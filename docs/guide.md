@@ -24,7 +24,8 @@ up the virtual memory card file.
 
 ## Reporting bugs
 
-Get a hold of me (mr_mary on Discord or @zlewyjuzjado on X/Twitter) and include:
+Open an issue on GitHub and include the details below:
+https://github.com/marysiamzawka/empress-megamix/issues
 
 - Console model (e.g. SCPH-50004).
 - Storage medium (USB or MMCE).

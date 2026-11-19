@@ -23,7 +23,8 @@ PCSX2를 사용한다면 가상 메모리 카드 파일을 백업하세요.
 
 ## 버그 제보
 
-Discord의 mr_mary 또는 X/Twitter의 @zlewyjuzjado로 아래 내용을 보내 주세요.
+GitHub Issues에 아래 내용을 포함해 제보해 주세요.
+https://github.com/marysiamzawka/empress-megamix/issues
 
 - 콘솔 모델명(예: SCPH-50004).
 - 저장장치(USB 또는 MMCE).

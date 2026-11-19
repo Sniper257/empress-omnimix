@@ -27,7 +27,8 @@ MEGAMIXを使う前に、元のセーブを必ずバックアップしてくだ�
 不具合の報告
 ------------
 
-Discordのmr_mary、またはX/Twitterの@zlewyjuzjadoまで、以下を添えて連絡してください。
+以下の情報を添えて、GitHubのIssuesに報告してください。
+https://github.com/marysiamzawka/empress-megamix/issues
 
 - 本体の型番（例：SCPH-50004）。
 - 使用ストレージ（USBまたはMMCE）。

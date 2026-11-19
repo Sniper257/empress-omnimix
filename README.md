@@ -21,6 +21,9 @@ Get the [latest release](https://github.com/marysiamzawka/empress-megamix/releas
 Back up your original saves before using MEGAMIX. The download includes TXT
 versions of these guides.
 
+Report bugs through [GitHub Issues](https://github.com/marysiamzawka/empress-megamix/issues). Include the information
+listed under Reporting bugs in the user guide.
+
 ## Build the download
 
 The maintainer/CI build requires Linux x86-64, Python 3.13 or later, Docker and
