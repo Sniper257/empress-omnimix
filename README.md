@@ -21,8 +21,33 @@ Get the [latest release](https://github.com/marysiamzawka/empress-megamix/releas
 Back up your original saves before using MEGAMIX. The download includes TXT
 versions of these guides.
 
+Known bugs are listed in the guide files.
+
 Report bugs through [GitHub Issues](https://github.com/marysiamzawka/empress-megamix/issues). Include the information
 listed under Reporting bugs in the user guide.
+
+## Features
+
+- **Works on a real PS2!**
+- Play IIDX EMPRESS straight from a storage device (USB or MMCE) - no audio drifting
+- Import and play every song from every IIDX PS2 game
+- Support for USB controllers
+- Native 480p
+- Reduced audio delay (by 13ms)
+- Expanded customizability
+    - Lane darkness, keybeam length, explosion size and note thickness
+    - FAST/SLOW and BPM notice
+    - Lift
+    - Live Playfield customization
+    - Per-player customization in BATTLE
+- QoL features
+    - Quick Retry and retaining RANDOM ("Chart Retry")
+    - R-RANDOM and RANDOM trainer
+    - Gauge Auto Shift
+    - Floating HI-SPEED and Lane Cover Lock
+    - Per-player offset adjustment from the Music Select menu
+    - Special lane modifiers (H-RAN, ALL-SCR and GAMBOL timings) available through a quick menu
+- New savefile format to accomodate for expanded library (your original EMPRESS save is untouched)
 
 ## Build the download
 
