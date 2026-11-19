@@ -1,0 +1,18 @@
+name NEMESIS 
+red 59
+record record.bin
+F c0 4 /a/1a/2d
+F c4 4 /a/63/1f
+F c8 4 /a/35/3c
+F cc 4 /a/36/58
+F d0 4 /a/4a/33
+F d4 4 /a/0b/41
+F d8 4 /a/60/38
+F e8 2 /a/55/30
+F ec 2 /a/0b/55
+F 58 4 /a/77/1f
+card /a/50/46
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

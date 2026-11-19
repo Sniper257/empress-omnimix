@@ -1,0 +1,18 @@
+name INDIGO VISION
+seventh 49
+record record.bin
+card /a/5f/04
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/2e/3d
+F c4 4 /a/2b/28
+F c8 4 /a/67/0b
+F d0 4 /a/19/58
+F d4 4 /a/3e/44
+F d8 4 /a/69/2b
+F e8 2 /a/77/38
+F ec 2 /a/6b/02
+F 58 4 /a/68/47
+D 0 /a/36/2c

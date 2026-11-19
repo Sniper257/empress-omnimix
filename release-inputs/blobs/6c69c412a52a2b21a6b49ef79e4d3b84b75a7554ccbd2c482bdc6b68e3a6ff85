@@ -1,0 +1,17 @@
+name MAX 300
+red 78
+record record.bin
+F c0 4 /a/78/38
+F c4 4 /a/29/2b
+F d0 4 /a/32/10
+F d4 4 /a/7d/44
+F d8 4 /a/57/17
+F e8 2 /a/26/48
+F ec 2 /a/2f/06
+F 58 4 /a/5b/46
+card /a/0e/46
+D 0 /a/61/32
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

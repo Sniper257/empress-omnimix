@@ -1,0 +1,18 @@
+name ORATIO
+djt 30
+record record.bin
+F c0 4 /a/2c/5d
+F c4 4 /a/5b/27
+F c8 4 /a/05/12
+F cc 4 /a/7d/2b
+F d0 4 /a/07/45
+F d4 4 /a/37/40
+F d8 4 /a/21/02
+F e8 2 /a/2c/1a
+F ec 2 /a/7e/54
+F 58 4 /a/68/2b
+card /a/25/5f
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

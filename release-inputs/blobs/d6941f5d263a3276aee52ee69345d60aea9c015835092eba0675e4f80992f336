@@ -1,0 +1,27 @@
+name SOMETHING WONDERFUL
+sixth 45
+record record.bin
+card /a/63/3f
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/33/3a
+F c4 4 /a/3b/1c
+F c8 4 /a/5c/59
+F d0 4 /a/16/19
+F d4 4 /a/0f/3a
+F d8 4 /a/6b/26
+F e8 2 /a/48/31
+F ea 2 /a/08/4f
+F ec 2 /a/2c/41
+F ee 2 /a/5b/3d
+F f0 2 /a/48/31
+F f4 2 /a/85/4b
+F f8 2 /a/19/2a
+F fa 2 /a/36/21
+F fc 2 /a/6f/19
+F fe 2 /a/19/0a
+F 100 2 /a/19/2a
+F 104 2 /a/6f/19
+F 58 4 /a/37/2a

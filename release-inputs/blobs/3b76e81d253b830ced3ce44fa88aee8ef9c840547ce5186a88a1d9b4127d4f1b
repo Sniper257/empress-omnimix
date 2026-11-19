@@ -1,0 +1,18 @@
+name CHANGES (CS 6TH)
+sixth 67
+record record.bin
+card /a/46/0b
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/6a/00
+F c4 4 /a/1b/25
+F d0 4 /a/1d/52
+F d4 4 /a/3f/25
+F d8 4 /a/6d/10
+F e8 2 /a/3e/14
+F ea 2 /a/2a/2f
+F ec 2 /a/0c/5c
+F ee 2 /a/7b/17
+F 58 4 /a/37/21

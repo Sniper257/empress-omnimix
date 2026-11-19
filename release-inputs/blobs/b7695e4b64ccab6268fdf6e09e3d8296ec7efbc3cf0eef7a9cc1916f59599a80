@@ -1,0 +1,18 @@
+name ERA (NOSTALMIX)
+eighth 73
+record record.bin
+card /a/82/36
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/58/43
+F c4 4 /a/4c/49
+F c8 4 /a/09/1e
+F cc 4 /a/5e/18
+F d0 4 /a/01/17
+F d4 4 /a/49/37
+F d8 4 /a/61/0f
+F e8 2 /a/4c/09
+F ec 2 /a/7c/41
+F 58 4 /a/49/28

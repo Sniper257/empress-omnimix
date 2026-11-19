@@ -1,0 +1,18 @@
+name BREATH
+red 1
+record record.bin
+F c0 4 /a/2f/54
+F c4 4 /a/2d/16
+F c8 4 /a/73/40
+F cc 4 /a/0f/2c
+F d0 4 /a/16/03
+F d4 4 /a/45/35
+F d8 4 /a/45/1d
+F e8 2 /a/06/09
+F ec 2 /a/55/35
+F 58 4 /a/66/0d
+card /a/3e/4e
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

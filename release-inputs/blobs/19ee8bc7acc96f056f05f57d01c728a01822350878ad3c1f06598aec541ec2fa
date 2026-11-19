@@ -1,0 +1,19 @@
+name TIME TO AIR
+pb 7
+record record.bin
+F c0 4 /a/3e/41
+F c4 4 /a/84/51
+F c8 4 /a/6f/14
+F cc 4 /a/4e/58
+F d0 4 /a/60/11
+F d4 4 /a/7f/3e
+F d8 4 /a/82/12
+F e0 4 /a/4a/25
+F e8 2 /a/1e/2b
+F ec 2 /a/05/20
+F 58 4 /a/1d/28
+card /a/16/55
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

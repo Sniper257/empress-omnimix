@@ -1,0 +1,19 @@
+name KARMA
+ninth 26
+record record.bin
+F c0 4 /a/4c/22
+F c4 4 /a/19/1f
+F c8 4 /a/64/4b
+F cc 4 /a/82/27
+F d0 4 /a/84/49
+F d4 4 /a/65/1a
+F e8 2 /a/78/1a
+F ec 2 /a/3f/3d
+F f4 2 /a/3d/5f
+F 58 4 /a/66/0d
+F 5c 4 /a/66/0d
+card /a/04/4f
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

@@ -1,0 +1,17 @@
+name PRESTO
+sixth 6
+record record.bin
+card /a/2d/10
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/1a/56
+F c4 4 /a/85/5e
+F c8 4 /a/65/56
+F d0 4 /a/62/1a
+F d4 4 /a/2a/19
+F d8 4 /a/81/0a
+F e8 2 /a/25/42
+F ec 2 /a/2b/23
+F 58 4 /a/73/1f

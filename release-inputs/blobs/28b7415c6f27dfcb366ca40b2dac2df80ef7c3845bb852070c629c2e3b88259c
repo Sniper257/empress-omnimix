@@ -1,0 +1,18 @@
+name HI SCHOOL DREAM
+tenth 36
+record record.bin
+F c0 4 /a/31/26
+F c4 4 /a/61/26
+F c8 4 /a/6b/15
+F cc 4 /a/63/12
+F d0 4 /a/2d/2f
+F d4 4 /a/1e/5e
+F d8 4 /a/3e/1a
+F e8 2 /a/2c/42
+F ec 2 /a/06/07
+F 58 4 /a/6d/5d
+card /a/36/55
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

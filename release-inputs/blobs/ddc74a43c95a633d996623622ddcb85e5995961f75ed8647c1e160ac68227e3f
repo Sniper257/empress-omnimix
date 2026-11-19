@@ -1,0 +1,23 @@
+name HYPER BOUNDARY GATE
+eighth 45
+record record.bin
+card /a/1a/21
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/1a/32
+F c4 4 /a/20/5d
+F c8 4 /a/4c/45
+F d0 4 /a/11/2b
+F d4 4 /a/10/01
+F e8 2 /a/1a/2e
+F ea 2 /a/1a/2e
+F ec 2 /a/7e/14
+F ee 2 /a/7e/14
+F f4 2 /a/44/50
+F f8 2 /a/1a/2e
+F fa 2 /a/1a/2e
+F fc 2 /a/26/12
+F fe 2 /a/26/12
+F 58 4 /a/36/0f

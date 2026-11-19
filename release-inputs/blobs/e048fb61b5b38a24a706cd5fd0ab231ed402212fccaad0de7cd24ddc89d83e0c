@@ -1,0 +1,18 @@
+name SILVIA DRIVE
+tenth 58
+record record.bin
+F c0 4 /a/0f/27
+F c4 4 /a/1a/36
+F c8 4 /a/82/21
+F cc 4 /a/20/47
+F d0 4 /a/6e/3d
+F d4 4 /a/80/41
+F d8 4 /a/2e/58
+F e8 2 /a/77/03
+F ec 2 /a/87/05
+F 58 4 /a/4e/2f
+card /a/5c/53
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

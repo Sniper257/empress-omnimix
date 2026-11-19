@@ -1,0 +1,47 @@
+﻿EMPRESS MEGAMIX - build the launcher cache on a PC
+
+This optional command builds cache files for an existing R171 installation.
+Use the matching R171 builder and cache engine together.
+Power off the PS2 before writing to its storage device.
+
+Install the optional runtime once:
+    python -m pip install "wasmtime>=50.0.1,<51"
+On Linux/macOS use python3 instead of python if needed.
+Normal ISO generation/install/verify commands do not need this runtime.
+No compiler, PS2SDK or fonts are needed.
+
+Build the cache (choose the PC directory and the actual PS2 game-data path):
+    python megamix.py cache "X:\MEGAMIX" --game-path mmce0:/MEGAMIX/
+    python megamix.py cache "/media/USB/Games/BM" --game-path mass:/Games/BM/
+
+mmce0: means MMCE in slot1; mmce1: means slot2. Use the exact device/path the
+launcher uses. mass: and mass0: have distinct cache keys; do not guess an alias.
+The executable's location is irrelevant. A cache built for another game-data
+path will safely miss and be rebuilt by the launcher.
+
+Use the launcher.cfg that you intend to use on the PS2. If it lives elsewhere:
+    python megamix.py cache "X:\MEGAMIX" --game-path mmce1:/MEGAMIX/ --config-dir "Y:\APPS\MEGAMIX" --settings-path mc0:/APPS/MEGAMIX/
+The second PC directory contains launcher.cfg. The second PS2 path identifies
+its configuration directory. HOST builds use --game-path host:.
+
+Keep debug0 and prepprobe0 (written as "debug 0" and "prepprobe 0" in debug.cfg).
+Finish any pending settings save or interrupted pack/update first. The command
+refuses an active installer lock and incompatible or damaged core files.
+
+Cache generation reads game files and a snapshot of your current configuration.
+It verifies a fresh build by restoring it through the launcher code before
+copying only cache products back. Settings, controller bindings, scores, source
+receipts and source.id are not changed. Existing caches for other settings or
+paths are retained. Changing folders, structural options or installed packs can
+require a new cache. Brightness/beam/note-height scalars still rebind normally.
+
+Expect about20MiB for the full-CS cache, plus temporary PC space. Use --temp-dir
+"D:\Temp" (or a suitable Linux/macOS directory) if your normal temp drive is full.
+If interrupted during copying, run the same command again. A partial cache is
+rejected by the launcher and rebuilt normally. Finish copying before unplugging.
+
+Standalone cache-tools ZIP users can run build-cache.py instead of
+"megamix.py cache" with the same arguments. No ISO/release.mmr is needed for
+that operation. Windows/macOS hardware acceptance remains pending; Linux native
+comparisons passed. The engine is portable WASI, run by the optional Wasmtime
+Python package. See cache-engine/licenses for linked-library notices.

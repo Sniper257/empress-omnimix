@@ -1,0 +1,19 @@
+name KAMAITACHI
+pb 12
+record record.bin
+F c0 4 /a/0c/43
+F c4 4 /a/6b/1c
+F c8 4 /a/4c/59
+F cc 4 /a/04/2d
+F d0 4 /a/67/36
+F d4 4 /a/58/15
+F d8 4 /a/3c/01
+F e0 4 /a/2e/41
+F e8 2 /a/00/36
+F ec 2 /a/0d/03
+F 58 4 /a/7d/3c
+card /a/6b/05
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

@@ -1,0 +1,22 @@
+name YOU REALLY GOT ME
+red 88
+record record.bin
+F c0 4 /a/47/49
+F c4 4 /a/45/48
+F c8 4 /a/2d/1d
+F cc 4 /a/7e/15
+F d0 4 /a/7f/3f
+F d4 4 /a/4b/18
+F e8 2 /a/02/4d
+F ec 2 /a/39/1c
+F f0 2 /a/02/4d
+F f2 2 /a/02/4d
+F f4 2 /a/31/1d
+F f6 2 /a/31/1d
+F 58 4 /a/7a/0a
+F 5c 4 /a/7a/0a
+card /a/46/00
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

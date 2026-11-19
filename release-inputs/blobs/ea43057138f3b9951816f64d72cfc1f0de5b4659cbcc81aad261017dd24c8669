@@ -1,0 +1,22 @@
+name SUMMER VACATION(CU MIX)
+usa 60
+record record.bin
+F c0 4 /a/34/5c
+F c4 4 /a/28/3c
+F d0 4 /a/38/04
+F d4 4 /a/15/41
+F d8 4 /a/6c/56
+F e8 2 /a/44/10
+F ec 2 /a/4b/3c
+F f0 2 /a/44/10
+F f4 2 /a/4b/3c
+F f8 2 /a/44/10
+F fc 2 /a/4b/3c
+F 100 2 /a/44/10
+F 104 2 /a/4b/3c
+F 58 4 /a/60/4d
+card /a/12/5b
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

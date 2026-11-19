@@ -1,0 +1,18 @@
+name AWAKENING
+red 8
+record record.bin
+F c0 4 /a/69/34
+F c4 4 /a/12/33
+F c8 4 /a/3a/0c
+F cc 4 /a/1a/1f
+F d0 4 /a/6f/1e
+F d4 4 /a/6c/3e
+F d8 4 /a/41/38
+F e8 2 /a/2f/37
+F ec 2 /a/42/49
+F 58 4 /a/7c/38
+card /a/32/52
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

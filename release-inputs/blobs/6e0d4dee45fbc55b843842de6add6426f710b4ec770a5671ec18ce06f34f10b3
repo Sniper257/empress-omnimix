@@ -1,0 +1,17 @@
+name LITTLE LITTLE PRINCESS
+happysky 24
+record record.bin
+F c0 4 /a/3a/19
+F c4 4 /a/7a/3a
+F c8 4 /a/64/1c
+F d0 4 /a/4e/3f
+F d4 4 /a/48/00
+F d8 4 /a/78/15
+F e8 2 /a/50/1c
+F ec 2 /a/55/1b
+F 58 4 /a/87/19
+card /a/08/5e
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

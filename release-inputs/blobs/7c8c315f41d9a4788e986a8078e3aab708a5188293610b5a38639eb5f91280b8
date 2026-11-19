@@ -1,0 +1,18 @@
+name AURORA
+pb 27
+record record.bin
+F c0 4 /a/80/58
+F c4 4 /a/2c/02
+F c8 4 /a/21/57
+F cc 4 /a/63/0d
+F d0 4 /a/0b/2b
+F d4 4 /a/44/18
+F d8 4 /a/43/56
+F e8 2 /a/00/45
+F ec 2 /a/09/0a
+F 58 4 /a/72/22
+card /a/63/01
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

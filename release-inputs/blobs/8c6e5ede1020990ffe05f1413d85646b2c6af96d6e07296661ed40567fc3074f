@@ -1,0 +1,20 @@
+name WAXING AND WANDING
+pb 24
+record record.bin
+F c0 4 /a/5b/53
+F c4 4 /a/6c/28
+F c8 4 /a/22/52
+F cc 4 /a/00/2d
+F d0 4 /a/24/5c
+F d4 4 /a/61/52
+F d8 4 /a/20/33
+F e8 2 /a/86/5a
+F ec 2 /a/3b/35
+F 58 4 /a/0c/08
+card /a/81/11
+D 0 /a/41/04
+D 1 /a/4e/17
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

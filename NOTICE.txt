@@ -1,0 +1,34 @@
+EMPRESS MEGAMIX notices
+======================
+
+Original MEGAMIX project code is licensed under MIT. See LICENSE in the source
+repository, or licenses/MEGAMIX-MIT.txt in a generated game installation.
+Copyright (c) 2026 MEGAMIX contributors.
+
+Third-party code, assets and build dependencies retain their own copyrights
+and licences. The project MIT licence does not replace those licences or
+relicense GPL-covered components. Preserve upstream headers and notices.
+
+Included source and asset notices:
+- Blowfish by Jashandeep Sohi: tools/release/vendor/blowfish.py and
+  tools/release/licenses/blowfish-GPL-3.0.txt (GPL-3.0-or-later).
+- Octree quantization derived from Pillow QuantOctree.c:
+  tools/release/licenses/QuantOctree.txt.
+- Default text coverage: tools/release/licenses/text-fonts/ contains the
+  individual font notices. User-supplied font files are not distributed.
+- GS mode support, PS2SDK, FatFs, MMCEMAN and ps2-packer:
+  tools/offdisc/licenses/ contains the retained upstream notices and the
+  ps2-packer source archive. Pinned download sources are in ci/dependencies.json.
+- WASI/libc and compiler runtime notices:
+  tools/release/cache-engine/licenses/.
+
+Generated builder downloads and game installations include the applicable
+licences. Keep their licences directories and corresponding source notices.
+
+The source includes disc-derived identifiers, names, hashes, file extents and
+small original-byte patch preconditions. It does not include complete retail
+charts, music, BGA, native artwork, game executables or IOP images. The builder
+reads those resources from the user's supported original game ISOs.
+
+EMPRESS MEGAMIX is an unofficial fan project. It is not affiliated with or
+endorsed by KONAMI or BEMANI. All trademarks belong to their respective owners.

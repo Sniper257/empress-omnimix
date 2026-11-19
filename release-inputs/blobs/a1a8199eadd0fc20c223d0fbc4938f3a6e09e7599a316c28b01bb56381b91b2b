@@ -1,0 +1,19 @@
+name RISTACCIA
+pb 5
+record record.bin
+F c0 4 /a/84/29
+F c4 4 /a/70/39
+F c8 4 /a/47/5c
+F cc 4 /a/11/07
+F d0 4 /a/4e/03
+F d4 4 /a/55/2f
+F d8 4 /a/5c/2e
+F e4 4 /a/0b/16
+F e8 2 /a/75/3a
+F ec 2 /a/12/55
+F 58 4 /a/54/48
+card /a/81/28
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

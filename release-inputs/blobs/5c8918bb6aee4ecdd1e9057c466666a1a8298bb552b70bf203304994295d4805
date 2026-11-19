@@ -1,0 +1,17 @@
+name VANISHING POINT
+distorted 88
+record record.bin
+F c0 4 /a/33/5d
+F c4 4 /a/4a/13
+F c8 4 /a/84/15
+F cc 4 /a/42/23
+F d0 4 /a/51/0d
+F d4 4 /a/4f/31
+F e8 2 /a/62/5a
+F ec 2 /a/13/16
+F 58 4 /a/0b/3e
+card /a/5b/06
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

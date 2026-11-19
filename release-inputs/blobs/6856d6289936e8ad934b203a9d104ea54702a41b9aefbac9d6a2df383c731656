@@ -1,0 +1,17 @@
+name ABYSS -THE HEAVENS REMIX-
+seventh 88
+record record.bin
+card /a/22/4b
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/61/17
+F c4 4 /a/5e/22
+F c8 4 /a/44/58
+F cc 4 /a/25/5d
+F d0 4 /a/05/34
+F d4 4 /a/86/46
+F e8 2 /a/67/48
+F ec 2 /a/17/5e
+F 58 4 /a/35/16

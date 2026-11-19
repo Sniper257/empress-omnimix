@@ -1,0 +1,24 @@
+name PARANOIA MAX ~DIRTY MIX~
+usa 56
+record record.bin
+F c0 4 /a/6b/17
+F c4 4 /a/53/2f
+F c8 4 /a/42/35
+F cc 4 /a/18/4e
+F d0 4 /a/0d/58
+F d4 4 /a/6d/54
+F d8 4 /a/75/07
+F e8 2 /a/54/0d
+F ec 2 /a/7d/08
+F f0 2 /a/54/0d
+F f4 2 /a/7d/08
+F f8 2 /a/54/0d
+F fc 2 /a/7d/08
+F 100 2 /a/54/0d
+F 104 2 /a/7d/08
+F 58 4 /a/84/36
+card /a/10/04
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

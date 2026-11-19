@@ -1,0 +1,17 @@
+name TAIYO
+red 6
+record record.bin
+F c0 4 /a/37/1f
+F c4 4 /a/44/5a
+F c8 4 /a/7e/56
+F d0 4 /a/10/53
+F d4 4 /a/62/42
+F d8 4 /a/68/45
+F e8 2 /a/52/27
+F ec 2 /a/13/1a
+F 58 4 /a/2d/4f
+card /a/74/55
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

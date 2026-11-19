@@ -1,0 +1,24 @@
+name MUSIC TO YOUR HEAD (US)
+usa 52
+record record.bin
+F c0 4 /a/79/46
+F c4 4 /a/20/0a
+F c8 4 /a/2f/0f
+F cc 4 /a/85/36
+F d0 4 /a/2d/37
+F d4 4 /a/6d/21
+F d8 4 /a/39/24
+F e8 2 /a/02/3f
+F ec 2 /a/67/10
+F f0 2 /a/02/3f
+F f4 2 /a/67/10
+F f8 2 /a/02/3f
+F fc 2 /a/67/10
+F 100 2 /a/02/3f
+F 104 2 /a/67/10
+F 58 4 /a/81/2d
+card /a/13/12
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

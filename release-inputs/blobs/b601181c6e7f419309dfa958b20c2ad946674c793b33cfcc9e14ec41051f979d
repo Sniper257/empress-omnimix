@@ -1,0 +1,19 @@
+name PARASITE WORLD
+distorted 28
+record record.bin
+F c0 4 /a/64/26
+F c4 4 /a/3d/24
+F c8 4 /a/4d/1d
+F cc 4 /a/64/3e
+F d0 4 /a/5a/3a
+F d4 4 /a/65/24
+F d8 4 /a/40/4f
+F e8 2 /a/2c/12
+F ec 2 /a/53/01
+F 58 4 /a/66/0d
+card /a/34/17
+D 0 /a/13/2d
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

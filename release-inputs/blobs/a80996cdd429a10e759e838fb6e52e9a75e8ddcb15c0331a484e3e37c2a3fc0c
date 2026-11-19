@@ -1,0 +1,17 @@
+name WORLD WIDE LOVE
+pb 57
+record record.bin
+F c0 4 /a/05/19
+F c4 4 /a/17/56
+F c8 4 /a/17/3b
+F d0 4 /a/1d/29
+F d4 4 /a/43/12
+F d8 4 /a/0d/08
+F e8 2 /a/55/43
+F ec 2 /a/48/37
+F 58 4 /a/3d/51
+card /a/03/3b
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

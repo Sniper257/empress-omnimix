@@ -1,0 +1,17 @@
+name FEEL IT
+tenth 35
+record record.bin
+F c0 4 /a/7a/4b
+F c4 4 /a/56/1e
+F c8 4 /a/36/2a
+F cc 4 /a/27/5b
+F d0 4 /a/69/22
+F d4 4 /a/6f/44
+F e8 2 /a/42/41
+F ec 2 /a/25/3e
+F 58 4 /a/54/4d
+card /a/07/03
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

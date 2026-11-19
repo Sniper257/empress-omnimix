@@ -1,0 +1,17 @@
+name LUV TO ME(UCCHIE'S EDITION)
+fourth 25
+record record.bin
+card /a/55/3b
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/70/35
+F c4 4 /a/85/5b
+F c8 4 /a/23/20
+F cc 4 /a/2d/4c
+F d0 4 /a/4b/2e
+F d4 4 /a/40/2e
+F e8 2 /a/73/26
+F ec 2 /a/51/4a
+F 58 4 /a/7d/28

@@ -1,0 +1,18 @@
+name LAST MESSAGE
+seventh 23
+record record.bin
+card /a/7a/13
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/40/13
+F c4 4 /a/36/33
+F c8 4 /a/05/36
+F cc 4 /a/18/35
+F d0 4 /a/0e/54
+F d4 4 /a/7c/25
+F d8 4 /a/14/1e
+F e8 2 /a/4b/21
+F ec 2 /a/1a/29
+F 58 4 /a/61/14

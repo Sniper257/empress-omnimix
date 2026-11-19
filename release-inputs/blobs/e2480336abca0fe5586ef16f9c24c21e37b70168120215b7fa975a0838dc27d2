@@ -1,0 +1,18 @@
+name MR.T.(TAKE ME HIGHER)
+fourth 35
+record record.bin
+card /a/2b/2f
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/63/43
+F c4 4 /a/62/32
+F c8 4 /a/7f/18
+F cc 4 /a/54/10
+F d0 4 /a/17/2a
+F d4 4 /a/1b/1b
+F e8 2 /a/2f/59
+F ec 2 /a/7d/1c
+F 58 4 /a/51/19
+D 0 /a/6a/02

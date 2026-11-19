@@ -1,0 +1,17 @@
+name E-MOTION 2003  -ROMANTIC EXTRA-
+ninth 50
+record record.bin
+F c0 4 /a/3d/0e
+F c4 4 /a/79/59
+F c8 4 /a/2a/3e
+F d0 4 /a/1c/4c
+F d4 4 /a/09/53
+F d8 4 /a/50/5c
+F e8 2 /a/38/4d
+F ec 2 /a/3b/2c
+F 58 4 /a/52/22
+card /a/5d/2a
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

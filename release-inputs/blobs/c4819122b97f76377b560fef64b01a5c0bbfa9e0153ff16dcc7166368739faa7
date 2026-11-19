@@ -1,0 +1,16 @@
+name TRANCEMISSION
+fourth 51
+record record.bin
+card /a/59/11
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/14/2b
+F c4 4 /a/31/57
+F d0 4 /a/1f/3d
+F d4 4 /a/18/2a
+F e8 2 /a/51/54
+F ec 2 /a/4e/3c
+F f8 2 /a/0c/07
+F 58 4 /a/77/4f

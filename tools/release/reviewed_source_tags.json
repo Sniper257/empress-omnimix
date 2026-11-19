@@ -1,0 +1,328 @@
+{
+  "schema": 1,
+  "source_iso_sha256": "8b42d601bc7c2e99ce9724b1641445951594c5b6646e913cc158370a1df035ab",
+  "tags": {
+    "red:53": "gambolhs",
+    "red:65": "_59",
+    "red:66": "tange_hs",
+    "red:68": "t_safari",
+    "red:54": "north",
+    "red:62": "estella",
+    "red:69": "dxy",
+    "red:77": "im4real",
+    "red:80": "eraser",
+    "red:55": "thecube",
+    "red:63": "fivereg",
+    "red:70": "stwords",
+    "red:71": "rislim",
+    "red:75": "loveage",
+    "red:79": "outwall",
+    "red:59": "nemesis",
+    "red:67": "a_amuro",
+    "red:78": "max300",
+    "red:52": "lvorange",
+    "red:57": "giudecca",
+    "red:60": "rnikita",
+    "red:64": "_aoisho",
+    "red:72": "rbwflyer",
+    "red:73": "lab",
+    "red:74": "v35",
+    "red:76": "murmur",
+    "red:56": "quicken",
+    "red:58": "loworld",
+    "red:61": "golden",
+    "red:0": "blocks",
+    "red:1": "breath",
+    "red:10": "ultimate",
+    "red:11": "spiral",
+    "red:12": "andromed",
+    "red:13": "reso1794",
+    "red:14": "earthscp",
+    "red:15": "lesfill",
+    "red:16": "moveme",
+    "red:17": "closeyes",
+    "red:18": "_oosan",
+    "red:19": "on_tube",
+    "red:2": "texture",
+    "red:20": "believe_",
+    "red:21": "kingrove",
+    "red:22": "evo66",
+    "red:23": "rokworld",
+    "red:24": "wonbull",
+    "red:25": "_psasori",
+    "red:26": "inject",
+    "red:27": "thehope",
+    "red:28": "backflr",
+    "red:29": "faketime",
+    "red:3": "d_afraid",
+    "red:30": "click",
+    "red:31": "redzone",
+    "red:32": "flyindia",
+    "red:33": "seclove",
+    "red:34": "bequiet",
+    "red:35": "ageha",
+    "red:36": "gigadel",
+    "red:37": "horizon",
+    "red:38": "kecak",
+    "red:39": "aa_amuro",
+    "red:4": "spdy_cat",
+    "red:40": "_perplex",
+    "red:41": "listento",
+    "red:42": "dance_",
+    "red:43": "nitokyo",
+    "red:44": "harmony",
+    "red:45": "perworld",
+    "red:46": "kiseki",
+    "red:47": "tellme",
+    "red:48": "moremove",
+    "red:49": "nebula",
+    "red:5": "cardream",
+    "red:50": "raspbery",
+    "red:51": "genocide",
+    "red:6": "_taiyo",
+    "red:7": "key",
+    "red:8": "awaken",
+    "red:81": "go_brzk",
+    "red:82": "sltn_emp",
+    "red:83": "_suijo",
+    "red:84": "inori",
+    "red:85": "lvagain_",
+    "red:86": "_regret",
+    "red:87": "toxic",
+    "red:88": "yougotme",
+    "red:9": "sphere"
+  },
+  "additional_mapping_evidence": [
+    {
+      "source": "red",
+      "sid": 53,
+      "title": "GAMBOL",
+      "tag": "gambolhs",
+      "matching_note_count_fields": 4,
+      "candidate_scores": {
+        "gambolhs": 4
+      }
+    },
+    {
+      "source": "red",
+      "sid": 65,
+      "title": ".59",
+      "tag": "_59",
+      "matching_note_count_fields": 6,
+      "candidate_scores": {
+        "_59": 6
+      }
+    },
+    {
+      "source": "red",
+      "sid": 68,
+      "title": "THE SAFARI",
+      "tag": "t_safari",
+      "matching_note_count_fields": 4,
+      "candidate_scores": {
+        "t_safari": 4
+      }
+    },
+    {
+      "source": "red",
+      "sid": 69,
+      "title": "DXY!",
+      "tag": "dxy",
+      "matching_note_count_fields": 6,
+      "candidate_scores": {
+        "dxy": 6
+      }
+    },
+    {
+      "source": "red",
+      "sid": 79,
+      "title": "OUTER WALL",
+      "tag": "outwall",
+      "matching_note_count_fields": 6,
+      "candidate_scores": {
+        "outwall": 6
+      }
+    },
+    {
+      "source": "red",
+      "sid": 59,
+      "title": "NEMESIS",
+      "tag": "nemesis",
+      "matching_note_count_fields": 6,
+      "candidate_scores": {
+        "nemesis": 6
+      }
+    },
+    {
+      "source": "red",
+      "sid": 67,
+      "title": "A",
+      "tag": "a_amuro",
+      "matching_note_count_fields": 6,
+      "candidate_scores": {
+        "a_amuro": 6
+      }
+    },
+    {
+      "source": "red",
+      "sid": 52,
+      "title": "LOVE IS ORANGE",
+      "tag": "lvorange",
+      "matching_note_count_fields": 5,
+      "candidate_scores": {
+        "lvorange": 5
+      }
+    },
+    {
+      "source": "red",
+      "sid": 72,
+      "title": "RAINBOW FLYER",
+      "tag": "rbwflyer",
+      "matching_note_count_fields": 6,
+      "candidate_scores": {
+        "rbwflyer": 6
+      }
+    },
+    {
+      "source": "red",
+      "sid": 73,
+      "title": "LAB",
+      "tag": "lab",
+      "matching_note_count_fields": 5,
+      "candidate_scores": {
+        "lab": 5
+      }
+    },
+    {
+      "source": "red",
+      "sid": 76,
+      "title": "MURMUR TWINS",
+      "tag": "murmur",
+      "matching_note_count_fields": 6,
+      "candidate_scores": {
+        "murmur": 6
+      }
+    },
+    {
+      "source": "red",
+      "sid": 11,
+      "title": "SPIRAL GALAXY",
+      "tag": "spiral",
+      "matching_note_count_fields": 6,
+      "candidate_scores": {
+        "spiral": 6
+      }
+    },
+    {
+      "source": "red",
+      "sid": 12,
+      "title": "ANDROMEDA",
+      "tag": "andromed",
+      "matching_note_count_fields": 6,
+      "candidate_scores": {
+        "andromed": 6
+      }
+    },
+    {
+      "source": "red",
+      "sid": 24,
+      "title": "WONDER BULLFIGHTER",
+      "tag": "wonbull",
+      "matching_note_count_fields": 6,
+      "candidate_scores": {
+        "wonbull": 6
+      }
+    },
+    {
+      "source": "red",
+      "sid": 25,
+      "title": "PF CONCERTO ANTI-ARES",
+      "tag": "_psasori",
+      "matching_note_count_fields": 6,
+      "candidate_scores": {
+        "_psasori": 6
+      }
+    },
+    {
+      "source": "red",
+      "sid": 27,
+      "title": "THE HOPE OF TOMORROW",
+      "tag": "thehope",
+      "matching_note_count_fields": 6,
+      "candidate_scores": {
+        "thehope": 6,
+        "thehoped": 0
+      }
+    },
+    {
+      "source": "red",
+      "sid": 31,
+      "title": "RED ZONE",
+      "tag": "redzone",
+      "matching_note_count_fields": 6,
+      "candidate_scores": {
+        "redzone": 6
+      }
+    },
+    {
+      "source": "red",
+      "sid": 36,
+      "title": "GIGADELIC",
+      "tag": "gigadel",
+      "matching_note_count_fields": 5,
+      "candidate_scores": {
+        "gigadel": 5
+      }
+    },
+    {
+      "source": "red",
+      "sid": 39,
+      "title": "AA",
+      "tag": "aa_amuro",
+      "matching_note_count_fields": 6,
+      "candidate_scores": {
+        "aa_amuro": 6
+      }
+    },
+    {
+      "source": "red",
+      "sid": 42,
+      "title": "D.A.N.C.E.!",
+      "tag": "dance_",
+      "matching_note_count_fields": 5,
+      "candidate_scores": {
+        "dance_": 5
+      }
+    },
+    {
+      "source": "red",
+      "sid": 51,
+      "title": "GENOCIDE",
+      "tag": "genocide",
+      "matching_note_count_fields": 6,
+      "candidate_scores": {
+        "genocide": 6
+      }
+    },
+    {
+      "source": "red",
+      "sid": 82,
+      "title": "SOLITON BEAM",
+      "tag": "sltn_emp",
+      "matching_note_count_fields": 2,
+      "candidate_scores": {
+        "sltn_emp": 2
+      }
+    },
+    {
+      "source": "red",
+      "sid": 9,
+      "title": "SPHERE",
+      "tag": "sphere",
+      "matching_note_count_fields": 6,
+      "candidate_scores": {
+        "sphere": 6
+      }
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+name HI SCHOOL DREAM
+pb 40
+record record.bin
+F c0 4 /a/49/14
+F c4 4 /a/4d/30
+F c8 4 /a/04/40
+F cc 4 /a/33/5c
+F d0 4 /a/67/05
+F d4 4 /a/17/0c
+F d8 4 /a/79/4f
+F e8 2 /a/5c/52
+F ec 2 /a/61/5c
+F 58 4 /a/6d/5d
+card /a/83/17
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

@@ -1,0 +1,18 @@
+name ABSOLUTE
+pb 77
+record record.bin
+F c0 4 /a/12/3f
+F c4 4 /a/64/16
+F c8 4 /a/62/33
+F cc 4 /a/7a/18
+F d0 4 /a/1d/1b
+F d4 4 /a/6a/52
+F d8 4 /a/1f/22
+F e8 2 /a/43/47
+F ec 2 /a/6c/30
+F 58 4 /a/5f/3f
+card /a/7f/0e
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

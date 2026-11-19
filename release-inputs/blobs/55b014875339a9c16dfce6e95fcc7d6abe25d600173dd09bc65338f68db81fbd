@@ -1,0 +1,18 @@
+name EAR
+gold 11
+record record.bin
+F c0 4 /a/7c/34
+F c4 4 /a/7f/16
+F c8 4 /a/31/00
+F cc 4 /a/72/4f
+F d0 4 /a/1f/0c
+F d4 4 /a/85/3d
+F d8 4 /a/73/2d
+F e8 2 /a/5e/0e
+F ec 2 /a/31/15
+F 58 4 /a/5e/2a
+card /a/43/07
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

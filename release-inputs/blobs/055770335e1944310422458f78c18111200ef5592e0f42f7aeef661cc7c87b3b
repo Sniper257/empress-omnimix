@@ -1,0 +1,19 @@
+name GIRIGIRI DADDY
+fourth 5
+record record.bin
+card /a/1d/07
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/2b/58
+F c4 4 /a/4b/57
+F c8 4 /a/19/1e
+F cc 4 /a/59/17
+F d0 4 /a/4c/00
+F d4 4 /a/6c/26
+F e8 2 /a/35/5a
+F ec 2 /a/09/56
+F ee 2 /a/28/05
+F 58 4 /a/51/19
+D 0 /a/04/0c

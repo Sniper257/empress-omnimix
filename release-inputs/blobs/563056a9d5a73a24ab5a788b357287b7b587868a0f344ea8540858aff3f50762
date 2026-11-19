@@ -1,0 +1,17 @@
+name FF
+djt 81
+record record.bin
+F c0 4 /a/7b/4d
+F c4 4 /a/7b/0f
+F c8 4 /a/77/01
+F cc 4 /a/27/0b
+F d0 4 /a/77/2e
+F d4 4 /a/80/09
+F e8 2 /a/60/3c
+F ec 2 /a/63/42
+F 58 4 /a/77/2f
+card /a/23/2e
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

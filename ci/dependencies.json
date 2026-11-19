@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "sdk_image": "ps2dev/ps2dev@sha256:5476fdfbf34d35eb644fde0a6f6533fb554a4a8171ce53dad7cd1df6077dfb05",
+  "archives": {
+    "ps2sdk": {
+      "url": "https://codeload.github.com/ps2dev/ps2sdk/tar.gz/329e2bb43287e16af16c4dde1c614e2662c24468",
+      "file": "ps2sdk.tar.gz",
+      "bytes": 2544056,
+      "sha256": "a2cf25cb5f6dbc043666440a3b9a6a132ccedde9d6c9bebe3bb23fc529d344a4"
+    },
+    "ps2sdk-usbd": {
+      "url": "https://codeload.github.com/ps2dev/ps2sdk/tar.gz/f1ca58a468ead937155ab818d9a38e52c8adf861",
+      "file": "ps2sdk-usbd.tar.gz",
+      "bytes": 2544013,
+      "sha256": "b8906269fcdcd6806a9faa26ec8ff38d5973bb8bc2d84e18c66cf90c897daac1"
+    },
+    "fatfs": {
+      "url": "https://codeload.github.com/fjtrujy/FatFs/tar.gz/18cc3d9e07473a6aa3d783a66224b243a7b4974c",
+      "file": "fatfs.tar.gz",
+      "bytes": 2311582,
+      "sha256": "ef0ce9710869f1932c328c5c4b07a707fdf08fa72e203f1fb1fa9ef67e288b81"
+    },
+    "mmceman": {
+      "url": "https://codeload.github.com/ps2-mmce/mmceman/tar.gz/de28936fdf45fe445554cfa0b8f058b05fa8212f",
+      "file": "mmceman.tar.gz",
+      "bytes": 29373,
+      "sha256": "dcf41e87681a7b5c9df0a1f3aee6e689a9ab7805faaa92841214671f28223b2c"
+    },
+    "llvm": {
+      "url": "https://github.com/llvm/llvm-project/releases/download/llvmorg-23.1.3/LLVM-23.1.3-Linux-X64.tar.zst",
+      "file": "llvm.tar.zst",
+      "bytes": 1188398549,
+      "sha256": "14d2f701eb68fb799001bdea6231048f3990690fa2f406d563555ff8f744daba"
+    },
+    "zig": {
+      "url": "https://ziglang.org/download/0.17.0/zig-x86_64-linux-0.17.0.tar.xz",
+      "file": "zig.tar.xz",
+      "bytes": 57332648,
+      "sha256": "1cbe9df9f27e6b78d14ccbca43b6703a404ef79ef1c463de901d7f088d4e2026"
+    }
+  }
+}

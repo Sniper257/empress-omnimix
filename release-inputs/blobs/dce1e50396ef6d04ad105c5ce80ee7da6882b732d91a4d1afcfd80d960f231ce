@@ -1,0 +1,24 @@
+name NEBULA GRASPER
+red 49
+record record.bin
+F c0 4 /a/3c/46
+F c4 4 /a/4e/5d
+F c8 4 /a/44/35
+F cc 4 /a/70/57
+F d0 4 /a/28/0e
+F d4 4 /a/77/00
+F d8 4 /a/5c/42
+F e8 2 /a/4f/11
+F ec 2 /a/49/12
+F ee 2 /a/49/12
+F f4 2 /a/49/12
+F f6 2 /a/5b/0d
+F fc 2 /a/49/12
+F fe 2 /a/49/12
+F 104 2 /a/49/12
+F 58 4 /a/03/12
+card /a/4f/10
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

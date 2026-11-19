@@ -1,0 +1,17 @@
+name BLAME
+eighth 21
+record record.bin
+card /a/1a/00
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/3a/3f
+F c4 4 /a/21/37
+F c8 4 /a/36/35
+F cc 4 /a/18/3c
+F d0 4 /a/5c/25
+F d4 4 /a/62/0e
+F e8 2 /a/06/35
+F ec 2 /a/20/0c
+F 58 4 /a/1f/37

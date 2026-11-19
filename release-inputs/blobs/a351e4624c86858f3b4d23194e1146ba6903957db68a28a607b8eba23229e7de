@@ -1,0 +1,17 @@
+name IFUTURELIST
+distorted 21
+record record.bin
+F c0 4 /a/00/44
+F c4 4 /a/35/5b
+F c8 4 /a/17/26
+F d0 4 /a/64/44
+F d4 4 /a/72/17
+F d8 4 /a/5c/3b
+F e8 2 /a/41/17
+F ec 2 /a/84/0d
+F 58 4 /a/24/32
+card /a/62/30
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

@@ -1,0 +1,17 @@
+name CAR OF YOUR DREAMS
+red 5
+record record.bin
+F c0 4 /a/23/2c
+F c4 4 /a/47/1e
+F c8 4 /a/32/22
+F d0 4 /a/71/17
+F d4 4 /a/56/2d
+F d8 4 /a/7c/2c
+F e8 2 /a/38/1f
+F ec 2 /a/09/38
+F 58 4 /a/54/19
+card /a/36/04
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

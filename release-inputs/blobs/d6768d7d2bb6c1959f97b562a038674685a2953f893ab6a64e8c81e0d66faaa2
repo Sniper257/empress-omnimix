@@ -1,0 +1,17 @@
+name V
+eighth 62
+record record.bin
+card /a/2e/23
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/72/20
+F c4 4 /a/1b/42
+F c8 4 /a/6f/0d
+F d0 4 /a/0e/53
+F d4 4 /a/1c/47
+F d8 4 /a/39/07
+F e8 2 /a/4c/4b
+F ec 2 /a/72/14
+F 58 4 /a/7e/1f

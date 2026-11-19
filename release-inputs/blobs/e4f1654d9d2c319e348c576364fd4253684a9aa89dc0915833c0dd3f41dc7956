@@ -1,0 +1,18 @@
+name SAKURA
+pb 59
+record record.bin
+F c0 4 /a/6d/41
+F c4 4 /a/70/12
+F c8 4 /a/62/13
+F cc 4 /a/3f/4d
+F d0 4 /a/43/00
+F d4 4 /a/71/13
+F d8 4 /a/2d/4e
+F e8 2 /a/75/3b
+F ec 2 /a/71/3e
+F 58 4 /a/29/10
+card /a/71/18
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

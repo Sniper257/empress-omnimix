@@ -1,0 +1,17 @@
+name MN
+gold 81
+record record.bin
+F c0 4 /a/1e/0c
+F c4 4 /a/11/5c
+F c8 4 /a/6b/32
+F cc 4 /a/49/3c
+F d0 4 /a/2d/18
+F d4 4 /a/6d/3d
+F e8 2 /a/2e/1a
+F ec 2 /a/7f/2b
+F 58 4 /a/29/32
+card /a/83/19
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

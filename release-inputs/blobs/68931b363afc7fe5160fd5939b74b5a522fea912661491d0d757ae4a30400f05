@@ -1,0 +1,19 @@
+name G2
+pb 71
+record record.bin
+F c0 4 /a/22/48
+F c4 4 /a/53/2d
+F c8 4 /a/62/4b
+F cc 4 /a/60/2d
+F d0 4 /a/0a/2b
+F d4 4 /a/6f/12
+F d8 4 /a/86/05
+F e0 4 /a/19/5a
+F e8 2 /a/3f/1a
+F ec 2 /a/2c/46
+F 58 4 /a/74/0b
+card /a/00/22
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

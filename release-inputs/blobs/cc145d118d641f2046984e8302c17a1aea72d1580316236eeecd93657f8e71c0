@@ -1,0 +1,18 @@
+name SHOOTING STAR
+tenth 8
+record record.bin
+F c0 4 /a/0f/5c
+F c4 4 /a/16/34
+F c8 4 /a/7b/1b
+F cc 4 /a/7e/2e
+F d0 4 /a/6d/4c
+F d4 4 /a/0f/0d
+F d8 4 /a/2e/52
+F e8 2 /a/31/49
+F ec 2 /a/23/39
+F 58 4 /a/00/40
+card /a/16/50
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

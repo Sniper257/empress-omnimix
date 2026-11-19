@@ -1,0 +1,18 @@
+name AOI SHOUDOU
+red 64
+record record.bin
+F c0 4 /a/25/10
+F c4 4 /a/7f/10
+F c8 4 /a/2b/5d
+F cc 4 /a/5e/27
+F d0 4 /a/65/25
+F d4 4 /a/6c/35
+F d8 4 /a/2d/47
+F e8 2 /a/4b/00
+F ec 2 /a/43/34
+F 58 4 /a/61/36
+card /a/40/5b
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

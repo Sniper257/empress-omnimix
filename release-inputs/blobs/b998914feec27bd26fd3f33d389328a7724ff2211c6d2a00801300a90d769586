@@ -1,0 +1,19 @@
+name SIGSIG
+pb 33
+record record.bin
+F c0 4 /a/3b/30
+F c4 4 /a/75/30
+F c8 4 /a/3f/35
+F cc 4 /a/09/44
+F d0 4 /a/0e/55
+F d4 4 /a/55/0c
+F d8 4 /a/41/32
+F e8 2 /a/13/1e
+F ec 2 /a/72/53
+F 58 4 /a/07/2a
+card /a/10/4c
+D 0 /a/01/1c
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

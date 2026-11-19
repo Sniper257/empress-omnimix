@@ -1,0 +1,17 @@
+name PEN
+gold 91
+record record.bin
+F c0 4 /a/64/49
+F c4 4 /a/66/47
+F c8 4 /a/59/15
+F cc 4 /a/15/4e
+F d0 4 /a/22/5d
+F d4 4 /a/70/37
+F e8 2 /a/21/35
+F ec 2 /a/1c/20
+F 58 4 /a/51/24
+card /a/38/08
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

@@ -1,0 +1,17 @@
+name I CAN FLY,I'VE GOT REASON
+ninth 25
+record record.bin
+F c0 4 /a/52/1b
+F c4 4 /a/2c/4a
+F c8 4 /a/37/26
+F cc 4 /a/25/20
+F d0 4 /a/2a/53
+F d4 4 /a/22/20
+F e8 2 /a/6e/3c
+F ec 2 /a/57/37
+F 58 4 /a/66/0d
+card /a/26/34
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

@@ -1,0 +1,17 @@
+name GLORIOUS DAYS
+seventh 2
+record record.bin
+card /a/75/5b
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/3a/17
+F c4 4 /a/24/0a
+F c8 4 /a/34/30
+F d0 4 /a/1b/1c
+F d4 4 /a/20/4f
+F d8 4 /a/65/5d
+F e8 2 /a/34/4a
+F ec 2 /a/24/5e
+F 58 4 /a/40/3c

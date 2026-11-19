@@ -1,0 +1,17 @@
+name FLUTE MAN
+eighth 13
+record record.bin
+card /a/7a/03
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/6e/0f
+F c4 4 /a/2b/3d
+F c8 4 /a/5a/08
+F cc 4 /a/3d/3d
+F d0 4 /a/4a/2f
+F d4 4 /a/07/54
+F e8 2 /a/4d/15
+F ec 2 /a/05/31
+F 58 4 /a/2f/51

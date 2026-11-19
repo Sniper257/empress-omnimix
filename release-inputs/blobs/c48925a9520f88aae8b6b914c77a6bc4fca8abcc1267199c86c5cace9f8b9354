@@ -1,0 +1,17 @@
+name S.O.S.
+third 54
+record record.bin
+card /a/5f/11
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/6f/00
+F c4 4 /a/70/24
+F d0 4 /a/53/52
+F d4 4 /a/28/3a
+F e8 2 /a/47/3c
+F ea 2 /a/6d/57
+F ec 2 /a/08/34
+F ee 2 /a/64/1a
+F 58 4 /a/28/24

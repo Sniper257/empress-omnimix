@@ -1,0 +1,17 @@
+name I WAS THE ONE (80'S EUROBEAT STYLE)
+ninth 57
+record record.bin
+F c0 4 /a/82/0c
+F c4 4 /a/81/3a
+F c8 4 /a/3e/0b
+F cc 4 /a/54/21
+F d0 4 /a/3c/4d
+F d4 4 /a/5b/17
+F e8 2 /a/08/0a
+F ec 2 /a/0c/39
+F 58 4 /a/3d/51
+card /a/02/2e
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

@@ -1,0 +1,17 @@
+name DAWN -THE NEXT ENDEAVOUR-
+happysky 86
+record record.bin
+F c0 4 /a/23/4e
+F c4 4 /a/7f/19
+F c8 4 /a/59/1d
+F cc 4 /a/7b/0d
+F d0 4 /a/7c/3c
+F d4 4 /a/24/06
+F e8 2 /a/30/17
+F ec 2 /a/57/56
+F 58 4 /a/6a/2c
+card /a/27/03
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

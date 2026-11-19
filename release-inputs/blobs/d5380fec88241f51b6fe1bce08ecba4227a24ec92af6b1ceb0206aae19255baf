@@ -1,0 +1,31 @@
+name 5.1.1. (OLD)
+seventh 43
+record record.bin
+card /a/24/00
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/16/31
+F c4 4 /a/3c/0f
+F c8 4 /a/34/08
+F cc 4 /a/79/30
+F d0 4 /a/3c/12
+F d4 4 /a/26/26
+F d8 4 /a/76/5a
+F e8 2 /a/17/15
+F ea 2 /a/17/15
+F ec 2 /a/05/22
+F ee 2 /a/05/22
+F f0 2 /a/32/57
+F f2 2 /a/32/57
+F f4 2 /a/21/50
+F f6 2 /a/21/50
+F f8 2 /a/17/15
+F fa 2 /a/17/15
+F fc 2 /a/05/22
+F fe 2 /a/05/22
+F 100 2 /a/17/15
+F 104 2 /a/05/22
+F 58 4 /a/66/5e
+D 0 /a/0c/59

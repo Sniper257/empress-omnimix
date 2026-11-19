@@ -1,0 +1,17 @@
+name LOGIC BOARD
+ninth 22
+record record.bin
+F c0 4 /a/1a/0c
+F c4 4 /a/4a/5f
+F c8 4 /a/10/51
+F cc 4 /a/1c/11
+F d0 4 /a/3f/31
+F d4 4 /a/0a/50
+F e8 2 /a/0b/5f
+F ec 2 /a/13/5a
+F 58 4 /a/83/30
+card /a/19/57
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

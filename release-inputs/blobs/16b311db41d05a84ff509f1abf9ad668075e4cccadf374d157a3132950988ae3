@@ -1,0 +1,18 @@
+name TOMORROW PERFUME
+happysky 71
+record record.bin
+F c0 4 /a/3c/17
+F c4 4 /a/84/3c
+F c8 4 /a/37/4f
+F cc 4 /a/79/45
+F d0 4 /a/20/55
+F d4 4 /a/21/03
+F d8 4 /a/6a/0f
+F e8 2 /a/59/53
+F ec 2 /a/75/54
+F 58 4 /a/60/26
+card /a/68/0d
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

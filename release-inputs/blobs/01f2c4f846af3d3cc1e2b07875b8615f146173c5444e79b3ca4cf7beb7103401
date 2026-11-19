@@ -1,0 +1,18 @@
+name ACT
+ninth 29
+record record.bin
+F c0 4 /a/6e/23
+F c4 4 /a/19/17
+F c8 4 /a/71/42
+F cc 4 /a/75/1e
+F d0 4 /a/29/30
+F d4 4 /a/82/4f
+F d8 4 /a/00/00
+F e8 2 /a/7d/25
+F ec 2 /a/37/5b
+F 58 4 /a/24/4e
+card /a/4a/3a
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

@@ -1,0 +1,24 @@
+name SNOW (OLD CS9)
+usa 58
+record record.bin
+card card.if
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/7b/28
+F c4 4 /a/7c/3a
+F c8 4 /a/79/37
+F cc 4 /a/5c/45
+F d0 4 /a/43/10
+F d4 4 /a/59/10
+F d8 4 /a/67/0d
+F e8 2 /a/40/40
+F ec 2 /a/28/54
+F f0 2 /a/40/40
+F f4 2 /a/28/54
+F f8 2 /a/40/40
+F fc 2 /a/28/54
+F 100 2 /a/40/40
+F 104 2 /a/28/54
+F 58 4 /a/5b/46

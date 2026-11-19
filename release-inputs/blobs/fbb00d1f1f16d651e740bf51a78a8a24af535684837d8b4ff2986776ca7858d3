@@ -1,0 +1,16 @@
+name FIVE REGRETS
+red 63
+record record.bin
+F c0 4 /a/6b/5d
+F c4 4 /a/24/37
+F d0 4 /a/7b/2c
+F d4 4 /a/4b/07
+F d8 4 /a/2a/35
+F e8 2 /a/49/4a
+F ec 2 /a/84/33
+F 58 4 /a/33/55
+card /a/4a/1f
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

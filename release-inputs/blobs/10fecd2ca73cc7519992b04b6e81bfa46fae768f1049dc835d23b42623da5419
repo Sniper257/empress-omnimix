@@ -1,0 +1,18 @@
+name LEADING CYBER
+pb 84
+record record.bin
+F c0 4 /a/77/0f
+F c4 4 /a/64/2b
+F c8 4 /a/5d/47
+F cc 4 /a/85/11
+F d0 4 /a/55/2b
+F d4 4 /a/02/28
+F d8 4 /a/59/08
+F e8 2 /a/7b/3a
+F ec 2 /a/17/1b
+F 58 4 /a/21/2f
+card /a/1a/34
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

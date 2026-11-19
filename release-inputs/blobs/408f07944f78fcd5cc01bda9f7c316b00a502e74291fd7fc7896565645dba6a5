@@ -1,0 +1,17 @@
+name DR.LOVE
+pb 92
+record record.bin
+F c0 4 /a/5d/24
+F c4 4 /a/27/44
+F c8 4 /a/86/09
+F d0 4 /a/3c/40
+F d4 4 /a/3b/05
+F d8 4 /a/57/0d
+F e8 2 /a/37/09
+F ec 2 /a/0d/0a
+F 58 4 /a/80/14
+card /a/59/00
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

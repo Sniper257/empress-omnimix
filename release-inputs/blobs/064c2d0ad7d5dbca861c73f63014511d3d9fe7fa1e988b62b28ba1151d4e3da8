@@ -1,0 +1,19 @@
+name DEEP ROAR
+distorted 13
+record record.bin
+F c0 4 /a/83/49
+F c4 4 /a/3f/4f
+F c8 4 /a/12/2f
+F cc 4 /a/62/1d
+F d0 4 /a/62/19
+F d4 4 /a/6a/2d
+F d8 4 /a/66/4e
+F e8 2 /a/5b/09
+F ec 2 /a/3b/50
+F 58 4 /a/49/11
+card /a/3b/3d
+D 0 /a/84/05
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

@@ -1,0 +1,18 @@
+name AURORA
+happysky 3
+record record.bin
+F c0 4 /a/14/29
+F c4 4 /a/4f/48
+F c8 4 /a/1c/4a
+F cc 4 /a/50/06
+F d0 4 /a/12/5a
+F d4 4 /a/30/5f
+F d8 4 /a/0c/54
+F e8 2 /a/5f/1f
+F ec 2 /a/75/06
+F 58 4 /a/72/22
+card /a/59/05
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

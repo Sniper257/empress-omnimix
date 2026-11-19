@@ -1,0 +1,29 @@
+name SWEET LAB
+happysky 61
+record record.bin
+F c0 4 /a/4b/5a
+F c4 4 /a/68/5c
+F c8 4 /a/52/1c
+F d0 4 /a/7b/5a
+F d4 4 /a/54/4f
+F d8 4 /a/2c/0f
+F e8 2 /a/47/13
+F ea 2 /a/02/08
+F ec 2 /a/79/05
+F ee 2 /a/2a/0b
+F f0 2 /a/47/13
+F f2 2 /a/02/08
+F f4 2 /a/79/05
+F f6 2 /a/2a/0b
+F f8 2 /a/47/13
+F fa 2 /a/02/08
+F fc 2 /a/79/05
+F fe 2 /a/2a/0b
+F 100 2 /a/47/13
+F 104 2 /a/79/05
+F 58 4 /a/02/1b
+card /a/3a/47
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

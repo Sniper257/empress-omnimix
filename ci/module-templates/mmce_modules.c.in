@@ -1,0 +1,18 @@
+typedef struct {const char *name;void *data;unsigned bytes;} mmce_module;
+unsigned char mmce_ioprp[278353] __attribute__((aligned(64),section(".data.iso_ioprp"),used))={0};
+
+unsigned mmce_ioprp_bytes=278353;
+@ARRAY(mmce_module_0)@
+
+@ARRAY(mmce_module_1)@
+
+@ARRAY(mmce_module_2)@
+
+@ARRAY(mmce_module_3)@
+
+mmce_module mmce_modules[]={
+{"iomanX",mmce_module_0,sizeof(mmce_module_0)},
+{"sio2man",mmce_module_1,sizeof(mmce_module_1)},
+{"fileXio",mmce_module_2,sizeof(mmce_module_2)},
+{"mmceman",mmce_module_3,sizeof(mmce_module_3)},
+};unsigned mmce_module_count=sizeof mmce_modules/sizeof mmce_modules[0];

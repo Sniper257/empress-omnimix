@@ -1,0 +1,16 @@
+name SANCTUS
+fourth 28
+record record.bin
+card /a/1c/53
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/29/11
+F c4 4 /a/26/02
+F d0 4 /a/21/4f
+F d4 4 /a/5f/56
+F e8 2 /a/64/41
+F ec 2 /a/41/0d
+F 58 4 /a/06/3f
+D 0 /a/22/29

@@ -1,0 +1,18 @@
+name MIRAGE
+djt 27
+record record.bin
+F c0 4 /a/28/48
+F c4 4 /a/5e/24
+F c8 4 /a/18/28
+F cc 4 /a/76/3f
+F d0 4 /a/06/38
+F d4 4 /a/87/1d
+F d8 4 /a/18/3b
+F e8 2 /a/29/2d
+F ec 2 /a/82/10
+F 58 4 /a/56/5e
+card /a/16/14
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

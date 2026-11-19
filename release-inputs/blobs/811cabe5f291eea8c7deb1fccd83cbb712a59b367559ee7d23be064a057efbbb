@@ -1,0 +1,17 @@
+name JELLY KISS
+tenth 79
+record record.bin
+F c0 4 /a/41/03
+F c4 4 /a/3b/13
+F c8 4 /a/81/27
+F cc 4 /a/80/37
+F d0 4 /a/58/06
+F d4 4 /a/20/16
+F e8 2 /a/15/44
+F ec 2 /a/2b/14
+F 58 4 /a/81/22
+card /a/51/4f
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

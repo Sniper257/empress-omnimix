@@ -1,0 +1,22 @@
+name QUELL -THE SEVENTH SLAVE-
+distorted 85
+record record.bin
+F c0 4 /a/42/59
+F c4 4 /a/46/57
+F c8 4 /a/5a/4a
+F cc 4 /a/5e/29
+F d0 4 /a/0b/59
+F d4 4 /a/28/46
+F e8 2 /a/69/39
+F ec 2 /a/29/44
+F f0 2 /a/1a/35
+F f2 2 /a/1a/35
+F f4 2 /a/48/28
+F f6 2 /a/48/28
+F 58 4 /a/60/2e
+F 5c 4 /a/06/4b
+card /a/72/3b
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

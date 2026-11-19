@@ -1,0 +1,17 @@
+name LIMITED
+tenth 13
+record record.bin
+F c0 4 /a/77/1d
+F c4 4 /a/5e/4e
+F c8 4 /a/2a/2c
+F cc 4 /a/18/4b
+F d0 4 /a/13/0d
+F d4 4 /a/0e/2a
+F e8 2 /a/43/54
+F ec 2 /a/1c/05
+F 58 4 /a/66/0d
+card /a/3c/22
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

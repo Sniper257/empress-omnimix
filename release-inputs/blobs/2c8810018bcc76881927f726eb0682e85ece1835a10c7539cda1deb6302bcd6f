@@ -1,0 +1,17 @@
+name PATSENNER
+third 72
+record record.bin
+card /a/0a/3e
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/46/1c
+F c4 4 /a/30/54
+F d0 4 /a/86/47
+F d4 4 /a/31/08
+F e8 2 /a/01/22
+F ea 2 /a/2d/0d
+F ec 2 /a/11/20
+F 58 4 /a/65/15
+D 0 /a/49/25

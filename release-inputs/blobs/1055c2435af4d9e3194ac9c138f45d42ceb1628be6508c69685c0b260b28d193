@@ -1,0 +1,22 @@
+name SETSUGEKKA
+pb 46
+record record.bin
+F c0 4 /a/37/03
+F c4 4 /a/33/08
+F c8 4 /a/65/38
+F cc 4 /a/22/1c
+F d0 4 /a/27/10
+F d4 4 /a/4d/4b
+F d8 4 /a/51/57
+F e8 2 /a/7c/36
+F ec 2 /a/47/35
+F 58 4 /a/1a/44
+card /a/26/2d
+D 0 /a/05/21
+D 1 /a/87/16
+D 2 /a/4c/31
+D 3 /a/13/11
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

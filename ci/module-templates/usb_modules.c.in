@@ -1,0 +1,24 @@
+typedef struct {const char *name;void *data;unsigned bytes;} usb_module;
+unsigned char usb_ioprp[278353] __attribute__((aligned(64),section(".data.iso_ioprp"),used))={0};
+
+unsigned usb_ioprp_bytes=278353;
+@ARRAY(usb_mod_0)@
+
+@ARRAY(usb_mod_1)@
+
+@ARRAY(usb_mod_2)@
+
+@ARRAY(usb_mod_3)@
+
+@ARRAY(usb_mod_4)@
+
+@ARRAY(usb_mod_5)@
+
+usb_module usb_modules[]={
+{"iomanX",usb_mod_0,sizeof(usb_mod_0)},
+{"fileXio",usb_mod_1,sizeof(usb_mod_1)},
+{"bdm",usb_mod_2,sizeof(usb_mod_2)},
+{"bdmfs_fatfs",usb_mod_3,sizeof(usb_mod_3)},
+{"usbd_mini",usb_mod_4,sizeof usb_mod_4},
+{"usbmass_bd_mini",usb_mod_5,sizeof(usb_mod_5)},
+};unsigned usb_module_count=sizeof usb_modules/sizeof usb_modules[0];

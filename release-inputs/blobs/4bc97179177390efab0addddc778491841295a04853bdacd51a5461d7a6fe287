@@ -1,0 +1,19 @@
+name SPIRAL GALAXY
+djt 58
+record record.bin
+F c0 4 /a/25/13
+F c4 4 /a/35/0f
+F c8 4 /a/21/43
+F cc 4 /a/47/37
+F d0 4 /a/42/5b
+F d4 4 /a/11/59
+F d8 4 /a/43/2e
+F e0 4 /a/35/0c
+F e8 2 /a/4c/5c
+F ec 2 /a/5b/28
+F 58 4 /a/1c/09
+card /a/02/06
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

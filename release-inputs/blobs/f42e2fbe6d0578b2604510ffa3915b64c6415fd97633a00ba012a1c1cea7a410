@@ -1,0 +1,17 @@
+name RED
+gold 32
+record record.bin
+F c0 4 /a/28/32
+F c4 4 /a/63/0c
+F c8 4 /a/47/1b
+F d0 4 /a/44/49
+F d4 4 /a/82/30
+F d8 4 /a/64/23
+F e8 2 /a/08/05
+F ec 2 /a/75/26
+F 58 4 /a/63/57
+card /a/2b/43
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

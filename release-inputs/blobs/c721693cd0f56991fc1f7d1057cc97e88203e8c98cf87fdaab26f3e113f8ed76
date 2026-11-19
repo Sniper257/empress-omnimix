@@ -1,0 +1,17 @@
+name INFINITE PRAYER
+fourth 41
+record record.bin
+card /a/5a/35
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/55/2c
+F c4 4 /a/31/42
+F c8 4 /a/5e/1b
+F cc 4 /a/56/04
+F d0 4 /a/4d/2d
+F d4 4 /a/1a/40
+F e8 2 /a/00/38
+F ec 2 /a/7d/58
+F 58 4 /a/82/56

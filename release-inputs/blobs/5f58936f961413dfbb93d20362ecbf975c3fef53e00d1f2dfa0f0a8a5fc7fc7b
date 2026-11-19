@@ -1,0 +1,17 @@
+name BACK INTO THE LIGHT (CS 10TH)
+tenth 18
+record record.bin
+F c0 4 /a/28/2c
+F c4 4 /a/1f/52
+F c8 4 /a/58/26
+F cc 4 /a/80/36
+F d0 4 /a/47/10
+F d4 4 /a/02/36
+F e8 2 /a/61/45
+F ec 2 /a/32/54
+F 58 4 /a/61/36
+card /a/43/3f
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

@@ -1,0 +1,117 @@
+{
+  "format": 1,
+  "name": "open-v1",
+  "fonts": {
+    "electrolize": {
+      "file": "fonts/Electrolize-Regular.ttf",
+      "sha256": "aa81ab9015fc0190bb5e68c50290565c7a4a723ddf32b88774aaff05cdd66bca",
+      "license": "OFL-1.1",
+      "source": "https://raw.githubusercontent.com/google/fonts/5398e41edd2c3b899769dd6f3c9b7b5e7f4ce01d/ofl/electrolize/Electrolize-Regular.ttf"
+    },
+    "play": {
+      "file": "fonts/Play-Regular.ttf",
+      "sha256": "eed0da79005cab35d6ed0eacab594ed67cc643be0b2632fa9e440b3bc5078dc4",
+      "license": "OFL-1.1",
+      "source": "https://raw.githubusercontent.com/google/fonts/5398e41edd2c3b899769dd6f3c9b7b5e7f4ce01d/ofl/play/Play-Regular.ttf"
+    },
+    "anton": {
+      "file": "fonts/Anton-Regular.ttf",
+      "sha256": "a4ba3a92350ebb031da0cb47630ac49eb265082ca1bc0450442f4a83ab947cab",
+      "license": "OFL-1.1",
+      "source": "https://raw.githubusercontent.com/google/fonts/5398e41edd2c3b899769dd6f3c9b7b5e7f4ce01d/ofl/anton/Anton-Regular.ttf"
+    },
+    "arimo": {
+      "file": "fonts/Arimo[wght].ttf",
+      "sha256": "e43898b143ec826ac8cb4034816458a7047fbe0836558de2a1f8c6223ae3e0ca",
+      "license": "OFL-1.1",
+      "source": "https://raw.githubusercontent.com/google/fonts/5398e41edd2c3b899769dd6f3c9b7b5e7f4ce01d/ofl/arimo/Arimo%5Bwght%5D.ttf",
+      "axes": [
+        700
+      ]
+    },
+    "sans": {
+      "file": "fonts/NotoSansCJK-Regular.ttc",
+      "sha256": "b76b0433203017ca80401b2ee0dd69350349871c4b19d504c34dbdd80541690a",
+      "face": 0,
+      "japanese": true,
+      "license": "OFL-1.1",
+      "source": "https://raw.githubusercontent.com/notofonts/noto-cjk/Sans2.004/Sans/OTC/NotoSansCJK-Regular.ttc"
+    },
+    "serif": {
+      "file": "fonts/NotoSerifCJK-Regular.ttc",
+      "sha256": "5d9c31a059600193c9d7968a998bde886ccdc77e934006ad243b41794c496a7d",
+      "face": 0,
+      "japanese": true,
+      "license": "OFL-1.1",
+      "source": "https://raw.githubusercontent.com/notofonts/noto-cjk/Serif2.003/Serif/OTC/NotoSerifCJK-Regular.ttc"
+    }
+  },
+  "roles": {
+    "wheel": {
+      "latin": [
+        "electrolize",
+        "play",
+        "sans"
+      ],
+      "japanese": [
+        "sans",
+        "sans"
+      ]
+    },
+    "large_title": {
+      "latin": [
+        "anton",
+        "play",
+        "sans"
+      ],
+      "japanese": [
+        "serif",
+        "sans"
+      ]
+    },
+    "genre_artist": {
+      "latin": [
+        "arimo",
+        "play",
+        "sans"
+      ],
+      "japanese": [
+        "sans",
+        "sans"
+      ]
+    },
+    "card_genre": {
+      "latin": [
+        "electrolize",
+        "play",
+        "sans"
+      ],
+      "japanese": [
+        "sans",
+        "sans"
+      ]
+    },
+    "card_artist": {
+      "latin": [
+        "arimo",
+        "play",
+        "sans"
+      ],
+      "japanese": [
+        "serif",
+        "sans"
+      ]
+    },
+    "launcher": {
+      "latin": [
+        "electrolize",
+        "play",
+        "sans"
+      ],
+      "japanese": [
+        "sans",
+        "sans"
+      ]
+    }
+  }
+}

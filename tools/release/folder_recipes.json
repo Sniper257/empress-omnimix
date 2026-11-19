@@ -1,0 +1,2714 @@
+{
+  "atlas_sha256": "5b0ed6bcc6580606e72b4857183fb33c535c0840c4f119d71f28a264ac3bdeba",
+  "bases": [
+    {
+      "path": "a/33/07",
+      "ref": {
+        "bytes": 131072,
+        "input": "base",
+        "offset": 275636224,
+        "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+      }
+    },
+    {
+      "path": "a/84/41",
+      "ref": {
+        "bytes": 1603584,
+        "input": "base",
+        "offset": 339791872,
+        "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+      }
+    }
+  ],
+  "format": 1,
+  "references": [
+    {
+      "default": {
+        "bytes": 1412,
+        "sha256": "08b47de02be4b76002912f9add3bd7355cb9ef5f857a696fb3014fc377743962"
+      },
+      "old": "08b47de02be4b76002912f9add3bd7355cb9ef5f857a696fb3014fc377743962",
+      "path": "songs/dj_troopers/pb_0/ui/1st_style/label.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "sheet": 0,
+        "source": {
+          "bytes": 133120,
+          "input": "iso",
+          "offset": 238149632,
+          "sha256": "dcd6b52a9f12b3c79e207acc6a2b915aa1c24c37c47bd4114339664e602e1592"
+        },
+        "sprite": 84
+      }
+    },
+    {
+      "default": {
+        "bytes": 6172,
+        "sha256": "185b4fb1365cec2298b62147b953b59a1a154f4b313fd4fd8bb356dd28db8a39"
+      },
+      "old": "185b4fb1365cec2298b62147b953b59a1a154f4b313fd4fd8bb356dd28db8a39",
+      "path": "songs/dj_troopers/pb_0/ui/1st_style/caption.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "sheet": 12,
+        "source": {
+          "bytes": 1650688,
+          "input": "iso",
+          "offset": 541093888,
+          "sha256": "8cebfd0309c101385179828e9ed8ae43ca505867c8209c850dfe5a917ac88422"
+        },
+        "sprite": 82
+      }
+    },
+    {
+      "default": {
+        "bytes": 1664,
+        "sha256": "fa2464dbe081d3a74872ff650a89f5c0f353cb527421a8a39530adebdbeef958"
+      },
+      "old": "fa2464dbe081d3a74872ff650a89f5c0f353cb527421a8a39530adebdbeef958",
+      "path": "songs/dj_troopers/pb_0/ui/substream/label.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "sheet": 0,
+        "source": {
+          "bytes": 133120,
+          "input": "iso",
+          "offset": 238149632,
+          "sha256": "dcd6b52a9f12b3c79e207acc6a2b915aa1c24c37c47bd4114339664e602e1592"
+        },
+        "sprite": 79
+      }
+    },
+    {
+      "default": {
+        "bytes": 6776,
+        "sha256": "1382351755f69a7169b772298d4010781ca0107852296cf08fb9cc3cd4c890d7"
+      },
+      "old": "1382351755f69a7169b772298d4010781ca0107852296cf08fb9cc3cd4c890d7",
+      "path": "songs/dj_troopers/pb_0/ui/substream/caption.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "sheet": 12,
+        "source": {
+          "bytes": 1650688,
+          "input": "iso",
+          "offset": 541093888,
+          "sha256": "8cebfd0309c101385179828e9ed8ae43ca505867c8209c850dfe5a917ac88422"
+        },
+        "sprite": 116
+      }
+    },
+    {
+      "default": {
+        "bytes": 1412,
+        "sha256": "45acb29ff3bf27183a661896c0b44069e328f04de8512bb61485947b568fb61c"
+      },
+      "old": "45acb29ff3bf27183a661896c0b44069e328f04de8512bb61485947b568fb61c",
+      "path": "songs/dj_troopers/pb_0/ui/2nd_style/label.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "sheet": 0,
+        "source": {
+          "bytes": 133120,
+          "input": "iso",
+          "offset": 238149632,
+          "sha256": "dcd6b52a9f12b3c79e207acc6a2b915aa1c24c37c47bd4114339664e602e1592"
+        },
+        "sprite": 85
+      }
+    },
+    {
+      "default": {
+        "bytes": 6656,
+        "sha256": "41818dafde3c84bb434ff865556b8a6a74774b17119786eba7f5486c5bd16f09"
+      },
+      "old": "41818dafde3c84bb434ff865556b8a6a74774b17119786eba7f5486c5bd16f09",
+      "path": "songs/dj_troopers/pb_0/ui/2nd_style/caption.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "sheet": 12,
+        "source": {
+          "bytes": 1650688,
+          "input": "iso",
+          "offset": 541093888,
+          "sha256": "8cebfd0309c101385179828e9ed8ae43ca505867c8209c850dfe5a917ac88422"
+        },
+        "sprite": 73
+      }
+    },
+    {
+      "default": {
+        "bytes": 1412,
+        "sha256": "55e53acdc78836bdce184ece47007aa9acf940d1e36ff52dd9ee84fcf84be89f"
+      },
+      "old": "55e53acdc78836bdce184ece47007aa9acf940d1e36ff52dd9ee84fcf84be89f",
+      "path": "songs/dj_troopers/pb_0/ui/3rd_style/label.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "sheet": 0,
+        "source": {
+          "bytes": 133120,
+          "input": "iso",
+          "offset": 238149632,
+          "sha256": "dcd6b52a9f12b3c79e207acc6a2b915aa1c24c37c47bd4114339664e602e1592"
+        },
+        "sprite": 86
+      }
+    },
+    {
+      "default": {
+        "bytes": 6656,
+        "sha256": "f728dc386fa7d0bf0ef0de5ecb86cdce9a216fe1f4bec3cf32b420e997c41dd1"
+      },
+      "old": "f728dc386fa7d0bf0ef0de5ecb86cdce9a216fe1f4bec3cf32b420e997c41dd1",
+      "path": "songs/dj_troopers/pb_0/ui/3rd_style/caption.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "sheet": 12,
+        "source": {
+          "bytes": 1650688,
+          "input": "iso",
+          "offset": 541093888,
+          "sha256": "8cebfd0309c101385179828e9ed8ae43ca505867c8209c850dfe5a917ac88422"
+        },
+        "sprite": 74
+      }
+    },
+    {
+      "default": {
+        "bytes": 1412,
+        "sha256": "bc8703359e66be60594a4ed294506dea250a45d0f1ffd2e0a1d160bcaf33c3e5"
+      },
+      "old": "bc8703359e66be60594a4ed294506dea250a45d0f1ffd2e0a1d160bcaf33c3e5",
+      "path": "songs/dj_troopers/pb_0/ui/4th_style/label.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "sheet": 0,
+        "source": {
+          "bytes": 133120,
+          "input": "iso",
+          "offset": 238149632,
+          "sha256": "dcd6b52a9f12b3c79e207acc6a2b915aa1c24c37c47bd4114339664e602e1592"
+        },
+        "sprite": 87
+      }
+    },
+    {
+      "default": {
+        "bytes": 6700,
+        "sha256": "011340d1040f51d3f6a7f11c1c76d0b2e4481f8e3fa1009e54fa66a1df79ad59"
+      },
+      "old": "011340d1040f51d3f6a7f11c1c76d0b2e4481f8e3fa1009e54fa66a1df79ad59",
+      "path": "songs/dj_troopers/pb_0/ui/4th_style/caption.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "sheet": 12,
+        "source": {
+          "bytes": 1650688,
+          "input": "iso",
+          "offset": 541093888,
+          "sha256": "8cebfd0309c101385179828e9ed8ae43ca505867c8209c850dfe5a917ac88422"
+        },
+        "sprite": 72
+      }
+    },
+    {
+      "default": {
+        "bytes": 1412,
+        "sha256": "7461c7d59eed30624183c23a04dd3aa28f2fbb67f42b0f0a9aeb333e7f2f5196"
+      },
+      "old": "7461c7d59eed30624183c23a04dd3aa28f2fbb67f42b0f0a9aeb333e7f2f5196",
+      "path": "songs/dj_troopers/pb_0/ui/5th_style/label.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "sheet": 0,
+        "source": {
+          "bytes": 133120,
+          "input": "iso",
+          "offset": 238149632,
+          "sha256": "dcd6b52a9f12b3c79e207acc6a2b915aa1c24c37c47bd4114339664e602e1592"
+        },
+        "sprite": 88
+      }
+    },
+    {
+      "default": {
+        "bytes": 6656,
+        "sha256": "fc0a85d00d144a560488464acbb04f9d25a195f04e0931a7557e42fbf8f25464"
+      },
+      "old": "fc0a85d00d144a560488464acbb04f9d25a195f04e0931a7557e42fbf8f25464",
+      "path": "songs/dj_troopers/pb_0/ui/5th_style/caption.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "sheet": 12,
+        "source": {
+          "bytes": 1650688,
+          "input": "iso",
+          "offset": 541093888,
+          "sha256": "8cebfd0309c101385179828e9ed8ae43ca505867c8209c850dfe5a917ac88422"
+        },
+        "sprite": 75
+      }
+    },
+    {
+      "default": {
+        "bytes": 1412,
+        "sha256": "1dc5ee5c78e582f7db73a20eac28fe275a4f91acf1c8423045057670fe1a5382"
+      },
+      "old": "1dc5ee5c78e582f7db73a20eac28fe275a4f91acf1c8423045057670fe1a5382",
+      "path": "songs/dj_troopers/pb_0/ui/6th_style/label.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "sheet": 0,
+        "source": {
+          "bytes": 133120,
+          "input": "iso",
+          "offset": 238149632,
+          "sha256": "dcd6b52a9f12b3c79e207acc6a2b915aa1c24c37c47bd4114339664e602e1592"
+        },
+        "sprite": 89
+      }
+    },
+    {
+      "default": {
+        "bytes": 6656,
+        "sha256": "c6b784e5d68257423e267bf5b1d590989d8b867a74535002af432c00034bd3af"
+      },
+      "old": "c6b784e5d68257423e267bf5b1d590989d8b867a74535002af432c00034bd3af",
+      "path": "songs/dj_troopers/pb_0/ui/6th_style/caption.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "sheet": 12,
+        "source": {
+          "bytes": 1650688,
+          "input": "iso",
+          "offset": 541093888,
+          "sha256": "8cebfd0309c101385179828e9ed8ae43ca505867c8209c850dfe5a917ac88422"
+        },
+        "sprite": 76
+      }
+    },
+    {
+      "default": {
+        "bytes": 1412,
+        "sha256": "dce10bb585be2019eec402df7e4fd9f5d716ee98fcc26f6ec77e3bad586479e2"
+      },
+      "old": "dce10bb585be2019eec402df7e4fd9f5d716ee98fcc26f6ec77e3bad586479e2",
+      "path": "songs/dj_troopers/pb_0/ui/7th_style/label.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "sheet": 0,
+        "source": {
+          "bytes": 133120,
+          "input": "iso",
+          "offset": 238149632,
+          "sha256": "dcd6b52a9f12b3c79e207acc6a2b915aa1c24c37c47bd4114339664e602e1592"
+        },
+        "sprite": 90
+      }
+    },
+    {
+      "default": {
+        "bytes": 6568,
+        "sha256": "66a4e0531a38ac1bb1af1172d7b9fc5243ebd924c634a2ba622234c686803af3"
+      },
+      "old": "66a4e0531a38ac1bb1af1172d7b9fc5243ebd924c634a2ba622234c686803af3",
+      "path": "songs/dj_troopers/pb_0/ui/7th_style/caption.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "sheet": 12,
+        "source": {
+          "bytes": 1650688,
+          "input": "iso",
+          "offset": 541093888,
+          "sha256": "8cebfd0309c101385179828e9ed8ae43ca505867c8209c850dfe5a917ac88422"
+        },
+        "sprite": 79
+      }
+    },
+    {
+      "default": {
+        "bytes": 1412,
+        "sha256": "16f79bdfc8e33e7ca2ff5d36bea91da7ee593efa16abc3fe24a3218d548b3e89"
+      },
+      "old": "16f79bdfc8e33e7ca2ff5d36bea91da7ee593efa16abc3fe24a3218d548b3e89",
+      "path": "songs/dj_troopers/pb_0/ui/8th_style/label.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "sheet": 0,
+        "source": {
+          "bytes": 133120,
+          "input": "iso",
+          "offset": 238149632,
+          "sha256": "dcd6b52a9f12b3c79e207acc6a2b915aa1c24c37c47bd4114339664e602e1592"
+        },
+        "sprite": 91
+      }
+    },
+    {
+      "default": {
+        "bytes": 6656,
+        "sha256": "2a103e4da8bd915f750c689a173a1c6101cbdad84d5335f5461ff731dca5c931"
+      },
+      "old": "2a103e4da8bd915f750c689a173a1c6101cbdad84d5335f5461ff731dca5c931",
+      "path": "songs/dj_troopers/pb_0/ui/8th_style/caption.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "sheet": 12,
+        "source": {
+          "bytes": 1650688,
+          "input": "iso",
+          "offset": 541093888,
+          "sha256": "8cebfd0309c101385179828e9ed8ae43ca505867c8209c850dfe5a917ac88422"
+        },
+        "sprite": 77
+      }
+    },
+    {
+      "default": {
+        "bytes": 1412,
+        "sha256": "83a199d6bf2eabe756b6941d6e278d5a9eda44f2b939d7f83175ca33618535fc"
+      },
+      "old": "83a199d6bf2eabe756b6941d6e278d5a9eda44f2b939d7f83175ca33618535fc",
+      "path": "songs/dj_troopers/pb_0/ui/9th_style/label.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "sheet": 0,
+        "source": {
+          "bytes": 133120,
+          "input": "iso",
+          "offset": 238149632,
+          "sha256": "dcd6b52a9f12b3c79e207acc6a2b915aa1c24c37c47bd4114339664e602e1592"
+        },
+        "sprite": 92
+      }
+    },
+    {
+      "default": {
+        "bytes": 6656,
+        "sha256": "3ab1819d08a41f7b13f76446f29b858a952b7670a883237974b682b96535cde8"
+      },
+      "old": "3ab1819d08a41f7b13f76446f29b858a952b7670a883237974b682b96535cde8",
+      "path": "songs/dj_troopers/pb_0/ui/9th_style/caption.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "sheet": 12,
+        "source": {
+          "bytes": 1650688,
+          "input": "iso",
+          "offset": 541093888,
+          "sha256": "8cebfd0309c101385179828e9ed8ae43ca505867c8209c850dfe5a917ac88422"
+        },
+        "sprite": 78
+      }
+    },
+    {
+      "default": {
+        "bytes": 1412,
+        "sha256": "5c8673c4315e283a3efa6a76e495fcdac164f43d8b4c696ccfb335f66a5ef76b"
+      },
+      "old": "5c8673c4315e283a3efa6a76e495fcdac164f43d8b4c696ccfb335f66a5ef76b",
+      "path": "songs/dj_troopers/pb_0/ui/10th_style/label.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "sheet": 0,
+        "source": {
+          "bytes": 133120,
+          "input": "iso",
+          "offset": 238149632,
+          "sha256": "dcd6b52a9f12b3c79e207acc6a2b915aa1c24c37c47bd4114339664e602e1592"
+        },
+        "sprite": 83
+      }
+    },
+    {
+      "default": {
+        "bytes": 7360,
+        "sha256": "02c69c7d1dfcd82f20f7264f4fc1e66d0c4eb8fbdfc109d369444c9aee7f8624"
+      },
+      "old": "02c69c7d1dfcd82f20f7264f4fc1e66d0c4eb8fbdfc109d369444c9aee7f8624",
+      "path": "songs/dj_troopers/pb_0/ui/10th_style/caption.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "sheet": 12,
+        "source": {
+          "bytes": 1650688,
+          "input": "iso",
+          "offset": 541093888,
+          "sha256": "8cebfd0309c101385179828e9ed8ae43ca505867c8209c850dfe5a917ac88422"
+        },
+        "sprite": 67
+      }
+    },
+    {
+      "default": {
+        "bytes": 1118,
+        "sha256": "a813972e0d39154bf9148ed4bff26b180c5cd342fff69a060918b3abc823c3a9"
+      },
+      "old": "a813972e0d39154bf9148ed4bff26b180c5cd342fff69a060918b3abc823c3a9",
+      "path": "songs/dj_troopers/pb_0/ui/red/label.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "sheet": 0,
+        "source": {
+          "bytes": 133120,
+          "input": "iso",
+          "offset": 238149632,
+          "sha256": "dcd6b52a9f12b3c79e207acc6a2b915aa1c24c37c47bd4114339664e602e1592"
+        },
+        "sprite": 94
+      }
+    },
+    {
+      "default": {
+        "bytes": 5256,
+        "sha256": "9998f19e0802afefe349ced597e239450f1729e198d81ca8f8321afa9401b54a"
+      },
+      "old": "9998f19e0802afefe349ced597e239450f1729e198d81ca8f8321afa9401b54a",
+      "path": "songs/dj_troopers/pb_0/ui/red/caption.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "sheet": 12,
+        "source": {
+          "bytes": 1650688,
+          "input": "iso",
+          "offset": 541093888,
+          "sha256": "8cebfd0309c101385179828e9ed8ae43ca505867c8209c850dfe5a917ac88422"
+        },
+        "sprite": 119
+      }
+    },
+    {
+      "default": {
+        "bytes": 1552,
+        "sha256": "603a09fb91ce26d418c667ff8e269d0fd2cd97db9281d320c48b38e4ca90ce00"
+      },
+      "old": "603a09fb91ce26d418c667ff8e269d0fd2cd97db9281d320c48b38e4ca90ce00",
+      "path": "songs/dj_troopers/pb_0/ui/happy_sky/label.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "sheet": 0,
+        "source": {
+          "bytes": 133120,
+          "input": "iso",
+          "offset": 238149632,
+          "sha256": "dcd6b52a9f12b3c79e207acc6a2b915aa1c24c37c47bd4114339664e602e1592"
+        },
+        "sprite": 80
+      }
+    },
+    {
+      "default": {
+        "bytes": 7080,
+        "sha256": "210a8cdba39ce6ca70711b9f9561dcba023574ce0086bde12fc6467060468a94"
+      },
+      "old": "210a8cdba39ce6ca70711b9f9561dcba023574ce0086bde12fc6467060468a94",
+      "path": "songs/dj_troopers/pb_0/ui/happy_sky/caption.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "sheet": 12,
+        "source": {
+          "bytes": 1650688,
+          "input": "iso",
+          "offset": 541093888,
+          "sha256": "8cebfd0309c101385179828e9ed8ae43ca505867c8209c850dfe5a917ac88422"
+        },
+        "sprite": 115
+      }
+    },
+    {
+      "default": {
+        "bytes": 1524,
+        "sha256": "7ad366367d329702867fc9655fad5340aeda62d00725bd90e3989c60bc3d6957"
+      },
+      "old": "7ad366367d329702867fc9655fad5340aeda62d00725bd90e3989c60bc3d6957",
+      "path": "songs/dj_troopers/pb_0/ui/distorted/label.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "sheet": 0,
+        "source": {
+          "bytes": 133120,
+          "input": "iso",
+          "offset": 238149632,
+          "sha256": "dcd6b52a9f12b3c79e207acc6a2b915aa1c24c37c47bd4114339664e602e1592"
+        },
+        "sprite": 81
+      }
+    },
+    {
+      "default": {
+        "bytes": 6092,
+        "sha256": "8865d9f86c0aad873ec3c31969b7e8d7179e2c8fa9be879bad86177ecacb0944"
+      },
+      "old": "8865d9f86c0aad873ec3c31969b7e8d7179e2c8fa9be879bad86177ecacb0944",
+      "path": "songs/dj_troopers/pb_0/ui/distorted/caption.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "sheet": 12,
+        "source": {
+          "bytes": 1650688,
+          "input": "iso",
+          "offset": 541093888,
+          "sha256": "8cebfd0309c101385179828e9ed8ae43ca505867c8209c850dfe5a917ac88422"
+        },
+        "sprite": 117
+      }
+    },
+    {
+      "default": {
+        "bytes": 754,
+        "sha256": "3eb0aba7341c7996a097fd0ded7771165195677a1742ec0b8abff791deeb101d"
+      },
+      "old": "3eb0aba7341c7996a097fd0ded7771165195677a1742ec0b8abff791deeb101d",
+      "path": "songs/dj_troopers/pb_0/ui/gold/label.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "sheet": 0,
+        "source": {
+          "bytes": 133120,
+          "input": "iso",
+          "offset": 238149632,
+          "sha256": "dcd6b52a9f12b3c79e207acc6a2b915aa1c24c37c47bd4114339664e602e1592"
+        },
+        "sprite": 111
+      }
+    },
+    {
+      "default": {
+        "bytes": 3318,
+        "sha256": "902ebf3627701d1ac82de81c4d5271af53e666ecce6d89a9f2e7426546059ac5"
+      },
+      "old": "902ebf3627701d1ac82de81c4d5271af53e666ecce6d89a9f2e7426546059ac5",
+      "path": "songs/dj_troopers/pb_0/ui/gold/caption.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "sheet": 12,
+        "source": {
+          "bytes": 1650688,
+          "input": "iso",
+          "offset": 541093888,
+          "sha256": "8cebfd0309c101385179828e9ed8ae43ca505867c8209c850dfe5a917ac88422"
+        },
+        "sprite": 135
+      }
+    },
+    {
+      "default": {
+        "bytes": 1972,
+        "sha256": "d817453db3312534fa64d6f72c6b31e7f649bbdf546f8483cbf88f451597817d"
+      },
+      "old": "d817453db3312534fa64d6f72c6b31e7f649bbdf546f8483cbf88f451597817d",
+      "path": "songs/dj_troopers/pb_0/ui/dj_troopers/label.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "sheet": 0,
+        "source": {
+          "bytes": 133120,
+          "input": "iso",
+          "offset": 238149632,
+          "sha256": "dcd6b52a9f12b3c79e207acc6a2b915aa1c24c37c47bd4114339664e602e1592"
+        },
+        "sprite": 71
+      }
+    },
+    {
+      "default": {
+        "bytes": 8638,
+        "sha256": "8e9a5c2c17be5e2600096d8ee558145a70349353c494c81626ed3aa8df015300"
+      },
+      "old": "8e9a5c2c17be5e2600096d8ee558145a70349353c494c81626ed3aa8df015300",
+      "path": "songs/dj_troopers/pb_0/ui/dj_troopers/caption.spr",
+      "recipe": "recipes/pb-append.json",
+      "spec": {
+        "grey": false,
+        "kind": "native",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "sheet": 12,
+        "source": {
+          "bytes": 1650688,
+          "input": "iso",
+          "offset": 541093888,
+          "sha256": "8cebfd0309c101385179828e9ed8ae43ca505867c8209c850dfe5a917ac88422"
+        },
+        "sprite": 113
+      }
+    },
+    {
+      "default": {
+        "bytes": 7360,
+        "sha256": "447c5b2794ecba4641a1a12bf62285cdfd490ab93ae4e75d23838b8d17190e9b"
+      },
+      "old": "57bab6edc18732ac988873ebb03100a0ff060dfd8832816dad19f00271c7680d",
+      "path": "songs/10th_style/caption.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          167,
+          44
+        ],
+        "text": "10th style"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1412,
+        "sha256": "260ad82cec1d9e4526cea200003c3738969485032699f0b21c651b148acfa552"
+      },
+      "old": "8ac69af07c8b066526cd787e0c43fe2245ab496ef4d350d8e276db66bbb7250d",
+      "path": "songs/10th_style/label.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          100,
+          14
+        ],
+        "text": "10th STYLE"
+      }
+    },
+    {
+      "default": {
+        "bytes": 6172,
+        "sha256": "374fe02c6603e98d03682a9c56e8807cec581b3cb239286cb01c2409dcd4f838"
+      },
+      "old": "530237283cc196d5cc2bd26391d649ea2d0e7c46687dee3d4f545326596a2579",
+      "path": "songs/1st_style/caption.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          140,
+          44
+        ],
+        "text": "1st style"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1412,
+        "sha256": "fe9dab9959ea86e320e5beeefb1dd79efe12916c29b3685fc9a98bfec0c1657b"
+      },
+      "old": "86d08755c5c91f74f4ec9b4c588f0a6350d0baa350929ce09423f83aec9ba3c5",
+      "path": "songs/1st_style/label.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          100,
+          14
+        ],
+        "text": "1st STYLE"
+      }
+    },
+    {
+      "default": {
+        "bytes": 6656,
+        "sha256": "f747d9f228272e22ff49d837bd91f931701f14700c93dba24fb2b0637d6ea271"
+      },
+      "old": "ff929b36e0fff2c9208dc1d867b1b1c76fbc344ba406a9f9388a3004ab638af6",
+      "path": "songs/2nd_style/caption.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          151,
+          44
+        ],
+        "text": "2nd style"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1412,
+        "sha256": "529fa16c2adb232f4810cbe7f22acfe57ef7980737657aad71fe6627ccfe5169"
+      },
+      "old": "5789b1389bacb57fa74b23a4a377de85e5cfc5dee7738f7a37c42809da83deb6",
+      "path": "songs/2nd_style/label.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          100,
+          14
+        ],
+        "text": "2nd STYLE"
+      }
+    },
+    {
+      "default": {
+        "bytes": 6656,
+        "sha256": "e2a1047cc545ef4d7fa401f2e2ad299df04ad0adef02d9643b96079934026ed3"
+      },
+      "old": "2d4c63c087c55038a88d534e22b01e7b0f0793045ee5142dfc63d4acfac507c6",
+      "path": "songs/3rd_style/caption.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          151,
+          44
+        ],
+        "text": "3rd style"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1412,
+        "sha256": "71c03cad1fb1b394684abfcbb791a52044ae515ead39d2998da964a3bf6391a6"
+      },
+      "old": "7da16967901c8371a01f5b7c6262761abd4b64528db11108ff7849e1a53e4532",
+      "path": "songs/3rd_style/label.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          100,
+          14
+        ],
+        "text": "3rd STYLE"
+      }
+    },
+    {
+      "default": {
+        "bytes": 6700,
+        "sha256": "fbf6f20a20a8d9b67f88e1e257a0f71826a63a4476215c054bfea7b424ebf018"
+      },
+      "old": "ad31d50db2b47929a20539a798ce7ee0fc8be136630a8b8cb6150bd4b92c1abf",
+      "path": "songs/4th_style/caption.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          152,
+          44
+        ],
+        "text": "4th style"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1412,
+        "sha256": "fb594f373b1bcb4e4d4f67a6a2fbaa13a6a41cf6a34f54d2c0332e5e101d90e4"
+      },
+      "old": "bea6ddf27ff6b52c296c9b09b70c6efc17a8ed50704fab03c6d28683cb31374d",
+      "path": "songs/4th_style/label.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          100,
+          14
+        ],
+        "text": "4th STYLE"
+      }
+    },
+    {
+      "default": {
+        "bytes": 6656,
+        "sha256": "daed4b9065dc44604ca00b4b69e36df172fc991aa3a5dbecb8ad75747eaa48df"
+      },
+      "old": "ae88065aee41c8839cf1bb5a621327ce0e4d2b6c633476f56b776b643e103cdb",
+      "path": "songs/5th_style/caption.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          151,
+          44
+        ],
+        "text": "5th style"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1412,
+        "sha256": "575adda2b98e67cf6993dc7286e9e52f794da956714f7301051577c0cda83f9b"
+      },
+      "old": "3bf52b401be61103b32ac925e41fb24c1e810790510e063242d927f93a31cfb6",
+      "path": "songs/5th_style/label.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          100,
+          14
+        ],
+        "text": "5th STYLE"
+      }
+    },
+    {
+      "default": {
+        "bytes": 6656,
+        "sha256": "586398d3cdb99aca88044a7f9ea4db0cdb85f3c3f1bc98115d29b8beab73a11c"
+      },
+      "old": "f7e0d6e4b5c10c36299d67c9cc375f3ab929d11bf8df6efa19c001cb5ada41bb",
+      "path": "songs/6th_style/caption.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          151,
+          44
+        ],
+        "text": "6th style"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1412,
+        "sha256": "2bca5a5b5b68cdaa9aaad46ecbd8d8586806f80de7b3a725469f94c5850e70e4"
+      },
+      "old": "fb871947e8ae6df5841cbffa493452dfb1bb019afe276cf9c081cfb990a927b2",
+      "path": "songs/6th_style/label.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          100,
+          14
+        ],
+        "text": "6th STYLE"
+      }
+    },
+    {
+      "default": {
+        "bytes": 6568,
+        "sha256": "391867c8b951eb7fb96dd971c682a8a283635b30422ab6b8473740f4cf690d75"
+      },
+      "old": "48292cfc1dfcb25550fff9e52323394611f598155ae21b4078a5ab9908f4e17a",
+      "path": "songs/7th_style/caption.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          149,
+          44
+        ],
+        "text": "7th style"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1412,
+        "sha256": "7ce5f06c34ff1a4254ff7b5ceb21d02fada613e62bc09435b0378ec9c78fceb4"
+      },
+      "old": "8e63dc7ce45e22ad6c69b4d4ca935b936e4b9fb24e5b6f35d961502c0785b8e6",
+      "path": "songs/7th_style/label.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          100,
+          14
+        ],
+        "text": "7th STYLE"
+      }
+    },
+    {
+      "default": {
+        "bytes": 6656,
+        "sha256": "8d7275a9e315414b4692f01203fe6c691430186288f4fc34e6f8168ad0d1163e"
+      },
+      "old": "d31f18dd3185b0e1a75ae434f647007315794c4eec11b21b24629268fe69abc7",
+      "path": "songs/8th_style/caption.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          151,
+          44
+        ],
+        "text": "8th style"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1412,
+        "sha256": "ae29476746752f244cbe458cbda6fa176e818a943ec1d49532d894c2ee34634a"
+      },
+      "old": "6659afaf80f661eaa84fd783b1d444e43995630df1a3f126cf02ca626ef3b74d",
+      "path": "songs/8th_style/label.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          100,
+          14
+        ],
+        "text": "8th STYLE"
+      }
+    },
+    {
+      "default": {
+        "bytes": 6656,
+        "sha256": "282170b556f989b551958f17090a2190c11391bf79e18e9cb83a362c705da6af"
+      },
+      "old": "27c7e0b239ec3826ebfdac6a499ee9a56adb111f0744c8a4396b2f226d54bd7d",
+      "path": "songs/9th_style/caption.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          151,
+          44
+        ],
+        "text": "9th style"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1412,
+        "sha256": "0227173fa03186d4c55c87e9df6fce916f06a83ee8de4ed98eb9971947da40e4"
+      },
+      "old": "e6d6cc628ef1e99d5eebe0960ae32f9067b677e5c6f924d5f099be5726d7849a",
+      "path": "songs/9th_style/label.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          100,
+          14
+        ],
+        "text": "9th STYLE"
+      }
+    },
+    {
+      "default": {
+        "bytes": 10500,
+        "sha256": "0758962f238aabd49237b4f7a69b1df93032241ce7799d016eb4e8d6de23b121"
+      },
+      "old": "0758962f238aabd49237b4f7a69b1df93032241ce7799d016eb4e8d6de23b121",
+      "path": "songs/beatmania_usa/caption.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          276,
+          38
+        ],
+        "text": "BEATMANIA USA"
+      }
+    },
+    {
+      "default": {
+        "bytes": 2364,
+        "sha256": "4891e5c61fd267379a8268757be54afbb77e282e23356edb72bb6831719ac7f2"
+      },
+      "old": "4891e5c61fd267379a8268757be54afbb77e282e23356edb72bb6831719ac7f2",
+      "path": "songs/beatmania_usa/label.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          168,
+          14
+        ],
+        "text": "BEATMANIA USA"
+      }
+    },
+    {
+      "default": {
+        "bytes": 5294,
+        "sha256": "ce6894cc37932001896cde59206b4f055dfefa4a09a1760fc772612b64eaeb50"
+      },
+      "old": "ce6894cc37932001896cde59206b4f055dfefa4a09a1760fc772612b64eaeb50",
+      "path": "songs/custom/caption.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          139,
+          38
+        ],
+        "text": "CUSTOM"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1188,
+        "sha256": "711be6333505641fd596e5ed3f6d61b830498b01fdec0c6654ae9f9ea70cd77b"
+      },
+      "old": "711be6333505641fd596e5ed3f6d61b830498b01fdec0c6654ae9f9ea70cd77b",
+      "path": "songs/custom/label.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          84,
+          14
+        ],
+        "text": "CUSTOM"
+      }
+    },
+    {
+      "default": {
+        "bytes": 6092,
+        "sha256": "61cfdb88a7105557b07c1528860ea58cfa39fc0d83d30ca2790b950da7dfc5a9"
+      },
+      "old": "e75180c77a86431cd16b93df06510a57d9ff0a1c05cff30628e0beeee1499a14",
+      "path": "songs/distorted/caption.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          160,
+          38
+        ],
+        "text": "DistorteD"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1524,
+        "sha256": "84fbdab81f5fd4d6e35da19cd43a6f5dbd35e4eb586d2f193d23f4dcdaa71af6"
+      },
+      "old": "4c875cfafb28f1a4f70e08ff33dce6269a192a79a1937bfa11b77b3eeb89fce9",
+      "path": "songs/distorted/label.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          108,
+          14
+        ],
+        "text": "DISTORTED"
+      }
+    },
+    {
+      "default": {
+        "bytes": 8638,
+        "sha256": "b8f3bc1825d4efed220dda64e678c8eb925f249ad5ee95e6d0c854316bf4c709"
+      },
+      "old": "606ada0113fbef1c466272c341285497a24ecfb60dc54145e5dedd968ec2c069",
+      "path": "songs/dj_troopers/caption.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          227,
+          38
+        ],
+        "text": "DJ TROOPERS"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1972,
+        "sha256": "ac645268c92d2a85df1ab2a08e6a78dba315ff79826f5db9089093a088774366"
+      },
+      "old": "e5340396919b8d0b5b9949dea7bc3be3df681919bf2b769f5ccc5f8dd0870ae9",
+      "path": "songs/dj_troopers/label.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          140,
+          14
+        ],
+        "text": "DJ TROOPERS"
+      }
+    },
+    {
+      "default": {
+        "bytes": 3318,
+        "sha256": "56bc026343a7826af98a5e8b7a2c85a5254845089dc56c0b67a7aaafd58f89ff"
+      },
+      "old": "41d45d455c873895edf6f85b548744fb4ea53ac8a5bb3d679fc2d9054eff7665",
+      "path": "songs/gold/caption.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          87,
+          38
+        ],
+        "text": "GOLD"
+      }
+    },
+    {
+      "default": {
+        "bytes": 754,
+        "sha256": "7fd039f859d50a44d9fb6e8d228933a48d0bf86f8242899b9f2fe5a4f66df368"
+      },
+      "old": "ce23b74a1defeb749d4d185824264c176e29763df41a3451b5c1c813e31a81de",
+      "path": "songs/gold/label.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          53,
+          14
+        ],
+        "text": "GOLD"
+      }
+    },
+    {
+      "default": {
+        "bytes": 7080,
+        "sha256": "7f750d9222b6f944988cd830721265189f0b7b47d21c6575efcadb2c3a84a2a6"
+      },
+      "old": "c5dad0e53a99ee737c2a02d4cd29994ce5c3ec5c40fa2d51faccb81d0b509c9d",
+      "path": "songs/happy_sky/caption.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          186,
+          38
+        ],
+        "text": "HAPPY SKY"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1552,
+        "sha256": "1bb6c84470784aa1f72cb0bb28134832138a90551971dd5a29c1d71f2ad72300"
+      },
+      "old": "bff95d3689acaa2be0b78084c5720257f5c3337b7f320328444899b6906c8aa6",
+      "path": "songs/happy_sky/label.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          110,
+          14
+        ],
+        "text": "HAPPY SKY"
+      }
+    },
+    {
+      "default": {
+        "bytes": 5256,
+        "sha256": "814a718eb9be8e0435883ef64b0d3e5e3ad245f1869909978a234f1b34eaec03"
+      },
+      "old": "1bb05975aa66138d60ae5adc7cf0a37cd843804fd67455f0ba824d78a826b37b",
+      "path": "songs/red/caption.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          138,
+          38
+        ],
+        "text": "IIDX RED"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1118,
+        "sha256": "e230c164f6590413e5d6091afd41507f83ce9dc73301bcc8fedd4531279f9f08"
+      },
+      "old": "9faeb455e1dc8489e3db6c816ee3ce21fabe3c769f1ada4e2ff11c1119764d64",
+      "path": "songs/red/label.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          79,
+          14
+        ],
+        "text": "IIDX RED"
+      }
+    },
+    {
+      "default": {
+        "bytes": 4306,
+        "sha256": "c899fa6638f4c6a6a79c3f7cd3f0632cbffe9f09576ed6c7b9ffb0f7d1b0254c"
+      },
+      "old": "c899fa6638f4c6a6a79c3f7cd3f0632cbffe9f09576ed6c7b9ffb0f7d1b0254c",
+      "path": "songs/sirius/caption.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          113,
+          38
+        ],
+        "text": "SIRIUS"
+      }
+    },
+    {
+      "default": {
+        "bytes": 908,
+        "sha256": "8573aad58aaf2a38e1df6270c0c8fa5de56ad44a0eaae357788693febe10315d"
+      },
+      "old": "8573aad58aaf2a38e1df6270c0c8fa5de56ad44a0eaae357788693febe10315d",
+      "path": "songs/sirius/label.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          64,
+          14
+        ],
+        "text": "SIRIUS"
+      }
+    },
+    {
+      "default": {
+        "bytes": 6776,
+        "sha256": "09ce01bad1fb8313a277f241dbc3f2dd30f5fd197cdd51bb2ea6140fd893f498"
+      },
+      "old": "e9deae9d33535eafc1d95a8225e072c0e6f4e19b7205b7455cf42cdb5be5b947",
+      "path": "songs/substream/caption.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          178,
+          38
+        ],
+        "text": "substream"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1664,
+        "sha256": "b494fde76e457bc1c40c792e39737c62c5bf7dae57afee1676fe309e360a7161"
+      },
+      "old": "ce4d93ce03907d2a7d9ae73f82ec1c6a21bade8f06ca0f4057406c1963f3243b",
+      "path": "songs/substream/label.spr",
+      "recipe": "recipes/id-console.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          118,
+          14
+        ],
+        "text": "SUBSTREAM"
+      }
+    },
+    {
+      "default": {
+        "bytes": 7360,
+        "sha256": "447c5b2794ecba4641a1a12bf62285cdfd490ab93ae4e75d23838b8d17190e9b"
+      },
+      "old": "57bab6edc18732ac988873ebb03100a0ff060dfd8832816dad19f00271c7680d",
+      "path": "songs/10th_style/caption.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          167,
+          44
+        ],
+        "text": "10th style"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1412,
+        "sha256": "260ad82cec1d9e4526cea200003c3738969485032699f0b21c651b148acfa552"
+      },
+      "old": "8ac69af07c8b066526cd787e0c43fe2245ab496ef4d350d8e276db66bbb7250d",
+      "path": "songs/10th_style/label.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          100,
+          14
+        ],
+        "text": "10th STYLE"
+      }
+    },
+    {
+      "default": {
+        "bytes": 6172,
+        "sha256": "374fe02c6603e98d03682a9c56e8807cec581b3cb239286cb01c2409dcd4f838"
+      },
+      "old": "530237283cc196d5cc2bd26391d649ea2d0e7c46687dee3d4f545326596a2579",
+      "path": "songs/1st_style/caption.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          140,
+          44
+        ],
+        "text": "1st style"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1412,
+        "sha256": "fe9dab9959ea86e320e5beeefb1dd79efe12916c29b3685fc9a98bfec0c1657b"
+      },
+      "old": "86d08755c5c91f74f4ec9b4c588f0a6350d0baa350929ce09423f83aec9ba3c5",
+      "path": "songs/1st_style/label.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          100,
+          14
+        ],
+        "text": "1st STYLE"
+      }
+    },
+    {
+      "default": {
+        "bytes": 6656,
+        "sha256": "f747d9f228272e22ff49d837bd91f931701f14700c93dba24fb2b0637d6ea271"
+      },
+      "old": "ff929b36e0fff2c9208dc1d867b1b1c76fbc344ba406a9f9388a3004ab638af6",
+      "path": "songs/2nd_style/caption.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          151,
+          44
+        ],
+        "text": "2nd style"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1412,
+        "sha256": "529fa16c2adb232f4810cbe7f22acfe57ef7980737657aad71fe6627ccfe5169"
+      },
+      "old": "5789b1389bacb57fa74b23a4a377de85e5cfc5dee7738f7a37c42809da83deb6",
+      "path": "songs/2nd_style/label.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          100,
+          14
+        ],
+        "text": "2nd STYLE"
+      }
+    },
+    {
+      "default": {
+        "bytes": 6656,
+        "sha256": "e2a1047cc545ef4d7fa401f2e2ad299df04ad0adef02d9643b96079934026ed3"
+      },
+      "old": "2d4c63c087c55038a88d534e22b01e7b0f0793045ee5142dfc63d4acfac507c6",
+      "path": "songs/3rd_style/caption.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          151,
+          44
+        ],
+        "text": "3rd style"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1412,
+        "sha256": "71c03cad1fb1b394684abfcbb791a52044ae515ead39d2998da964a3bf6391a6"
+      },
+      "old": "7da16967901c8371a01f5b7c6262761abd4b64528db11108ff7849e1a53e4532",
+      "path": "songs/3rd_style/label.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          100,
+          14
+        ],
+        "text": "3rd STYLE"
+      }
+    },
+    {
+      "default": {
+        "bytes": 6700,
+        "sha256": "fbf6f20a20a8d9b67f88e1e257a0f71826a63a4476215c054bfea7b424ebf018"
+      },
+      "old": "ad31d50db2b47929a20539a798ce7ee0fc8be136630a8b8cb6150bd4b92c1abf",
+      "path": "songs/4th_style/caption.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          152,
+          44
+        ],
+        "text": "4th style"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1412,
+        "sha256": "fb594f373b1bcb4e4d4f67a6a2fbaa13a6a41cf6a34f54d2c0332e5e101d90e4"
+      },
+      "old": "bea6ddf27ff6b52c296c9b09b70c6efc17a8ed50704fab03c6d28683cb31374d",
+      "path": "songs/4th_style/label.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          100,
+          14
+        ],
+        "text": "4th STYLE"
+      }
+    },
+    {
+      "default": {
+        "bytes": 6656,
+        "sha256": "daed4b9065dc44604ca00b4b69e36df172fc991aa3a5dbecb8ad75747eaa48df"
+      },
+      "old": "ae88065aee41c8839cf1bb5a621327ce0e4d2b6c633476f56b776b643e103cdb",
+      "path": "songs/5th_style/caption.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          151,
+          44
+        ],
+        "text": "5th style"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1412,
+        "sha256": "575adda2b98e67cf6993dc7286e9e52f794da956714f7301051577c0cda83f9b"
+      },
+      "old": "3bf52b401be61103b32ac925e41fb24c1e810790510e063242d927f93a31cfb6",
+      "path": "songs/5th_style/label.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          100,
+          14
+        ],
+        "text": "5th STYLE"
+      }
+    },
+    {
+      "default": {
+        "bytes": 6656,
+        "sha256": "586398d3cdb99aca88044a7f9ea4db0cdb85f3c3f1bc98115d29b8beab73a11c"
+      },
+      "old": "f7e0d6e4b5c10c36299d67c9cc375f3ab929d11bf8df6efa19c001cb5ada41bb",
+      "path": "songs/6th_style/caption.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          151,
+          44
+        ],
+        "text": "6th style"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1412,
+        "sha256": "2bca5a5b5b68cdaa9aaad46ecbd8d8586806f80de7b3a725469f94c5850e70e4"
+      },
+      "old": "fb871947e8ae6df5841cbffa493452dfb1bb019afe276cf9c081cfb990a927b2",
+      "path": "songs/6th_style/label.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          100,
+          14
+        ],
+        "text": "6th STYLE"
+      }
+    },
+    {
+      "default": {
+        "bytes": 6568,
+        "sha256": "391867c8b951eb7fb96dd971c682a8a283635b30422ab6b8473740f4cf690d75"
+      },
+      "old": "48292cfc1dfcb25550fff9e52323394611f598155ae21b4078a5ab9908f4e17a",
+      "path": "songs/7th_style/caption.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          149,
+          44
+        ],
+        "text": "7th style"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1412,
+        "sha256": "7ce5f06c34ff1a4254ff7b5ceb21d02fada613e62bc09435b0378ec9c78fceb4"
+      },
+      "old": "8e63dc7ce45e22ad6c69b4d4ca935b936e4b9fb24e5b6f35d961502c0785b8e6",
+      "path": "songs/7th_style/label.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          100,
+          14
+        ],
+        "text": "7th STYLE"
+      }
+    },
+    {
+      "default": {
+        "bytes": 6656,
+        "sha256": "8d7275a9e315414b4692f01203fe6c691430186288f4fc34e6f8168ad0d1163e"
+      },
+      "old": "d31f18dd3185b0e1a75ae434f647007315794c4eec11b21b24629268fe69abc7",
+      "path": "songs/8th_style/caption.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          151,
+          44
+        ],
+        "text": "8th style"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1412,
+        "sha256": "ae29476746752f244cbe458cbda6fa176e818a943ec1d49532d894c2ee34634a"
+      },
+      "old": "6659afaf80f661eaa84fd783b1d444e43995630df1a3f126cf02ca626ef3b74d",
+      "path": "songs/8th_style/label.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          100,
+          14
+        ],
+        "text": "8th STYLE"
+      }
+    },
+    {
+      "default": {
+        "bytes": 6656,
+        "sha256": "282170b556f989b551958f17090a2190c11391bf79e18e9cb83a362c705da6af"
+      },
+      "old": "27c7e0b239ec3826ebfdac6a499ee9a56adb111f0744c8a4396b2f226d54bd7d",
+      "path": "songs/9th_style/caption.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          151,
+          44
+        ],
+        "text": "9th style"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1412,
+        "sha256": "0227173fa03186d4c55c87e9df6fce916f06a83ee8de4ed98eb9971947da40e4"
+      },
+      "old": "e6d6cc628ef1e99d5eebe0960ae32f9067b677e5c6f924d5f099be5726d7849a",
+      "path": "songs/9th_style/label.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          100,
+          14
+        ],
+        "text": "9th STYLE"
+      }
+    },
+    {
+      "default": {
+        "bytes": 10500,
+        "sha256": "0758962f238aabd49237b4f7a69b1df93032241ce7799d016eb4e8d6de23b121"
+      },
+      "old": "0758962f238aabd49237b4f7a69b1df93032241ce7799d016eb4e8d6de23b121",
+      "path": "songs/beatmania_usa/caption.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          276,
+          38
+        ],
+        "text": "BEATMANIA USA"
+      }
+    },
+    {
+      "default": {
+        "bytes": 2364,
+        "sha256": "4891e5c61fd267379a8268757be54afbb77e282e23356edb72bb6831719ac7f2"
+      },
+      "old": "4891e5c61fd267379a8268757be54afbb77e282e23356edb72bb6831719ac7f2",
+      "path": "songs/beatmania_usa/label.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          168,
+          14
+        ],
+        "text": "BEATMANIA USA"
+      }
+    },
+    {
+      "default": {
+        "bytes": 5294,
+        "sha256": "ce6894cc37932001896cde59206b4f055dfefa4a09a1760fc772612b64eaeb50"
+      },
+      "old": "ce6894cc37932001896cde59206b4f055dfefa4a09a1760fc772612b64eaeb50",
+      "path": "songs/custom/caption.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          139,
+          38
+        ],
+        "text": "CUSTOM"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1188,
+        "sha256": "711be6333505641fd596e5ed3f6d61b830498b01fdec0c6654ae9f9ea70cd77b"
+      },
+      "old": "711be6333505641fd596e5ed3f6d61b830498b01fdec0c6654ae9f9ea70cd77b",
+      "path": "songs/custom/label.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          84,
+          14
+        ],
+        "text": "CUSTOM"
+      }
+    },
+    {
+      "default": {
+        "bytes": 6092,
+        "sha256": "61cfdb88a7105557b07c1528860ea58cfa39fc0d83d30ca2790b950da7dfc5a9"
+      },
+      "old": "e75180c77a86431cd16b93df06510a57d9ff0a1c05cff30628e0beeee1499a14",
+      "path": "songs/distorted/caption.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          160,
+          38
+        ],
+        "text": "DistorteD"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1524,
+        "sha256": "84fbdab81f5fd4d6e35da19cd43a6f5dbd35e4eb586d2f193d23f4dcdaa71af6"
+      },
+      "old": "4c875cfafb28f1a4f70e08ff33dce6269a192a79a1937bfa11b77b3eeb89fce9",
+      "path": "songs/distorted/label.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          108,
+          14
+        ],
+        "text": "DISTORTED"
+      }
+    },
+    {
+      "default": {
+        "bytes": 8638,
+        "sha256": "b8f3bc1825d4efed220dda64e678c8eb925f249ad5ee95e6d0c854316bf4c709"
+      },
+      "old": "606ada0113fbef1c466272c341285497a24ecfb60dc54145e5dedd968ec2c069",
+      "path": "songs/dj_troopers/caption.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          227,
+          38
+        ],
+        "text": "DJ TROOPERS"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1972,
+        "sha256": "ac645268c92d2a85df1ab2a08e6a78dba315ff79826f5db9089093a088774366"
+      },
+      "old": "e5340396919b8d0b5b9949dea7bc3be3df681919bf2b769f5ccc5f8dd0870ae9",
+      "path": "songs/dj_troopers/label.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          140,
+          14
+        ],
+        "text": "DJ TROOPERS"
+      }
+    },
+    {
+      "default": {
+        "bytes": 3318,
+        "sha256": "56bc026343a7826af98a5e8b7a2c85a5254845089dc56c0b67a7aaafd58f89ff"
+      },
+      "old": "41d45d455c873895edf6f85b548744fb4ea53ac8a5bb3d679fc2d9054eff7665",
+      "path": "songs/gold/caption.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          87,
+          38
+        ],
+        "text": "GOLD"
+      }
+    },
+    {
+      "default": {
+        "bytes": 754,
+        "sha256": "7fd039f859d50a44d9fb6e8d228933a48d0bf86f8242899b9f2fe5a4f66df368"
+      },
+      "old": "ce23b74a1defeb749d4d185824264c176e29763df41a3451b5c1c813e31a81de",
+      "path": "songs/gold/label.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          53,
+          14
+        ],
+        "text": "GOLD"
+      }
+    },
+    {
+      "default": {
+        "bytes": 7080,
+        "sha256": "7f750d9222b6f944988cd830721265189f0b7b47d21c6575efcadb2c3a84a2a6"
+      },
+      "old": "c5dad0e53a99ee737c2a02d4cd29994ce5c3ec5c40fa2d51faccb81d0b509c9d",
+      "path": "songs/happy_sky/caption.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          186,
+          38
+        ],
+        "text": "HAPPY SKY"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1552,
+        "sha256": "1bb6c84470784aa1f72cb0bb28134832138a90551971dd5a29c1d71f2ad72300"
+      },
+      "old": "bff95d3689acaa2be0b78084c5720257f5c3337b7f320328444899b6906c8aa6",
+      "path": "songs/happy_sky/label.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          110,
+          14
+        ],
+        "text": "HAPPY SKY"
+      }
+    },
+    {
+      "default": {
+        "bytes": 5256,
+        "sha256": "814a718eb9be8e0435883ef64b0d3e5e3ad245f1869909978a234f1b34eaec03"
+      },
+      "old": "1bb05975aa66138d60ae5adc7cf0a37cd843804fd67455f0ba824d78a826b37b",
+      "path": "songs/red/caption.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          138,
+          38
+        ],
+        "text": "IIDX RED"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1118,
+        "sha256": "e230c164f6590413e5d6091afd41507f83ce9dc73301bcc8fedd4531279f9f08"
+      },
+      "old": "9faeb455e1dc8489e3db6c816ee3ce21fabe3c769f1ada4e2ff11c1119764d64",
+      "path": "songs/red/label.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          79,
+          14
+        ],
+        "text": "IIDX RED"
+      }
+    },
+    {
+      "default": {
+        "bytes": 4306,
+        "sha256": "c899fa6638f4c6a6a79c3f7cd3f0632cbffe9f09576ed6c7b9ffb0f7d1b0254c"
+      },
+      "old": "c899fa6638f4c6a6a79c3f7cd3f0632cbffe9f09576ed6c7b9ffb0f7d1b0254c",
+      "path": "songs/sirius/caption.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          113,
+          38
+        ],
+        "text": "SIRIUS"
+      }
+    },
+    {
+      "default": {
+        "bytes": 908,
+        "sha256": "8573aad58aaf2a38e1df6270c0c8fa5de56ad44a0eaae357788693febe10315d"
+      },
+      "old": "8573aad58aaf2a38e1df6270c0c8fa5de56ad44a0eaae357788693febe10315d",
+      "path": "songs/sirius/label.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          64,
+          14
+        ],
+        "text": "SIRIUS"
+      }
+    },
+    {
+      "default": {
+        "bytes": 6776,
+        "sha256": "09ce01bad1fb8313a277f241dbc3f2dd30f5fd197cdd51bb2ea6140fd893f498"
+      },
+      "old": "e9deae9d33535eafc1d95a8225e072c0e6f4e19b7205b7455cf42cdb5be5b947",
+      "path": "songs/substream/caption.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_caption",
+        "palette": {
+          "bytes": 1603584,
+          "input": "base",
+          "offset": 339791872,
+          "sha256": "fa9fd018af47668eaa89c3403c71a68c54558bd0ef412f32ecbd33e7e415dc7c"
+        },
+        "size": [
+          178,
+          38
+        ],
+        "text": "substream"
+      }
+    },
+    {
+      "default": {
+        "bytes": 1664,
+        "sha256": "b494fde76e457bc1c40c792e39737c62c5bf7dae57afee1676fe309e360a7161"
+      },
+      "old": "ce4d93ce03907d2a7d9ae73f82ec1c6a21bade8f06ca0f4057406c1963f3243b",
+      "path": "songs/substream/label.spr",
+      "recipe": "recipes/id-host.json",
+      "spec": {
+        "kind": "folder",
+        "layout": "pb_label",
+        "palette": {
+          "bytes": 131072,
+          "input": "base",
+          "offset": 275636224,
+          "sha256": "61341b2e5921073aed0b72ed50eb74de36a886599a9e81d763895a45496ef338"
+        },
+        "size": [
+          118,
+          14
+        ],
+        "text": "SUBSTREAM"
+      }
+    }
+  ]
+}

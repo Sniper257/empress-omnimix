@@ -1,0 +1,17 @@
+name ELECTRO TUNED
+third 57
+record record.bin
+card /a/07/0d
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/67/31
+F c4 4 /a/74/4f
+F c8 4 /a/0a/59
+F d0 4 /a/75/3f
+F d4 4 /a/36/30
+F e8 2 /a/3d/30
+F ec 2 /a/3e/5b
+F 58 4 /a/28/1c
+D 0 /a/4d/2b

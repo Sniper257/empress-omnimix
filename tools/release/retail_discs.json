@@ -1,0 +1,182 @@
+{
+  "schema": 1,
+  "scope": "Fixed PS2 IIDX3..16/PB/USA dumps",
+  "discs": [
+    {
+      "source": "third",
+      "version": 3,
+      "name": "beatmania ii dx 3rd style (japan).iso",
+      "iso_bytes": 3810918400,
+      "iso_sha256": "d7e11cd70100675a97ddd9027d1578bda1397959fa1562151ba9c9e7f94e16d1",
+      "exe": "SLPM_650.06",
+      "exe_bytes": 9041028,
+      "exe_sha256": "cd2ee5a1c50c46808927ef32a7fe8f5791ae66399da029a75d5095ca70499321",
+      "chart_clock_ratio": "526/525"
+    },
+    {
+      "source": "fourth",
+      "version": 4,
+      "name": "beatmania ii dx 4th style - new songs collection (japan).iso",
+      "iso_bytes": 2616393728,
+      "iso_sha256": "b1e5c78e750261761bb70ab3e69c8ceb0c8a3d819a248e7145c6a9714db1bbfd",
+      "exe": "SLPM_650.26",
+      "exe_bytes": 9256196,
+      "exe_sha256": "dc507d7d35a7af5adb1607b856fcc23aaf8cb6841b32ec53266c3741f6a35429",
+      "chart_clock_ratio": "526/525"
+    },
+    {
+      "source": "fifth",
+      "version": 5,
+      "name": "beatmania ii dx 5th style - new songs collection (japan).iso",
+      "iso_bytes": 3712614400,
+      "iso_sha256": "e316d8f6a160327220cfb4e34f197ca8142459d6ff46cf87bdf0f10bdf6c2df6",
+      "exe": "SLPM_650.49",
+      "exe_bytes": 13644036,
+      "exe_sha256": "6667292d88836087a90bedd8e9856ae08132fdc4291d4958ddbe11e37f547b9c",
+      "chart_clock_ratio": "526/525"
+    },
+    {
+      "source": "sixth",
+      "version": 6,
+      "name": "beatmania ii dx 6th style - new songs collection (japan).iso",
+      "iso_bytes": 4520869888,
+      "iso_sha256": "91e22fbcb7b5097f0d4d56a6d79adb66bfbdba8f01e8ae6ddf6d507f3a1336e0",
+      "exe": "SLPM_651.56",
+      "exe_bytes": 9736648,
+      "exe_sha256": "4c58566cd7d5e5f0eba377615eb27fa87e8e2ea99c10673d619dcf4693ea751b",
+      "chart_clock_ratio": "526/525"
+    },
+    {
+      "source": "seventh",
+      "version": 7,
+      "name": "beatmania ii dx 7th style (japan).iso",
+      "iso_bytes": 2664071168,
+      "iso_sha256": "60a8bfa00ebc393cdec24d5fff1b0b8ae902ac2ba0277eaf7d497eca67a029c0",
+      "exe": "SLPM_655.93",
+      "exe_bytes": 11715504,
+      "exe_sha256": "a0d1d4c1c47f0a251f7708dc003ee4a86a3d4fdc194bf9a6eeda4b96063cccec",
+      "chart_clock_ratio": "526/525"
+    },
+    {
+      "source": "eighth",
+      "version": 8,
+      "name": "beatmania ii dx 8th style (japan) (en,ja).iso",
+      "iso_bytes": 3928981504,
+      "iso_sha256": "dd51774a2fbfe7692fd25cd0fc828cf217a65bda6b5619f1e8de1ff7e79ce2cf",
+      "exe": "SLPM_657.68",
+      "exe_bytes": 9894064,
+      "exe_sha256": "f4efe03117df8f31b0b23ae8d9a963f9d60ffe6d9cd7efe4a7b0a5cad925b220",
+      "chart_clock_ratio": "526/525"
+    },
+    {
+      "source": "ninth",
+      "version": 9,
+      "name": "beatmania ii dx 9th style (japan).iso",
+      "iso_bytes": 4060774400,
+      "iso_sha256": "db1064b56f6df4b33d720cfaa45ef0ba62ec66806b76fab230d29602499b2c29",
+      "exe": "SLPM_659.46",
+      "exe_bytes": 907952,
+      "exe_sha256": "9001256836f38be889b55b76e5748b3e86f7daa5347189adda5cbaeb44936973",
+      "chart_clock_ratio": "1"
+    },
+    {
+      "source": "tenth",
+      "version": 10,
+      "name": "beatmania ii dx 10th style (japan).iso",
+      "iso_bytes": 4218912768,
+      "iso_sha256": "95e07d6ad134b29f8f94677d49a127e4a55dc91a82bcd3209a82d187fdbd8b61",
+      "exe": "SLPM_661.80",
+      "exe_bytes": 1204656,
+      "exe_sha256": "af0060150603d1ffc97032d60bf0284c2f4121261a9423babcda37be83d92dcc",
+      "chart_clock_ratio": "1"
+    },
+    {
+      "source": "red",
+      "version": 11,
+      "name": "beatmania ii dx 11 - ii dx red (japan).iso",
+      "iso_bytes": 4346707968,
+      "iso_sha256": "8b42d601bc7c2e99ce9724b1641445951594c5b6646e913cc158370a1df035ab",
+      "exe": "SLPM_664.26",
+      "exe_bytes": 1940144,
+      "exe_sha256": "650f2c33d169c6e8233a36ec850a7bbb25ce1861c06231c7e1e6dc83aaf33b4c",
+      "chart_clock_ratio": "1"
+    },
+    {
+      "source": "happysky",
+      "version": 12,
+      "name": "beatmania12-gant.iso",
+      "iso_bytes": 4508254208,
+      "iso_sha256": "6f191608d92abd9e3361fa23cdfabb3bafa7b1d5d9598f6632c8899aeac84828",
+      "exe": "SLPM_666.21",
+      "exe_bytes": 1419056,
+      "exe_sha256": "604cf7359d9eff762a5ee6aa281dc9c468aa8c37c1b69a89aa4fd592883f6902",
+      "chart_clock_ratio": "1"
+    },
+    {
+      "source": "distorted",
+      "version": 13,
+      "name": "bm13-nwr.iso",
+      "iso_bytes": 4517658624,
+      "iso_sha256": "1a0a56e4f8bbb336c8ebe4feccda7c32aeabc90e536d6034c9af58e3482033d2",
+      "exe": "SLPM_668.28",
+      "exe_bytes": 1846064,
+      "exe_sha256": "363298e7d89dca8222324ed1c32f314ec3981653744e3f34f8c7eda50b244423",
+      "chart_clock_ratio": "1"
+    },
+    {
+      "source": "gold",
+      "version": 14,
+      "name": "gant-b14.iso",
+      "iso_bytes": 4450484224,
+      "iso_sha256": "9d407d690150ee61cc31e001212054519865dbbb5f6c19f8e7f1201a40d48e08",
+      "exe": "SLPM_669.95",
+      "exe_bytes": 1967792,
+      "exe_sha256": "3ebc3f46a0af3a6e40f0be3bfd19f7467ea201eaac8750f207fac60eca27692f",
+      "chart_clock_ratio": "1"
+    },
+    {
+      "source": "djt",
+      "version": 15,
+      "name": "gant-bm15.iso",
+      "iso_bytes": 4556161024,
+      "iso_sha256": "c15cebb8b2a7d76734b0bdc4f4309ab4eba92ff8cb978cf4aea0a67d83cfa690",
+      "exe": "SLPM_551.17",
+      "exe_bytes": 2075312,
+      "exe_sha256": "f849961c8d4a8ec3d6b627d55ccfac0964394fce3e72f3b49777bfb6f98c8c77",
+      "chart_clock_ratio": "1"
+    },
+    {
+      "source": "id",
+      "version": 16,
+      "name": "empress.iso",
+      "iso_bytes": 4362993664,
+      "iso_sha256": "9adf96aedf66e0e9906a0a8827d7380c20710c7d6580f9ef3ab627fefc5ae6ab",
+      "exe": "SLPM_552.21",
+      "exe_bytes": 1757744,
+      "exe_sha256": "0daef4193e51ed3c49f49db9d84aa673d9aab783d004bec4fa6a02f6d520914f",
+      "chart_clock_ratio": "1"
+    },
+    {
+      "source": "pb",
+      "version": 17,
+      "name": "pb.iso",
+      "iso_bytes": 4494557184,
+      "iso_sha256": "6d81c1645bb497893384cd816ebc54a8d55b8313599657bfb6a7e74bd8e2260f",
+      "exe": "SLPM_552.22",
+      "exe_bytes": 1777968,
+      "exe_sha256": "3fd3fe9e98bfc496672699b45dda4fe99457357ca058992b29d430a6a7737e1d",
+      "chart_clock_ratio": "1"
+    },
+    {
+      "source": "usa",
+      "version": 18,
+      "name": "beatmania (usa).iso",
+      "iso_bytes": 2859106304,
+      "iso_sha256": "4a0f122ddc0fc5d1139efeda0791b4ad6d5a8c571ac0d25c18d65d945a16f2cc",
+      "exe": "SLUS_212.39",
+      "exe_bytes": 924336,
+      "exe_sha256": "e948a775b4342c2124fad348b49e7a9c011177c40ea2c62f046656e41207c727",
+      "chart_clock_ratio": "1"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+name FLY THROUGH THE NIGHT
+sixth 32
+record record.bin
+card /a/33/21
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/27/5d
+F c4 4 /a/55/59
+F c8 4 /a/42/3a
+F cc 4 /a/34/31
+F d0 4 /a/5d/00
+F d4 4 /a/7a/38
+F d8 4 /a/85/1f
+F e8 2 /a/53/28
+F ec 2 /a/57/31
+F 58 4 /a/0b/25

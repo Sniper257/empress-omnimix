@@ -1,0 +1,18 @@
+name PLATONIC-XXX
+tenth 7
+record record.bin
+F c0 4 /a/3e/5d
+F c4 4 /a/43/5d
+F c8 4 /a/42/4b
+F cc 4 /a/47/55
+F d0 4 /a/43/28
+F d4 4 /a/17/13
+F d8 4 /a/34/3f
+F e8 2 /a/3b/07
+F ec 2 /a/1f/4b
+F 58 4 /a/06/49
+card /a/0b/45
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

@@ -1,0 +1,24 @@
+name FLY THROUGH THE NIGHT
+usa 38
+record record.bin
+F c0 4 /a/32/03
+F c4 4 /a/66/1a
+F c8 4 /a/09/52
+F cc 4 /a/77/32
+F d0 4 /a/0c/5e
+F d4 4 /a/28/18
+F d8 4 /a/11/16
+F e8 2 /a/7d/00
+F ec 2 /a/12/26
+F f0 2 /a/7d/00
+F f4 2 /a/12/26
+F f8 2 /a/7d/00
+F fc 2 /a/12/26
+F 100 2 /a/7d/00
+F 104 2 /a/12/26
+F 58 4 /a/45/1e
+card /a/78/04
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

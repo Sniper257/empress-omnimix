@@ -1,0 +1,17 @@
+name COLORS (RADIO EDIT)
+tenth 68
+record record.bin
+F c0 4 /a/74/34
+F c4 4 /a/2a/5e
+F c8 4 /a/17/2b
+F cc 4 /a/50/24
+F d0 4 /a/2f/04
+F d4 4 /a/61/4d
+F e8 2 /a/31/2b
+F ec 2 /a/5a/0c
+F 58 4 /a/7d/04
+card /a/44/06
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

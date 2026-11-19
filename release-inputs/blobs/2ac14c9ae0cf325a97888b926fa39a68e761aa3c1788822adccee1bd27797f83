@@ -1,0 +1,17 @@
+name FEE
+gold 80
+record record.bin
+F c0 4 /a/6c/2a
+F c4 4 /a/17/0f
+F c8 4 /a/85/0f
+F cc 4 /a/3c/3b
+F d0 4 /a/5d/4f
+F d4 4 /a/7a/46
+F e8 2 /a/00/3e
+F ec 2 /a/3d/05
+F 58 4 /a/1f/0d
+card /a/51/3f
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

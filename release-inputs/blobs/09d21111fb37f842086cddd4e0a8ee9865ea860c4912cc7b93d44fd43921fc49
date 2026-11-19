@@ -1,0 +1,18 @@
+name FREEZING ATMOSPHERE
+tenth 45
+record record.bin
+F c0 4 /a/37/0d
+F c4 4 /a/2b/16
+F c8 4 /a/59/3c
+F cc 4 /a/2a/27
+F d0 4 /a/01/42
+F d4 4 /a/56/07
+F d8 4 /a/5c/54
+F e8 2 /a/55/0f
+F ec 2 /a/37/07
+F 58 4 /a/4f/24
+card /a/40/38
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

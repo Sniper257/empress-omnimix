@@ -1,0 +1,18 @@
+name PLEASE DON'T GO
+happysky 73
+record record.bin
+F c0 4 /a/34/4f
+F c4 4 /a/5b/03
+F c8 4 /a/40/5e
+F cc 4 /a/5c/2f
+F d0 4 /a/2e/13
+F d4 4 /a/64/05
+F d8 4 /a/7f/36
+F e8 2 /a/5b/43
+F ec 2 /a/56/0f
+F 58 4 /a/5c/26
+card /a/49/3f
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

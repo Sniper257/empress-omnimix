@@ -1,0 +1,18 @@
+name KAKUMEI
+pb 66
+record record.bin
+F c0 4 /a/84/56
+F c4 4 /a/70/26
+F c8 4 /a/4b/0d
+F cc 4 /a/65/46
+F d0 4 /a/71/22
+F d4 4 /a/42/14
+F d8 4 /a/59/43
+F e8 2 /a/65/39
+F ec 2 /a/29/2a
+F 58 4 /a/2d/08
+card /a/68/33
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

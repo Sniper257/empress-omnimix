@@ -1,0 +1,17 @@
+name BREAK OUT
+distorted 7
+record record.bin
+F c0 4 /a/4a/1d
+F c4 4 /a/21/5b
+F c8 4 /a/47/08
+F d0 4 /a/15/32
+F d4 4 /a/52/14
+F d8 4 /a/10/3d
+F e8 2 /a/42/28
+F ec 2 /a/0c/1f
+F 58 4 /a/17/16
+card /a/4b/50
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

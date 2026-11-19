@@ -1,0 +1,21 @@
+name FIRE FIRE
+pb 10
+record record.bin
+F c0 4 /a/50/3c
+F c4 4 /a/09/5b
+F c8 4 /a/3e/4a
+F cc 4 /a/64/37
+F d0 4 /a/69/0f
+F d4 4 /a/26/3a
+F d8 4 /a/6c/2e
+F e8 2 /a/64/5d
+F ec 2 /a/56/53
+F 58 4 /a/1d/28
+card /a/12/2a
+D 0 /a/1b/09
+D 1 /a/32/3e
+D 2 /a/66/4f
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

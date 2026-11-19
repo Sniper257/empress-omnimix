@@ -1,0 +1,22 @@
+name CELEBRATION
+usa 31
+record record.bin
+F c0 4 /a/0e/31
+F c4 4 /a/40/07
+F d0 4 /a/32/0a
+F d4 4 /a/4d/50
+F d8 4 /a/40/4a
+F e8 2 /a/61/1e
+F ec 2 /a/58/0b
+F f0 2 /a/61/1e
+F f4 2 /a/58/0b
+F f8 2 /a/61/1e
+F fc 2 /a/58/0b
+F 100 2 /a/61/1e
+F 104 2 /a/58/0b
+F 58 4 /a/5c/5c
+card /a/2a/1c
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

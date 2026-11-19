@@ -1,0 +1,18 @@
+name AA
+red 39
+record record.bin
+F c0 4 /a/6c/20
+F c4 4 /a/4f/5f
+F c8 4 /a/15/0f
+F cc 4 /a/2f/49
+F d0 4 /a/01/0e
+F d4 4 /a/32/28
+F d8 4 /a/1d/1c
+F e8 2 /a/36/03
+F ec 2 /a/47/0d
+F 58 4 /a/22/43
+card /a/2a/39
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

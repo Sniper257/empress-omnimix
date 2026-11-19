@@ -1,0 +1,14 @@
+name LET THE BEAT HIT EM!
+third 60
+record record.bin
+card /a/27/46
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/14/5a
+F c4 4 /a/4d/19
+F e8 2 /a/7b/03
+F ec 2 /a/3e/35
+F 58 4 /a/2f/32
+D 0 /a/07/0b

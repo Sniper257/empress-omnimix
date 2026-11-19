@@ -1,0 +1,17 @@
+name SOLDIER'S WALTZ
+djt 45
+record record.bin
+F c0 4 /a/01/36
+F c4 4 /a/5b/39
+F c8 4 /a/1e/13
+F d0 4 /a/2a/13
+F d4 4 /a/42/56
+F d8 4 /a/19/2c
+F e8 2 /a/0c/14
+F ec 2 /a/5e/16
+F 58 4 /a/22/57
+card /a/4b/1e
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

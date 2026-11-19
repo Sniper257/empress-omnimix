@@ -1,0 +1,17 @@
+name LOVE GENERATION
+seventh 37
+record record.bin
+card /a/10/25
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/3a/36
+F c4 4 /a/36/48
+F c8 4 /a/41/25
+F d0 4 /a/4b/46
+F d4 4 /a/55/0e
+F d8 4 /a/49/1d
+F e8 2 /a/56/3b
+F ec 2 /a/27/06
+F 58 4 /a/05/37

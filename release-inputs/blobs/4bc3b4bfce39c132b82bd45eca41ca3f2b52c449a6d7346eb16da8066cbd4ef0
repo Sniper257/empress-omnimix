@@ -1,0 +1,17 @@
+name SECRET TALE
+seventh 28
+record record.bin
+card /a/55/31
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/7a/4d
+F c4 4 /a/62/2d
+F c8 4 /a/3a/58
+F d0 4 /a/3b/11
+F d4 4 /a/0b/26
+F d8 4 /a/1c/19
+F e8 2 /a/36/25
+F ec 2 /a/10/36
+F 58 4 /a/1a/0e

@@ -1,0 +1,8 @@
+{
+  "wheel": {"file": "./fonts/HandelGothicITCStd.ttf"},
+  "large_title": {"file": "./fonts/Compacta BT.TTF"},
+  "genre_artist": {"file": "./fonts/Helvetica Bold.TTF"},
+  "card_genre": {"file": "./fonts/HandelGotDLig.ttf"},
+  "card_artist": {"file": "./fonts/Helvetica Bold.TTF"},
+  "launcher": {"file": "./fonts/HandelGothicITCStd.ttf"}
+}

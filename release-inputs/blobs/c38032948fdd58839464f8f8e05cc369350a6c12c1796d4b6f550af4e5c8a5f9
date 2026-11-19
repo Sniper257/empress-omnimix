@@ -1,0 +1,17 @@
+name ROTTEL-THE-MERCURY
+tenth 57
+record record.bin
+F c0 4 /a/21/0b
+F c4 4 /a/14/59
+F c8 4 /a/65/06
+F cc 4 /a/42/4e
+F d0 4 /a/6c/32
+F d4 4 /a/71/1d
+F e8 2 /a/78/17
+F ec 2 /a/2f/01
+F 58 4 /a/4b/5e
+card /a/3e/32
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

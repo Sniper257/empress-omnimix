@@ -1,0 +1,20 @@
+name FOUR PIECES OF HEAVEN
+djt 13
+record record.bin
+F c0 4 /a/2c/1c
+F c4 4 /a/7b/16
+F c8 4 /a/28/47
+F cc 4 /a/04/4a
+F d0 4 /a/86/2f
+F d4 4 /a/4d/45
+F d8 4 /a/85/59
+F e0 4 /a/53/0a
+F e8 2 /a/5b/1d
+F ec 2 /a/69/20
+F 58 4 /a/03/3e
+card /a/11/4a
+D 0 /a/20/40
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

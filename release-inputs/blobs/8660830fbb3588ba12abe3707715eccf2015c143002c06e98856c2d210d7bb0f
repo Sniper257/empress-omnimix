@@ -1,0 +1,17 @@
+name AVE DE RAPINA
+eighth 56
+record record.bin
+card /a/77/5d
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/62/54
+F c4 4 /a/67/5d
+F c8 4 /a/3e/2d
+F d0 4 /a/49/29
+F d4 4 /a/70/1b
+F d8 4 /a/2f/28
+F e8 2 /a/2e/10
+F ec 2 /a/3a/29
+F 58 4 /a/2f/51

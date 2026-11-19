@@ -1,0 +1,17 @@
+name HYPE THE CORE
+tenth 84
+record record.bin
+F c0 4 /a/48/2c
+F c4 4 /a/6f/34
+F c8 4 /a/30/1a
+F cc 4 /a/70/40
+F d0 4 /a/7c/0e
+F d4 4 /a/7d/47
+F e8 2 /a/5c/1b
+F ec 2 /a/56/39
+F 58 4 /a/81/06
+card /a/22/28
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

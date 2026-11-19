@@ -1,0 +1,28 @@
+name I WAS THE ONE
+sixth 20
+record record.bin
+card /a/71/4f
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/52/00
+F c4 4 /a/60/19
+F c8 4 /a/80/50
+F d0 4 /a/6c/02
+F d4 4 /a/60/19
+F d8 4 /a/77/10
+F e8 2 /a/81/1a
+F ea 2 /a/57/1c
+F ec 2 /a/21/0a
+F ee 2 /a/21/0a
+F f0 2 /a/81/1a
+F f4 2 /a/21/0a
+F f8 2 /a/81/1a
+F fa 2 /a/57/1c
+F fc 2 /a/21/0a
+F fe 2 /a/21/0a
+F 100 2 /a/81/1a
+F 104 2 /a/21/0a
+F 58 4 /a/28/1a
+D 0 /a/14/16

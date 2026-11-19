@@ -1,0 +1,17 @@
+name LOWER WORLD
+ninth 0
+record record.bin
+F c0 4 /a/78/3c
+F c4 4 /a/86/53
+F c8 4 /a/55/38
+F cc 4 /a/05/4e
+F d0 4 /a/0f/1a
+F d4 4 /a/33/30
+F e8 2 /a/47/01
+F ec 2 /a/2b/1a
+F 58 4 /a/84/34
+card /a/0a/13
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

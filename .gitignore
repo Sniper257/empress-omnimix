@@ -1,0 +1,43 @@
+# Python and local environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+# Generated packages, compiler downloads and work directories
+/dist/
+/.build-dependencies/
+/build/
+/work/
+*.mmr
+*.elf
+*.ELF
+*.irx
+*.IRX
+*.o
+*.a
+*.wasm
+# Local game dumps, private fonts, saves and recordings
+*.iso
+*.ISO
+*.7z
+*.m4a
+*.mkv
+*.mp4
+*.heic
+*.HEIC
+*.ps2
+*.p2s
+*.ttf
+*.TTF
+*.otf
+*.OTF
+*.ttc
+*.TTC
+*.otc
+*.OTC
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db

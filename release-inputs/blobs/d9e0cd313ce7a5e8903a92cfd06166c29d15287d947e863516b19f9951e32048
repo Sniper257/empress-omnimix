@@ -1,0 +1,19 @@
+name MENTAL MELTDOWN
+djt 26
+record record.bin
+F c0 4 /a/20/17
+F c4 4 /a/24/33
+F c8 4 /a/1e/53
+F cc 4 /a/46/28
+F d0 4 /a/0c/3c
+F d4 4 /a/17/47
+F d8 4 /a/78/3d
+F e0 4 /a/27/08
+F e8 2 /a/61/19
+F ec 2 /a/6e/13
+F 58 4 /a/34/20
+card /a/7f/12
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

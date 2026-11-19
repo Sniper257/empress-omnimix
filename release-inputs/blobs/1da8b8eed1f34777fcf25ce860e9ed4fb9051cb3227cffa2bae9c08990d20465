@@ -1,0 +1,23 @@
+name BAD BOY BASS!! (DJ REMO-CON MIX)
+usa 30
+record record.bin
+F c0 4 /a/3d/18
+F c4 4 /a/08/23
+F c8 4 /a/7d/50
+F d0 4 /a/64/56
+F d4 4 /a/79/3e
+F d8 4 /a/7e/1a
+F e8 2 /a/7d/07
+F ec 2 /a/61/1c
+F f0 2 /a/7d/07
+F f4 2 /a/61/1c
+F f8 2 /a/7d/07
+F fc 2 /a/61/1c
+F 100 2 /a/7d/07
+F 104 2 /a/61/1c
+F 58 4 /a/21/59
+card /a/3c/28
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

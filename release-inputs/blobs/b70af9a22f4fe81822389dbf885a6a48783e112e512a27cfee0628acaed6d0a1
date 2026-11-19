@@ -1,0 +1,16 @@
+name NASTY!
+fourth 36
+record record.bin
+card /a/5f/55
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/3f/0a
+F c4 4 /a/7c/15
+F c8 4 /a/52/3f
+F d0 4 /a/51/40
+F d4 4 /a/35/38
+F e8 2 /a/33/0f
+F ec 2 /a/0e/3b
+F 58 4 /a/51/19

@@ -1,0 +1,18 @@
+name SWITCH
+ninth 31
+record record.bin
+F c0 4 /a/74/10
+F c4 4 /a/36/24
+F c8 4 /a/58/00
+F cc 4 /a/1d/40
+F d0 4 /a/2a/4e
+F d4 4 /a/7b/25
+F d8 4 /a/6a/5c
+F e8 2 /a/0e/2d
+F ec 2 /a/4b/54
+F 58 4 /a/29/32
+card /a/79/2d
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

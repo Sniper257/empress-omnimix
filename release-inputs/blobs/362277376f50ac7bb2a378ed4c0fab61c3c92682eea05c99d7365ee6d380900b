@@ -1,0 +1,18 @@
+name GOBBLE
+fourth 50
+record record.bin
+card /a/76/18
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/6a/4b
+F c4 4 /a/76/2a
+F d0 4 /a/41/29
+F d4 4 /a/86/17
+F e8 2 /a/31/16
+F ec 2 /a/3b/28
+F ee 2 /a/41/26
+F fc 2 /a/3b/28
+F fe 2 /a/3b/28
+F 58 4 /a/08/1a

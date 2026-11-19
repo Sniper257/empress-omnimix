@@ -1,0 +1,17 @@
+name MORE MOVE
+eighth 85
+record record.bin
+card /a/52/31
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/58/2c
+F c4 4 /a/39/3b
+F c8 4 /a/62/5b
+F cc 4 /a/36/5f
+F d0 4 /a/83/16
+F d4 4 /a/27/21
+F e8 2 /a/4c/43
+F ec 2 /a/77/0b
+F 58 4 /a/81/03

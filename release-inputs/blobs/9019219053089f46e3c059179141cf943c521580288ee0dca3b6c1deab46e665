@@ -1,0 +1,17 @@
+name DRUNK MONKY
+distorted 82
+record record.bin
+F c0 4 /a/0b/47
+F c4 4 /a/11/5d
+F c8 4 /a/19/32
+F cc 4 /a/29/5b
+F d0 4 /a/3a/28
+F d4 4 /a/3d/22
+F e8 2 /a/45/30
+F ec 2 /a/7b/5d
+F 58 4 /a/6d/5b
+card /a/76/1f
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

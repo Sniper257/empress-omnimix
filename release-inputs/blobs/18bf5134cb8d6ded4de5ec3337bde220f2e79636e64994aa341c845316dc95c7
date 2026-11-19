@@ -1,0 +1,21 @@
+name OUTER LIMITS (CS DD)
+distorted 63
+record record.bin
+F c0 4 /a/0a/4d
+F c4 4 /a/2c/03
+F c8 4 /a/33/35
+F cc 4 /a/25/24
+F d0 4 /a/75/5a
+F d4 4 /a/3b/10
+F e8 2 /a/32/58
+F ec 2 /a/27/55
+F f0 2 /a/12/21
+F f2 2 /a/12/21
+F f4 2 /a/46/14
+F f6 2 /a/46/14
+F 58 4 /a/5b/46
+card /a/20/46
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

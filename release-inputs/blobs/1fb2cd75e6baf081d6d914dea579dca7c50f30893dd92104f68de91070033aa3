@@ -1,0 +1,22 @@
+name NOTHING AIN'T STOPPIN' US
+usa 54
+record record.bin
+F c0 4 /a/2e/5b
+F c4 4 /a/7f/5f
+F d0 4 /a/3a/40
+F d4 4 /a/66/51
+F d8 4 /a/78/06
+F e8 2 /a/00/59
+F ec 2 /a/0b/20
+F f0 2 /a/00/59
+F f4 2 /a/0b/20
+F f8 2 /a/00/59
+F fc 2 /a/0b/20
+F 100 2 /a/00/59
+F 104 2 /a/0b/20
+F 58 4 /a/06/49
+card /a/7d/16
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

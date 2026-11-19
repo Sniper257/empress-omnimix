@@ -1,0 +1,17 @@
+name ROTTEL-DA-SUN
+sixth 28
+record record.bin
+card /a/70/13
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/74/19
+F c4 4 /a/3b/25
+F c8 4 /a/83/53
+F d0 4 /a/67/3c
+F d4 4 /a/50/21
+F d8 4 /a/4d/03
+F e8 2 /a/60/13
+F ec 2 /a/29/0b
+F 58 4 /a/2e/05

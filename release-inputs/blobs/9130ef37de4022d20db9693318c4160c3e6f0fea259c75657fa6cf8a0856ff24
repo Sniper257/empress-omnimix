@@ -1,0 +1,17 @@
+name NO.13
+ninth 86
+record record.bin
+F c0 4 /a/2b/26
+F c4 4 /a/7b/56
+F c8 4 /a/6b/27
+F cc 4 /a/01/39
+F d0 4 /a/6a/35
+F d4 4 /a/06/1c
+F e8 2 /a/58/08
+F ec 2 /a/1d/21
+F 58 4 /a/3b/3f
+card /a/2a/11
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

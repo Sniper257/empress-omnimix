@@ -1,0 +1,18 @@
+name ABYSS -THE HEAVENS REMIX-
+happysky 74
+record record.bin
+F c0 4 /a/7e/0d
+F c4 4 /a/76/0f
+F c8 4 /a/5f/14
+F cc 4 /a/56/3d
+F d0 4 /a/6e/14
+F d4 4 /a/25/1e
+F d8 4 /a/85/58
+F e8 2 /a/82/5b
+F ec 2 /a/61/5a
+F 58 4 /a/62/4a
+card /a/00/3c
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

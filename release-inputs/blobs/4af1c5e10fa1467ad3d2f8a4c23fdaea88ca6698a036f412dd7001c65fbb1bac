@@ -1,0 +1,22 @@
+name NEBULA GRASPER (OLD CS8)
+eighth 86
+record record.bin
+card /a/1b/2a
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/6f/1a
+F c4 4 /a/5d/10
+F c8 4 /a/51/29
+F cc 4 /a/56/5f
+F d0 4 /a/75/1d
+F d4 4 /a/43/0c
+F e8 2 /a/82/13
+F ec 2 /a/84/52
+F ee 2 /a/84/52
+F f4 2 /a/25/18
+F f6 2 /a/09/13
+F fc 2 /a/25/18
+F fe 2 /a/25/18
+F 58 4 /a/6f/57

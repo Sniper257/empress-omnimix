@@ -1,0 +1,29 @@
+name SCRIPTED CONNECTION N
+happysky 78
+record record.bin
+F c0 4 /a/18/0a
+F c4 4 /a/41/4f
+F c8 4 /a/29/3f
+F cc 4 /a/50/5e
+F d0 4 /a/32/04
+F d4 4 /a/5f/06
+F d8 4 /a/16/06
+F e8 2 /a/7b/07
+F ea 2 /a/7b/07
+F ec 2 /a/5e/32
+F ee 2 /a/5e/32
+F f0 2 /a/7b/07
+F f2 2 /a/7b/07
+F f4 2 /a/5e/32
+F f6 2 /a/5e/32
+F f8 2 /a/7b/07
+F fa 2 /a/7b/07
+F fc 2 /a/5e/32
+F fe 2 /a/5e/32
+F 58 4 /a/5e/3d
+card /a/6d/1e
+D 0 /a/67/44
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

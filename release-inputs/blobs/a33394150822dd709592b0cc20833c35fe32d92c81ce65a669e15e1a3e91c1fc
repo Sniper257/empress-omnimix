@@ -1,0 +1,17 @@
+name WEL
+gold 92
+record record.bin
+F c0 4 /a/65/51
+F c4 4 /a/12/18
+F c8 4 /a/74/0f
+F cc 4 /a/6b/3b
+F d0 4 /a/3a/4f
+F d4 4 /a/3a/0f
+F e8 2 /a/72/44
+F ec 2 /a/23/48
+F 58 4 /a/55/18
+card /a/45/09
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

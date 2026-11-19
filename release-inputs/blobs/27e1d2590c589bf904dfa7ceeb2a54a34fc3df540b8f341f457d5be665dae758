@@ -1,0 +1,18 @@
+name LOVE IS DROWING
+ninth 9
+record record.bin
+F c0 4 /a/09/5a
+F c4 4 /a/13/52
+F c8 4 /a/13/08
+F cc 4 /a/54/4e
+F d0 4 /a/7d/1b
+F d4 4 /a/30/4f
+F d8 4 /a/71/41
+F e8 2 /a/40/5c
+F ec 2 /a/1f/4e
+F 58 4 /a/1a/44
+card /a/5a/19
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

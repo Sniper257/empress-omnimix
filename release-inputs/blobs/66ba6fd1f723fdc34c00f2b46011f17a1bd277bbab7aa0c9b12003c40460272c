@@ -1,0 +1,17 @@
+name FESTA DO SOL
+ninth 47
+record record.bin
+F c0 4 /a/57/18
+F c4 4 /a/16/3b
+F c8 4 /a/33/11
+F d0 4 /a/74/2b
+F d4 4 /a/2a/10
+F d8 4 /a/6e/31
+F e8 2 /a/04/41
+F ec 2 /a/62/41
+F 58 4 /a/86/0f
+card /a/38/19
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

@@ -1,0 +1,17 @@
+name COMMENT TE DIRE ADIEU
+sixth 48
+record record.bin
+card /a/76/47
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/56/43
+F c4 4 /a/6f/13
+F c8 4 /a/27/00
+F d0 4 /a/1c/27
+F d4 4 /a/6a/36
+F d8 4 /a/86/0d
+F e8 2 /a/22/2e
+F ec 2 /a/2e/1d
+F 58 4 /a/14/1a

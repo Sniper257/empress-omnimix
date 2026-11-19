@@ -1,0 +1,20 @@
+name ICARUS
+djt 17
+record record.bin
+F c0 4 /a/5a/54
+F c4 4 /a/00/17
+F c8 4 /a/05/0b
+F cc 4 /a/70/05
+F d0 4 /a/13/34
+F d4 4 /a/3d/2b
+F d8 4 /a/42/2a
+F e0 4 /a/55/5a
+F e8 2 /a/6b/19
+F ec 2 /a/2b/48
+F 58 4 /a/03/3e
+card /a/3b/4a
+D 0 /a/14/5b
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

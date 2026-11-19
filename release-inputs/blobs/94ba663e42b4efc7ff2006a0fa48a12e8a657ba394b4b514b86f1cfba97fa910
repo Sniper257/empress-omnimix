@@ -1,0 +1,19 @@
+name STATE OF THE ART
+djt 48
+record record.bin
+F c0 4 /a/7e/4e
+F c4 4 /a/06/2e
+F c8 4 /a/32/38
+F cc 4 /a/45/38
+F d0 4 /a/66/00
+F d4 4 /a/64/2e
+F d8 4 /a/6f/0b
+F e4 4 /a/25/41
+F e8 2 /a/6b/1b
+F ec 2 /a/71/07
+F 58 4 /a/1b/53
+card /a/00/3a
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

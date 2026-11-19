@@ -1,0 +1,26 @@
+name JELLY KISS
+usa 46
+record record.bin
+F c0 4 /a/32/00
+F c4 4 /a/68/0f
+F d0 4 /a/45/32
+F d4 4 /a/3c/13
+F d8 4 /a/29/02
+F e8 2 /a/37/45
+F ec 2 /a/6d/4d
+F ee 2 /a/2c/28
+F f0 2 /a/37/45
+F f4 2 /a/0a/00
+F f6 2 /a/38/0b
+F f8 2 /a/37/45
+F fc 2 /a/0a/00
+F fe 2 /a/38/0b
+F 100 2 /a/37/45
+F 104 2 /a/2c/28
+F 106 2 /a/38/0b
+F 58 4 /a/39/39
+card /a/20/2f
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

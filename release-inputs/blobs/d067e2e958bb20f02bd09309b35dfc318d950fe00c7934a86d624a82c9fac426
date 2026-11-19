@@ -1,0 +1,692 @@
+# Patches in this base build
+
+Runtime instructions are validated and applied to EE RAM at launcher START, not written into the input ISO.
+
+Input EXE SHA256: `0daef4193e51ed3c49f49db9d84aa673d9aab783d004bec4fa6a02f6d520914f`.
+
+The input ISO is never modified. The installed EXE receives only validated rating-byte updates; the launcher applies code hooks in RAM.
+
+## Storage
+
+Map native disc reads and module paths to this installation; original judgement timing stays unchanged.
+
+| Address | Kind | Expected → replacement/target | Hook or module |
+| --- | --- | --- | --- |
+| `12f7ac` | W | `0000202d → 24040001` |  |
+| `12f7bc` | W | `0c046146 → 24020001` |  |
+| `12f7d8` | W | `0c046132 → 24020001` |  |
+| `12f814` | W | `0000202d → 24040001` |  |
+| `14c984` | J | `0c0478c6 → 7ca658` |  |
+| `14c9b0` | J | `0c0478ec → 7ca670` |  |
+| `14ca74` | J | `0c0476e4 → 7ca618` |  |
+| `14ca90` | J | `0c0478ac → 7ca638` |  |
+| `14caa4` | J | `0c0478b8 → 7ca640` |  |
+| `14cab4` | J | `0c0478de → 7ca668` |  |
+| `14cad8` | J | `0c0478de → 7ca668` |  |
+| `14cb8c` | J | `0c0476e4 → 7ca618` |  |
+| `14cbac` | J | `0c04776c → 7ca120` |  |
+| `14cbbc` | J | `0c0474de → 7ca610` |  |
+| `14cbd4` | J | `0c0474de → 7ca610` |  |
+| `14cc18` | J | `0c047818 → 7ca620` |  |
+| `14ccac` | J | `0c0477e4 → 7ca630` |  |
+| `14cda8` | J | `0c0478de → 7ca668` |  |
+| `14cdc8` | J | `0c0478de → 7ca668` |  |
+
+## Memory
+
+Reserve runtime/tables outside the native heap and manage imported graphics within that budget.
+
+| Address | Kind | Expected → replacement/target | Hook or module |
+| --- | --- | --- | --- |
+| `1001d0` | W | `3c04007c → 3c040094` |  |
+| `152dc4` | W | `3c03007c → 3c030094` |  |
+| `2360f4` | W | `007c4700 → 00944700` |  |
+
+## Assets
+
+Load large imported BGA graphics and retire them at native scene boundaries; keep source video and audio.
+
+| Address | Kind | Expected → replacement/target | Hook or module |
+| --- | --- | --- | --- |
+| `131bd8` | W | `0c04e92c → 0c1f185c` | asset_movie_free_hook |
+| `1322e4` | W | `0c04e930 → 0c1f1841` | asset_movie_alloc_hook |
+| `135270` | W | `3c0a0035 → 081f1808` | asset_anim_guard |
+| `135274` | W | `8c650218 → 00000000` | asset_anim_guard |
+| `135460` | W | `00051880 → 081f1817` | asset_length_guard |
+| `135464` | W | `00431021 → 00000000` | asset_length_guard |
+| `135830` | W | `0c04e92c → 0c1f17b7` | asset_release_hook |
+| `1359d0` | W | `27bdfe80 → 081f179c` | asset_unpack_hook |
+| `1359d4` | W | `ffbf0070 → 00000000` | asset_unpack_hook |
+| `14cb78` | W | `0c04efb4 → 0c1f18ad` | asset_queue_hook |
+| `1f1258` | W | `0c04e908 → 0c1f17d2` | asset_workspace_exit_hook |
+| `1f212c` | W | `0c04e908 → 0c1f17d2` | asset_workspace_exit_hook |
+| `1f2f40` | W | `0c04e908 → 0c1f17d2` | asset_workspace_exit_hook |
+| `1f5e7c` | W | `0c04e908 → 0c1f1826` | asset_workspace_hook |
+
+## Saves
+
+Connect native SAVE/LOAD and autosave to recoverable imported-score checkpoints; native AUTOSAVE remains the enable switch.
+
+| Address | Kind | Expected → replacement/target | Hook or module |
+| --- | --- | --- | --- |
+| `17a390` | W | `27bdffa0 → 081f1af6` | save_result_exit_hook |
+| `17a394` | W | `24020005 → 00000000` | save_result_exit_hook |
+| `1a0bc0` | W | `27bdffb0 → 081f1ac0` | save_result_hook |
+| `1a0bc4` | W | `ffbf0040 → 00000000` | save_result_hook |
+| `1d2260` | W | `03e00008 → 081f1a1d` | save_profile_role_hook |
+| `1d2264` | W | `af8487b4 → 00000000` | save_profile_role_hook |
+| `1d2730` | W | `27bdfff0 → 081f1a02` | save_profile_startup_hook |
+| `1d2734` | W | `3c020079 → 00000000` | save_profile_startup_hook |
+| `1d2eb0` | W | `27bdfff0 → 081f1a6f` | save_load_hook |
+| `1d2eb4` | W | `3c020079 → 00000000` | save_load_hook |
+| `1d32b0` | W | `27bdfff0 → 081f1a54` | save_write_hook |
+| `1d32b4` | W | `3c020079 → 00000000` | save_write_hook |
+| `1d43e0` | W | `27bdffa0 → 081f19e7` | save_profile_presence_hook |
+| `1d43e4` | W | `3c060027 → 00000000` | save_profile_presence_hook |
+| `1d4510` | W | `27bdffc0 → 081f1aa5` | save_manual_hook |
+| `1d4514` | W | `3c020079 → 00000000` | save_manual_hook |
+| `1d50e0` | W | `27bdffc0 → 081f1a8a` | save_auto_hook |
+| `1d50e4` | W | `ffbf0030 → 00000000` | save_auto_hook |
+| `1d6d40` | W | `27bdff50 → 081f1adb` | save_message_hook |
+| `1d6d44` | W | `3c020026 → 00000000` | save_message_hook |
+
+## Audio
+
+Dispatch the existing sound worker before the frame wait on queued PLAY input requests; one wake per loop, native frame wait, input/judgement, IOP timer and stream clocks retained.
+
+| Address | Kind | Expected → replacement/target | Hook or module |
+| --- | --- | --- | --- |
+| `1519e0` | W | `0c043b28 → 0c1f1b62` | ad_frame_wait_hook |
+| `1519f0` | W | `0c04fd6c → 0c1f1b7d` | ad_wake_hook |
+| `1e8944` | W | `0c050098 → 0c1f1b98` | ad_request_hook |
+| `1e9028` | W | `0c050098 → 0c1f1b98` | ad_request_hook |
+| `1e9118` | W | `0c050098 → 0c1f1b98` | ad_request_hook |
+| `1e91b8` | W | `0c050098 → 0c1f1b98` | ad_request_hook |
+
+## Fast_slow
+
+Optional native-judgement FAST/SLOW display and per-player counters; shares retry/reset ownership with GAS; disabled by default.
+
+| Address | Kind | Expected → replacement/target | Hook or module |
+| --- | --- | --- | --- |
+| `1e88d4` | W | `0c07b568 → 0c1f1e0b` | fs_key_hook |
+| `1e8fb8` | W | `0c07b568 → 0c1f1e28` | fs_scratch_hook |
+| `1ed5a0` | W | `8f8688f0 → 081f1bc3` | fs_ring_hook |
+| `1ed5a4` | W | `3c07007a → 00000000` | fs_ring_hook |
+| `1fe450` | W | `27bdffc0 → 081f1bde` | fs_play_hook |
+| `1fe454` | W | `ffbf0030 → 00000000` | fs_play_hook |
+| `17c570` | W | `27bdff50 → 081f1d75` | fs_result_hook |
+| `17c574` | W | `ffbf0090 → 00000000` | fs_result_hook |
+| `13bbf0` | W | `27bdffc0 → 081f1d90` | fs_input_hook |
+| `13bbf4` | W | `ffbf0030 → 00000000` | fs_input_hook |
+| `1f6900` | W | `0c0785cc → 0c1f1dcb` | fs_counts_single_hook |
+| `1f6c34` | W | `0c0785cc → 0c1f1deb` | fs_counts_battle_hook |
+| `1fb950` | W | `27bdfe10 → 081f1bfd` | fs_ghost_draw_hook |
+| `1fb954` | W | `ffbf00a0 → 00000000` | fs_ghost_draw_hook |
+
+## Gauge
+
+Optional FREE-only HARD to EASY auto shift, NORMAL promotion and SELECT result views; disabled by default.
+
+| Address | Kind | Expected → replacement/target | Hook or module |
+| --- | --- | --- | --- |
+| `153fec` | W | `0c0400fc → 0c1f14ff` | gsm_menu_hook |
+| `17aaa0` | W | `27bdffe0 → 081f14bb` | gsm_end_hook |
+| `17aaa4` | W | `ffbf0010 → 00000000` | gsm_end_hook |
+| `17e920` | W | `27bdff80 → 081f147f` | gsm_result_hook |
+| `17e924` | W | `ffbf0060 → 00000000` | gsm_result_hook |
+| `17eb18` | W | `0c07656c → 0c1f149b` | gsm_background_hard_hook |
+| `17eee0` | W | `27bdffa0 → 081f145c` | gsm_segment_hook |
+| `17eee4` | W | `ffbf0050 → 00000000` | gsm_segment_hook |
+| `1a112c` | W | `0c081260 → 0c1f151b` | gsm_count_hook |
+| `1a1154` | W | `0c081248 → 0c1f1536` | gsm_sample_hook |
+| `1a11e8` | W | `0c081244 → 0c1f151b` | gsm_count_hook |
+| `1a1284` | W | `0c08122c → 0c1f1551` | gsm_score_sample_hook |
+| `1a12bc` | W | `0c08120c → 0c1f156c` | gsm_rate_sample_hook |
+| `1d95b0` | W | `27bdffd0 → 081f141c` | gsm_hard_hook |
+| `1d95b4` | W | `ffbf0020 → 00000000` | gsm_hard_hook |
+| `1d9610` | W | `27bdffd0 → 081f143c` | gsm_easy_hook |
+| `1d9614` | W | `ffbf0020 → 00000000` | gsm_easy_hook |
+| `1d9f30` | W | `27bdffd0 → 081f14df` | gsm_hard_raw_hook |
+| `1d9f34` | W | `ffbf0020 → 00000000` | gsm_hard_raw_hook |
+| `203490` | W | `27bdffd0 → 081f13c9` | gsm_options_hook |
+| `203494` | W | `3c06007a → 00000000` | gsm_options_hook |
+| `204990` | W | `27bdffc0 → 081f13ff` | gsm_history_hook |
+| `204994` | W | `3083001f → 00000000` | gsm_history_hook |
+| `204d30` | W | `3c02007a → 081f1389` | gsm_update_hook |
+| `204d34` | W | `00041980 → 00000000` | gsm_update_hook |
+| `204d50` | W | `27bdffc0 → 081f13a4` | gsm_init_hook |
+| `204d54` | W | `ffbf0030 → 00000000` | gsm_init_hook |
+| `205200` | W | `27bdffc0 → 081f13e4` | gsm_retry_hook |
+| `205204` | W | `3c02007a → 00000000` | gsm_retry_hook |
+
+## Skin
+
+Independent skin controls and source-frame hooks; native frame and settings are the default.
+
+| Address | Kind | Expected → replacement/target | Hook or module |
+| --- | --- | --- | --- |
+| `135210` | W | `27bdffc0 → 081f25dc` | eighth_anim_hook |
+| `135214` | W | `3c030035 → 00000000` | eighth_anim_hook |
+| `135540` | W | `27bdffe0 → 081f24b4` | tint_hook |
+| `135544` | W | `ffbf0000 → 00000000` | tint_hook |
+| `1e757c` | W | `0c04bf74 → 0c1f261a` | note_hook |
+| `1f66bc` | W | `24140184 → 081f2600` | judge_pos_hook |
+| `1fa880` | W | `0c07e8f8 → 0c1f2507` | frame_setup_hook |
+| `1fafe0` | W | `0c07fdf4 → 0c1f25cb` | eighth_progress_hook |
+| `1faff0` | W | `0c07ed94 → 0c1f25ba` | eighth_turntable_hook |
+| `1fe284` | W | `0c04beb8 → 0c1f2609` | beam_hook |
+| `1fe3ec` | W | `0c04beb8 → 0c1f260c` | beam_scratch_hook |
+| `1ff298` | W | `0c04beb8 → 0c1f2546` | eighth_bomb_hook |
+| `200240` | W | `27bdff70 → 081f2525` | eighth_callback_hook |
+| `200244` | W | `ffbf0060 → 00000000` | eighth_callback_hook |
+
+## Songlist
+
+Stable chart identities, windowed aliases, folders, counters, duplicate visibility and sprite binding.
+
+| Address | Kind | Expected → replacement/target | Hook or module |
+| --- | --- | --- | --- |
+| `25c314` | W | `00154930 → 007c87cc` |  |
+| `18b46c` | J | `0c064668 → 7c8838` |  |
+| `1f2428` | J | `0c07935c → 7c88a4` |  |
+| `1f2cd0` | J | `0c07935c → 7c88a4` |  |
+| `1f2464` | J | `0c0792d0 → 7c8910` |  |
+| `1f2d0c` | J | `0c0792d0 → 7c8910` |  |
+| `1f2ed8` | J | `0c0793ac → 7c897c` |  |
+| `1f2f08` | J | `0c080c54 → 7c89e8` |  |
+| `1f2f10` | J | `0c07ce4c → 7c8a54` |  |
+| `1f5eb8` | J | `0c080d24 → 7c8ac0` |  |
+| `114364` | W | `1000001a → 081f1587` |  |
+| `1fbd24` | W | `0c0785cc → 0c1f1dab` |  |
+| `13bc14` | W | `0c04ee98 → 0c1f1b11` |  |
+| `13b764` | W | `0c046e76 → 0c1f1b2c` |  |
+| `13bc24` | W | `0c04ed88 → 0c1f1b47` |  |
+| `11ec68` | W | `27bdff70 → 081f18cd` | profile_mc_open |
+| `11ec6c` | W | `3c02002b → 00000000` | profile_mc_open |
+| `11f3c8` | W | `27bdff60 → 081f18e3` | profile_mc_info |
+| `11f3cc` | W | `ffb60070 → 00000000` | profile_mc_info |
+| `11f5b8` | W | `27bdff60 → 081f18f9` | profile_mc_dir |
+| `11f5bc` | W | `3c02002b → 00000000` | profile_mc_dir |
+| `11f8d8` | W | `27bdffa0 → 081f190f` | profile_mc_format |
+| `11f8dc` | W | `3c02002b → 00000000` | profile_mc_format |
+| `11f9a8` | W | `27bdff80 → 081f1925` | profile_mc_delete |
+| `11f9ac` | W | `3c02002b → 00000000` | profile_mc_delete |
+| `11fb88` | W | `27bdff60 → 081f193b` | profile_mc_setinfo |
+| `11fb8c` | W | `3c02002b → 00000000` | profile_mc_setinfo |
+| `11fd58` | W | `27bdff70 → 081f1951` | profile_mc_rename |
+| `11fd5c` | W | `3c02002b → 00000000` | profile_mc_rename |
+| `11feb0` | W | `27bdffa0 → 081f1967` | profile_mc_unformat |
+| `11feb4` | W | `3c02002b → 00000000` | profile_mc_unformat |
+| `11ff80` | W | `27bdff90 → 081f197d` | profile_mc_space |
+| `11ff84` | W | `3c02002b → 00000000` | profile_mc_space |
+| `12f834` | W | `0c045ffa → 24020001` |  |
+| `12f854` | W | `0c045ffa → 24020001` |  |
+| `12f874` | W | `0c045ffa → 24020001` |  |
+| `12f894` | W | `0c045ffa → 24020001` |  |
+| `12f8b4` | W | `0c045ffa → 24020001` |  |
+| `12f8d4` | W | `0c045ffa → 24020001` |  |
+| `12f8f4` | W | `0c045ffa → 24020001` |  |
+| `131c00` | W | `0c04e92c → 0c1f1892` |  |
+| `132080` | W | `8c420000 → 0c1f239a` | mv_hook |
+| `132304` | W | `0c04e930 → 0c1f1877` |  |
+| `135720` | W | `8f838440 → 081f248b` | draw_hook |
+| `135724` | W | `3c080035 → 00000000` | draw_hook |
+| `13693c` | W | `0c043bb8 → 0c1f17ed` |  |
+| `1393b0` | W | `3c0d0080 → 3c0d007f` |  |
+| `1393b4` | W | `35ad8080 → 8dad7b68` |  |
+| `139430` | W | `3c0d0080 → 3c0d007f` |  |
+| `13943c` | W | `35ad8080 → 8dad7b68` |  |
+| `139480` | W | `3c0d0080 → 3c0d007f` |  |
+| `13948c` | W | `35ad8080 → 8dad7b68` |  |
+| `1482f0` | W | `8c820194 → 081f1f81` | fhs_ring_hook |
+| `1482f4` | W | `24420001 → 00000000` | fhs_ring_hook |
+| `14cf18` | W | `3c040024 → 081f237d` | st_hook |
+| `14cf1c` | W | `2484c2f0 → 00000000` | st_hook |
+| `14d15c` | W | `3c040024 → 081f238b` | ld_hook |
+| `14d160` | W | `2484c2f0 → 00000000` | ld_hook |
+| `14d300` | W | `0c045c64 → 0000102d` |  |
+| `153fe4` | W | `240407cc → 24040830` |  |
+| `1896d0` | W | `27bdff90 → 081f15ca` | menu_draw_hook |
+| `1896d4` | W | `ffbf0050 → 00000000` | menu_draw_hook |
+| `18a230` | W | `27bdff90 → 081f246a` | window_update_hook |
+| `18a234` | W | `ffbf0060 → 00000000` | window_update_hook |
+| `18a4e0` | W | `04400012 → 081f120a` | lbl_hook1 |
+| `18a508` | W | `28410064 → 2841007d` |  |
+| `18a5b8` | W | `24020063 → 2402007c` |  |
+| `18a63c` | W | `28430063 → 2843007c` |  |
+| `18a7c4` | W | `28610064 → 2861007d` |  |
+| `18af04` | W | `a22206e8 → a22207cc` |  |
+| `18af24` | W | `260506e8 → 260507cc` |  |
+| `18af88` | W | `0440000c → 081f1211` | lbl_hook2 |
+| `18afb0` | W | `28420064 → 2842007d` |  |
+| `18afd4` | W | `0c075ea8 → 0c1f242d` | window_random_hook |
+| `18bb54` | W | `0c07638c → 0c1f133b` | vis_hook |
+| `18bbb4` | W | `a06206e8 → a06207cc` |  |
+| `18bbc4` | W | `26730001 → 0c1f1326` | next_s3 |
+| `18bbc8` | W | `2a62002c → 00000000` | next_s3 |
+| `18bbe0` | W | `264506e8 → 264507cc` |  |
+| `18bc40` | W | `a26206e8 → a26207cc` |  |
+| `18bc60` | W | `264506e8 → 264507cc` |  |
+| `18bcfc` | W | `0c07638c → 0c1f1218` | vcur_hook |
+| `18bedc` | W | `24020063 → 2402007c` |  |
+| `18bf8c` | W | `24040064 → 2404007d` |  |
+| `18c154` | W | `0c075ea8 → 0c1f242d` | window_random_hook |
+| `18c5ac` | W | `24020064 → 2402007d` |  |
+| `18c890` | W | `24020064 → 2402007d` |  |
+| `18c9ec` | W | `28610003 → 0c1f134e` | reo_hook |
+| `18c9f0` | W | `14200086 → 00000000` | reo_hook |
+| `18c9f4` | W | `00000000 → 14200085` |  |
+| `18ca8c` | W | `2642ff9d → 2642ff84` |  |
+| `18cab4` | W | `2442ff9d → 2442ff84` |  |
+| `18d460` | W | `a20206e8 → a20207cc` |  |
+| `18d480` | W | `264506e8 → 264507cc` |  |
+| `18d494` | W | `24030064 → 2403007d` |  |
+| `18d524` | W | `2602ff9c → 2602ff83` |  |
+| `18d594` | W | `24030064 → 2403007d` |  |
+| `18d95c` | W | `2a810063 → 2a81007c` |  |
+| `18d9a4` | W | `2a820063 → 2a82007c` |  |
+| `18dac4` | W | `a26206e8 → a26207cc` |  |
+| `18dae4` | W | `264506e8 → 264507cc` |  |
+| `18db84` | W | `a26206e8 → a26207cc` |  |
+| `18dba4` | W | `264506e8 → 264507cc` |  |
+| `18dc30` | W | `24050064 → 2405007d` |  |
+| `18dc3c` | W | `24050064 → 2405007d` |  |
+| `18dc44` | W | `24030064 → 2403007d` |  |
+| `18e168` | W | `24020064 → 2402007d` |  |
+| `18e590` | W | `28410063 → 2841007c` |  |
+| `18ed9c` | W | `24020064 → 2402007d` |  |
+| `18f1d8` | W | `0c07638c → 0c1f133b` | vis_hook |
+| `18f24c` | W | `a06206e8 → a06207cc` |  |
+| `18f2d8` | W | `a06206e8 → a06207cc` |  |
+| `18f2e8` | W | `26310001 → 0c1f132d` | next_s1 |
+| `18f2ec` | W | `2a22002c → 00000000` | next_s1 |
+| `18f314` | W | `264506e8 → 264507cc` |  |
+| `18fb3c` | W | `24030064 → 2403007d` |  |
+| `18fe2c` | W | `14400002 → 0c1f1355` | rnd_hook |
+| `18fe34` | W | `24110001 → 00000000` |  |
+| `18fea0` | W | `24020064 → 2402007d` |  |
+| `18ff04` | W | `24020063 → 2402007c` |  |
+| `18ff54` | W | `24020064 → 2402007d` |  |
+| `18ffbc` | W | `24020065 → 2402007e` |  |
+| `1902f0` | W | `0c078ce4 → 0c1f12f0` | spr_panel_hook_g |
+| `19032c` | W | `0c078cf4 → 0c1f12d5` | spr_panel_hook_b |
+| `190368` | W | `0c078cd4 → 0c1f130b` | spr_panel_hook_a |
+| `190b1c` | W | `0440007e → 00000000` |  |
+| `190b24` | W | `28410063 → 2841007c` |  |
+| `190b40` | W | `04400075 → 00000000` |  |
+| `190b48` | W | `28410063 → 2841007c` |  |
+| `190b64` | W | `0480006c → 00000000` |  |
+| `190b6c` | W | `28810063 → 2881007c` |  |
+| `190b78` | W | `0c078ce4 → 0c1f12f0` | spr_panel_hook_g |
+| `190ba4` | W | `0480005c → 00000000` |  |
+| `190bac` | W | `28810063 → 2881007c` |  |
+| `190bb8` | W | `0c078cf4 → 0c1f12d5` | spr_panel_hook_b |
+| `190be4` | W | `0480004c → 00000000` |  |
+| `190bec` | W | `28810063 → 2881007c` |  |
+| `190bf8` | W | `0c078cd4 → 0c1f130b` | spr_panel_hook_a |
+| `190e78` | W | `0c07638c → 0c1f133b` | vis_hook |
+| `190eb4` | W | `04400005 → 00000000` |  |
+| `190ebc` | W | `28410064 → 2841007d` |  |
+| `190f58` | W | `24020064 → 2402007d` |  |
+| `19152c` | W | `046000a8 → 24610001` |  |
+| `191530` | W | `00000000 → 102000a7` |  |
+| `191534` | W | `24020064 → 2402007d` |  |
+| `1918a4` | W | `0c084360 → 0c1f11c6` | stat_hook |
+| `1918e0` | W | `0c0844ec → 0c1f23c1` | ft_hook |
+| `19190c` | W | `0c0844ec → 0c1f23c1` | ft_hook |
+| `191930` | W | `0c0844ec → 0c1f23c1` | ft_hook |
+| `191944` | W | `0c0844ec → 0c1f23c1` | ft_hook |
+| `191958` | W | `0c0844ec → 0c1f23c1` | ft_hook |
+| `191c0c` | W | `24130063 → 2413007c` |  |
+| `191c34` | W | `0c07638c → 0c1f133b` | vis_hook |
+| `191d28` | W | `240401a8 → 24040328` |  |
+| `191d34` | W | `240401a8 → 24040328` |  |
+| `191d40` | W | `240401a8 → 24040328` |  |
+| `192018` | W | `0c077118 → 0c1f11c0` | entry_hook |
+| `1920b4` | W | `a24206e8 → a24207cc` |  |
+| `1920d4` | W | `268506e8 → 268507cc` |  |
+| `1925cc` | W | `0c07638c → 0c1f133b` | vis_hook |
+| `192640` | W | `a06206e8 → a06207cc` |  |
+| `1926d0` | W | `a06206e8 → a06207cc` |  |
+| `1926e0` | W | `26100001 → 0c1f1334` | next_s0 |
+| `1926e4` | W | `2a02002c → 00000000` | next_s0 |
+| `19270c` | W | `264506e8 → 264507cc` |  |
+| `1929fc` | W | `2a420063 → 2a42007c` |  |
+| `192a08` | W | `24020063 → 2402007c` |  |
+| `192a40` | W | `0c04c398 → 00000000` |  |
+| `192b3c` | W | `0620012d → 081f11e1` | bpm_hook |
+| `192b44` | W | `2a210063 → 2a21007c` |  |
+| `192eb8` | W | `0c0844ec → 0c1f23c1` | ft_hook |
+| `193178` | W | `2682ff9d → 2682ff84` |  |
+| `1931a0` | W | `24020064 → 2402007d` |  |
+| `1931a4` | W | `24090065 → 2409007e` |  |
+| `1931a8` | W | `24030063 → 2403007c` |  |
+| `1935d4` | W | `24020063 → 2402007c` |  |
+| `193a34` | W | `3463851f → 081f2448` | song_count_hook |
+| `193a38` | W | `00720018 → 00000000` | song_count_hook |
+| `194000` | W | `38420063 → 3842007c` |  |
+| `194308` | W | `24030063 → 2403007c` |  |
+| `194b04` | W | `0660007a → 00000000` |  |
+| `194b0c` | W | `2a610063 → 2a61007c` |  |
+| `194c48` | W | `06600019 → 00000000` |  |
+| `194c50` | W | `2a610063 → 2a61007c` |  |
+| `194c5c` | W | `0c078cf4 → 0c1f12d5` | spr_panel_hook_b |
+| `194d68` | W | `06600034 → 00000000` |  |
+| `194d70` | W | `2a610063 → 2a61007c` |  |
+| `194e68` | W | `06600041 → 00000000` |  |
+| `194e70` | W | `2a610063 → 2a61007c` |  |
+| `19b0d0` | W | `2ca10008 → 081f1f1e` | fhs_ab_hook |
+| `19b0d4` | W | `1020000d → 00000000` | fhs_ab_hook |
+| `19b170` | W | `2ca10008 → 081f1f40` | fhs_ab_set_hook |
+| `19b174` | W | `1020000d → 00000000` | fhs_ab_set_hook |
+| `19b8e0` | W | `27bdffb0 → 081f2332` | sv_b8e0 |
+| `19b8e4` | W | `ffbf0040 → 00000000` | sv_b8e0 |
+| `19bac0` | W | `27bdffb0 → 081f232c` | sv_bac0 |
+| `19bac4` | W | `ffbf0040 → 00000000` | sv_bac0 |
+| `19bca0` | W | `27bdffb0 → 081f2326` | sv_bca0 |
+| `19bca4` | W | `ffbf0040 → 00000000` | sv_bca0 |
+| `1d76b0` | W | `8f8487b4 → 081f1993` | profile_display_0 |
+| `1d76b4` | W | `3c0500c6 → 00000000` | profile_display_0 |
+| `1d76cc` | W | `8f8487b4 → 081f19a6` | profile_display_1 |
+| `1d76d0` | W | `3c0500c6 → 00000000` | profile_display_1 |
+| `1d76f4` | W | `8f8487b4 → 081f19b9` | profile_display_2 |
+| `1d76f8` | W | `3c0500c6 → 00000000` | profile_display_2 |
+| `1d7710` | W | `8f8487b4 → 081f19cc` | profile_display_3 |
+| `1d7714` | W | `3c0500c6 → 00000000` | profile_display_3 |
+| `1d85c0` | W | `03e00008 → 081f1233` | saved_hook |
+| `1db4f0` | W | `27bdffa0 → 081f246c` | window_tick_hook |
+| `1db4f4` | W | `ffbf0050 → 00000000` | window_tick_hook |
+| `1dc120` | W | `29610063 → 2961007c` |  |
+| `1dc354` | W | `28420063 → 2842007c` |  |
+| `1dc758` | W | `28630063 → 2863007c` |  |
+| `1dc7f4` | W | `28610063 → 2861007c` |  |
+| `1dce1c` | W | `24020063 → 2402007c` |  |
+| `1dce2c` | W | `24020064 → 2402007d` |  |
+| `1dce3c` | W | `24020065 → 2402007e` |  |
+| `1dd058` | W | `2a230064 → 2a23007d` |  |
+| `1dd0f0` | W | `2a230064 → 2a23007d` |  |
+| `1dd0fc` | W | `2a210066 → 2a21007f` |  |
+| `1dd108` | W | `24110065 → 2411007e` |  |
+| `1dd11c` | W | `8c7e0468 → 8c7e0404` |  |
+| `1dd3c4` | W | `24020063 → 2402007c` |  |
+| `1dd3d4` | W | `24020064 → 2402007d` |  |
+| `1dd3e4` | W | `24020065 → 2402007e` |  |
+| `1dd4cc` | W | `2a230064 → 2a23007d` |  |
+| `1dd500` | W | `2a230064 → 2a23007d` |  |
+| `1dd50c` | W | `2a210066 → 2a21007f` |  |
+| `1dd518` | W | `24110065 → 2411007e` |  |
+| `1dd52c` | W | `8c710468 → 8c710404` |  |
+| `1dd72c` | W | `24040063 → 2404007c` |  |
+| `1dd74c` | W | `28610063 → 2861007c` |  |
+| `1dd758` | W | `0460004f → 00000000` |  |
+| `1dd974` | W | `24040063 → 2404007c` |  |
+| `1dd988` | W | `2ae10063 → 2ae1007c` |  |
+| `1dd994` | W | `06e00049 → 00000000` |  |
+| `1ddab8` | W | `2ae10063 → 2ae1007c` |  |
+| `1ddbac` | W | `24030063 → 2403007c` |  |
+| `1ddc48` | W | `2a810063 → 2a81007c` |  |
+| `1ddc54` | W | `06800057 → 00000000` |  |
+| `1ddda4` | W | `2a810063 → 2a81007c` |  |
+| `1ddea0` | W | `24030063 → 2403007c` |  |
+| `1ddeb0` | W | `2a610063 → 2a61007c` |  |
+| `1ddebc` | W | `0660005b → 00000000` |  |
+| `1de020` | W | `2a610063 → 2a61007c` |  |
+| `1de0f0` | W | `24030063 → 2403007c` |  |
+| `1dec74` | W | `2a010063 → 2a01007c` |  |
+| `1ded10` | W | `24020065 → 2402007e` |  |
+| `1df118` | W | `28630063 → 2863007c` |  |
+| `1e1970` | W | `03e00008 → 081f2302` | gate_hook |
+| `1e1974` | W | `28820063 → 00000000` | gate_hook |
+| `1e19a0` | W | `24020134 → 081f22cb` | rec_hook |
+| `1e19a4` | W | `00a21818 → 00000000` | rec_hook |
+| `1e3350` | W | `27bdffe0 → 081f12ba` | spr_hook_a |
+| `1e3354` | W | `ffbf0010 → 00000000` | spr_hook_a |
+| `1e3390` | W | `27bdffe0 → 081f129f` | spr_hook_g |
+| `1e3394` | W | `ffbf0010 → 00000000` | spr_hook_g |
+| `1e33d0` | W | `27bdffe0 → 081f1284` | spr_hook_b |
+| `1e33d4` | W | `ffbf0010 → 00000000` | spr_hook_b |
+| `1e3410` | W | `27bdffe0 → 081f1269` | spr_hook_w |
+| `1e3414` | W | `ffbf0010 → 00000000` | spr_hook_w |
+| `1e5a90` | W | `27bdffe0 → 081f1f62` | fhs_velocity_hook |
+| `1e5a94` | W | `ffbf0010 → 00000000` | fhs_velocity_hook |
+| `1e5b80` | W | `27bdff90 → 081f20d4` | fhs_prime_hook |
+| `1e5b84` | W | `ffbf0060 → 00000000` | fhs_prime_hook |
+| `1e65d0` | W | `27bdff70 → 081f20b5` | fhs_chart_hook |
+| `1e65d4` | W | `ffbf0070 → 00000000` | fhs_chart_hook |
+| `1e7998` | W | `0c081750 → 0c1f2150` | lq_note_link_hook |
+| `1e7c28` | W | `0c05a8f0 → 0c1f21d7` | player_note_timing_hook |
+| `1ea870` | W | `27bdffa0 → 081f20f3` | lq_setup_hook |
+| `1ea874` | W | `ffbf0050 → 00000000` | lq_setup_hook |
+| `1f06f0` | W | `27bdffb0 → 081f1e83` | fhs_commit_hook |
+| `1f06f4` | W | `27828978 → 00000000` | fhs_commit_hook |
+| `1f3cc0` | W | `27bdff50 → 081f1ec1` | fhs_cover_hook |
+| `1f3cc4` | W | `24030010 → 00000000` | fhs_cover_hook |
+| `1f4230` | W | `27bdfe40 → 081f1ea2` | fhs_speed_hook |
+| `1f4234` | W | `3c020026 → 00000000` | fhs_speed_hook |
+| `1f5850` | W | `27bdff80 → 081f1e64` | fhs_restore_hook |
+| `1f5854` | W | `ffbf0070 → 00000000` | fhs_restore_hook |
+| `1f5f18` | W | `0c081780 → 0c1f124e` | var_hook |
+| `1f66c0` | W | `1000000c → 2413ffee` |  |
+| `1fac80` | W | `27bdffb0 → 081f1c20` | ca_load_hook |
+| `1fac84` | W | `3c030028 → 00000000` | ca_load_hook |
+| `1fb86c` | W | `0c04c504 → 0c1f1cd2` | ca_turn_hook |
+| `1fbf10` | W | `27bdff30 → 081f1c7d` | ca_cover_top_hook |
+| `1fbf14` | W | `ffbf00a0 → 00000000` | ca_cover_top_hook |
+| `1fbfa0` | W | `0c07d90c → 0c1f1cb7` | ca_cover_gate_hook |
+| `1fc190` | W | `27bdff00 → 081f1c9c` | ca_cover_bottom_hook |
+| `1fc194` | W | `24020002 → 00000000` | ca_cover_bottom_hook |
+| `1fc260` | W | `0c07d90c → 0c1f1cb7` | ca_cover_gate_hook |
+| `1fc464` | W | `0c0785cc → 0c1f205a` | fhs_gn_text_hook |
+| `1fc518` | W | `0c0785cc → 0c1f207a` | fhs_label_text_hook |
+| `1fe48c` | W | `0c05a900 → 0c1f1d09` | cs_judge_visible_hook |
+| `1fe500` | W | `0c07fa3c → 0c1f1d5a` | cs_judge_pgreat_hook |
+| `1fe518` | W | `0c07f9a4 → 0c1f1d3f` | cs_judge_good_hook |
+| `1fe530` | W | `0c07f9a4 → 0c1f1d3f` | cs_judge_good_hook |
+| `1fe548` | W | `0c07f968 → 0c1f1d24` | cs_judge_bad_hook |
+| `1fe560` | W | `0c07f968 → 0c1f1d24` | cs_judge_bad_hook |
+| `1ff340` | W | `27bdff80 → 081f1c5e` | ca_bomb_hit_hook |
+| `1ff344` | W | `ffbf0070 → 00000000` | ca_bomb_hit_hook |
+| `1ff50c` | W | `0c083ed4 → 0c1f259f` | ca_particle_hook |
+| `1ff550` | W | `27bdffd0 → 081f1c3f` | ca_bomb_init_hook |
+| `1ff554` | W | `0000382d → 00000000` | ca_bomb_init_hook |
+| `1ffbb0` | W | `0c08162c → 0c1f209a` | fhs_bar_index_hook |
+| `1ffca8` | W | `0c08162c → 0c1f209a` | fhs_bar_index_hook |
+| `1ffee0` | W | `27bdff70 → 081f1fa0` | fhs_hud0_hook |
+| `1ffee4` | W | `ffbf0060 → 00000000` | fhs_hud0_hook |
+| `2005a0` | W | `27bdff10 → 081f1fde` | fhs_hud2_hook |
+| `2005a4` | W | `ffbf00b0 → 00000000` | fhs_hud2_hook |
+| `200ae0` | W | `27bdff10 → 081f1ffd` | fhs_hud3_hook |
+| `200ae4` | W | `ffbf00b0 → 00000000` | fhs_hud3_hook |
+| `201020` | W | `27bdff10 → 081f201c` | fhs_hud4_hook |
+| `201024` | W | `ffbf00b0 → 00000000` | fhs_hud4_hook |
+| `201560` | W | `27bdff10 → 081f203b` | fhs_hud5_hook |
+| `201564` | W | `ffbf00b0 → 00000000` | fhs_hud5_hook |
+| `204180` | W | `27bdffd0 → 081f1cee` | cs_score_hook |
+| `204184` | W | `ffbf0020 → 00000000` | cs_score_hook |
+| `2058b0` | W | `00041080 → 081f1ee0` | fhs_index_hook |
+| `2058b4` | W | `00441821 → 00000000` | fhs_index_hook |
+| `2058e0` | W | `00041880 → 081f1eff` | fhs_index_set_hook |
+| `2058e4` | W | `00643021 → 00000000` | fhs_index_set_hook |
+| `2059d0` | W | `00041080 → 081f1e45` | lift_hidden_hook |
+| `2059d4` | W | `00441821 → 00000000` | lift_hidden_hook |
+| `205b80` | W | `3c02007a → 081f2131` | lq_allscr_hook |
+| `205b84` | W | `904232c8 → 00000000` | lq_allscr_hook |
+| `205c10` | W | `3c02007a → 081f2112` | lq_hran_hook |
+| `205c14` | W | `8c4232c4 → 00000000` | lq_hran_hook |
+| `210d70` | W | `08084b20 → 081f23f7` | fl_hook |
+| `2113b0` | W | `08084a58 → 081f23dc` | fc_hook |
+| `2113c0` | W | `0808462c → 081f2412` | fo_hook |
+| `2114c4` | W | `0c084d54 → 0c1f23a4` | fb_hook |
+| `2115b4` | W | `0c084d54 → 0c1f23a4` | fb_hook |
+| `21a294` | W | `28630008 → 28630009` |  |
+| `21a6f8` | W | `80570000 → 805701a8` |  |
+| `21a748` | W | `8044002c → 804401e8` |  |
+| `21abd4` | W | `817e0000 → 817e01a8` |  |
+| `21ac08` | W | `8164002c → 816401e8` |  |
+| `21aeec` | W | `ac89008c → ac890228` |  |
+| `21aef4` | W | `248a008c → 248a0228` |  |
+| `21b00c` | W | `80560000 → 805601a8` |  |
+| `21b014` | W | `8044002c → 804401e8` |  |
+| `21b1dc` | W | `8c53008c → 8c530228` |  |
+| `21b38c` | W | `acaa008c → acaa0228` |  |
+| `21b394` | W | `24ab008c → 24ab0228` |  |
+| `21b4b4` | W | `8c72008c → 8c720228` |  |
+| `21b4b8` | W | `26a2002c → 26a201e8` |  |
+| `21b4c0` | W | `2477008c → 24770228` |  |
+| `21b4d0` | W | `82a4002c → 82a401e8` |  |
+| `21b4ec` | W | `82be0000 → 82be01a8` |  |
+| `21b570` | W | `82b50000 → 82b501a8` |  |
+| `21b614` | W | `8c72008c → 8c720228` |  |
+| `21b618` | W | `26a2002c → 26a201e8` |  |
+| `21b620` | W | `2477008c → 24770228` |  |
+| `21b630` | W | `82a4002c → 82a401e8` |  |
+| `21b64c` | W | `82be0000 → 82be01a8` |  |
+| `21b6d0` | W | `82b50000 → 82b501a8` |  |
+| `21b87c` | W | `8c74008c → 8c740228` |  |
+| `21b888` | W | `80520000 → 805201a8` |  |
+| `21b88c` | W | `8044002c → 804401e8` |  |
+| `21b9f4` | W | `0240202d → 264401a8` |  |
+| `21ba04` | W | `2406002c → 24060080` |  |
+| `21ba18` | W | `2644008c → 26440228` |  |
+| `21ba24` | W | `240600b0 → 24060100` |  |
+| `21bf54` | W | `2484002c → 248401e8` |  |
+| `21bf80` | W | `0c04ab52 → 0c1f134c` | wcopy_hook |
+| `21c73c` | W | `04600009 → 00000000` |  |
+| `21c744` | W | `28630063 → 2863007c` |  |
+| `21cc78` | W | `04600009 → 00000000` |  |
+| `21cc80` | W | `28630063 → 2863007c` |  |
+| `21cde8` | W | `0460000b → 00000000` |  |
+| `21cdf0` | W | `28630063 → 2863007c` |  |
+| `21cfe4` | W | `04600009 → 00000000` |  |
+| `21cfec` | W | `28630063 → 2863007c` |  |
+| `21d2c4` | W | `28420063 → 2842007c` |  |
+| `21d444` | W | `04600009 → 00000000` |  |
+| `21d44c` | W | `28630063 → 2863007c` |  |
+| `21d580` | W | `04600009 → 00000000` |  |
+| `21d588` | W | `28630063 → 2863007c` |  |
+| `21d6a4` | W | `04600009 → 00000000` |  |
+| `21d6ac` | W | `28630063 → 2863007c` |  |
+| `21d7e0` | W | `04600009 → 00000000` |  |
+| `21d7e8` | W | `28630063 → 2863007c` |  |
+| `21d900` | W | `04600009 → 00000000` |  |
+| `21d908` | W | `28630063 → 2863007c` |  |
+| `21db74` | W | `04600009 → 00000000` |  |
+| `21db7c` | W | `28630063 → 2863007c` |  |
+| `21dc9c` | W | `04600009 → 00000000` |  |
+| `21dca4` | W | `28630063 → 2863007c` |  |
+| `21ddcc` | W | `04600009 → 00000000` |  |
+| `21ddd4` | W | `28630063 → 2863007c` |  |
+| `21decc` | W | `04600009 → 00000000` |  |
+| `21ded4` | W | `28630063 → 2863007c` |  |
+| `21dfd4` | W | `04600009 → 00000000` |  |
+| `21dfdc` | W | `28630063 → 2863007c` |  |
+| `21e0f4` | W | `04600009 → 00000000` |  |
+| `21e0fc` | W | `28630063 → 2863007c` |  |
+| `21e228` | W | `04e0008d → 00000000` |  |
+| `21e230` | W | `28e30063 → 28e3007c` |  |
+| `21e278` | W | `04e0007b → 00000000` |  |
+| `21e280` | W | `28e30063 → 28e3007c` |  |
+| `21e2b4` | W | `046000ab → 00000000` |  |
+| `21e2bc` | W | `28630063 → 2863007c` |  |
+| `21e364` | W | `04e0009e → 00000000` |  |
+| `21e36c` | W | `28e30063 → 28e3007c` |  |
+| `21e71c` | W | `04800070 → 00000000` |  |
+| `21e724` | W | `28830063 → 2883007c` |  |
+| `21e788` | W | `04600073 → 00000000` |  |
+| `21e790` | W | `28630063 → 2863007c` |  |
+| `21e8a4` | W | `0460004a → 00000000` |  |
+| `21e8ac` | W | `28630063 → 2863007c` |  |
+| `21ea58` | W | `04400045 → 00000000` |  |
+| `21ea60` | W | `28420063 → 2842007c` |  |
+| `21ebb0` | W | `04600057 → 00000000` |  |
+| `21ebb8` | W | `28630063 → 2863007c` |  |
+| `21eccc` | W | `0460002e → 00000000` |  |
+| `21ecd4` | W | `28630063 → 2863007c` |  |
+| `21ee34` | W | `24020063 → 2402007c` |  |
+| `229c14` | W | `062000e4 → 00000000` |  |
+| `229c1c` | W | `2a210063 → 2a21007c` |  |
+| `22ae98` | W | `044001f8 → 00000000` |  |
+| `22aea0` | W | `28410063 → 2841007c` |  |
+| `25f13c` | W | `00000000 → 0000001c` |  |
+
+## Resources
+
+Resolve note counts and graph targets through the catalog; bound native optional-resource readers/writers and include distinct installed charts in DJ POINT aggregates.
+
+| Address | Kind | Expected → replacement/target | Hook or module |
+| --- | --- | --- | --- |
+| `177750` | W | `24020004 → 081f16aa` | resource_rival_graph_a |
+| `177754` | W | `10e2000c → 00000000` | resource_rival_graph_a |
+| `1778c0` | W | `24030004 → 081f16bc` | resource_rival_graph_write |
+| `1778c4` | W | `10e3000c → 00000000` | resource_rival_graph_write |
+| `177970` | W | `24020004 → 081f16ce` | resource_rival_reset |
+| `177974` | W | `10e2000c → 00000000` | resource_rival_reset |
+| `1779f0` | W | `24030004 → 081f16e0` | resource_rival_lamp_write |
+| `1779f4` | W | `10e3000c → 00000000` | resource_rival_lamp_write |
+| `177a60` | W | `24020004 → 081f16f2` | resource_rival_lamp_a |
+| `177a64` | W | `10e2000c → 00000000` | resource_rival_lamp_a |
+| `177ad0` | W | `24020004 → 081f1704` | resource_rival_score_a |
+| `177ad4` | W | `10e2000c → 00000000` | resource_rival_score_a |
+| `179c30` | W | `24030004 → 081f1716` | resource_rival_graph_b |
+| `179c34` | W | `10e3000c → 00000000` | resource_rival_graph_b |
+| `179dc0` | W | `24030004 → 081f1728` | resource_rival_lamp_b |
+| `179dc4` | W | `10e3000c → 00000000` | resource_rival_lamp_b |
+| `179e50` | W | `24030004 → 081f173a` | resource_rival_score_b |
+| `179e54` | W | `10e3000c → 00000000` | resource_rival_score_b |
+| `198fe0` | W | `00061940 → 081f176f` | resource_history_prepare |
+| `198fe4` | W | `3c010001 → 00000000` | resource_history_prepare |
+| `1d88c0` | W | `27bdffc0 → 081f175d` | resource_favorite_get |
+| `1d88c4` | W | `ffbf0030 → 00000000` | resource_favorite_get |
+| `1d8960` | W | `27bdffb0 → 081f1766` | resource_favorite_set |
+| `1d8964` | W | `ffbf0040 → 00000000` | resource_favorite_set |
+| `1e1a60` | W | `27bdff90 → 081f1674` | resource_profile_rebuild_hook |
+| `1e1a64` | W | `0000282d → 00000000` | resource_profile_rebuild_hook |
+| `1e1d90` | W | `27bdffb0 → 081f168f` | resource_profile_baseline_hook |
+| `1e1d94` | W | `ffbf0040 → 00000000` | resource_profile_baseline_hook |
+| `1e3650` | W | `27bdffc0 → 081f161b` | resource_graph_target_hook |
+| `1e3654` | W | `ffbf0030 → 00000000` | resource_graph_target_hook |
+| `1e3700` | W | `27bdffb0 → 081f1636` | resource_note_count_hook |
+| `1e3704` | W | `ffbf0040 → 00000000` | resource_note_count_hook |
+| `1e3cf0` | W | `27bdffc0 → 081f177b` | resource_legacy_chart |
+| `1e3cf4` | W | `ffbf0030 → 00000000` | resource_legacy_chart |
+| `216cb0` | W | `00061080 → 081f1787` | resource_cached_rival_delta |
+| `216cb4` | W | `3c030002 → 00000000` | resource_cached_rival_delta |
+| `216d50` | W | `27bdffb0 → 081f1793` | resource_cached_grade_delta |
+| `216d54` | W | `ffbf0040 → 00000000` | resource_cached_grade_delta |
+| `22ccc0` | W | `3c09007b → 081f1600` | ranking_evaluate_hook |
+| `22ccc4` | W | `3c07007b → 00000000` | ranking_evaluate_hook |
+| `22ce90` | W | `8f848aac → 081f15e5` | ranking_load_hook |
+| `22ce94` | W | `24020001 → 00000000` | ranking_load_hook |
+
+## Retry
+
+FREE exit/failure tap START draws a new arrangement and SELECT retains the realized lane maps through the native I/O-draining retry path. RESULT Continue with held SELECT retains maps; normal result saving and native held exit remain intact.
+
+| Address | Kind | Expected → replacement/target | Hook or module |
+| --- | --- | --- | --- |
+| `17a7b8` | W | `0c087d30 → 0c1f21a1` | qr_choice_hook |
+| `1a16cc` | W | `0c07c85c → 0c1f216b` | qr_play_hook |
+| `1a17d4` | W | `0c07d5e8 → 0c1f21bc` | qr_continue_hook |
+| `1f2b84` | W | `0c07d3c8 → 0c1f2186` | qr_decision_hook |
+| `226dec` | W | `0c07c85c → 0c1f216b` | qr_play_hook |
+
+## Unlock
+
+Expose installed songs/charts and all native CUSTOMIZE items without writing unlock bits to the memory card; native category/item validation, selections and NEW flags remain intact.
+
+| Address | Kind | Expected → replacement/target | Hook or module |
+| --- | --- | --- | --- |
+| `196ad4` | W | `90420004 → 24020001` |  |
+| `19cdd0` | W | `90840003 → 03e00008` |  |
+| `19cdd4` | W | `24030001 → 24020001` |  |
+
+## Difficulty metadata
+
+21 level-byte changes from the offline snapshot; chart notes, slot assignments and BEGINNER ratings stay unchanged.
+
+## Validation limits
+
+- USB boot and selected 2P AUTO charts passed on SCPH-50004; this is not universal device/scene qualification.
+- R157 Cyber allocation and earliest FHS/LIFT changes still await hardware acceptance.
+- This documents static recipes; relocated folder/catalog tables are also built from installed data at START.

@@ -1,0 +1,21 @@
+name JELLY KISS (CS 8TH)
+eighth 43
+record record.bin
+card /a/57/04
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/62/07
+F c4 4 /a/4f/5d
+F d0 4 /a/5b/2a
+F d4 4 /a/31/5b
+F e8 2 /a/28/59
+F ea 2 /a/60/00
+F ec 2 /a/15/3a
+F ee 2 /a/02/07
+F f8 2 /a/0c/35
+F fa 2 /a/5d/02
+F fc 2 /a/78/1c
+F fe 2 /a/2d/57
+F 58 4 /a/14/1c

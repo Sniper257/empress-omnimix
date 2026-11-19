@@ -1,0 +1,17 @@
+name SHOOT'EM ALL
+distorted 91
+record record.bin
+F c0 4 /a/78/5a
+F c4 4 /a/49/42
+F c8 4 /a/6b/1d
+F cc 4 /a/5f/13
+F d0 4 /a/5d/4a
+F d4 4 /a/09/46
+F e8 2 /a/31/0c
+F ec 2 /a/82/0b
+F 58 4 /a/41/2c
+card /a/42/47
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

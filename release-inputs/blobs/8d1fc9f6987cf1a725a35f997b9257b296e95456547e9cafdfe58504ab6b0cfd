@@ -1,0 +1,18 @@
+name RASPBERRY HEART
+red 50
+record record.bin
+F c0 4 /a/60/05
+F c4 4 /a/81/5e
+F c8 4 /a/63/29
+F cc 4 /a/2d/28
+F d0 4 /a/12/2b
+F d4 4 /a/7e/24
+F d8 4 /a/49/13
+F e8 2 /a/6b/0c
+F ec 2 /a/39/5f
+F 58 4 /a/52/13
+card /a/47/47
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

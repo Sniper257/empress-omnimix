@@ -1,0 +1,18 @@
+name THE EARTH LIGHT (CS 8TH)
+eighth 78
+record record.bin
+card /a/7e/0a
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/30/33
+F c4 4 /a/05/0a
+F c8 4 /a/5d/13
+F cc 4 /a/2f/5a
+F d0 4 /a/24/0c
+F d4 4 /a/3d/19
+F e8 2 /a/1d/49
+F ec 2 /a/75/0c
+F 58 4 /a/27/3f
+D 0 /a/4e/2d

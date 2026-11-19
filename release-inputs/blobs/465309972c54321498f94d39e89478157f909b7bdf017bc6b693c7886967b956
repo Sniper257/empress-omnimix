@@ -1,0 +1,24 @@
+name ERA (NOSTALMIX)
+usa 36
+record record.bin
+F c0 4 /a/2f/5c
+F c4 4 /a/4d/18
+F c8 4 /a/48/20
+F cc 4 /a/3e/11
+F d0 4 /a/7a/17
+F d4 4 /a/56/4e
+F d8 4 /a/3c/1c
+F e8 2 /a/11/30
+F ec 2 /a/5c/0b
+F f0 2 /a/11/30
+F f4 2 /a/5c/0b
+F f8 2 /a/11/30
+F fc 2 /a/5c/0b
+F 100 2 /a/11/30
+F 104 2 /a/5c/0b
+F 58 4 /a/64/3f
+card /a/79/58
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

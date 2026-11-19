@@ -1,0 +1,19 @@
+name OVER THE CLOUDS
+seventh 70
+record record.bin
+card /a/0c/3e
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/71/47
+F c4 4 /a/04/2a
+F c8 4 /a/37/20
+F cc 4 /a/48/58
+F d0 4 /a/4c/54
+F d4 4 /a/0f/15
+F d8 4 /a/01/3c
+F e8 2 /a/76/3b
+F ec 2 /a/1e/5a
+F 58 4 /a/56/3c
+D 0 /a/09/3d

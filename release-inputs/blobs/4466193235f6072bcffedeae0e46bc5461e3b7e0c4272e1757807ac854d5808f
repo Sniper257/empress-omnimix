@@ -1,0 +1,17 @@
+name QUANTUM TELEPORTATION
+distorted 93
+record record.bin
+F c0 4 /a/81/10
+F c4 4 /a/3b/40
+F c8 4 /a/20/35
+F cc 4 /a/6f/29
+F d0 4 /a/66/57
+F d4 4 /a/57/5c
+F e8 2 /a/37/57
+F ec 2 /a/81/00
+F 58 4 /a/77/3f
+card /a/00/53
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

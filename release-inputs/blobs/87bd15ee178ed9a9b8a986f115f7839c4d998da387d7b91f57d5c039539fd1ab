@@ -1,0 +1,16 @@
+name DUAL CONTROL
+eighth 6
+record record.bin
+card /a/51/53
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/10/4f
+F c4 4 /a/5e/03
+F c8 4 /a/2f/20
+F d0 4 /a/00/20
+F d4 4 /a/1a/37
+F e8 2 /a/87/30
+F ec 2 /a/82/1e
+F 58 4 /a/68/41

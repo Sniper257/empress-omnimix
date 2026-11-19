@@ -1,0 +1,19 @@
+name GET ON BEAT(WILD STYLE)
+sixth 21
+record record.bin
+card /a/7e/27
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/70/22
+F c4 4 /a/68/10
+F c8 4 /a/79/0a
+F cc 4 /a/5f/1c
+F d0 4 /a/25/2d
+F d4 4 /a/1c/57
+F d8 4 /a/6f/27
+F e8 2 /a/71/49
+F ec 2 /a/0e/26
+F 58 4 /a/1d/23
+D 0 /a/1d/3f

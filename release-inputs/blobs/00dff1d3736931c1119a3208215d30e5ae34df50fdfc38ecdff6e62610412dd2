@@ -1,0 +1,17 @@
+name MOON RACE
+happysky 28
+record record.bin
+F c0 4 /a/81/5b
+F c4 4 /a/67/29
+F c8 4 /a/03/0f
+F d0 4 /a/7a/50
+F d4 4 /a/0b/3c
+F d8 4 /a/69/1c
+F e8 2 /a/15/29
+F ec 2 /a/65/1d
+F 58 4 /a/2a/2a
+card /a/6a/3e
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

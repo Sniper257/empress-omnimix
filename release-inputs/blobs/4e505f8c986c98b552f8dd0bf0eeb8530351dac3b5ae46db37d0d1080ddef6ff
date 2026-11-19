@@ -1,0 +1,18 @@
+name in my eyes
+fifth 44
+record record.bin
+card /a/4b/30
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/31/13
+F c4 4 /a/3a/43
+F c8 4 /a/79/19
+F cc 4 /a/6f/48
+F d0 4 /a/80/33
+F d4 4 /a/3c/18
+F d8 4 /a/0f/3d
+F e8 2 /a/57/3a
+F ec 2 /a/4f/4c
+F 58 4 /a/10/44

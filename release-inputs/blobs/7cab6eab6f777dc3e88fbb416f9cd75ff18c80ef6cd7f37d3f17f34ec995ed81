@@ -1,0 +1,17 @@
+name BOUNDARY
+tenth 12
+record record.bin
+F c0 4 /a/87/32
+F c4 4 /a/72/04
+F c8 4 /a/2f/3c
+F cc 4 /a/83/01
+F d0 4 /a/49/31
+F d4 4 /a/68/12
+F e8 2 /a/23/2a
+F ec 2 /a/34/41
+F 58 4 /a/33/45
+card /a/27/52
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

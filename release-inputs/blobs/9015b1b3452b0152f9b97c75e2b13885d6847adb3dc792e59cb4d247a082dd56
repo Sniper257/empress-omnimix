@@ -1,0 +1,18 @@
+name WISH(EUROBEAT MIX)
+distorted 47
+record record.bin
+F c0 4 /a/1b/3d
+F c4 4 /a/25/14
+F c8 4 /a/3c/51
+F cc 4 /a/13/5b
+F d0 4 /a/84/3a
+F d4 4 /a/80/3d
+F d8 4 /a/04/27
+F e8 2 /a/0e/1b
+F ec 2 /a/63/3d
+F 58 4 /a/5e/3c
+card /a/73/5d
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

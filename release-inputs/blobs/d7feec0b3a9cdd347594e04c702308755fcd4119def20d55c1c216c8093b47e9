@@ -1,0 +1,19 @@
+name VIRTUAL MIND
+fifth 54
+record record.bin
+card /a/4b/02
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/78/4f
+F c4 4 /a/2b/1d
+F c8 4 /a/23/10
+F cc 4 /a/22/0b
+F d0 4 /a/21/5e
+F d4 4 /a/3e/00
+F d8 4 /a/10/02
+F e8 2 /a/58/33
+F ec 2 /a/57/23
+F 58 4 /a/63/2b
+D 0 /a/82/18

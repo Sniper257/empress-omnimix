@@ -1,0 +1,17 @@
+name DOUBLE LOVING HEART
+distorted 14
+record record.bin
+F c0 4 /a/44/15
+F c4 4 /a/74/14
+F c8 4 /a/76/05
+F d0 4 /a/70/31
+F d4 4 /a/10/11
+F d8 4 /a/3b/5f
+F e8 2 /a/19/0e
+F ec 2 /a/70/59
+F 58 4 /a/08/4c
+card /a/4d/0d
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

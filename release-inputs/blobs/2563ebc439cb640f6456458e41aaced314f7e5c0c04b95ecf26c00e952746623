@@ -1,0 +1,17 @@
+name SYMPTOM
+djt 89
+record record.bin
+F c0 4 /a/75/34
+F c4 4 /a/05/54
+F c8 4 /a/20/00
+F cc 4 /a/7c/33
+F d0 4 /a/83/2a
+F d4 4 /a/58/4f
+F e8 2 /a/70/10
+F ec 2 /a/2b/09
+F 58 4 /a/1a/4a
+card /a/30/0d
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

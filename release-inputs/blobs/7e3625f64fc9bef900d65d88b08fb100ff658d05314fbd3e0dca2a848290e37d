@@ -1,0 +1,17 @@
+name Rise'n Beauty (DJT)
+djt 62
+record record.bin
+F c0 4 /a/43/38
+F c4 4 /a/7c/11
+F c8 4 /a/73/33
+F cc 4 /a/5f/25
+F d0 4 /a/40/31
+F d4 4 /a/46/05
+F e8 2 /a/57/27
+F ec 2 /a/63/1e
+F 58 4 /a/6d/5d
+card /a/80/47
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

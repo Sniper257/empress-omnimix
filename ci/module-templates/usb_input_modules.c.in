@@ -1,0 +1,6 @@
+@ARRAY(mui_usbd)@
+
+unsigned mui_usbd_size=sizeof mui_usbd;
+@ARRAY(mui_hid)@
+
+unsigned mui_hid_size=sizeof mui_hid;

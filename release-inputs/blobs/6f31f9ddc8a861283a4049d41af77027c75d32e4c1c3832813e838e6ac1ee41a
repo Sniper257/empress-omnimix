@@ -1,0 +1,17 @@
+name HORMIGA OBRERA
+eighth 17
+record record.bin
+card /a/1c/21
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/06/47
+F c4 4 /a/0d/5b
+F c8 4 /a/4e/44
+F cc 4 /a/53/3b
+F d0 4 /a/46/2f
+F d4 4 /a/7e/18
+F e8 2 /a/2d/3f
+F ec 2 /a/3c/45
+F 58 4 /a/68/41

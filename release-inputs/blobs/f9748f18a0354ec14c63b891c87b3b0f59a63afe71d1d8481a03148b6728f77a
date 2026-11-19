@@ -1,0 +1,23 @@
+name Spin the disc
+usa 59
+record record.bin
+F c0 4 /a/4e/16
+F c4 4 /a/2a/4a
+F c8 4 /a/4a/50
+F d0 4 /a/12/1c
+F d4 4 /a/76/3e
+F d8 4 /a/53/3c
+F e8 2 /a/4d/56
+F ec 2 /a/5d/3d
+F f0 2 /a/4d/56
+F f4 2 /a/5d/3d
+F f8 2 /a/4d/56
+F fc 2 /a/5d/3d
+F 100 2 /a/4d/56
+F 104 2 /a/5d/3d
+F 58 4 /a/77/1a
+card /a/71/3d
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

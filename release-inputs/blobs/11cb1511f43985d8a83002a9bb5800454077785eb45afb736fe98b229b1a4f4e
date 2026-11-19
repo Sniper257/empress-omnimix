@@ -1,0 +1,17 @@
+name GUILTY
+djt 74
+record record.bin
+F c0 4 /a/41/44
+F c4 4 /a/65/03
+F c8 4 /a/01/16
+F cc 4 /a/78/20
+F d0 4 /a/19/07
+F d4 4 /a/1d/5e
+F e8 2 /a/2e/08
+F ec 2 /a/05/1f
+F 58 4 /a/23/19
+card /a/4e/1d
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

@@ -1,0 +1,17 @@
+name SATU
+djt 80
+record record.bin
+F c0 4 /a/40/2c
+F c4 4 /a/5f/5c
+F c8 4 /a/62/5c
+F cc 4 /a/50/4a
+F d0 4 /a/0d/17
+F d4 4 /a/6b/49
+F e8 2 /a/5d/2d
+F ec 2 /a/48/2d
+F 58 4 /a/2d/08
+card /a/11/5e
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

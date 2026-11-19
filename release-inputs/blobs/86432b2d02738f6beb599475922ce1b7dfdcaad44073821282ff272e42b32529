@@ -1,0 +1,17 @@
+name .59
+third 48
+record record.bin
+card /a/40/0d
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/22/34
+F c4 4 /a/5f/2d
+F c8 4 /a/12/41
+F d0 4 /a/12/56
+F d4 4 /a/3a/51
+F e8 2 /a/63/53
+F ec 2 /a/56/38
+F 58 4 /a/03/1e
+D 0 /a/20/20

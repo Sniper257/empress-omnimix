@@ -1,0 +1,18 @@
+name RED NIKITA
+red 60
+record record.bin
+F c0 4 /a/17/46
+F c4 4 /a/08/57
+F c8 4 /a/50/53
+F cc 4 /a/0a/0b
+F d0 4 /a/81/41
+F d4 4 /a/7d/17
+F d8 4 /a/10/09
+F e8 2 /a/05/08
+F ec 2 /a/33/1d
+F 58 4 /a/3d/51
+card /a/54/24
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

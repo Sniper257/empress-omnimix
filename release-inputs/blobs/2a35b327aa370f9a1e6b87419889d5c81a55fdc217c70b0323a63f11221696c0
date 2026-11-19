@@ -1,0 +1,21 @@
+name AND
+gold 2
+record record.bin
+F c0 4 /a/29/4c
+F c4 4 /a/54/3b
+F c8 4 /a/59/50
+F d0 4 /a/1e/22
+F d4 4 /a/5a/0d
+F d8 4 /a/50/01
+F e8 2 /a/11/13
+F ec 2 /a/03/15
+F 58 4 /a/83/30
+card /a/50/55
+D 0 /a/2b/1e
+D 1 /a/6d/49
+D 2 /a/63/1d
+D 3 /a/7d/41
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

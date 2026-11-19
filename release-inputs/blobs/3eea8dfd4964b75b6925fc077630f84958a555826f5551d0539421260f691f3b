@@ -1,0 +1,18 @@
+name APOCALYPSE
+distorted 1
+record record.bin
+F c0 4 /a/37/2d
+F c4 4 /a/85/56
+F c8 4 /a/59/3a
+F cc 4 /a/15/5b
+F d0 4 /a/63/22
+F d4 4 /a/6c/15
+F d8 4 /a/6f/5f
+F e8 2 /a/77/22
+F ec 2 /a/69/55
+F 58 4 /a/79/53
+card /a/3a/16
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

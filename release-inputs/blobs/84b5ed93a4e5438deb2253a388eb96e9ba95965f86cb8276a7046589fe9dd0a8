@@ -1,0 +1,18 @@
+name SEC
+gold 34
+record record.bin
+F c0 4 /a/58/2f
+F c4 4 /a/18/24
+F c8 4 /a/85/40
+F cc 4 /a/38/4b
+F d0 4 /a/31/5c
+F d4 4 /a/2a/4d
+F d8 4 /a/75/37
+F e8 2 /a/51/2e
+F ec 2 /a/07/1d
+F 58 4 /a/29/58
+card /a/06/46
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

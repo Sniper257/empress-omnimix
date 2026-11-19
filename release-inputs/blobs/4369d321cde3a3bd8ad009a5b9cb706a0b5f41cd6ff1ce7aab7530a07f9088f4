@@ -1,0 +1,19 @@
+name SNOW STORM
+pb 15
+record record.bin
+F c0 4 /a/09/01
+F c4 4 /a/78/1f
+F c8 4 /a/5f/3e
+F cc 4 /a/7d/34
+F d0 4 /a/5d/25
+F d4 4 /a/3f/39
+F d8 4 /a/09/59
+F e0 4 /a/61/2e
+F e8 2 /a/38/5f
+F ec 2 /a/48/2a
+F 58 4 /a/47/38
+card /a/3c/0b
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

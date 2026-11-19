@@ -1,0 +1,22 @@
+name YOU REALLY GOT ME
+usa 68
+record record.bin
+F c0 4 /a/41/15
+F c4 4 /a/13/3e
+F d0 4 /a/3d/1e
+F d4 4 /a/05/5d
+F d8 4 /a/49/5b
+F e8 2 /a/83/45
+F ec 2 /a/4b/2b
+F f0 2 /a/83/45
+F f4 2 /a/4b/2b
+F f8 2 /a/83/45
+F fc 2 /a/4b/2b
+F 100 2 /a/83/45
+F 104 2 /a/4b/2b
+F 58 4 /a/7a/0a
+card /a/5a/5b
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

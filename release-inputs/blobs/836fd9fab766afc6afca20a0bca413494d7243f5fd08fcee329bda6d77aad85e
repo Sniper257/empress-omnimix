@@ -1,0 +1,17 @@
+name QUICKENING
+ninth 49
+record record.bin
+F c0 4 /a/1c/34
+F c4 4 /a/05/29
+F c8 4 /a/5f/41
+F cc 4 /a/65/33
+F d0 4 /a/05/38
+F d4 4 /a/53/2c
+F e8 2 /a/3b/49
+F ec 2 /a/20/4b
+F 58 4 /a/68/52
+card /a/81/01
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

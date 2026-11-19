@@ -1,0 +1,17 @@
+name PRESTO
+pb 85
+record record.bin
+F c0 4 /a/78/05
+F c4 4 /a/2e/39
+F c8 4 /a/30/44
+F d0 4 /a/46/40
+F d4 4 /a/5f/54
+F d8 4 /a/77/05
+F e8 2 /a/43/5c
+F ec 2 /a/06/5a
+F 58 4 /a/4a/57
+card /a/74/49
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

@@ -1,0 +1,17 @@
+name Spin the disc
+ninth 67
+record record.bin
+F c0 4 /a/49/21
+F c4 4 /a/08/02
+F c8 4 /a/2a/2e
+F d0 4 /a/57/1a
+F d4 4 /a/02/57
+F d8 4 /a/70/51
+F e8 2 /a/52/59
+F ec 2 /a/32/19
+F 58 4 /a/77/1a
+card /a/76/11
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

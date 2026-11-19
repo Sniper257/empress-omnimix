@@ -1,0 +1,19 @@
+name NEW GENERATION
+djt 28
+record record.bin
+F c0 4 /a/3a/27
+F c4 4 /a/49/44
+F c8 4 /a/4a/04
+F cc 4 /a/20/06
+F d0 4 /a/6f/28
+F d4 4 /a/46/11
+F d8 4 /a/41/5f
+F e0 4 /a/10/33
+F e8 2 /a/1b/32
+F ec 2 /a/5f/00
+F 58 4 /a/29/10
+card /a/19/31
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

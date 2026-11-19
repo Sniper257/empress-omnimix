@@ -1,0 +1,24 @@
+name OUTER LIMITS (CS 8TH)
+eighth 44
+record record.bin
+card /a/49/3d
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/38/4f
+F c4 4 /a/6b/51
+F d0 4 /a/21/2c
+F d4 4 /a/3b/5e
+F d8 4 /a/85/4f
+F e8 2 /a/6a/33
+F ea 2 /a/6a/33
+F ec 2 /a/83/1f
+F ee 2 /a/46/15
+F f8 2 /a/6a/33
+F fa 2 /a/6a/33
+F fc 2 /a/4b/56
+F fe 2 /a/7a/4e
+F 100 2 /a/6a/33
+F 104 2 /a/4b/56
+F 58 4 /a/0c/4d

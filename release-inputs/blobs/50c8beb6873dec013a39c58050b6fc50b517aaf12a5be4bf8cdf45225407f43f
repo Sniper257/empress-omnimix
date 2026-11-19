@@ -1,0 +1,16 @@
+name STILL MY WORDS
+red 70
+record record.bin
+F c0 4 /a/5d/03
+F c4 4 /a/4c/30
+F d0 4 /a/83/35
+F d4 4 /a/3d/35
+F d8 4 /a/3f/51
+F e8 2 /a/7c/21
+F ec 2 /a/40/45
+F 58 4 /a/04/1c
+card /a/11/03
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

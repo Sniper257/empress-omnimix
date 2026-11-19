@@ -1,0 +1,18 @@
+name GRADIUSIC CYBER
+third 32
+record record.bin
+card /a/04/08
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/38/40
+F c4 4 /a/4b/3f
+F c8 4 /a/12/16
+F cc 4 /a/57/03
+F d0 4 /a/29/1e
+F d4 4 /a/3e/0c
+F e8 2 /a/7f/13
+F ec 2 /a/77/2b
+F 58 4 /a/55/14
+D 0 /a/2f/39

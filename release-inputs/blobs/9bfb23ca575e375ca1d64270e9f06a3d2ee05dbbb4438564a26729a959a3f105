@@ -1,0 +1,21 @@
+name SOMETHING WONDERFUL
+fifth 59
+record record.bin
+card /a/63/3f
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/33/3a
+F c4 4 /a/3b/1c
+F d0 4 /a/16/19
+F d4 4 /a/0f/3a
+F e8 2 /a/35/1a
+F ea 2 /a/05/17
+F ec 2 /a/5a/03
+F ee 2 /a/44/1c
+F f8 2 /a/72/57
+F fa 2 /a/17/25
+F fc 2 /a/0a/34
+F fe 2 /a/47/2a
+F 58 4 /a/08/03

@@ -1,0 +1,21 @@
+name THEME OF DENJIN J
+fifth 62
+record record.bin
+card /a/3b/14
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/62/3e
+F c4 4 /a/50/4f
+F d0 4 /a/21/39
+F d4 4 /a/44/44
+F e8 2 /a/73/20
+F ea 2 /a/3b/00
+F ec 2 /a/0e/30
+F ee 2 /a/0e/42
+F f8 2 /a/14/1d
+F fa 2 /a/51/1e
+F fc 2 /a/73/5b
+F fe 2 /a/38/1b
+F 58 4 /a/26/20

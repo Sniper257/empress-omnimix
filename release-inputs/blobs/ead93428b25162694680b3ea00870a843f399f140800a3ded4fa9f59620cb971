@@ -1,0 +1,17 @@
+name Love Is Eternity (OLD CS10)
+tenth 24
+record record.bin
+F c0 4 /a/66/48
+F c4 4 /a/64/5e
+F c8 4 /a/30/2b
+F cc 4 /a/39/56
+F d0 4 /a/16/35
+F d4 4 /a/5a/31
+F e8 2 /a/20/12
+F ec 2 /a/17/4c
+F 58 4 /a/12/5c
+card /a/44/23
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

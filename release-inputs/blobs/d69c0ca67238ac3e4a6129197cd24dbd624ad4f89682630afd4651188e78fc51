@@ -1,0 +1,17 @@
+name MUSIC TO YOUR HEAD
+ninth 60
+record record.bin
+F c0 4 /a/1f/34
+F c4 4 /a/86/4e
+F c8 4 /a/80/0d
+F cc 4 /a/3a/05
+F d0 4 /a/18/1b
+F d4 4 /a/80/0f
+F e8 2 /a/6e/0a
+F ec 2 /a/84/4f
+F 58 4 /a/81/2d
+card /a/0b/0b
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

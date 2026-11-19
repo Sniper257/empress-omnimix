@@ -1,0 +1,18 @@
+name THE BEAUTY OF SILENCE
+seventh 38
+record record.bin
+card /a/28/4b
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/6c/48
+F c4 4 /a/2a/20
+F c8 4 /a/42/02
+F d0 4 /a/56/4b
+F d4 4 /a/69/0a
+F d8 4 /a/59/42
+F e8 2 /a/2a/43
+F ec 2 /a/5f/4c
+F 58 4 /a/05/37
+D 0 /a/0d/5e

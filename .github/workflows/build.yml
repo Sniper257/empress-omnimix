@@ -1,0 +1,81 @@
+name: Build ISO builder
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+jobs:
+  tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-latest, macos-latest]
+        python: ['3.10', '3.14']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: ${{ matrix.python }}
+      - if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y xdelta3
+      - run: python -m pip install Pillow fonttools
+      - run: python ci/audit.py
+      - run: python ci/render_guides.py --check
+      - run: python -m unittest discover -s tools/release -p 'test_*.py'
+  builder:
+    needs: tests
+    runs-on: ubuntu-24.04
+    outputs:
+      release_date: ${{ steps.compile_date.outputs.date }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.13'
+      - run: sudo apt-get update && sudo apt-get install -y zstd
+      - run: docker pull ps2dev/ps2dev@sha256:5476fdfbf34d35eb644fde0a6f6533fb554a4a8171ce53dad7cd1df6077dfb05
+      - run: python ci/build_builder.py --work-dir "$RUNNER_TEMP/megamix-build" --output dist/megamix.zip
+      - name: Record compile date
+        id: compile_date
+        run: echo "date=$(TZ=Europe/Warsaw date +'%d-%m-%Y')" >> "$GITHUB_OUTPUT"
+      - name: Collect build receipt
+        run: cp "$RUNNER_TEMP/megamix-build/build-receipt.json" dist/build-receipt.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: megamix
+          path: |
+            dist/megamix.zip
+            dist/build-receipt.json
+          if-no-files-found: error
+  release:
+    needs: builder
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - name: Publish dated GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_DATE: ${{ needs.builder.outputs.release_date }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh run download "$GITHUB_RUN_ID" --repo "$GITHUB_REPOSITORY" --name megamix --dir dist
+          test -s dist/megamix.zip
+          release_tag="build-${RELEASE_DATE}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          notes_file="$RUNNER_TEMP/release-notes.md"
+          cat > "$notes_file" <<EOF
+          Download and extract **megamix.zip** to use the Python ISO builder.
+          Back up your original saves before testing.
+
+          Compiled on ${RELEASE_DATE} (Europe/Warsaw).
+          Source commit: ${GITHUB_SHA}
+          Build: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}
+          EOF
+          gh release create "$release_tag" dist/megamix.zip \
+            --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --title "$RELEASE_DATE" --notes-file "$notes_file" --draft
+          gh release edit "$release_tag" --repo "$GITHUB_REPOSITORY" --draft=false --latest

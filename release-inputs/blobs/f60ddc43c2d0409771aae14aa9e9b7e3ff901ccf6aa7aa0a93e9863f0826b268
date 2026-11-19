@@ -1,0 +1,17 @@
+name ENTRANCE
+seventh 12
+record record.bin
+card /a/49/06
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/29/0e
+F c4 4 /a/5a/5d
+F c8 4 /a/06/19
+F d0 4 /a/49/3a
+F d4 4 /a/6d/0b
+F d8 4 /a/74/0a
+F e8 2 /a/2d/29
+F ec 2 /a/17/36
+F 58 4 /a/0d/0c

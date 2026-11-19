@@ -1,0 +1,21 @@
+name STICK AROUND
+sixth 66
+record record.bin
+card /a/0b/2a
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/64/3c
+F c4 4 /a/05/4f
+F c8 4 /a/3f/40
+F d0 4 /a/46/3f
+F d4 4 /a/33/1b
+F d8 4 /a/43/5b
+F e8 2 /a/56/57
+F ea 2 /a/78/09
+F ec 2 /a/49/52
+F ee 2 /a/69/3a
+F f0 2 /a/78/09
+F f4 2 /a/1a/4d
+F 58 4 /a/60/53

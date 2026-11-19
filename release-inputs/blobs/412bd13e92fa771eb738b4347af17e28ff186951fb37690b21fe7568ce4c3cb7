@@ -1,0 +1,18 @@
+name HARMONY
+red 44
+record record.bin
+F c0 4 /a/24/4f
+F c4 4 /a/11/3f
+F c8 4 /a/23/5c
+F cc 4 /a/27/3d
+F d0 4 /a/4a/07
+F d4 4 /a/5d/38
+F d8 4 /a/26/21
+F e8 2 /a/36/47
+F ec 2 /a/0e/4f
+F 58 4 /a/61/36
+card /a/6d/25
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

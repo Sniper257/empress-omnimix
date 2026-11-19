@@ -1,0 +1,26 @@
+name LOVE IS DREAMINESS
+usa 48
+record record.bin
+F c0 4 /a/5d/33
+F c4 4 /a/60/55
+F d0 4 /a/19/28
+F d4 4 /a/27/5f
+F d8 4 /a/77/3c
+F e8 2 /a/31/0a
+F ec 2 /a/68/38
+F ee 2 /a/75/59
+F f0 2 /a/31/0a
+F f4 2 /a/7d/5a
+F f6 2 /a/67/1f
+F f8 2 /a/31/0a
+F fc 2 /a/7d/5a
+F fe 2 /a/67/1f
+F 100 2 /a/31/0a
+F 104 2 /a/7d/5a
+F 106 2 /a/67/1f
+F 58 4 /a/4c/1e
+card /a/84/3f
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

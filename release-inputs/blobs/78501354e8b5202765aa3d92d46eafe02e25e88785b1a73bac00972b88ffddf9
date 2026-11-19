@@ -1,0 +1,16 @@
+name HYPER EUROBEAT (2DX STYLE)
+ninth 44
+record record.bin
+F c0 4 /a/84/1a
+F c4 4 /a/05/2c
+F c8 4 /a/26/38
+F d0 4 /a/1d/1a
+F d4 4 /a/02/4e
+F e8 2 /a/64/5c
+F ec 2 /a/18/0b
+F 58 4 /a/1a/44
+card /a/7a/04
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

@@ -1,0 +1,18 @@
+name ALLA TURCA CON PASSIONE
+happysky 2
+record record.bin
+F c0 4 /a/25/17
+F c4 4 /a/43/4b
+F c8 4 /a/7c/52
+F cc 4 /a/59/4d
+F d0 4 /a/64/35
+F d4 4 /a/22/11
+F d8 4 /a/2a/00
+F e8 2 /a/60/45
+F ec 2 /a/3f/3c
+F 58 4 /a/53/58
+card /a/3a/45
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

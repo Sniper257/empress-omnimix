@@ -1,0 +1,22 @@
+name FIRST DAY
+usa 37
+record record.bin
+F c0 4 /a/74/2f
+F c4 4 /a/3b/1d
+F d0 4 /a/64/0d
+F d4 4 /a/4c/50
+F d8 4 /a/5e/57
+F e8 2 /a/09/40
+F ec 2 /a/5a/43
+F f0 2 /a/09/40
+F f4 2 /a/5a/43
+F f8 2 /a/09/40
+F fc 2 /a/5a/43
+F 100 2 /a/09/40
+F 104 2 /a/5a/43
+F 58 4 /a/2f/48
+card /a/86/21
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

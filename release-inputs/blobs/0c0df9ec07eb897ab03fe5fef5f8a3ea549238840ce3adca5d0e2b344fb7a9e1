@@ -1,0 +1,17 @@
+name MEMORIES
+eighth 2
+record record.bin
+card /a/35/47
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/66/3e
+F c4 4 /a/5d/19
+F c8 4 /a/55/2e
+F cc 4 /a/49/2d
+F d0 4 /a/01/49
+F d4 4 /a/38/0a
+F e8 2 /a/04/3d
+F ec 2 /a/09/06
+F 58 4 /a/05/04

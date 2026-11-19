@@ -1,0 +1,17 @@
+name BATTLE TRAIN
+djt 82
+record record.bin
+F c0 4 /a/2e/25
+F c4 4 /a/62/25
+F c8 4 /a/46/5a
+F cc 4 /a/41/09
+F d0 4 /a/5b/49
+F d4 4 /a/68/4b
+F e8 2 /a/48/26
+F ec 2 /a/38/0d
+F 58 4 /a/1e/18
+card /a/56/56
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

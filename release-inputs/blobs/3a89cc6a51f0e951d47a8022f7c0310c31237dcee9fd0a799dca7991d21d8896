@@ -1,0 +1,29 @@
+name SUPER HIGHWAY
+distorted 84
+record record.bin
+F c0 4 /a/3d/1b
+F c4 4 /a/14/42
+F c8 4 /a/26/3b
+F cc 4 /a/76/48
+F d0 4 /a/53/49
+F d4 4 /a/62/40
+F e8 2 /a/34/5b
+F ea 2 /a/2d/09
+F ec 2 /a/66/2c
+F ee 2 /a/66/2c
+F f0 2 /a/34/5b
+F f2 2 /a/34/5b
+F f4 2 /a/66/2c
+F f6 2 /a/66/2c
+F f8 2 /a/34/5b
+F fa 2 /a/2d/09
+F fc 2 /a/66/2c
+F fe 2 /a/66/2c
+F 100 2 /a/34/5b
+F 104 2 /a/66/2c
+F 58 4 /a/3f/07
+card /a/37/0c
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

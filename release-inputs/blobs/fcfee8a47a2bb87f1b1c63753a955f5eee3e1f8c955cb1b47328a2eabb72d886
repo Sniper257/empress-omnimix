@@ -1,0 +1,19 @@
+name DENI
+gold 79
+record record.bin
+F c0 4 /a/78/34
+F c4 4 /a/4d/4f
+F c8 4 /a/24/2d
+F cc 4 /a/7b/0b
+F d0 4 /a/1f/15
+F d4 4 /a/0d/10
+F e8 2 /a/1e/06
+F ec 2 /a/12/3a
+F f4 2 /a/7a/34
+F f6 2 /a/7a/34
+F 58 4 /a/6d/5b
+card /a/15/05
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

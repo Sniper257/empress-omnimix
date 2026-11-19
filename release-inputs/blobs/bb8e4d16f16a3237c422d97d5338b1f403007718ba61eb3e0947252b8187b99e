@@ -1,0 +1,17 @@
+name satellite020712 from "CODED ARMS" (OLD CS10)
+tenth 85
+record record.bin
+F c0 4 /a/7f/03
+F c4 4 /a/10/29
+F c8 4 /a/15/19
+F cc 4 /a/11/2e
+F d0 4 /a/23/31
+F d4 4 /a/3d/2f
+F e8 2 /a/1d/2c
+F ec 2 /a/63/31
+F 58 4 /a/7e/5a
+card /a/6b/00
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

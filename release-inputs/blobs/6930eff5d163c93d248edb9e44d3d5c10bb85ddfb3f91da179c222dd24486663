@@ -1,0 +1,17 @@
+name CALDERA
+distorted 81
+record record.bin
+F c0 4 /a/36/22
+F c4 4 /a/20/53
+F c8 4 /a/72/41
+F cc 4 /a/28/21
+F d0 4 /a/82/37
+F d4 4 /a/30/31
+F e8 2 /a/34/05
+F ec 2 /a/44/36
+F 58 4 /a/5e/3d
+card /a/81/34
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

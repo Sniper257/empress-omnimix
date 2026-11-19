@@ -1,0 +1,17 @@
+name ALIEN TEMPLE
+tenth 37
+record record.bin
+F c0 4 /a/59/5f
+F c4 4 /a/5c/30
+F c8 4 /a/0a/12
+F cc 4 /a/26/11
+F d0 4 /a/53/17
+F d4 4 /a/1b/52
+F e8 2 /a/83/41
+F ec 2 /a/62/27
+F 58 4 /a/0f/34
+card /a/6f/2f
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

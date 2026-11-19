@@ -1,0 +1,17 @@
+name STAR FIELD
+pb 50
+record record.bin
+F c0 4 /a/3b/32
+F c4 4 /a/2e/0d
+F c8 4 /a/83/59
+F d0 4 /a/19/2d
+F d4 4 /a/46/17
+F d8 4 /a/2d/0f
+F e8 2 /a/5a/00
+F ec 2 /a/76/40
+F 58 4 /a/73/2f
+card /a/5b/0b
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

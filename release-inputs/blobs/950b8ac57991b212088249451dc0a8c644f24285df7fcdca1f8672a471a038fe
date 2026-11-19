@@ -1,0 +1,17 @@
+name G2
+eighth 58
+record record.bin
+card /a/12/0a
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/2b/4d
+F c4 4 /a/17/4f
+F c8 4 /a/04/3c
+F cc 4 /a/6b/43
+F d0 4 /a/1a/3d
+F d4 4 /a/20/3c
+F e8 2 /a/62/0a
+F ec 2 /a/26/44
+F 58 4 /a/15/10

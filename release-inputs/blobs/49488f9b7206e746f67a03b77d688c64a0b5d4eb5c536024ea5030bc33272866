@@ -1,0 +1,17 @@
+name D.A.N.C.E.!
+red 42
+record record.bin
+F c0 4 /a/77/1b
+F c4 4 /a/5c/2a
+F c8 4 /a/2f/2d
+F d0 4 /a/66/3c
+F d4 4 /a/66/15
+F d8 4 /a/06/54
+F e8 2 /a/13/25
+F ec 2 /a/2a/3a
+F 58 4 /a/0a/4f
+card /a/7f/27
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

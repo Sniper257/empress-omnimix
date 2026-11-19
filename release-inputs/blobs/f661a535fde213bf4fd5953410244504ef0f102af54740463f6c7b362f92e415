@@ -1,0 +1,18 @@
+name CLICK AGAIN
+red 30
+record record.bin
+F c0 4 /a/83/23
+F c4 4 /a/2c/0c
+F c8 4 /a/43/1b
+F cc 4 /a/49/38
+F d0 4 /a/2f/27
+F d4 4 /a/4d/53
+F d8 4 /a/61/5b
+F e8 2 /a/1c/03
+F ec 2 /a/1f/50
+F 58 4 /a/50/19
+card /a/82/5f
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

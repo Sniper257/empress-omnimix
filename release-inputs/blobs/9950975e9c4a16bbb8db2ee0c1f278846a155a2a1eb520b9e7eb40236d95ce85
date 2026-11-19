@@ -1,0 +1,18 @@
+name SPACE FIGHT
+tenth 17
+record record.bin
+F c0 4 /a/4d/2a
+F c4 4 /a/41/2f
+F c8 4 /a/83/04
+F cc 4 /a/60/27
+F d0 4 /a/62/17
+F d4 4 /a/24/5f
+F d8 4 /a/61/18
+F e8 2 /a/44/5d
+F ec 2 /a/23/40
+F 58 4 /a/51/05
+card /a/44/57
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

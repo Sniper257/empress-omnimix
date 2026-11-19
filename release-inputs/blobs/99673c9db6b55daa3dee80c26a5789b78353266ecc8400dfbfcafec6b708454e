@@ -1,0 +1,19 @@
+name MURMUR TWINS
+pb 53
+record record.bin
+F c0 4 /a/43/3e
+F c4 4 /a/6d/4b
+F c8 4 /a/66/3d
+F cc 4 /a/1a/07
+F d0 4 /a/31/52
+F d4 4 /a/0c/26
+F d8 4 /a/2c/23
+F e8 2 /a/25/58
+F ec 2 /a/2f/4a
+F 100 2 /a/3f/2c
+F 58 4 /a/7a/5c
+card /a/39/18
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

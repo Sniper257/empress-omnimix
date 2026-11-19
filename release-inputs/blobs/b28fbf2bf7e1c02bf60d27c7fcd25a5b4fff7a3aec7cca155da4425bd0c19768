@@ -1,0 +1,19 @@
+name GENERAL RELATIVITY
+distorted 65
+record record.bin
+F c0 4 /a/70/34
+F c4 4 /a/79/3d
+F c8 4 /a/27/3c
+F cc 4 /a/68/06
+F d0 4 /a/7f/3b
+F d4 4 /a/73/0a
+F d8 4 /a/2d/19
+F dc 4 /a/58/25
+F e8 2 /a/02/1e
+F ec 2 /a/7e/22
+F 58 4 /a/73/2c
+card /a/03/32
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

@@ -1,0 +1,17 @@
+name GUI
+gold 87
+record record.bin
+F c0 4 /a/5d/09
+F c4 4 /a/80/4f
+F c8 4 /a/11/28
+F cc 4 /a/75/4d
+F d0 4 /a/70/49
+F d4 4 /a/24/0b
+F e8 2 /a/82/26
+F ec 2 /a/38/5c
+F 58 4 /a/79/0b
+card /a/1a/2b
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

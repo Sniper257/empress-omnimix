@@ -1,0 +1,18 @@
+name 250BPM
+fifth 11
+record record.bin
+card /a/79/5c
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/7b/51
+F c4 4 /a/29/25
+F c8 4 /a/26/5a
+F cc 4 /a/6a/0a
+F d0 4 /a/80/25
+F d4 4 /a/13/3d
+F d8 4 /a/31/50
+F e8 2 /a/0a/42
+F ec 2 /a/5f/28
+F 58 4 /a/11/1d

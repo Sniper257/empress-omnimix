@@ -1,0 +1,17 @@
+name KAZENOTANINO DREAM
+happysky 88
+record record.bin
+F c0 4 /a/69/4e
+F c4 4 /a/0c/23
+F c8 4 /a/6a/15
+F cc 4 /a/79/18
+F d0 4 /a/45/2c
+F d4 4 /a/34/14
+F e8 2 /a/39/0e
+F ec 2 /a/56/26
+F 58 4 /a/50/14
+card /a/7d/5c
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

@@ -1,0 +1,18 @@
+name TEXTURE
+red 2
+record record.bin
+F c0 4 /a/0e/28
+F c4 4 /a/79/21
+F c8 4 /a/17/5a
+F cc 4 /a/79/3c
+F d0 4 /a/43/24
+F d4 4 /a/84/01
+F d8 4 /a/06/33
+F e8 2 /a/7a/28
+F ec 2 /a/67/2b
+F 58 4 /a/2c/3b
+card /a/71/26
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

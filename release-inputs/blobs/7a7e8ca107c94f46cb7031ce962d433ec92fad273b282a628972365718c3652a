@@ -1,0 +1,17 @@
+name EDEN
+happysky 9
+record record.bin
+F c0 4 /a/28/5e
+F c4 4 /a/14/49
+F c8 4 /a/22/1d
+F d0 4 /a/6c/05
+F d4 4 /a/32/35
+F d8 4 /a/1b/20
+F e8 2 /a/1a/3a
+F ec 2 /a/22/33
+F 58 4 /a/46/18
+card /a/86/23
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

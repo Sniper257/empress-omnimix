@@ -1,0 +1,31 @@
+name THE SHINING POLARIS (US)
+usa 62
+record record.bin
+F c0 4 /a/7f/3a
+F c4 4 /a/29/40
+F c8 4 /a/82/55
+F d0 4 /a/6d/01
+F d4 4 /a/58/55
+F d8 4 /a/2b/06
+F e8 2 /a/86/1d
+F ea 2 /a/86/1d
+F ec 2 /a/52/4e
+F ee 2 /a/52/4e
+F f0 2 /a/86/1d
+F f2 2 /a/2c/36
+F f4 2 /a/0f/1c
+F f6 2 /a/30/2a
+F f8 2 /a/86/1d
+F fa 2 /a/2c/36
+F fc 2 /a/30/2a
+F fe 2 /a/30/2a
+F 100 2 /a/2c/36
+F 102 2 /a/2c/36
+F 104 2 /a/30/2a
+F 106 2 /a/30/2a
+F 58 4 /a/21/46
+card /a/08/2d
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

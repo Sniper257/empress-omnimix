@@ -1,0 +1,17 @@
+name CAM
+gold 48
+record record.bin
+F c0 4 /a/58/41
+F c4 4 /a/1a/5c
+F c8 4 /a/29/47
+F d0 4 /a/3a/2b
+F d4 4 /a/3f/57
+F d8 4 /a/0d/30
+F e8 2 /a/2f/1f
+F ec 2 /a/42/3c
+F 58 4 /a/27/2b
+card /a/50/4b
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

@@ -1,0 +1,18 @@
+name SOMEBODY LIKE YOU
+seventh 24
+record record.bin
+card /a/60/02
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/53/15
+F c4 4 /a/5e/58
+F c8 4 /a/6c/42
+F cc 4 /a/72/11
+F d0 4 /a/15/0d
+F d4 4 /a/07/40
+F d8 4 /a/07/52
+F e8 2 /a/2e/5c
+F ec 2 /a/02/3e
+F 58 4 /a/1e/50

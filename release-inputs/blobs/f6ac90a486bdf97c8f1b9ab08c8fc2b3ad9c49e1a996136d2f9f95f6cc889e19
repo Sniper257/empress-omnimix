@@ -1,0 +1,20 @@
+name VANESSA
+pb 17
+record record.bin
+F c0 4 /a/1b/46
+F c4 4 /a/15/40
+F c8 4 /a/63/05
+F cc 4 /a/58/31
+F d0 4 /a/03/3a
+F d4 4 /a/28/4c
+F d8 4 /a/7f/48
+F e0 4 /a/4c/2f
+F e8 2 /a/86/30
+F ec 2 /a/03/48
+F 58 4 /a/33/41
+card /a/38/47
+D 0 /a/42/0c
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

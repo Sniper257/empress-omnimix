@@ -1,0 +1,17 @@
+name LOVE IS ORANGE
+red 52
+record record.bin
+F c0 4 /a/54/0b
+F c4 4 /a/73/31
+F c8 4 /a/36/0d
+F d0 4 /a/3b/12
+F d4 4 /a/82/2f
+F d8 4 /a/1c/59
+F e8 2 /a/61/54
+F ec 2 /a/44/13
+F 58 4 /a/6e/32
+card /a/42/5d
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

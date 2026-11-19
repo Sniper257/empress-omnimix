@@ -1,0 +1,17 @@
+name GET'EM UP TO R.A.V.E
+happysky 15
+record record.bin
+F c0 4 /a/6b/16
+F c4 4 /a/04/1d
+F c8 4 /a/47/2c
+F d0 4 /a/3f/0b
+F d4 4 /a/66/14
+F d8 4 /a/33/29
+F e8 2 /a/27/2a
+F ec 2 /a/82/15
+F 58 4 /a/85/41
+card /a/39/1f
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

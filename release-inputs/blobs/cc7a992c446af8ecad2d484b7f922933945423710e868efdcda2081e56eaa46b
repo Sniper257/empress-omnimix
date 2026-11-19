@@ -1,0 +1,21 @@
+name KICK OUT
+djt 20
+record record.bin
+F c0 4 /a/11/46
+F c4 4 /a/4a/09
+F c8 4 /a/41/55
+F cc 4 /a/77/49
+F d0 4 /a/2b/0e
+F d4 4 /a/09/33
+F d8 4 /a/72/2f
+F e8 2 /a/4f/2f
+F ec 2 /a/27/35
+F f4 2 /a/11/36
+F f6 2 /a/11/36
+F 58 4 /a/7d/59
+card /a/2f/3b
+D 0 /a/57/02
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

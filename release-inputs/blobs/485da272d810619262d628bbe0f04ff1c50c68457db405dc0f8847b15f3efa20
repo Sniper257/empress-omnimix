@@ -1,0 +1,17 @@
+name BACK TO THE DANCE FLOOR
+red 28
+record record.bin
+F c0 4 /a/4e/52
+F c4 4 /a/07/55
+F c8 4 /a/31/41
+F d0 4 /a/6d/19
+F d4 4 /a/73/5e
+F d8 4 /a/85/52
+F e8 2 /a/82/1a
+F ec 2 /a/48/4d
+F 58 4 /a/61/36
+card /a/1e/4c
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

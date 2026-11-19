@@ -1,0 +1,17 @@
+name VOLTAGE (FEAT. HIDEMARU)
+fourth 9
+record record.bin
+card /a/69/12
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/3b/01
+F c4 4 /a/13/55
+F c8 4 /a/5e/2b
+F d0 4 /a/3a/01
+F d4 4 /a/28/5f
+F e8 2 /a/75/22
+F ec 2 /a/18/0f
+F 58 4 /a/7f/39
+D 0 /a/29/13

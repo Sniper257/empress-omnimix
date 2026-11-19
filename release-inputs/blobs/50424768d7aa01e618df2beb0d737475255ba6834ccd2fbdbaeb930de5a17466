@@ -1,0 +1,18 @@
+name A
+seventh 3
+record record.bin
+card /a/57/12
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/3f/08
+F c4 4 /a/54/29
+F c8 4 /a/2c/5e
+F cc 4 /a/51/3b
+F d0 4 /a/4e/36
+F d4 4 /a/11/1e
+F e8 2 /a/34/3c
+F ec 2 /a/1b/14
+F 58 4 /a/37/41
+D 0 /a/7d/4e

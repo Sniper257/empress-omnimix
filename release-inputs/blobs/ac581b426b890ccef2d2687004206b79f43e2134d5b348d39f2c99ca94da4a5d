@@ -1,0 +1,17 @@
+name BEAUTIFUL DAYS
+sixth 56
+record record.bin
+card /a/7c/05
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/13/00
+F c4 4 /a/07/12
+F c8 4 /a/6a/41
+F d0 4 /a/17/35
+F d4 4 /a/1f/00
+F d8 4 /a/0e/17
+F e8 2 /a/6a/3c
+F ec 2 /a/44/31
+F 58 4 /a/6c/50

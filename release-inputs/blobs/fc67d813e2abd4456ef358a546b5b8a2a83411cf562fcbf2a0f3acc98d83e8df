@@ -1,0 +1,18 @@
+name LES FILLES BALANCENT
+red 15
+record record.bin
+F c0 4 /a/40/34
+F c4 4 /a/02/19
+F c8 4 /a/35/2c
+F cc 4 /a/28/12
+F d0 4 /a/7a/5e
+F d4 4 /a/34/12
+F d8 4 /a/55/2d
+F e8 2 /a/66/37
+F ec 2 /a/0d/5c
+F 58 4 /a/67/4c
+card /a/2d/02
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

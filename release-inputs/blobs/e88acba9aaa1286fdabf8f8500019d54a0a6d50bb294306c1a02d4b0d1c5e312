@@ -1,0 +1,16 @@
+name dissolve (OLD CS8)
+eighth 46
+record record.bin
+card card.if
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/20/48
+F c4 4 /a/17/02
+F c8 4 /a/49/17
+F d0 4 /a/63/2d
+F d4 4 /a/17/10
+F e8 2 /a/1a/12
+F ec 2 /a/61/42
+F 58 4 /a/35/57

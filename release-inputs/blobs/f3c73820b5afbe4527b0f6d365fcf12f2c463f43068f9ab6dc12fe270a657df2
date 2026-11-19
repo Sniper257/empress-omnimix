@@ -1,0 +1,17 @@
+name LAB
+red 73
+record record.bin
+F c0 4 /a/15/23
+F c4 4 /a/80/4d
+F c8 4 /a/51/25
+F d0 4 /a/62/58
+F d4 4 /a/7f/02
+F d8 4 /a/19/2e
+F e8 2 /a/40/41
+F ec 2 /a/06/3b
+F 58 4 /a/16/10
+card /a/03/1f
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

@@ -1,0 +1,18 @@
+name ERA(NOSTALMIX)
+pb 83
+record record.bin
+F c0 4 /a/02/5d
+F c4 4 /a/14/2e
+F c8 4 /a/43/40
+F cc 4 /a/55/51
+F d0 4 /a/38/31
+F d4 4 /a/48/5e
+F d8 4 /a/56/24
+F e8 2 /a/20/02
+F ec 2 /a/81/1c
+F 58 4 /a/24/2f
+card /a/60/14
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

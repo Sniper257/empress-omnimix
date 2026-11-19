@@ -1,0 +1,23 @@
+name LOVE IS DREAMINESS
+sixth 43
+record record.bin
+card /a/1d/16
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/5e/30
+F c4 4 /a/78/57
+F d0 4 /a/3d/00
+F d4 4 /a/34/34
+F d8 4 /a/59/1e
+F e8 2 /a/5b/3a
+F ec 2 /a/79/2b
+F ee 2 /a/84/22
+F f8 2 /a/5e/33
+F fa 2 /a/2c/37
+F fc 2 /a/7c/57
+F fe 2 /a/83/37
+F 100 2 /a/5e/33
+F 104 2 /a/7c/57
+F 58 4 /a/10/0e

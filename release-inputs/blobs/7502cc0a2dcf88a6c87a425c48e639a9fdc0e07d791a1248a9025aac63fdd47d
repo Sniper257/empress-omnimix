@@ -1,0 +1,17 @@
+name 1ST SAMURAI
+tenth 39
+record record.bin
+F c0 4 /a/1a/18
+F c4 4 /a/34/54
+F c8 4 /a/2a/28
+F cc 4 /a/1e/3f
+F d0 4 /a/0c/51
+F d4 4 /a/5f/0c
+F e8 2 /a/1b/3a
+F ec 2 /a/72/0c
+F 58 4 /a/5e/3d
+card /a/4d/09
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

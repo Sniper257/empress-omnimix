@@ -1,0 +1,17 @@
+name INJECTION OF LOVE
+red 26
+record record.bin
+F c0 4 /a/13/2e
+F c4 4 /a/46/52
+F c8 4 /a/60/0c
+F d0 4 /a/2b/04
+F d4 4 /a/81/2c
+F d8 4 /a/15/49
+F e8 2 /a/42/19
+F ec 2 /a/46/3e
+F 58 4 /a/1a/44
+card /a/69/4b
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

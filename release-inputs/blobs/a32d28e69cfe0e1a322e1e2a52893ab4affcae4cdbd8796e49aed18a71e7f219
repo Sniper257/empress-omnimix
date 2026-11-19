@@ -1,0 +1,17 @@
+name THE BIG VOYAGER
+fourth 46
+record record.bin
+card /a/4f/2c
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/16/00
+F c4 4 /a/6f/07
+F d0 4 /a/0d/4c
+F d4 4 /a/33/3d
+F e8 2 /a/35/17
+F ec 2 /a/11/47
+F f8 2 /a/51/35
+F fc 2 /a/4d/52
+F 58 4 /a/34/07

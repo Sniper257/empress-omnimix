@@ -1,0 +1,18 @@
+name MURMUR TWINS
+eighth 32
+record record.bin
+card /a/38/3a
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/74/2c
+F c4 4 /a/1d/3a
+F c8 4 /a/5c/16
+F cc 4 /a/72/01
+F d0 4 /a/68/5d
+F d4 4 /a/67/32
+F d8 4 /a/4d/5d
+F e8 2 /a/4b/19
+F ec 2 /a/1f/33
+F 58 4 /a/6c/27

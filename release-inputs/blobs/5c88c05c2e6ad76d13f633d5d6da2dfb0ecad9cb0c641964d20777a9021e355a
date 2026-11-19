@@ -1,0 +1,17 @@
+name ATOMIC AGE
+ninth 36
+record record.bin
+F c0 4 /a/10/59
+F c4 4 /a/47/07
+F c8 4 /a/65/02
+F d0 4 /a/71/51
+F d4 4 /a/3b/09
+F d8 4 /a/5e/43
+F e8 2 /a/7e/07
+F ec 2 /a/72/03
+F 58 4 /a/3d/51
+card /a/44/25
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

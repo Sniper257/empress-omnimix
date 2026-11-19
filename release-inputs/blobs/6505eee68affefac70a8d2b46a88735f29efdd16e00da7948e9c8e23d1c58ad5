@@ -1,0 +1,18 @@
+name PLAY B
+gold 31
+record record.bin
+F c0 4 /a/42/54
+F c4 4 /a/46/20
+F c8 4 /a/63/13
+F cc 4 /a/12/59
+F d0 4 /a/62/2f
+F d4 4 /a/72/00
+F d8 4 /a/7f/5b
+F e8 2 /a/33/2e
+F ec 2 /a/17/59
+F 58 4 /a/50/34
+card /a/83/10
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

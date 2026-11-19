@@ -1,0 +1,28 @@
+name ERASERMOTOR MAXIMUM
+red 80
+record record.bin
+F c0 4 /a/0c/05
+F c4 4 /a/58/4e
+F c8 4 /a/87/1b
+F cc 4 /a/39/2d
+F d0 4 /a/28/13
+F d4 4 /a/84/38
+F e8 2 /a/28/41
+F ea 2 /a/28/41
+F ec 2 /a/47/5b
+F ee 2 /a/47/5b
+F f0 2 /a/3b/47
+F f2 2 /a/3b/47
+F f4 2 /a/48/33
+F f6 2 /a/48/33
+F f8 2 /a/68/59
+F fa 2 /a/68/59
+F fc 2 /a/2d/01
+F fe 2 /a/44/0b
+F 58 4 /a/5a/36
+card /a/32/34
+D 0 /a/15/5f
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

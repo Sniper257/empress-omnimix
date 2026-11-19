@@ -1,0 +1,17 @@
+name SKYSCRAPER
+happysky 56
+record record.bin
+F c0 4 /a/80/3c
+F c4 4 /a/79/03
+F c8 4 /a/30/00
+F d0 4 /a/83/27
+F d4 4 /a/82/5a
+F d8 4 /a/72/42
+F e8 2 /a/00/13
+F ec 2 /a/21/12
+F 58 4 /a/29/32
+card /a/56/1a
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

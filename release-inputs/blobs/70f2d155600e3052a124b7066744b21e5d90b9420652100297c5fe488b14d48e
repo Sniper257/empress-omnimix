@@ -1,0 +1,16 @@
+name MOON_CHILD
+ninth 12
+record record.bin
+F c0 4 /a/05/3e
+F c4 4 /a/3a/26
+F c8 4 /a/58/02
+F d0 4 /a/59/1b
+F d4 4 /a/27/22
+F e8 2 /a/43/3d
+F ec 2 /a/53/4c
+F 58 4 /a/01/32
+card /a/77/56
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

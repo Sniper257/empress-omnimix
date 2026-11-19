@@ -1,0 +1,17 @@
+name THE SAFARI
+eighth 77
+record record.bin
+card /a/77/5b
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/15/55
+F c4 4 /a/61/41
+F d0 4 /a/75/24
+F d4 4 /a/7a/43
+F d8 4 /a/71/12
+F e8 2 /a/5d/06
+F ec 2 /a/81/51
+F 58 4 /a/2f/51
+D 0 /a/06/0c

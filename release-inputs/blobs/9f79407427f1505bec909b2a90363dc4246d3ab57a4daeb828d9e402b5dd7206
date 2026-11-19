@@ -1,0 +1,17 @@
+name STEP INTO THE NEW WORLD
+eighth 81
+record record.bin
+card /a/7a/32
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/09/50
+F c4 4 /a/1b/3e
+F c8 4 /a/40/2f
+F cc 4 /a/52/24
+F d0 4 /a/30/14
+F d4 4 /a/16/26
+F e8 2 /a/09/57
+F ec 2 /a/62/1c
+F 58 4 /a/3a/00

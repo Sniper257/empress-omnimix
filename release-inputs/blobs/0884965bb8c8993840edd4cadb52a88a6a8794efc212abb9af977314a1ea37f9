@@ -1,0 +1,16 @@
+name LOVE AGAIN...
+red 85
+record record.bin
+F c0 4 /a/10/47
+F c4 4 /a/16/2d
+F c8 4 /a/7d/35
+F d0 4 /a/26/36
+F d4 4 /a/34/48
+F e8 2 /a/2c/08
+F ec 2 /a/7d/2c
+F 58 4 /a/2f/36
+card /a/77/24
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

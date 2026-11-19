@@ -1,0 +1,17 @@
+name LOVE IS ORANGE
+eighth 8
+record record.bin
+card /a/2a/47
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/5a/56
+F c4 4 /a/54/57
+F c8 4 /a/80/29
+F d0 4 /a/44/2b
+F d4 4 /a/23/32
+F d8 4 /a/6f/3d
+F e8 2 /a/08/07
+F ec 2 /a/57/11
+F 58 4 /a/06/5c

@@ -1,0 +1,18 @@
+name DAISUKE
+tenth 32
+record record.bin
+F c0 4 /a/1b/2f
+F c4 4 /a/46/35
+F c8 4 /a/82/1c
+F cc 4 /a/07/0c
+F d0 4 /a/31/02
+F d4 4 /a/16/39
+F d8 4 /a/3f/04
+F e8 2 /a/1c/22
+F ec 2 /a/07/3f
+F 58 4 /a/1e/0a
+card /a/10/56
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

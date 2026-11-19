@@ -1,0 +1,31 @@
+name TABLETS
+sixth 31
+record record.bin
+card /a/3e/23
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/02/00
+F c4 4 /a/72/27
+F c8 4 /a/4e/1c
+F cc 4 /a/72/54
+F d0 4 /a/2a/1b
+F d4 4 /a/20/1d
+F d8 4 /a/39/1e
+F e8 2 /a/6d/27
+F ea 2 /a/6d/27
+F ec 2 /a/3f/24
+F ee 2 /a/3e/55
+F f0 2 /a/6d/27
+F f2 2 /a/6d/27
+F f4 2 /a/3f/24
+F f6 2 /a/3e/55
+F f8 2 /a/6d/27
+F fa 2 /a/6d/27
+F fc 2 /a/3f/24
+F fe 2 /a/3e/55
+F 100 2 /a/6d/27
+F 104 2 /a/3f/24
+F 58 4 /a/3b/46
+D 0 /a/80/31

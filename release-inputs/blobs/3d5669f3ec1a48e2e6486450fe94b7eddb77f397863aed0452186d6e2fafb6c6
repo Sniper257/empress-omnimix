@@ -1,0 +1,17 @@
+name SMALL CLONE
+eighth 25
+record record.bin
+card /a/70/54
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/43/5a
+F c4 4 /a/87/3a
+F c8 4 /a/7a/37
+F d0 4 /a/1e/34
+F d4 4 /a/58/36
+F d8 4 /a/12/10
+F e8 2 /a/55/0b
+F ec 2 /a/6e/47
+F 58 4 /a/66/46

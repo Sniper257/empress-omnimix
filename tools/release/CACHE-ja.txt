@@ -1,0 +1,41 @@
+﻿EMPRESS MEGAMIX - PCでランチャーのキャッシュを作成
+
+R171の既存環境向けの追加機能です。R171のビルダーと対応するキャッシュ
+エンジンを組み合わせてください。ストレージを書き換える前にPS2の電源を切ってください。
+
+初回のみ、追加の実行環境をインストールします。
+    python -m pip install "wasmtime>=50.0.1,<51"
+Linux/macOSでは必要に応じてpythonをpython3に読み替えてください。
+通常のISOからの生成・追加インストール・検証には不要です。
+コンパイラ、PS2SDK、フォントも不要です。
+
+PC上のMEGAMIXフォルダと、PS2で実際に使うゲームデータのパスを指定します。
+    python megamix.py cache "X:\MEGAMIX" --game-path mmce0:/MEGAMIX/
+    python megamix.py cache "/media/USB/Games/BM" --game-path mass:/Games/BM/
+
+mmce0:はスロット1、mmce1:はスロット2です。mass:とmass0:も別のキーに
+なります。ELFの場所ではなく、ランチャーが使うゲームデータのパスを正確に
+指定してください。パスが違えばキャッシュは使われず、PS2側で再生成されます。
+
+PS2で使用するlauncher.cfgを使ってください。設定が別の場所にある場合：
+    python megamix.py cache "X:\MEGAMIX" --game-path mmce1:/MEGAMIX/ --config-dir "Y:\APPS\MEGAMIX" --settings-path mc0:/APPS/MEGAMIX/
+--config-dirはPC上の設定フォルダ、--settings-pathはPS2上の設定フォルダです。
+HOST版は--game-path host:を指定します。
+
+debug.cfgのdebugとprepprobeは0にしてください（debug 0 / prepprobe 0）。
+設定保存や追加インストール・更新の処理が未完了なら先に完了させてください。
+
+ゲームファイルと設定のスナップショットから生成し、ランチャーの復元処理で
+検証してからキャッシュだけを書き込みます。設定、USB割り当て、スコア、
+インストール情報、source.idは変更しません。別条件の既存キャッシュも残します。
+フォルダ選択や構造に関わる設定、追加したディスクによって再生成が必要です。
+
+全CS曲の環境では約20MiBとPC側の一時領域を使います。一時ドライブの空きが
+足りない場合は--temp-dir "D:\Temp"などを指定できます。書き込み中に中断
+した場合は同じコマンドを再実行してください。不完全なキャッシュはランチャー
+で検出され、通常の再生成に戻ります。コピー完了前に抜かないでください。
+
+単体のcache-tools ZIPでは、"megamix.py cache"の代わりにbuild-cache.pyを
+使えます。引数は同じです。この操作にISOやrelease.mmrは不要です。
+Linuxでのネイティブ比較は成功しています。Windows/macOSの実機確認は未完了です。
+詳細とライセンスについてはCACHE.txtとcache-engine/licensesを参照してください。

@@ -1,0 +1,16 @@
+name NEVER LOOK BACK
+seventh 39
+record record.bin
+card /a/48/40
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/65/5e
+F c4 4 /a/26/1c
+F d0 4 /a/20/10
+F d4 4 /a/1a/27
+F d8 4 /a/3e/13
+F e8 2 /a/73/16
+F ec 2 /a/17/1c
+F 58 4 /a/53/1f

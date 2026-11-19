@@ -1,0 +1,18 @@
+name LOOK TO THE SKY(CYBER TRUE COLOR )
+distorted 24
+record record.bin
+F c0 4 /a/52/1e
+F c4 4 /a/75/51
+F c8 4 /a/48/42
+F d0 4 /a/25/56
+F d4 4 /a/66/06
+F d8 4 /a/1a/31
+F e8 2 /a/19/50
+F ec 2 /a/07/56
+F 58 4 /a/6d/5d
+card /a/24/21
+D 0 /a/54/0f
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

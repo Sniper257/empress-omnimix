@@ -1,0 +1,18 @@
+name DANCER
+eighth 15
+record record.bin
+card /a/2b/51
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/3f/17
+F c4 4 /a/35/53
+F c8 4 /a/4a/00
+F cc 4 /a/38/2d
+F d0 4 /a/43/33
+F d4 4 /a/69/15
+F d8 4 /a/05/4b
+F e8 2 /a/5c/0e
+F ec 2 /a/2f/44
+F 58 4 /a/78/0a

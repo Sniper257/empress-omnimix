@@ -1,0 +1,17 @@
+name JUST A LITTLE SMILE
+happysky 84
+record record.bin
+F c0 4 /a/06/30
+F c4 4 /a/09/10
+F c8 4 /a/3c/56
+F cc 4 /a/2e/42
+F d0 4 /a/60/12
+F d4 4 /a/75/32
+F e8 2 /a/5e/01
+F ec 2 /a/5e/26
+F 58 4 /a/72/2e
+card /a/11/23
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

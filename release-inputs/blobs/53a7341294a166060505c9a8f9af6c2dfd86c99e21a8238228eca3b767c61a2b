@@ -1,0 +1,6054 @@
+{
+  "schema": 1,
+  "input_exe_sha256": "0daef4193e51ed3c49f49db9d84aa673d9aab783d004bec4fa6a02f6d520914f",
+  "application": "Runtime instructions are validated and applied to EE RAM at launcher START, not written into the input ISO.",
+  "rating_changes": [
+    {
+      "sid": 38,
+      "title": "THUNDER HOUSE NATION REMIX",
+      "field": 74,
+      "before": 4,
+      "after": 5,
+      "origin": "official AC/INFINITAS (including last official rating for removed charts)"
+    },
+    {
+      "sid": 49,
+      "title": "MIDNIGHT DATENSHI",
+      "field": 83,
+      "before": 11,
+      "after": 12,
+      "origin": "official AC/INFINITAS (including last official rating for removed charts)"
+    },
+    {
+      "sid": 66,
+      "title": "GIGADELIC",
+      "field": 74,
+      "before": 8,
+      "after": 9,
+      "origin": "official AC/INFINITAS (including last official rating for removed charts)"
+    },
+    {
+      "sid": 68,
+      "title": "DOLL",
+      "field": 74,
+      "before": 4,
+      "after": 5,
+      "origin": "official AC/INFINITAS (including last official rating for removed charts)"
+    },
+    {
+      "sid": 72,
+      "title": "MOON_CHILD",
+      "field": 74,
+      "before": 4,
+      "after": 5,
+      "origin": "official AC/INFINITAS (including last official rating for removed charts)"
+    },
+    {
+      "sid": 80,
+      "title": "LOVE WILL",
+      "field": 74,
+      "before": 3,
+      "after": 4,
+      "origin": "official AC/INFINITAS (including last official rating for removed charts)"
+    },
+    {
+      "sid": 81,
+      "title": "HOLIC",
+      "field": 74,
+      "before": 4,
+      "after": 5,
+      "origin": "official AC/INFINITAS (including last official rating for removed charts)"
+    },
+    {
+      "sid": 84,
+      "title": "THE SHINING POLARIS",
+      "field": 74,
+      "before": 4,
+      "after": 5,
+      "origin": "official AC/INFINITAS (including last official rating for removed charts)"
+    },
+    {
+      "sid": 84,
+      "title": "THE SHINING POLARIS",
+      "field": 75,
+      "before": 6,
+      "after": 7,
+      "origin": "official AC/INFINITAS (including last official rating for removed charts)"
+    },
+    {
+      "sid": 84,
+      "title": "THE SHINING POLARIS",
+      "field": 76,
+      "before": 7,
+      "after": 8,
+      "origin": "official AC/INFINITAS (including last official rating for removed charts)"
+    },
+    {
+      "sid": 84,
+      "title": "THE SHINING POLARIS",
+      "field": 80,
+      "before": 7,
+      "after": 8,
+      "origin": "official AC/INFINITAS (including last official rating for removed charts)"
+    },
+    {
+      "sid": 87,
+      "title": "TORI-NO-KIMOCHI",
+      "field": 79,
+      "before": 2,
+      "after": 3,
+      "origin": "official AC/INFINITAS (including last official rating for removed charts)"
+    },
+    {
+      "sid": 88,
+      "title": "TOYCUBE PF.(RX-VER.S.P.L.)",
+      "field": 80,
+      "before": 8,
+      "after": 9,
+      "origin": "official AC/INFINITAS (including last official rating for removed charts)"
+    },
+    {
+      "sid": 93,
+      "title": "RIZING YOU UP",
+      "field": 79,
+      "before": 7,
+      "after": 8,
+      "origin": "official AC/INFINITAS (including last official rating for removed charts)"
+    },
+    {
+      "sid": 94,
+      "title": "TIME TO EMPRESS",
+      "field": 75,
+      "before": 8,
+      "after": 9,
+      "origin": "official AC/INFINITAS (including last official rating for removed charts)"
+    },
+    {
+      "sid": 94,
+      "title": "TIME TO EMPRESS",
+      "field": 79,
+      "before": 5,
+      "after": 7,
+      "origin": "official AC/INFINITAS (including last official rating for removed charts)"
+    },
+    {
+      "sid": 95,
+      "title": "UNICORN TAIL",
+      "field": 74,
+      "before": 4,
+      "after": 5,
+      "origin": "official AC/INFINITAS (including last official rating for removed charts)"
+    },
+    {
+      "sid": 95,
+      "title": "UNICORN TAIL",
+      "field": 75,
+      "before": 8,
+      "after": 9,
+      "origin": "official AC/INFINITAS (including last official rating for removed charts)"
+    },
+    {
+      "sid": 95,
+      "title": "UNICORN TAIL",
+      "field": 79,
+      "before": 4,
+      "after": 5,
+      "origin": "official AC/INFINITAS (including last official rating for removed charts)"
+    },
+    {
+      "sid": 96,
+      "title": "TAMAYURA",
+      "field": 74,
+      "before": 6,
+      "after": 7,
+      "origin": "official AC/INFINITAS (including last official rating for removed charts)"
+    },
+    {
+      "sid": 96,
+      "title": "TAMAYURA",
+      "field": 75,
+      "before": 9,
+      "after": 10,
+      "origin": "official AC/INFINITAS (including last official rating for removed charts)"
+    }
+  ],
+  "groups": {
+    "storage": "Map native disc reads and module paths to this installation; original judgement timing stays unchanged.",
+    "memory": "Reserve runtime/tables outside the native heap and manage imported graphics within that budget.",
+    "assets": "Load large imported BGA graphics and retire them at native scene boundaries; keep source video and audio.",
+    "saves": "Connect native SAVE/LOAD and autosave to recoverable imported-score checkpoints; native AUTOSAVE remains the enable switch.",
+    "audio": "Dispatch the existing sound worker before the frame wait on queued PLAY input requests; one wake per loop, native frame wait, input/judgement, IOP timer and stream clocks retained.",
+    "fast_slow": "Optional native-judgement FAST/SLOW display and per-player counters; shares retry/reset ownership with GAS; disabled by default.",
+    "gauge": "Optional FREE-only HARD to EASY auto shift, NORMAL promotion and SELECT result views; disabled by default.",
+    "skin": "Independent skin controls and source-frame hooks; native frame and settings are the default.",
+    "songlist": "Stable chart identities, windowed aliases, folders, counters, duplicate visibility and sprite binding.",
+    "resources": "Resolve note counts and graph targets through the catalog; bound native optional-resource readers/writers and include distinct installed charts in DJ POINT aggregates.",
+    "retry": "FREE exit/failure tap START draws a new arrangement and SELECT retains the realized lane maps through the native I/O-draining retry path. RESULT Continue with held SELECT retains maps; normal result saving and native held exit remain intact.",
+    "unlock": "Expose installed songs/charts and all native CUSTOMIZE items without writing unlock bits to the memory card; native category/item validation, selections and NEW flags remain intact.",
+    "diagnostics": "Optional input sampling; not enabled in this base build.",
+    "video": "Optional component 480p modes; original 480i is the default. RGB is not hardware-qualified."
+  },
+  "patches": [
+    {
+      "kind": "W",
+      "address": "25c314",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 25c314 00154930 007c8688",
+      "expected": "00154930",
+      "replacement": "007c8688"
+    },
+    {
+      "kind": "J",
+      "address": "18b46c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "J 18b46c 0c064668 7c86f4",
+      "expected": "0c064668",
+      "replacement": "7c86f4"
+    },
+    {
+      "kind": "J",
+      "address": "1f2428",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "J 1f2428 0c07935c 7c8760",
+      "expected": "0c07935c",
+      "replacement": "7c8760"
+    },
+    {
+      "kind": "J",
+      "address": "1f2cd0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "J 1f2cd0 0c07935c 7c8760",
+      "expected": "0c07935c",
+      "replacement": "7c8760"
+    },
+    {
+      "kind": "J",
+      "address": "1f2464",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "J 1f2464 0c0792d0 7c87cc",
+      "expected": "0c0792d0",
+      "replacement": "7c87cc"
+    },
+    {
+      "kind": "J",
+      "address": "1f2d0c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "J 1f2d0c 0c0792d0 7c87cc",
+      "expected": "0c0792d0",
+      "replacement": "7c87cc"
+    },
+    {
+      "kind": "J",
+      "address": "1f2ed8",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "J 1f2ed8 0c0793ac 7c8838",
+      "expected": "0c0793ac",
+      "replacement": "7c8838"
+    },
+    {
+      "kind": "J",
+      "address": "1f2f08",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "J 1f2f08 0c080c54 7c88a4",
+      "expected": "0c080c54",
+      "replacement": "7c88a4"
+    },
+    {
+      "kind": "J",
+      "address": "1f2f10",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "J 1f2f10 0c07ce4c 7c8910",
+      "expected": "0c07ce4c",
+      "replacement": "7c8910"
+    },
+    {
+      "kind": "J",
+      "address": "1f5eb8",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "J 1f5eb8 0c080d24 7c897c",
+      "expected": "0c080d24",
+      "replacement": "7c897c"
+    },
+    {
+      "kind": "W",
+      "address": "114364",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 114364 1000001a 081f1587",
+      "expected": "1000001a",
+      "replacement": "081f1587"
+    },
+    {
+      "kind": "W",
+      "address": "1519e0",
+      "group": "audio",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ad_frame_wait_hook",
+      "recipe": "W 1519e0 0c043b28 0c1f1b11",
+      "expected": "0c043b28",
+      "replacement": "0c1f1b11"
+    },
+    {
+      "kind": "W",
+      "address": "1519f0",
+      "group": "audio",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ad_wake_hook",
+      "recipe": "W 1519f0 0c04fd6c 0c1f1b2c",
+      "expected": "0c04fd6c",
+      "replacement": "0c1f1b2c"
+    },
+    {
+      "kind": "W",
+      "address": "1e8944",
+      "group": "audio",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ad_request_hook",
+      "recipe": "W 1e8944 0c050098 0c1f1b47",
+      "expected": "0c050098",
+      "replacement": "0c1f1b47"
+    },
+    {
+      "kind": "W",
+      "address": "1e9028",
+      "group": "audio",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ad_request_hook",
+      "recipe": "W 1e9028 0c050098 0c1f1b47",
+      "expected": "0c050098",
+      "replacement": "0c1f1b47"
+    },
+    {
+      "kind": "W",
+      "address": "1e9118",
+      "group": "audio",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ad_request_hook",
+      "recipe": "W 1e9118 0c050098 0c1f1b47",
+      "expected": "0c050098",
+      "replacement": "0c1f1b47"
+    },
+    {
+      "kind": "W",
+      "address": "1e91b8",
+      "group": "audio",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ad_request_hook",
+      "recipe": "W 1e91b8 0c050098 0c1f1b47",
+      "expected": "0c050098",
+      "replacement": "0c1f1b47"
+    },
+    {
+      "kind": "W",
+      "address": "1e88d4",
+      "group": "fast_slow",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fs_key_hook",
+      "recipe": "W 1e88d4 0c07b568 0c1f1dba",
+      "expected": "0c07b568",
+      "replacement": "0c1f1dba"
+    },
+    {
+      "kind": "W",
+      "address": "1e8fb8",
+      "group": "fast_slow",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fs_scratch_hook",
+      "recipe": "W 1e8fb8 0c07b568 0c1f1dd7",
+      "expected": "0c07b568",
+      "replacement": "0c1f1dd7"
+    },
+    {
+      "kind": "W",
+      "address": "1ed5a0",
+      "group": "fast_slow",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fs_ring_hook",
+      "recipe": "W 1ed5a0 8f8688f0 081f1b72",
+      "expected": "8f8688f0",
+      "replacement": "081f1b72"
+    },
+    {
+      "kind": "W",
+      "address": "1ed5a4",
+      "group": "fast_slow",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fs_ring_hook",
+      "recipe": "W 1ed5a4 3c07007a 00000000",
+      "expected": "3c07007a",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1fe450",
+      "group": "fast_slow",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fs_play_hook",
+      "recipe": "W 1fe450 27bdffc0 081f1b8d",
+      "expected": "27bdffc0",
+      "replacement": "081f1b8d"
+    },
+    {
+      "kind": "W",
+      "address": "1fe454",
+      "group": "fast_slow",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fs_play_hook",
+      "recipe": "W 1fe454 ffbf0030 00000000",
+      "expected": "ffbf0030",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "17c570",
+      "group": "fast_slow",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fs_result_hook",
+      "recipe": "W 17c570 27bdff50 081f1d24",
+      "expected": "27bdff50",
+      "replacement": "081f1d24"
+    },
+    {
+      "kind": "W",
+      "address": "17c574",
+      "group": "fast_slow",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fs_result_hook",
+      "recipe": "W 17c574 ffbf0090 00000000",
+      "expected": "ffbf0090",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "13bbf0",
+      "group": "fast_slow",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fs_input_hook",
+      "recipe": "W 13bbf0 27bdffc0 081f1d3f",
+      "expected": "27bdffc0",
+      "replacement": "081f1d3f"
+    },
+    {
+      "kind": "W",
+      "address": "13bbf4",
+      "group": "fast_slow",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fs_input_hook",
+      "recipe": "W 13bbf4 ffbf0030 00000000",
+      "expected": "ffbf0030",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1fbd24",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1fbd24 0c0785cc 0c1f1d5a",
+      "expected": "0c0785cc",
+      "replacement": "0c1f1d5a"
+    },
+    {
+      "kind": "W",
+      "address": "1f6900",
+      "group": "fast_slow",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fs_counts_single_hook",
+      "recipe": "W 1f6900 0c0785cc 0c1f1d7a",
+      "expected": "0c0785cc",
+      "replacement": "0c1f1d7a"
+    },
+    {
+      "kind": "W",
+      "address": "1f6c34",
+      "group": "fast_slow",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fs_counts_battle_hook",
+      "recipe": "W 1f6c34 0c0785cc 0c1f1d9a",
+      "expected": "0c0785cc",
+      "replacement": "0c1f1d9a"
+    },
+    {
+      "kind": "W",
+      "address": "1001d0",
+      "group": "memory",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1001d0 3c04007c 3c040094",
+      "expected": "3c04007c",
+      "replacement": "3c040094"
+    },
+    {
+      "kind": "W",
+      "address": "11ec68",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "profile_mc_open",
+      "recipe": "W 11ec68 27bdff70 081f18cd",
+      "expected": "27bdff70",
+      "replacement": "081f18cd"
+    },
+    {
+      "kind": "W",
+      "address": "11ec6c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "profile_mc_open",
+      "recipe": "W 11ec6c 3c02002b 00000000",
+      "expected": "3c02002b",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "11f3c8",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "profile_mc_info",
+      "recipe": "W 11f3c8 27bdff60 081f18e3",
+      "expected": "27bdff60",
+      "replacement": "081f18e3"
+    },
+    {
+      "kind": "W",
+      "address": "11f3cc",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "profile_mc_info",
+      "recipe": "W 11f3cc ffb60070 00000000",
+      "expected": "ffb60070",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "11f5b8",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "profile_mc_dir",
+      "recipe": "W 11f5b8 27bdff60 081f18f9",
+      "expected": "27bdff60",
+      "replacement": "081f18f9"
+    },
+    {
+      "kind": "W",
+      "address": "11f5bc",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "profile_mc_dir",
+      "recipe": "W 11f5bc 3c02002b 00000000",
+      "expected": "3c02002b",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "11f8d8",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "profile_mc_format",
+      "recipe": "W 11f8d8 27bdffa0 081f190f",
+      "expected": "27bdffa0",
+      "replacement": "081f190f"
+    },
+    {
+      "kind": "W",
+      "address": "11f8dc",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "profile_mc_format",
+      "recipe": "W 11f8dc 3c02002b 00000000",
+      "expected": "3c02002b",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "11f9a8",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "profile_mc_delete",
+      "recipe": "W 11f9a8 27bdff80 081f1925",
+      "expected": "27bdff80",
+      "replacement": "081f1925"
+    },
+    {
+      "kind": "W",
+      "address": "11f9ac",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "profile_mc_delete",
+      "recipe": "W 11f9ac 3c02002b 00000000",
+      "expected": "3c02002b",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "11fb88",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "profile_mc_setinfo",
+      "recipe": "W 11fb88 27bdff60 081f193b",
+      "expected": "27bdff60",
+      "replacement": "081f193b"
+    },
+    {
+      "kind": "W",
+      "address": "11fb8c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "profile_mc_setinfo",
+      "recipe": "W 11fb8c 3c02002b 00000000",
+      "expected": "3c02002b",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "11fd58",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "profile_mc_rename",
+      "recipe": "W 11fd58 27bdff70 081f1951",
+      "expected": "27bdff70",
+      "replacement": "081f1951"
+    },
+    {
+      "kind": "W",
+      "address": "11fd5c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "profile_mc_rename",
+      "recipe": "W 11fd5c 3c02002b 00000000",
+      "expected": "3c02002b",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "11feb0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "profile_mc_unformat",
+      "recipe": "W 11feb0 27bdffa0 081f1967",
+      "expected": "27bdffa0",
+      "replacement": "081f1967"
+    },
+    {
+      "kind": "W",
+      "address": "11feb4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "profile_mc_unformat",
+      "recipe": "W 11feb4 3c02002b 00000000",
+      "expected": "3c02002b",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "11ff80",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "profile_mc_space",
+      "recipe": "W 11ff80 27bdff90 081f197d",
+      "expected": "27bdff90",
+      "replacement": "081f197d"
+    },
+    {
+      "kind": "W",
+      "address": "11ff84",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "profile_mc_space",
+      "recipe": "W 11ff84 3c02002b 00000000",
+      "expected": "3c02002b",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "131bd8",
+      "group": "assets",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "asset_movie_free_hook",
+      "recipe": "W 131bd8 0c04e92c 0c1f185c",
+      "expected": "0c04e92c",
+      "replacement": "0c1f185c"
+    },
+    {
+      "kind": "W",
+      "address": "131c00",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 131c00 0c04e92c 0c1f1892",
+      "expected": "0c04e92c",
+      "replacement": "0c1f1892"
+    },
+    {
+      "kind": "W",
+      "address": "132080",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "mv_hook",
+      "recipe": "W 132080 8c420000 0c1f2349",
+      "expected": "8c420000",
+      "replacement": "0c1f2349"
+    },
+    {
+      "kind": "W",
+      "address": "1322e4",
+      "group": "assets",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "asset_movie_alloc_hook",
+      "recipe": "W 1322e4 0c04e930 0c1f1841",
+      "expected": "0c04e930",
+      "replacement": "0c1f1841"
+    },
+    {
+      "kind": "W",
+      "address": "132304",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 132304 0c04e930 0c1f1877",
+      "expected": "0c04e930",
+      "replacement": "0c1f1877"
+    },
+    {
+      "kind": "W",
+      "address": "135210",
+      "group": "skin",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "eighth_anim_hook",
+      "recipe": "W 135210 27bdffc0 081f258b",
+      "expected": "27bdffc0",
+      "replacement": "081f258b"
+    },
+    {
+      "kind": "W",
+      "address": "135214",
+      "group": "skin",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "eighth_anim_hook",
+      "recipe": "W 135214 3c030035 00000000",
+      "expected": "3c030035",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "135270",
+      "group": "assets",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "asset_anim_guard",
+      "recipe": "W 135270 3c0a0035 081f1808",
+      "expected": "3c0a0035",
+      "replacement": "081f1808"
+    },
+    {
+      "kind": "W",
+      "address": "135274",
+      "group": "assets",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "asset_anim_guard",
+      "recipe": "W 135274 8c650218 00000000",
+      "expected": "8c650218",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "135460",
+      "group": "assets",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "asset_length_guard",
+      "recipe": "W 135460 00051880 081f1817",
+      "expected": "00051880",
+      "replacement": "081f1817"
+    },
+    {
+      "kind": "W",
+      "address": "135464",
+      "group": "assets",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "asset_length_guard",
+      "recipe": "W 135464 00431021 00000000",
+      "expected": "00431021",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "135540",
+      "group": "skin",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "tint_hook",
+      "recipe": "W 135540 27bdffe0 081f2463",
+      "expected": "27bdffe0",
+      "replacement": "081f2463"
+    },
+    {
+      "kind": "W",
+      "address": "135544",
+      "group": "skin",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "tint_hook",
+      "recipe": "W 135544 ffbf0000 00000000",
+      "expected": "ffbf0000",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "135720",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "draw_hook",
+      "recipe": "W 135720 8f838440 081f243a",
+      "expected": "8f838440",
+      "replacement": "081f243a"
+    },
+    {
+      "kind": "W",
+      "address": "135724",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "draw_hook",
+      "recipe": "W 135724 3c080035 00000000",
+      "expected": "3c080035",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "135830",
+      "group": "assets",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "asset_release_hook",
+      "recipe": "W 135830 0c04e92c 0c1f17b7",
+      "expected": "0c04e92c",
+      "replacement": "0c1f17b7"
+    },
+    {
+      "kind": "W",
+      "address": "1359d0",
+      "group": "assets",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "asset_unpack_hook",
+      "recipe": "W 1359d0 27bdfe80 081f179c",
+      "expected": "27bdfe80",
+      "replacement": "081f179c"
+    },
+    {
+      "kind": "W",
+      "address": "1359d4",
+      "group": "assets",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "asset_unpack_hook",
+      "recipe": "W 1359d4 ffbf0070 00000000",
+      "expected": "ffbf0070",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "13693c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 13693c 0c043bb8 0c1f17ed",
+      "expected": "0c043bb8",
+      "replacement": "0c1f17ed"
+    },
+    {
+      "kind": "W",
+      "address": "1393b0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1393b0 3c0d0080 3c0d007f",
+      "expected": "3c0d0080",
+      "replacement": "3c0d007f"
+    },
+    {
+      "kind": "W",
+      "address": "1393b4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1393b4 35ad8080 8dad6a48",
+      "expected": "35ad8080",
+      "replacement": "8dad6a48"
+    },
+    {
+      "kind": "W",
+      "address": "139430",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 139430 3c0d0080 3c0d007f",
+      "expected": "3c0d0080",
+      "replacement": "3c0d007f"
+    },
+    {
+      "kind": "W",
+      "address": "13943c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 13943c 35ad8080 8dad6a48",
+      "expected": "35ad8080",
+      "replacement": "8dad6a48"
+    },
+    {
+      "kind": "W",
+      "address": "139480",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 139480 3c0d0080 3c0d007f",
+      "expected": "3c0d0080",
+      "replacement": "3c0d007f"
+    },
+    {
+      "kind": "W",
+      "address": "13948c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 13948c 35ad8080 8dad6a48",
+      "expected": "35ad8080",
+      "replacement": "8dad6a48"
+    },
+    {
+      "kind": "W",
+      "address": "1482f0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_ring_hook",
+      "recipe": "W 1482f0 8c820194 081f1f30",
+      "expected": "8c820194",
+      "replacement": "081f1f30"
+    },
+    {
+      "kind": "W",
+      "address": "1482f4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_ring_hook",
+      "recipe": "W 1482f4 24420001 00000000",
+      "expected": "24420001",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "14cb78",
+      "group": "assets",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "asset_queue_hook",
+      "recipe": "W 14cb78 0c04efb4 0c1f18ad",
+      "expected": "0c04efb4",
+      "replacement": "0c1f18ad"
+    },
+    {
+      "kind": "W",
+      "address": "14cf18",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "st_hook",
+      "recipe": "W 14cf18 3c040024 081f232c",
+      "expected": "3c040024",
+      "replacement": "081f232c"
+    },
+    {
+      "kind": "W",
+      "address": "14cf1c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "st_hook",
+      "recipe": "W 14cf1c 2484c2f0 00000000",
+      "expected": "2484c2f0",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "14d15c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ld_hook",
+      "recipe": "W 14d15c 3c040024 081f233a",
+      "expected": "3c040024",
+      "replacement": "081f233a"
+    },
+    {
+      "kind": "W",
+      "address": "14d160",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ld_hook",
+      "recipe": "W 14d160 2484c2f0 00000000",
+      "expected": "2484c2f0",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "152dc4",
+      "group": "memory",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 152dc4 3c03007c 3c030094",
+      "expected": "3c03007c",
+      "replacement": "3c030094"
+    },
+    {
+      "kind": "W",
+      "address": "153fe4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 153fe4 240407cc 24040830",
+      "expected": "240407cc",
+      "replacement": "24040830"
+    },
+    {
+      "kind": "W",
+      "address": "153fec",
+      "group": "gauge",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gsm_menu_hook",
+      "recipe": "W 153fec 0c0400fc 0c1f14ff",
+      "expected": "0c0400fc",
+      "replacement": "0c1f14ff"
+    },
+    {
+      "kind": "W",
+      "address": "177750",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_rival_graph_a",
+      "recipe": "W 177750 24020004 081f16aa",
+      "expected": "24020004",
+      "replacement": "081f16aa"
+    },
+    {
+      "kind": "W",
+      "address": "177754",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_rival_graph_a",
+      "recipe": "W 177754 10e2000c 00000000",
+      "expected": "10e2000c",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1778c0",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_rival_graph_write",
+      "recipe": "W 1778c0 24030004 081f16bc",
+      "expected": "24030004",
+      "replacement": "081f16bc"
+    },
+    {
+      "kind": "W",
+      "address": "1778c4",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_rival_graph_write",
+      "recipe": "W 1778c4 10e3000c 00000000",
+      "expected": "10e3000c",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "177970",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_rival_reset",
+      "recipe": "W 177970 24020004 081f16ce",
+      "expected": "24020004",
+      "replacement": "081f16ce"
+    },
+    {
+      "kind": "W",
+      "address": "177974",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_rival_reset",
+      "recipe": "W 177974 10e2000c 00000000",
+      "expected": "10e2000c",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1779f0",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_rival_lamp_write",
+      "recipe": "W 1779f0 24030004 081f16e0",
+      "expected": "24030004",
+      "replacement": "081f16e0"
+    },
+    {
+      "kind": "W",
+      "address": "1779f4",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_rival_lamp_write",
+      "recipe": "W 1779f4 10e3000c 00000000",
+      "expected": "10e3000c",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "177a60",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_rival_lamp_a",
+      "recipe": "W 177a60 24020004 081f16f2",
+      "expected": "24020004",
+      "replacement": "081f16f2"
+    },
+    {
+      "kind": "W",
+      "address": "177a64",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_rival_lamp_a",
+      "recipe": "W 177a64 10e2000c 00000000",
+      "expected": "10e2000c",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "177ad0",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_rival_score_a",
+      "recipe": "W 177ad0 24020004 081f1704",
+      "expected": "24020004",
+      "replacement": "081f1704"
+    },
+    {
+      "kind": "W",
+      "address": "177ad4",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_rival_score_a",
+      "recipe": "W 177ad4 10e2000c 00000000",
+      "expected": "10e2000c",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "179c30",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_rival_graph_b",
+      "recipe": "W 179c30 24030004 081f1716",
+      "expected": "24030004",
+      "replacement": "081f1716"
+    },
+    {
+      "kind": "W",
+      "address": "179c34",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_rival_graph_b",
+      "recipe": "W 179c34 10e3000c 00000000",
+      "expected": "10e3000c",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "179dc0",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_rival_lamp_b",
+      "recipe": "W 179dc0 24030004 081f1728",
+      "expected": "24030004",
+      "replacement": "081f1728"
+    },
+    {
+      "kind": "W",
+      "address": "179dc4",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_rival_lamp_b",
+      "recipe": "W 179dc4 10e3000c 00000000",
+      "expected": "10e3000c",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "179e50",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_rival_score_b",
+      "recipe": "W 179e50 24030004 081f173a",
+      "expected": "24030004",
+      "replacement": "081f173a"
+    },
+    {
+      "kind": "W",
+      "address": "179e54",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_rival_score_b",
+      "recipe": "W 179e54 10e3000c 00000000",
+      "expected": "10e3000c",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "17a390",
+      "group": "saves",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "save_result_exit_hook",
+      "recipe": "W 17a390 27bdffa0 081f1af6",
+      "expected": "27bdffa0",
+      "replacement": "081f1af6"
+    },
+    {
+      "kind": "W",
+      "address": "17a394",
+      "group": "saves",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "save_result_exit_hook",
+      "recipe": "W 17a394 24020005 00000000",
+      "expected": "24020005",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "17a7b8",
+      "group": "retry",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "qr_choice_hook",
+      "recipe": "W 17a7b8 0c087d30 0c1f2150",
+      "expected": "0c087d30",
+      "replacement": "0c1f2150"
+    },
+    {
+      "kind": "W",
+      "address": "17aaa0",
+      "group": "gauge",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gsm_end_hook",
+      "recipe": "W 17aaa0 27bdffe0 081f14bb",
+      "expected": "27bdffe0",
+      "replacement": "081f14bb"
+    },
+    {
+      "kind": "W",
+      "address": "17aaa4",
+      "group": "gauge",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gsm_end_hook",
+      "recipe": "W 17aaa4 ffbf0010 00000000",
+      "expected": "ffbf0010",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "17e920",
+      "group": "gauge",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gsm_result_hook",
+      "recipe": "W 17e920 27bdff80 081f147f",
+      "expected": "27bdff80",
+      "replacement": "081f147f"
+    },
+    {
+      "kind": "W",
+      "address": "17e924",
+      "group": "gauge",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gsm_result_hook",
+      "recipe": "W 17e924 ffbf0060 00000000",
+      "expected": "ffbf0060",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "17eb18",
+      "group": "gauge",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gsm_background_hard_hook",
+      "recipe": "W 17eb18 0c07656c 0c1f149b",
+      "expected": "0c07656c",
+      "replacement": "0c1f149b"
+    },
+    {
+      "kind": "W",
+      "address": "17eee0",
+      "group": "gauge",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gsm_segment_hook",
+      "recipe": "W 17eee0 27bdffa0 081f145c",
+      "expected": "27bdffa0",
+      "replacement": "081f145c"
+    },
+    {
+      "kind": "W",
+      "address": "17eee4",
+      "group": "gauge",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gsm_segment_hook",
+      "recipe": "W 17eee4 ffbf0050 00000000",
+      "expected": "ffbf0050",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1896d0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "menu_draw_hook",
+      "recipe": "W 1896d0 27bdff90 081f15ca",
+      "expected": "27bdff90",
+      "replacement": "081f15ca"
+    },
+    {
+      "kind": "W",
+      "address": "1896d4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "menu_draw_hook",
+      "recipe": "W 1896d4 ffbf0050 00000000",
+      "expected": "ffbf0050",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "18a230",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "window_update_hook",
+      "recipe": "W 18a230 27bdff90 081f2419",
+      "expected": "27bdff90",
+      "replacement": "081f2419"
+    },
+    {
+      "kind": "W",
+      "address": "18a234",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "window_update_hook",
+      "recipe": "W 18a234 ffbf0060 00000000",
+      "expected": "ffbf0060",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "18a4e0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "lbl_hook1",
+      "recipe": "W 18a4e0 04400012 081f120a",
+      "expected": "04400012",
+      "replacement": "081f120a"
+    },
+    {
+      "kind": "W",
+      "address": "18a508",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18a508 28410064 2841007d",
+      "expected": "28410064",
+      "replacement": "2841007d"
+    },
+    {
+      "kind": "W",
+      "address": "18a5b8",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18a5b8 24020063 2402007c",
+      "expected": "24020063",
+      "replacement": "2402007c"
+    },
+    {
+      "kind": "W",
+      "address": "18a63c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18a63c 28430063 2843007c",
+      "expected": "28430063",
+      "replacement": "2843007c"
+    },
+    {
+      "kind": "W",
+      "address": "18a7c4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18a7c4 28610064 2861007d",
+      "expected": "28610064",
+      "replacement": "2861007d"
+    },
+    {
+      "kind": "W",
+      "address": "18af04",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18af04 a22206e8 a22207cc",
+      "expected": "a22206e8",
+      "replacement": "a22207cc"
+    },
+    {
+      "kind": "W",
+      "address": "18af24",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18af24 260506e8 260507cc",
+      "expected": "260506e8",
+      "replacement": "260507cc"
+    },
+    {
+      "kind": "W",
+      "address": "18af88",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "lbl_hook2",
+      "recipe": "W 18af88 0440000c 081f1211",
+      "expected": "0440000c",
+      "replacement": "081f1211"
+    },
+    {
+      "kind": "W",
+      "address": "18afb0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18afb0 28420064 2842007d",
+      "expected": "28420064",
+      "replacement": "2842007d"
+    },
+    {
+      "kind": "W",
+      "address": "18afd4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "window_random_hook",
+      "recipe": "W 18afd4 0c075ea8 0c1f23dc",
+      "expected": "0c075ea8",
+      "replacement": "0c1f23dc"
+    },
+    {
+      "kind": "W",
+      "address": "18bb54",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "vis_hook",
+      "recipe": "W 18bb54 0c07638c 0c1f133b",
+      "expected": "0c07638c",
+      "replacement": "0c1f133b"
+    },
+    {
+      "kind": "W",
+      "address": "18bbb4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18bbb4 a06206e8 a06207cc",
+      "expected": "a06206e8",
+      "replacement": "a06207cc"
+    },
+    {
+      "kind": "W",
+      "address": "18bbc4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "next_s3",
+      "recipe": "W 18bbc4 26730001 0c1f1326",
+      "expected": "26730001",
+      "replacement": "0c1f1326"
+    },
+    {
+      "kind": "W",
+      "address": "18bbc8",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "next_s3",
+      "recipe": "W 18bbc8 2a62002c 00000000",
+      "expected": "2a62002c",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "18bbe0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18bbe0 264506e8 264507cc",
+      "expected": "264506e8",
+      "replacement": "264507cc"
+    },
+    {
+      "kind": "W",
+      "address": "18bc40",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18bc40 a26206e8 a26207cc",
+      "expected": "a26206e8",
+      "replacement": "a26207cc"
+    },
+    {
+      "kind": "W",
+      "address": "18bc60",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18bc60 264506e8 264507cc",
+      "expected": "264506e8",
+      "replacement": "264507cc"
+    },
+    {
+      "kind": "W",
+      "address": "18bcfc",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "vcur_hook",
+      "recipe": "W 18bcfc 0c07638c 0c1f1218",
+      "expected": "0c07638c",
+      "replacement": "0c1f1218"
+    },
+    {
+      "kind": "W",
+      "address": "18bedc",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18bedc 24020063 2402007c",
+      "expected": "24020063",
+      "replacement": "2402007c"
+    },
+    {
+      "kind": "W",
+      "address": "18bf8c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18bf8c 24040064 2404007d",
+      "expected": "24040064",
+      "replacement": "2404007d"
+    },
+    {
+      "kind": "W",
+      "address": "18c154",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "window_random_hook",
+      "recipe": "W 18c154 0c075ea8 0c1f23dc",
+      "expected": "0c075ea8",
+      "replacement": "0c1f23dc"
+    },
+    {
+      "kind": "W",
+      "address": "18c5ac",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18c5ac 24020064 2402007d",
+      "expected": "24020064",
+      "replacement": "2402007d"
+    },
+    {
+      "kind": "W",
+      "address": "18c890",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18c890 24020064 2402007d",
+      "expected": "24020064",
+      "replacement": "2402007d"
+    },
+    {
+      "kind": "W",
+      "address": "18c9ec",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "reo_hook",
+      "recipe": "W 18c9ec 28610003 0c1f134e",
+      "expected": "28610003",
+      "replacement": "0c1f134e"
+    },
+    {
+      "kind": "W",
+      "address": "18c9f0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "reo_hook",
+      "recipe": "W 18c9f0 14200086 00000000",
+      "expected": "14200086",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "18c9f4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18c9f4 00000000 14200085",
+      "expected": "00000000",
+      "replacement": "14200085"
+    },
+    {
+      "kind": "W",
+      "address": "18ca8c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18ca8c 2642ff9d 2642ff84",
+      "expected": "2642ff9d",
+      "replacement": "2642ff84"
+    },
+    {
+      "kind": "W",
+      "address": "18cab4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18cab4 2442ff9d 2442ff84",
+      "expected": "2442ff9d",
+      "replacement": "2442ff84"
+    },
+    {
+      "kind": "W",
+      "address": "18d460",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18d460 a20206e8 a20207cc",
+      "expected": "a20206e8",
+      "replacement": "a20207cc"
+    },
+    {
+      "kind": "W",
+      "address": "18d480",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18d480 264506e8 264507cc",
+      "expected": "264506e8",
+      "replacement": "264507cc"
+    },
+    {
+      "kind": "W",
+      "address": "18d494",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18d494 24030064 2403007d",
+      "expected": "24030064",
+      "replacement": "2403007d"
+    },
+    {
+      "kind": "W",
+      "address": "18d524",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18d524 2602ff9c 2602ff83",
+      "expected": "2602ff9c",
+      "replacement": "2602ff83"
+    },
+    {
+      "kind": "W",
+      "address": "18d594",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18d594 24030064 2403007d",
+      "expected": "24030064",
+      "replacement": "2403007d"
+    },
+    {
+      "kind": "W",
+      "address": "18d95c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18d95c 2a810063 2a81007c",
+      "expected": "2a810063",
+      "replacement": "2a81007c"
+    },
+    {
+      "kind": "W",
+      "address": "18d9a4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18d9a4 2a820063 2a82007c",
+      "expected": "2a820063",
+      "replacement": "2a82007c"
+    },
+    {
+      "kind": "W",
+      "address": "18dac4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18dac4 a26206e8 a26207cc",
+      "expected": "a26206e8",
+      "replacement": "a26207cc"
+    },
+    {
+      "kind": "W",
+      "address": "18dae4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18dae4 264506e8 264507cc",
+      "expected": "264506e8",
+      "replacement": "264507cc"
+    },
+    {
+      "kind": "W",
+      "address": "18db84",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18db84 a26206e8 a26207cc",
+      "expected": "a26206e8",
+      "replacement": "a26207cc"
+    },
+    {
+      "kind": "W",
+      "address": "18dba4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18dba4 264506e8 264507cc",
+      "expected": "264506e8",
+      "replacement": "264507cc"
+    },
+    {
+      "kind": "W",
+      "address": "18dc30",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18dc30 24050064 2405007d",
+      "expected": "24050064",
+      "replacement": "2405007d"
+    },
+    {
+      "kind": "W",
+      "address": "18dc3c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18dc3c 24050064 2405007d",
+      "expected": "24050064",
+      "replacement": "2405007d"
+    },
+    {
+      "kind": "W",
+      "address": "18dc44",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18dc44 24030064 2403007d",
+      "expected": "24030064",
+      "replacement": "2403007d"
+    },
+    {
+      "kind": "W",
+      "address": "18e168",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18e168 24020064 2402007d",
+      "expected": "24020064",
+      "replacement": "2402007d"
+    },
+    {
+      "kind": "W",
+      "address": "18e590",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18e590 28410063 2841007c",
+      "expected": "28410063",
+      "replacement": "2841007c"
+    },
+    {
+      "kind": "W",
+      "address": "18ed9c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18ed9c 24020064 2402007d",
+      "expected": "24020064",
+      "replacement": "2402007d"
+    },
+    {
+      "kind": "W",
+      "address": "18f1d8",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "vis_hook",
+      "recipe": "W 18f1d8 0c07638c 0c1f133b",
+      "expected": "0c07638c",
+      "replacement": "0c1f133b"
+    },
+    {
+      "kind": "W",
+      "address": "18f24c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18f24c a06206e8 a06207cc",
+      "expected": "a06206e8",
+      "replacement": "a06207cc"
+    },
+    {
+      "kind": "W",
+      "address": "18f2d8",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18f2d8 a06206e8 a06207cc",
+      "expected": "a06206e8",
+      "replacement": "a06207cc"
+    },
+    {
+      "kind": "W",
+      "address": "18f2e8",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "next_s1",
+      "recipe": "W 18f2e8 26310001 0c1f132d",
+      "expected": "26310001",
+      "replacement": "0c1f132d"
+    },
+    {
+      "kind": "W",
+      "address": "18f2ec",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "next_s1",
+      "recipe": "W 18f2ec 2a22002c 00000000",
+      "expected": "2a22002c",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "18f314",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18f314 264506e8 264507cc",
+      "expected": "264506e8",
+      "replacement": "264507cc"
+    },
+    {
+      "kind": "W",
+      "address": "18fb3c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18fb3c 24030064 2403007d",
+      "expected": "24030064",
+      "replacement": "2403007d"
+    },
+    {
+      "kind": "W",
+      "address": "18fe2c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "rnd_hook",
+      "recipe": "W 18fe2c 14400002 0c1f1355",
+      "expected": "14400002",
+      "replacement": "0c1f1355"
+    },
+    {
+      "kind": "W",
+      "address": "18fe34",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18fe34 24110001 00000000",
+      "expected": "24110001",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "18fea0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18fea0 24020064 2402007d",
+      "expected": "24020064",
+      "replacement": "2402007d"
+    },
+    {
+      "kind": "W",
+      "address": "18ff04",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18ff04 24020063 2402007c",
+      "expected": "24020063",
+      "replacement": "2402007c"
+    },
+    {
+      "kind": "W",
+      "address": "18ff54",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18ff54 24020064 2402007d",
+      "expected": "24020064",
+      "replacement": "2402007d"
+    },
+    {
+      "kind": "W",
+      "address": "18ffbc",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 18ffbc 24020065 2402007e",
+      "expected": "24020065",
+      "replacement": "2402007e"
+    },
+    {
+      "kind": "W",
+      "address": "1902f0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "spr_panel_hook_g",
+      "recipe": "W 1902f0 0c078ce4 0c1f12f0",
+      "expected": "0c078ce4",
+      "replacement": "0c1f12f0"
+    },
+    {
+      "kind": "W",
+      "address": "19032c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "spr_panel_hook_b",
+      "recipe": "W 19032c 0c078cf4 0c1f12d5",
+      "expected": "0c078cf4",
+      "replacement": "0c1f12d5"
+    },
+    {
+      "kind": "W",
+      "address": "190368",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "spr_panel_hook_a",
+      "recipe": "W 190368 0c078cd4 0c1f130b",
+      "expected": "0c078cd4",
+      "replacement": "0c1f130b"
+    },
+    {
+      "kind": "W",
+      "address": "190b1c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 190b1c 0440007e 00000000",
+      "expected": "0440007e",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "190b24",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 190b24 28410063 2841007c",
+      "expected": "28410063",
+      "replacement": "2841007c"
+    },
+    {
+      "kind": "W",
+      "address": "190b40",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 190b40 04400075 00000000",
+      "expected": "04400075",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "190b48",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 190b48 28410063 2841007c",
+      "expected": "28410063",
+      "replacement": "2841007c"
+    },
+    {
+      "kind": "W",
+      "address": "190b64",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 190b64 0480006c 00000000",
+      "expected": "0480006c",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "190b6c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 190b6c 28810063 2881007c",
+      "expected": "28810063",
+      "replacement": "2881007c"
+    },
+    {
+      "kind": "W",
+      "address": "190b78",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "spr_panel_hook_g",
+      "recipe": "W 190b78 0c078ce4 0c1f12f0",
+      "expected": "0c078ce4",
+      "replacement": "0c1f12f0"
+    },
+    {
+      "kind": "W",
+      "address": "190ba4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 190ba4 0480005c 00000000",
+      "expected": "0480005c",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "190bac",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 190bac 28810063 2881007c",
+      "expected": "28810063",
+      "replacement": "2881007c"
+    },
+    {
+      "kind": "W",
+      "address": "190bb8",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "spr_panel_hook_b",
+      "recipe": "W 190bb8 0c078cf4 0c1f12d5",
+      "expected": "0c078cf4",
+      "replacement": "0c1f12d5"
+    },
+    {
+      "kind": "W",
+      "address": "190be4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 190be4 0480004c 00000000",
+      "expected": "0480004c",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "190bec",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 190bec 28810063 2881007c",
+      "expected": "28810063",
+      "replacement": "2881007c"
+    },
+    {
+      "kind": "W",
+      "address": "190bf8",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "spr_panel_hook_a",
+      "recipe": "W 190bf8 0c078cd4 0c1f130b",
+      "expected": "0c078cd4",
+      "replacement": "0c1f130b"
+    },
+    {
+      "kind": "W",
+      "address": "190e78",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "vis_hook",
+      "recipe": "W 190e78 0c07638c 0c1f133b",
+      "expected": "0c07638c",
+      "replacement": "0c1f133b"
+    },
+    {
+      "kind": "W",
+      "address": "190eb4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 190eb4 04400005 00000000",
+      "expected": "04400005",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "190ebc",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 190ebc 28410064 2841007d",
+      "expected": "28410064",
+      "replacement": "2841007d"
+    },
+    {
+      "kind": "W",
+      "address": "190f58",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 190f58 24020064 2402007d",
+      "expected": "24020064",
+      "replacement": "2402007d"
+    },
+    {
+      "kind": "W",
+      "address": "19152c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 19152c 046000a8 24610001",
+      "expected": "046000a8",
+      "replacement": "24610001"
+    },
+    {
+      "kind": "W",
+      "address": "191530",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 191530 00000000 102000a7",
+      "expected": "00000000",
+      "replacement": "102000a7"
+    },
+    {
+      "kind": "W",
+      "address": "191534",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 191534 24020064 2402007d",
+      "expected": "24020064",
+      "replacement": "2402007d"
+    },
+    {
+      "kind": "W",
+      "address": "1918a4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "stat_hook",
+      "recipe": "W 1918a4 0c084360 0c1f11c6",
+      "expected": "0c084360",
+      "replacement": "0c1f11c6"
+    },
+    {
+      "kind": "W",
+      "address": "1918e0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ft_hook",
+      "recipe": "W 1918e0 0c0844ec 0c1f2370",
+      "expected": "0c0844ec",
+      "replacement": "0c1f2370"
+    },
+    {
+      "kind": "W",
+      "address": "19190c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ft_hook",
+      "recipe": "W 19190c 0c0844ec 0c1f2370",
+      "expected": "0c0844ec",
+      "replacement": "0c1f2370"
+    },
+    {
+      "kind": "W",
+      "address": "191930",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ft_hook",
+      "recipe": "W 191930 0c0844ec 0c1f2370",
+      "expected": "0c0844ec",
+      "replacement": "0c1f2370"
+    },
+    {
+      "kind": "W",
+      "address": "191944",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ft_hook",
+      "recipe": "W 191944 0c0844ec 0c1f2370",
+      "expected": "0c0844ec",
+      "replacement": "0c1f2370"
+    },
+    {
+      "kind": "W",
+      "address": "191958",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ft_hook",
+      "recipe": "W 191958 0c0844ec 0c1f2370",
+      "expected": "0c0844ec",
+      "replacement": "0c1f2370"
+    },
+    {
+      "kind": "W",
+      "address": "191c0c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 191c0c 24130063 2413007c",
+      "expected": "24130063",
+      "replacement": "2413007c"
+    },
+    {
+      "kind": "W",
+      "address": "191c34",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "vis_hook",
+      "recipe": "W 191c34 0c07638c 0c1f133b",
+      "expected": "0c07638c",
+      "replacement": "0c1f133b"
+    },
+    {
+      "kind": "W",
+      "address": "191d28",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 191d28 240401a8 24040328",
+      "expected": "240401a8",
+      "replacement": "24040328"
+    },
+    {
+      "kind": "W",
+      "address": "191d34",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 191d34 240401a8 24040328",
+      "expected": "240401a8",
+      "replacement": "24040328"
+    },
+    {
+      "kind": "W",
+      "address": "191d40",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 191d40 240401a8 24040328",
+      "expected": "240401a8",
+      "replacement": "24040328"
+    },
+    {
+      "kind": "W",
+      "address": "192018",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "entry_hook",
+      "recipe": "W 192018 0c077118 0c1f11c0",
+      "expected": "0c077118",
+      "replacement": "0c1f11c0"
+    },
+    {
+      "kind": "W",
+      "address": "1920b4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1920b4 a24206e8 a24207cc",
+      "expected": "a24206e8",
+      "replacement": "a24207cc"
+    },
+    {
+      "kind": "W",
+      "address": "1920d4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1920d4 268506e8 268507cc",
+      "expected": "268506e8",
+      "replacement": "268507cc"
+    },
+    {
+      "kind": "W",
+      "address": "1925cc",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "vis_hook",
+      "recipe": "W 1925cc 0c07638c 0c1f133b",
+      "expected": "0c07638c",
+      "replacement": "0c1f133b"
+    },
+    {
+      "kind": "W",
+      "address": "192640",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 192640 a06206e8 a06207cc",
+      "expected": "a06206e8",
+      "replacement": "a06207cc"
+    },
+    {
+      "kind": "W",
+      "address": "1926d0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1926d0 a06206e8 a06207cc",
+      "expected": "a06206e8",
+      "replacement": "a06207cc"
+    },
+    {
+      "kind": "W",
+      "address": "1926e0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "next_s0",
+      "recipe": "W 1926e0 26100001 0c1f1334",
+      "expected": "26100001",
+      "replacement": "0c1f1334"
+    },
+    {
+      "kind": "W",
+      "address": "1926e4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "next_s0",
+      "recipe": "W 1926e4 2a02002c 00000000",
+      "expected": "2a02002c",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "19270c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 19270c 264506e8 264507cc",
+      "expected": "264506e8",
+      "replacement": "264507cc"
+    },
+    {
+      "kind": "W",
+      "address": "1929fc",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1929fc 2a420063 2a42007c",
+      "expected": "2a420063",
+      "replacement": "2a42007c"
+    },
+    {
+      "kind": "W",
+      "address": "192a08",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 192a08 24020063 2402007c",
+      "expected": "24020063",
+      "replacement": "2402007c"
+    },
+    {
+      "kind": "W",
+      "address": "192a40",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 192a40 0c04c398 00000000",
+      "expected": "0c04c398",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "192b3c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "bpm_hook",
+      "recipe": "W 192b3c 0620012d 081f11e1",
+      "expected": "0620012d",
+      "replacement": "081f11e1"
+    },
+    {
+      "kind": "W",
+      "address": "192b44",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 192b44 2a210063 2a21007c",
+      "expected": "2a210063",
+      "replacement": "2a21007c"
+    },
+    {
+      "kind": "W",
+      "address": "192eb8",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ft_hook",
+      "recipe": "W 192eb8 0c0844ec 0c1f2370",
+      "expected": "0c0844ec",
+      "replacement": "0c1f2370"
+    },
+    {
+      "kind": "W",
+      "address": "193178",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 193178 2682ff9d 2682ff84",
+      "expected": "2682ff9d",
+      "replacement": "2682ff84"
+    },
+    {
+      "kind": "W",
+      "address": "1931a0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1931a0 24020064 2402007d",
+      "expected": "24020064",
+      "replacement": "2402007d"
+    },
+    {
+      "kind": "W",
+      "address": "1931a4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1931a4 24090065 2409007e",
+      "expected": "24090065",
+      "replacement": "2409007e"
+    },
+    {
+      "kind": "W",
+      "address": "1931a8",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1931a8 24030063 2403007c",
+      "expected": "24030063",
+      "replacement": "2403007c"
+    },
+    {
+      "kind": "W",
+      "address": "1935d4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1935d4 24020063 2402007c",
+      "expected": "24020063",
+      "replacement": "2402007c"
+    },
+    {
+      "kind": "W",
+      "address": "193a34",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "song_count_hook",
+      "recipe": "W 193a34 3463851f 081f23f7",
+      "expected": "3463851f",
+      "replacement": "081f23f7"
+    },
+    {
+      "kind": "W",
+      "address": "193a38",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "song_count_hook",
+      "recipe": "W 193a38 00720018 00000000",
+      "expected": "00720018",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "194000",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 194000 38420063 3842007c",
+      "expected": "38420063",
+      "replacement": "3842007c"
+    },
+    {
+      "kind": "W",
+      "address": "194308",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 194308 24030063 2403007c",
+      "expected": "24030063",
+      "replacement": "2403007c"
+    },
+    {
+      "kind": "W",
+      "address": "194b04",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 194b04 0660007a 00000000",
+      "expected": "0660007a",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "194b0c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 194b0c 2a610063 2a61007c",
+      "expected": "2a610063",
+      "replacement": "2a61007c"
+    },
+    {
+      "kind": "W",
+      "address": "194c48",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 194c48 06600019 00000000",
+      "expected": "06600019",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "194c50",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 194c50 2a610063 2a61007c",
+      "expected": "2a610063",
+      "replacement": "2a61007c"
+    },
+    {
+      "kind": "W",
+      "address": "194c5c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "spr_panel_hook_b",
+      "recipe": "W 194c5c 0c078cf4 0c1f12d5",
+      "expected": "0c078cf4",
+      "replacement": "0c1f12d5"
+    },
+    {
+      "kind": "W",
+      "address": "194d68",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 194d68 06600034 00000000",
+      "expected": "06600034",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "194d70",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 194d70 2a610063 2a61007c",
+      "expected": "2a610063",
+      "replacement": "2a61007c"
+    },
+    {
+      "kind": "W",
+      "address": "194e68",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 194e68 06600041 00000000",
+      "expected": "06600041",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "194e70",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 194e70 2a610063 2a61007c",
+      "expected": "2a610063",
+      "replacement": "2a61007c"
+    },
+    {
+      "kind": "W",
+      "address": "196ad4",
+      "group": "unlock",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 196ad4 90420004 24020001",
+      "expected": "90420004",
+      "replacement": "24020001"
+    },
+    {
+      "kind": "W",
+      "address": "198fe0",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_history_prepare",
+      "recipe": "W 198fe0 00061940 081f176f",
+      "expected": "00061940",
+      "replacement": "081f176f"
+    },
+    {
+      "kind": "W",
+      "address": "198fe4",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_history_prepare",
+      "recipe": "W 198fe4 3c010001 00000000",
+      "expected": "3c010001",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "19b0d0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_ab_hook",
+      "recipe": "W 19b0d0 2ca10008 081f1ecd",
+      "expected": "2ca10008",
+      "replacement": "081f1ecd"
+    },
+    {
+      "kind": "W",
+      "address": "19b0d4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_ab_hook",
+      "recipe": "W 19b0d4 1020000d 00000000",
+      "expected": "1020000d",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "19b170",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_ab_set_hook",
+      "recipe": "W 19b170 2ca10008 081f1eef",
+      "expected": "2ca10008",
+      "replacement": "081f1eef"
+    },
+    {
+      "kind": "W",
+      "address": "19b174",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_ab_set_hook",
+      "recipe": "W 19b174 1020000d 00000000",
+      "expected": "1020000d",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "19b8e0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "sv_b8e0",
+      "recipe": "W 19b8e0 27bdffb0 081f22e1",
+      "expected": "27bdffb0",
+      "replacement": "081f22e1"
+    },
+    {
+      "kind": "W",
+      "address": "19b8e4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "sv_b8e0",
+      "recipe": "W 19b8e4 ffbf0040 00000000",
+      "expected": "ffbf0040",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "19bac0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "sv_bac0",
+      "recipe": "W 19bac0 27bdffb0 081f22db",
+      "expected": "27bdffb0",
+      "replacement": "081f22db"
+    },
+    {
+      "kind": "W",
+      "address": "19bac4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "sv_bac0",
+      "recipe": "W 19bac4 ffbf0040 00000000",
+      "expected": "ffbf0040",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "19bca0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "sv_bca0",
+      "recipe": "W 19bca0 27bdffb0 081f22d5",
+      "expected": "27bdffb0",
+      "replacement": "081f22d5"
+    },
+    {
+      "kind": "W",
+      "address": "19bca4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "sv_bca0",
+      "recipe": "W 19bca4 ffbf0040 00000000",
+      "expected": "ffbf0040",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "19cdd0",
+      "group": "unlock",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 19cdd0 90840003 03e00008",
+      "expected": "90840003",
+      "replacement": "03e00008"
+    },
+    {
+      "kind": "W",
+      "address": "19cdd4",
+      "group": "unlock",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 19cdd4 24030001 24020001",
+      "expected": "24030001",
+      "replacement": "24020001"
+    },
+    {
+      "kind": "W",
+      "address": "1a0bc0",
+      "group": "saves",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "save_result_hook",
+      "recipe": "W 1a0bc0 27bdffb0 081f1ac0",
+      "expected": "27bdffb0",
+      "replacement": "081f1ac0"
+    },
+    {
+      "kind": "W",
+      "address": "1a0bc4",
+      "group": "saves",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "save_result_hook",
+      "recipe": "W 1a0bc4 ffbf0040 00000000",
+      "expected": "ffbf0040",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1a112c",
+      "group": "gauge",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gsm_count_hook",
+      "recipe": "W 1a112c 0c081260 0c1f151b",
+      "expected": "0c081260",
+      "replacement": "0c1f151b"
+    },
+    {
+      "kind": "W",
+      "address": "1a1154",
+      "group": "gauge",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gsm_sample_hook",
+      "recipe": "W 1a1154 0c081248 0c1f1536",
+      "expected": "0c081248",
+      "replacement": "0c1f1536"
+    },
+    {
+      "kind": "W",
+      "address": "1a11e8",
+      "group": "gauge",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gsm_count_hook",
+      "recipe": "W 1a11e8 0c081244 0c1f151b",
+      "expected": "0c081244",
+      "replacement": "0c1f151b"
+    },
+    {
+      "kind": "W",
+      "address": "1a1284",
+      "group": "gauge",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gsm_score_sample_hook",
+      "recipe": "W 1a1284 0c08122c 0c1f1551",
+      "expected": "0c08122c",
+      "replacement": "0c1f1551"
+    },
+    {
+      "kind": "W",
+      "address": "1a12bc",
+      "group": "gauge",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gsm_rate_sample_hook",
+      "recipe": "W 1a12bc 0c08120c 0c1f156c",
+      "expected": "0c08120c",
+      "replacement": "0c1f156c"
+    },
+    {
+      "kind": "W",
+      "address": "1a16cc",
+      "group": "retry",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "qr_play_hook",
+      "recipe": "W 1a16cc 0c07c85c 0c1f211a",
+      "expected": "0c07c85c",
+      "replacement": "0c1f211a"
+    },
+    {
+      "kind": "W",
+      "address": "1a17d4",
+      "group": "retry",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "qr_continue_hook",
+      "recipe": "W 1a17d4 0c07d5e8 0c1f216b",
+      "expected": "0c07d5e8",
+      "replacement": "0c1f216b"
+    },
+    {
+      "kind": "W",
+      "address": "1d2260",
+      "group": "saves",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "save_profile_role_hook",
+      "recipe": "W 1d2260 03e00008 081f1a1d",
+      "expected": "03e00008",
+      "replacement": "081f1a1d"
+    },
+    {
+      "kind": "W",
+      "address": "1d2264",
+      "group": "saves",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "save_profile_role_hook",
+      "recipe": "W 1d2264 af8487b4 00000000",
+      "expected": "af8487b4",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1d2730",
+      "group": "saves",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "save_profile_startup_hook",
+      "recipe": "W 1d2730 27bdfff0 081f1a02",
+      "expected": "27bdfff0",
+      "replacement": "081f1a02"
+    },
+    {
+      "kind": "W",
+      "address": "1d2734",
+      "group": "saves",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "save_profile_startup_hook",
+      "recipe": "W 1d2734 3c020079 00000000",
+      "expected": "3c020079",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1d2eb0",
+      "group": "saves",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "save_load_hook",
+      "recipe": "W 1d2eb0 27bdfff0 081f1a6f",
+      "expected": "27bdfff0",
+      "replacement": "081f1a6f"
+    },
+    {
+      "kind": "W",
+      "address": "1d2eb4",
+      "group": "saves",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "save_load_hook",
+      "recipe": "W 1d2eb4 3c020079 00000000",
+      "expected": "3c020079",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1d32b0",
+      "group": "saves",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "save_write_hook",
+      "recipe": "W 1d32b0 27bdfff0 081f1a54",
+      "expected": "27bdfff0",
+      "replacement": "081f1a54"
+    },
+    {
+      "kind": "W",
+      "address": "1d32b4",
+      "group": "saves",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "save_write_hook",
+      "recipe": "W 1d32b4 3c020079 00000000",
+      "expected": "3c020079",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1d43e0",
+      "group": "saves",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "save_profile_presence_hook",
+      "recipe": "W 1d43e0 27bdffa0 081f19e7",
+      "expected": "27bdffa0",
+      "replacement": "081f19e7"
+    },
+    {
+      "kind": "W",
+      "address": "1d43e4",
+      "group": "saves",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "save_profile_presence_hook",
+      "recipe": "W 1d43e4 3c060027 00000000",
+      "expected": "3c060027",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1d4510",
+      "group": "saves",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "save_manual_hook",
+      "recipe": "W 1d4510 27bdffc0 081f1aa5",
+      "expected": "27bdffc0",
+      "replacement": "081f1aa5"
+    },
+    {
+      "kind": "W",
+      "address": "1d4514",
+      "group": "saves",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "save_manual_hook",
+      "recipe": "W 1d4514 3c020079 00000000",
+      "expected": "3c020079",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1d50e0",
+      "group": "saves",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "save_auto_hook",
+      "recipe": "W 1d50e0 27bdffc0 081f1a8a",
+      "expected": "27bdffc0",
+      "replacement": "081f1a8a"
+    },
+    {
+      "kind": "W",
+      "address": "1d50e4",
+      "group": "saves",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "save_auto_hook",
+      "recipe": "W 1d50e4 ffbf0030 00000000",
+      "expected": "ffbf0030",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1d6d40",
+      "group": "saves",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "save_message_hook",
+      "recipe": "W 1d6d40 27bdff50 081f1adb",
+      "expected": "27bdff50",
+      "replacement": "081f1adb"
+    },
+    {
+      "kind": "W",
+      "address": "1d6d44",
+      "group": "saves",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "save_message_hook",
+      "recipe": "W 1d6d44 3c020026 00000000",
+      "expected": "3c020026",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1d76b0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "profile_display_0",
+      "recipe": "W 1d76b0 8f8487b4 081f1993",
+      "expected": "8f8487b4",
+      "replacement": "081f1993"
+    },
+    {
+      "kind": "W",
+      "address": "1d76b4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "profile_display_0",
+      "recipe": "W 1d76b4 3c0500c6 00000000",
+      "expected": "3c0500c6",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1d76cc",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "profile_display_1",
+      "recipe": "W 1d76cc 8f8487b4 081f19a6",
+      "expected": "8f8487b4",
+      "replacement": "081f19a6"
+    },
+    {
+      "kind": "W",
+      "address": "1d76d0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "profile_display_1",
+      "recipe": "W 1d76d0 3c0500c6 00000000",
+      "expected": "3c0500c6",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1d76f4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "profile_display_2",
+      "recipe": "W 1d76f4 8f8487b4 081f19b9",
+      "expected": "8f8487b4",
+      "replacement": "081f19b9"
+    },
+    {
+      "kind": "W",
+      "address": "1d76f8",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "profile_display_2",
+      "recipe": "W 1d76f8 3c0500c6 00000000",
+      "expected": "3c0500c6",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1d7710",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "profile_display_3",
+      "recipe": "W 1d7710 8f8487b4 081f19cc",
+      "expected": "8f8487b4",
+      "replacement": "081f19cc"
+    },
+    {
+      "kind": "W",
+      "address": "1d7714",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "profile_display_3",
+      "recipe": "W 1d7714 3c0500c6 00000000",
+      "expected": "3c0500c6",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1d85c0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "saved_hook",
+      "recipe": "W 1d85c0 03e00008 081f1233",
+      "expected": "03e00008",
+      "replacement": "081f1233"
+    },
+    {
+      "kind": "W",
+      "address": "1d88c0",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_favorite_get",
+      "recipe": "W 1d88c0 27bdffc0 081f175d",
+      "expected": "27bdffc0",
+      "replacement": "081f175d"
+    },
+    {
+      "kind": "W",
+      "address": "1d88c4",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_favorite_get",
+      "recipe": "W 1d88c4 ffbf0030 00000000",
+      "expected": "ffbf0030",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1d8960",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_favorite_set",
+      "recipe": "W 1d8960 27bdffb0 081f1766",
+      "expected": "27bdffb0",
+      "replacement": "081f1766"
+    },
+    {
+      "kind": "W",
+      "address": "1d8964",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_favorite_set",
+      "recipe": "W 1d8964 ffbf0040 00000000",
+      "expected": "ffbf0040",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1d95b0",
+      "group": "gauge",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gsm_hard_hook",
+      "recipe": "W 1d95b0 27bdffd0 081f141c",
+      "expected": "27bdffd0",
+      "replacement": "081f141c"
+    },
+    {
+      "kind": "W",
+      "address": "1d95b4",
+      "group": "gauge",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gsm_hard_hook",
+      "recipe": "W 1d95b4 ffbf0020 00000000",
+      "expected": "ffbf0020",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1d9610",
+      "group": "gauge",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gsm_easy_hook",
+      "recipe": "W 1d9610 27bdffd0 081f143c",
+      "expected": "27bdffd0",
+      "replacement": "081f143c"
+    },
+    {
+      "kind": "W",
+      "address": "1d9614",
+      "group": "gauge",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gsm_easy_hook",
+      "recipe": "W 1d9614 ffbf0020 00000000",
+      "expected": "ffbf0020",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1d9f30",
+      "group": "gauge",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gsm_hard_raw_hook",
+      "recipe": "W 1d9f30 27bdffd0 081f14df",
+      "expected": "27bdffd0",
+      "replacement": "081f14df"
+    },
+    {
+      "kind": "W",
+      "address": "1d9f34",
+      "group": "gauge",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gsm_hard_raw_hook",
+      "recipe": "W 1d9f34 ffbf0020 00000000",
+      "expected": "ffbf0020",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1db4f0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "window_tick_hook",
+      "recipe": "W 1db4f0 27bdffa0 081f241b",
+      "expected": "27bdffa0",
+      "replacement": "081f241b"
+    },
+    {
+      "kind": "W",
+      "address": "1db4f4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "window_tick_hook",
+      "recipe": "W 1db4f4 ffbf0050 00000000",
+      "expected": "ffbf0050",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1dc120",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1dc120 29610063 2961007c",
+      "expected": "29610063",
+      "replacement": "2961007c"
+    },
+    {
+      "kind": "W",
+      "address": "1dc354",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1dc354 28420063 2842007c",
+      "expected": "28420063",
+      "replacement": "2842007c"
+    },
+    {
+      "kind": "W",
+      "address": "1dc758",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1dc758 28630063 2863007c",
+      "expected": "28630063",
+      "replacement": "2863007c"
+    },
+    {
+      "kind": "W",
+      "address": "1dc7f4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1dc7f4 28610063 2861007c",
+      "expected": "28610063",
+      "replacement": "2861007c"
+    },
+    {
+      "kind": "W",
+      "address": "1dce1c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1dce1c 24020063 2402007c",
+      "expected": "24020063",
+      "replacement": "2402007c"
+    },
+    {
+      "kind": "W",
+      "address": "1dce2c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1dce2c 24020064 2402007d",
+      "expected": "24020064",
+      "replacement": "2402007d"
+    },
+    {
+      "kind": "W",
+      "address": "1dce3c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1dce3c 24020065 2402007e",
+      "expected": "24020065",
+      "replacement": "2402007e"
+    },
+    {
+      "kind": "W",
+      "address": "1dd058",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1dd058 2a230064 2a23007d",
+      "expected": "2a230064",
+      "replacement": "2a23007d"
+    },
+    {
+      "kind": "W",
+      "address": "1dd0f0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1dd0f0 2a230064 2a23007d",
+      "expected": "2a230064",
+      "replacement": "2a23007d"
+    },
+    {
+      "kind": "W",
+      "address": "1dd0fc",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1dd0fc 2a210066 2a21007f",
+      "expected": "2a210066",
+      "replacement": "2a21007f"
+    },
+    {
+      "kind": "W",
+      "address": "1dd108",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1dd108 24110065 2411007e",
+      "expected": "24110065",
+      "replacement": "2411007e"
+    },
+    {
+      "kind": "W",
+      "address": "1dd11c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1dd11c 8c7e0468 8c7e0404",
+      "expected": "8c7e0468",
+      "replacement": "8c7e0404"
+    },
+    {
+      "kind": "W",
+      "address": "1dd3c4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1dd3c4 24020063 2402007c",
+      "expected": "24020063",
+      "replacement": "2402007c"
+    },
+    {
+      "kind": "W",
+      "address": "1dd3d4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1dd3d4 24020064 2402007d",
+      "expected": "24020064",
+      "replacement": "2402007d"
+    },
+    {
+      "kind": "W",
+      "address": "1dd3e4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1dd3e4 24020065 2402007e",
+      "expected": "24020065",
+      "replacement": "2402007e"
+    },
+    {
+      "kind": "W",
+      "address": "1dd4cc",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1dd4cc 2a230064 2a23007d",
+      "expected": "2a230064",
+      "replacement": "2a23007d"
+    },
+    {
+      "kind": "W",
+      "address": "1dd500",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1dd500 2a230064 2a23007d",
+      "expected": "2a230064",
+      "replacement": "2a23007d"
+    },
+    {
+      "kind": "W",
+      "address": "1dd50c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1dd50c 2a210066 2a21007f",
+      "expected": "2a210066",
+      "replacement": "2a21007f"
+    },
+    {
+      "kind": "W",
+      "address": "1dd518",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1dd518 24110065 2411007e",
+      "expected": "24110065",
+      "replacement": "2411007e"
+    },
+    {
+      "kind": "W",
+      "address": "1dd52c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1dd52c 8c710468 8c710404",
+      "expected": "8c710468",
+      "replacement": "8c710404"
+    },
+    {
+      "kind": "W",
+      "address": "1dd72c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1dd72c 24040063 2404007c",
+      "expected": "24040063",
+      "replacement": "2404007c"
+    },
+    {
+      "kind": "W",
+      "address": "1dd74c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1dd74c 28610063 2861007c",
+      "expected": "28610063",
+      "replacement": "2861007c"
+    },
+    {
+      "kind": "W",
+      "address": "1dd758",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1dd758 0460004f 00000000",
+      "expected": "0460004f",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1dd974",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1dd974 24040063 2404007c",
+      "expected": "24040063",
+      "replacement": "2404007c"
+    },
+    {
+      "kind": "W",
+      "address": "1dd988",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1dd988 2ae10063 2ae1007c",
+      "expected": "2ae10063",
+      "replacement": "2ae1007c"
+    },
+    {
+      "kind": "W",
+      "address": "1dd994",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1dd994 06e00049 00000000",
+      "expected": "06e00049",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1ddab8",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1ddab8 2ae10063 2ae1007c",
+      "expected": "2ae10063",
+      "replacement": "2ae1007c"
+    },
+    {
+      "kind": "W",
+      "address": "1ddbac",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1ddbac 24030063 2403007c",
+      "expected": "24030063",
+      "replacement": "2403007c"
+    },
+    {
+      "kind": "W",
+      "address": "1ddc48",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1ddc48 2a810063 2a81007c",
+      "expected": "2a810063",
+      "replacement": "2a81007c"
+    },
+    {
+      "kind": "W",
+      "address": "1ddc54",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1ddc54 06800057 00000000",
+      "expected": "06800057",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1ddda4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1ddda4 2a810063 2a81007c",
+      "expected": "2a810063",
+      "replacement": "2a81007c"
+    },
+    {
+      "kind": "W",
+      "address": "1ddea0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1ddea0 24030063 2403007c",
+      "expected": "24030063",
+      "replacement": "2403007c"
+    },
+    {
+      "kind": "W",
+      "address": "1ddeb0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1ddeb0 2a610063 2a61007c",
+      "expected": "2a610063",
+      "replacement": "2a61007c"
+    },
+    {
+      "kind": "W",
+      "address": "1ddebc",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1ddebc 0660005b 00000000",
+      "expected": "0660005b",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1de020",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1de020 2a610063 2a61007c",
+      "expected": "2a610063",
+      "replacement": "2a61007c"
+    },
+    {
+      "kind": "W",
+      "address": "1de0f0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1de0f0 24030063 2403007c",
+      "expected": "24030063",
+      "replacement": "2403007c"
+    },
+    {
+      "kind": "W",
+      "address": "1dec74",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1dec74 2a010063 2a01007c",
+      "expected": "2a010063",
+      "replacement": "2a01007c"
+    },
+    {
+      "kind": "W",
+      "address": "1ded10",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1ded10 24020065 2402007e",
+      "expected": "24020065",
+      "replacement": "2402007e"
+    },
+    {
+      "kind": "W",
+      "address": "1df118",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1df118 28630063 2863007c",
+      "expected": "28630063",
+      "replacement": "2863007c"
+    },
+    {
+      "kind": "W",
+      "address": "1e1970",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gate_hook",
+      "recipe": "W 1e1970 03e00008 081f22b1",
+      "expected": "03e00008",
+      "replacement": "081f22b1"
+    },
+    {
+      "kind": "W",
+      "address": "1e1974",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gate_hook",
+      "recipe": "W 1e1974 28820063 00000000",
+      "expected": "28820063",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1e19a0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "rec_hook",
+      "recipe": "W 1e19a0 24020134 081f227a",
+      "expected": "24020134",
+      "replacement": "081f227a"
+    },
+    {
+      "kind": "W",
+      "address": "1e19a4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "rec_hook",
+      "recipe": "W 1e19a4 00a21818 00000000",
+      "expected": "00a21818",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1e1a60",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_profile_rebuild_hook",
+      "recipe": "W 1e1a60 27bdff90 081f1674",
+      "expected": "27bdff90",
+      "replacement": "081f1674"
+    },
+    {
+      "kind": "W",
+      "address": "1e1a64",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_profile_rebuild_hook",
+      "recipe": "W 1e1a64 0000282d 00000000",
+      "expected": "0000282d",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1e1d90",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_profile_baseline_hook",
+      "recipe": "W 1e1d90 27bdffb0 081f168f",
+      "expected": "27bdffb0",
+      "replacement": "081f168f"
+    },
+    {
+      "kind": "W",
+      "address": "1e1d94",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_profile_baseline_hook",
+      "recipe": "W 1e1d94 ffbf0040 00000000",
+      "expected": "ffbf0040",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1e3350",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "spr_hook_a",
+      "recipe": "W 1e3350 27bdffe0 081f12ba",
+      "expected": "27bdffe0",
+      "replacement": "081f12ba"
+    },
+    {
+      "kind": "W",
+      "address": "1e3354",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "spr_hook_a",
+      "recipe": "W 1e3354 ffbf0010 00000000",
+      "expected": "ffbf0010",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1e3390",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "spr_hook_g",
+      "recipe": "W 1e3390 27bdffe0 081f129f",
+      "expected": "27bdffe0",
+      "replacement": "081f129f"
+    },
+    {
+      "kind": "W",
+      "address": "1e3394",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "spr_hook_g",
+      "recipe": "W 1e3394 ffbf0010 00000000",
+      "expected": "ffbf0010",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1e33d0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "spr_hook_b",
+      "recipe": "W 1e33d0 27bdffe0 081f1284",
+      "expected": "27bdffe0",
+      "replacement": "081f1284"
+    },
+    {
+      "kind": "W",
+      "address": "1e33d4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "spr_hook_b",
+      "recipe": "W 1e33d4 ffbf0010 00000000",
+      "expected": "ffbf0010",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1e3410",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "spr_hook_w",
+      "recipe": "W 1e3410 27bdffe0 081f1269",
+      "expected": "27bdffe0",
+      "replacement": "081f1269"
+    },
+    {
+      "kind": "W",
+      "address": "1e3414",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "spr_hook_w",
+      "recipe": "W 1e3414 ffbf0010 00000000",
+      "expected": "ffbf0010",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1e3650",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_graph_target_hook",
+      "recipe": "W 1e3650 27bdffc0 081f161b",
+      "expected": "27bdffc0",
+      "replacement": "081f161b"
+    },
+    {
+      "kind": "W",
+      "address": "1e3654",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_graph_target_hook",
+      "recipe": "W 1e3654 ffbf0030 00000000",
+      "expected": "ffbf0030",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1e3700",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_note_count_hook",
+      "recipe": "W 1e3700 27bdffb0 081f1636",
+      "expected": "27bdffb0",
+      "replacement": "081f1636"
+    },
+    {
+      "kind": "W",
+      "address": "1e3704",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_note_count_hook",
+      "recipe": "W 1e3704 ffbf0040 00000000",
+      "expected": "ffbf0040",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1e3cf0",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_legacy_chart",
+      "recipe": "W 1e3cf0 27bdffc0 081f177b",
+      "expected": "27bdffc0",
+      "replacement": "081f177b"
+    },
+    {
+      "kind": "W",
+      "address": "1e3cf4",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_legacy_chart",
+      "recipe": "W 1e3cf4 ffbf0030 00000000",
+      "expected": "ffbf0030",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1e5a90",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_velocity_hook",
+      "recipe": "W 1e5a90 27bdffe0 081f1f11",
+      "expected": "27bdffe0",
+      "replacement": "081f1f11"
+    },
+    {
+      "kind": "W",
+      "address": "1e5a94",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_velocity_hook",
+      "recipe": "W 1e5a94 ffbf0010 00000000",
+      "expected": "ffbf0010",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1e5b80",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_prime_hook",
+      "recipe": "W 1e5b80 27bdff90 081f2083",
+      "expected": "27bdff90",
+      "replacement": "081f2083"
+    },
+    {
+      "kind": "W",
+      "address": "1e5b84",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_prime_hook",
+      "recipe": "W 1e5b84 ffbf0060 00000000",
+      "expected": "ffbf0060",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1e65d0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_chart_hook",
+      "recipe": "W 1e65d0 27bdff70 081f2064",
+      "expected": "27bdff70",
+      "replacement": "081f2064"
+    },
+    {
+      "kind": "W",
+      "address": "1e65d4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_chart_hook",
+      "recipe": "W 1e65d4 ffbf0070 00000000",
+      "expected": "ffbf0070",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1e757c",
+      "group": "skin",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "note_hook",
+      "recipe": "W 1e757c 0c04bf74 0c1f25c9",
+      "expected": "0c04bf74",
+      "replacement": "0c1f25c9"
+    },
+    {
+      "kind": "W",
+      "address": "1e7998",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "lq_note_link_hook",
+      "recipe": "W 1e7998 0c081750 0c1f20ff",
+      "expected": "0c081750",
+      "replacement": "0c1f20ff"
+    },
+    {
+      "kind": "W",
+      "address": "1e7c28",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "player_note_timing_hook",
+      "recipe": "W 1e7c28 0c05a8f0 0c1f2186",
+      "expected": "0c05a8f0",
+      "replacement": "0c1f2186"
+    },
+    {
+      "kind": "W",
+      "address": "1ea870",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "lq_setup_hook",
+      "recipe": "W 1ea870 27bdffa0 081f20a2",
+      "expected": "27bdffa0",
+      "replacement": "081f20a2"
+    },
+    {
+      "kind": "W",
+      "address": "1ea874",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "lq_setup_hook",
+      "recipe": "W 1ea874 ffbf0050 00000000",
+      "expected": "ffbf0050",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1f06f0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_commit_hook",
+      "recipe": "W 1f06f0 27bdffb0 081f1e32",
+      "expected": "27bdffb0",
+      "replacement": "081f1e32"
+    },
+    {
+      "kind": "W",
+      "address": "1f06f4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_commit_hook",
+      "recipe": "W 1f06f4 27828978 00000000",
+      "expected": "27828978",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1f1258",
+      "group": "assets",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "asset_workspace_exit_hook",
+      "recipe": "W 1f1258 0c04e908 0c1f17d2",
+      "expected": "0c04e908",
+      "replacement": "0c1f17d2"
+    },
+    {
+      "kind": "W",
+      "address": "1f212c",
+      "group": "assets",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "asset_workspace_exit_hook",
+      "recipe": "W 1f212c 0c04e908 0c1f17d2",
+      "expected": "0c04e908",
+      "replacement": "0c1f17d2"
+    },
+    {
+      "kind": "W",
+      "address": "1f2b84",
+      "group": "retry",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "qr_decision_hook",
+      "recipe": "W 1f2b84 0c07d3c8 0c1f2135",
+      "expected": "0c07d3c8",
+      "replacement": "0c1f2135"
+    },
+    {
+      "kind": "W",
+      "address": "1f2f40",
+      "group": "assets",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "asset_workspace_exit_hook",
+      "recipe": "W 1f2f40 0c04e908 0c1f17d2",
+      "expected": "0c04e908",
+      "replacement": "0c1f17d2"
+    },
+    {
+      "kind": "W",
+      "address": "1f3cc0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_cover_hook",
+      "recipe": "W 1f3cc0 27bdff50 081f1e70",
+      "expected": "27bdff50",
+      "replacement": "081f1e70"
+    },
+    {
+      "kind": "W",
+      "address": "1f3cc4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_cover_hook",
+      "recipe": "W 1f3cc4 24030010 00000000",
+      "expected": "24030010",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1f4230",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_speed_hook",
+      "recipe": "W 1f4230 27bdfe40 081f1e51",
+      "expected": "27bdfe40",
+      "replacement": "081f1e51"
+    },
+    {
+      "kind": "W",
+      "address": "1f4234",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_speed_hook",
+      "recipe": "W 1f4234 3c020026 00000000",
+      "expected": "3c020026",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1f5850",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_restore_hook",
+      "recipe": "W 1f5850 27bdff80 081f1e13",
+      "expected": "27bdff80",
+      "replacement": "081f1e13"
+    },
+    {
+      "kind": "W",
+      "address": "1f5854",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_restore_hook",
+      "recipe": "W 1f5854 ffbf0070 00000000",
+      "expected": "ffbf0070",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1f5e7c",
+      "group": "assets",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "asset_workspace_hook",
+      "recipe": "W 1f5e7c 0c04e908 0c1f1826",
+      "expected": "0c04e908",
+      "replacement": "0c1f1826"
+    },
+    {
+      "kind": "W",
+      "address": "1f5f18",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "var_hook",
+      "recipe": "W 1f5f18 0c081780 0c1f124e",
+      "expected": "0c081780",
+      "replacement": "0c1f124e"
+    },
+    {
+      "kind": "W",
+      "address": "1f66bc",
+      "group": "skin",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "judge_pos_hook",
+      "recipe": "W 1f66bc 24140184 081f25af",
+      "expected": "24140184",
+      "replacement": "081f25af"
+    },
+    {
+      "kind": "W",
+      "address": "1f66c0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 1f66c0 1000000c 2413ffee",
+      "expected": "1000000c",
+      "replacement": "2413ffee"
+    },
+    {
+      "kind": "W",
+      "address": "1fa880",
+      "group": "skin",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "frame_setup_hook",
+      "recipe": "W 1fa880 0c07e8f8 0c1f24b6",
+      "expected": "0c07e8f8",
+      "replacement": "0c1f24b6"
+    },
+    {
+      "kind": "W",
+      "address": "1fac80",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ca_load_hook",
+      "recipe": "W 1fac80 27bdffb0 081f1bcf",
+      "expected": "27bdffb0",
+      "replacement": "081f1bcf"
+    },
+    {
+      "kind": "W",
+      "address": "1fac84",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ca_load_hook",
+      "recipe": "W 1fac84 3c030028 00000000",
+      "expected": "3c030028",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1fafe0",
+      "group": "skin",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "eighth_progress_hook",
+      "recipe": "W 1fafe0 0c07fdf4 0c1f257a",
+      "expected": "0c07fdf4",
+      "replacement": "0c1f257a"
+    },
+    {
+      "kind": "W",
+      "address": "1faff0",
+      "group": "skin",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "eighth_turntable_hook",
+      "recipe": "W 1faff0 0c07ed94 0c1f2569",
+      "expected": "0c07ed94",
+      "replacement": "0c1f2569"
+    },
+    {
+      "kind": "W",
+      "address": "1fb86c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ca_turn_hook",
+      "recipe": "W 1fb86c 0c04c504 0c1f1c81",
+      "expected": "0c04c504",
+      "replacement": "0c1f1c81"
+    },
+    {
+      "kind": "W",
+      "address": "1fb950",
+      "group": "fast_slow",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fs_ghost_draw_hook",
+      "recipe": "W 1fb950 27bdfe10 081f1bac",
+      "expected": "27bdfe10",
+      "replacement": "081f1bac"
+    },
+    {
+      "kind": "W",
+      "address": "1fb954",
+      "group": "fast_slow",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fs_ghost_draw_hook",
+      "recipe": "W 1fb954 ffbf00a0 00000000",
+      "expected": "ffbf00a0",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1fbf10",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ca_cover_top_hook",
+      "recipe": "W 1fbf10 27bdff30 081f1c2c",
+      "expected": "27bdff30",
+      "replacement": "081f1c2c"
+    },
+    {
+      "kind": "W",
+      "address": "1fbf14",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ca_cover_top_hook",
+      "recipe": "W 1fbf14 ffbf00a0 00000000",
+      "expected": "ffbf00a0",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1fbfa0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ca_cover_gate_hook",
+      "recipe": "W 1fbfa0 0c07d90c 0c1f1c66",
+      "expected": "0c07d90c",
+      "replacement": "0c1f1c66"
+    },
+    {
+      "kind": "W",
+      "address": "1fc190",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ca_cover_bottom_hook",
+      "recipe": "W 1fc190 27bdff00 081f1c4b",
+      "expected": "27bdff00",
+      "replacement": "081f1c4b"
+    },
+    {
+      "kind": "W",
+      "address": "1fc194",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ca_cover_bottom_hook",
+      "recipe": "W 1fc194 24020002 00000000",
+      "expected": "24020002",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1fc260",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ca_cover_gate_hook",
+      "recipe": "W 1fc260 0c07d90c 0c1f1c66",
+      "expected": "0c07d90c",
+      "replacement": "0c1f1c66"
+    },
+    {
+      "kind": "W",
+      "address": "1fc464",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_gn_text_hook",
+      "recipe": "W 1fc464 0c0785cc 0c1f2009",
+      "expected": "0c0785cc",
+      "replacement": "0c1f2009"
+    },
+    {
+      "kind": "W",
+      "address": "1fc518",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_label_text_hook",
+      "recipe": "W 1fc518 0c0785cc 0c1f2029",
+      "expected": "0c0785cc",
+      "replacement": "0c1f2029"
+    },
+    {
+      "kind": "W",
+      "address": "1fe284",
+      "group": "skin",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "beam_hook",
+      "recipe": "W 1fe284 0c04beb8 0c1f25b8",
+      "expected": "0c04beb8",
+      "replacement": "0c1f25b8"
+    },
+    {
+      "kind": "W",
+      "address": "1fe3ec",
+      "group": "skin",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "beam_scratch_hook",
+      "recipe": "W 1fe3ec 0c04beb8 0c1f25bb",
+      "expected": "0c04beb8",
+      "replacement": "0c1f25bb"
+    },
+    {
+      "kind": "W",
+      "address": "1fe48c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "cs_judge_visible_hook",
+      "recipe": "W 1fe48c 0c05a900 0c1f1cb8",
+      "expected": "0c05a900",
+      "replacement": "0c1f1cb8"
+    },
+    {
+      "kind": "W",
+      "address": "1fe500",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "cs_judge_pgreat_hook",
+      "recipe": "W 1fe500 0c07fa3c 0c1f1d09",
+      "expected": "0c07fa3c",
+      "replacement": "0c1f1d09"
+    },
+    {
+      "kind": "W",
+      "address": "1fe518",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "cs_judge_good_hook",
+      "recipe": "W 1fe518 0c07f9a4 0c1f1cee",
+      "expected": "0c07f9a4",
+      "replacement": "0c1f1cee"
+    },
+    {
+      "kind": "W",
+      "address": "1fe530",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "cs_judge_good_hook",
+      "recipe": "W 1fe530 0c07f9a4 0c1f1cee",
+      "expected": "0c07f9a4",
+      "replacement": "0c1f1cee"
+    },
+    {
+      "kind": "W",
+      "address": "1fe548",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "cs_judge_bad_hook",
+      "recipe": "W 1fe548 0c07f968 0c1f1cd3",
+      "expected": "0c07f968",
+      "replacement": "0c1f1cd3"
+    },
+    {
+      "kind": "W",
+      "address": "1fe560",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "cs_judge_bad_hook",
+      "recipe": "W 1fe560 0c07f968 0c1f1cd3",
+      "expected": "0c07f968",
+      "replacement": "0c1f1cd3"
+    },
+    {
+      "kind": "W",
+      "address": "1ff298",
+      "group": "skin",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "eighth_bomb_hook",
+      "recipe": "W 1ff298 0c04beb8 0c1f24f5",
+      "expected": "0c04beb8",
+      "replacement": "0c1f24f5"
+    },
+    {
+      "kind": "W",
+      "address": "1ff340",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ca_bomb_hit_hook",
+      "recipe": "W 1ff340 27bdff80 081f1c0d",
+      "expected": "27bdff80",
+      "replacement": "081f1c0d"
+    },
+    {
+      "kind": "W",
+      "address": "1ff344",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ca_bomb_hit_hook",
+      "recipe": "W 1ff344 ffbf0070 00000000",
+      "expected": "ffbf0070",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1ff50c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ca_particle_hook",
+      "recipe": "W 1ff50c 0c083ed4 0c1f254e",
+      "expected": "0c083ed4",
+      "replacement": "0c1f254e"
+    },
+    {
+      "kind": "W",
+      "address": "1ff550",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ca_bomb_init_hook",
+      "recipe": "W 1ff550 27bdffd0 081f1bee",
+      "expected": "27bdffd0",
+      "replacement": "081f1bee"
+    },
+    {
+      "kind": "W",
+      "address": "1ff554",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ca_bomb_init_hook",
+      "recipe": "W 1ff554 0000382d 00000000",
+      "expected": "0000382d",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "1ffbb0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_bar_index_hook",
+      "recipe": "W 1ffbb0 0c08162c 0c1f2049",
+      "expected": "0c08162c",
+      "replacement": "0c1f2049"
+    },
+    {
+      "kind": "W",
+      "address": "1ffca8",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_bar_index_hook",
+      "recipe": "W 1ffca8 0c08162c 0c1f2049",
+      "expected": "0c08162c",
+      "replacement": "0c1f2049"
+    },
+    {
+      "kind": "W",
+      "address": "1ffee0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_hud0_hook",
+      "recipe": "W 1ffee0 27bdff70 081f1f4f",
+      "expected": "27bdff70",
+      "replacement": "081f1f4f"
+    },
+    {
+      "kind": "W",
+      "address": "1ffee4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_hud0_hook",
+      "recipe": "W 1ffee4 ffbf0060 00000000",
+      "expected": "ffbf0060",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "200240",
+      "group": "skin",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "eighth_callback_hook",
+      "recipe": "W 200240 27bdff70 081f24d4",
+      "expected": "27bdff70",
+      "replacement": "081f24d4"
+    },
+    {
+      "kind": "W",
+      "address": "200244",
+      "group": "skin",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "eighth_callback_hook",
+      "recipe": "W 200244 ffbf0060 00000000",
+      "expected": "ffbf0060",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "2005a0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_hud2_hook",
+      "recipe": "W 2005a0 27bdff10 081f1f8d",
+      "expected": "27bdff10",
+      "replacement": "081f1f8d"
+    },
+    {
+      "kind": "W",
+      "address": "2005a4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_hud2_hook",
+      "recipe": "W 2005a4 ffbf00b0 00000000",
+      "expected": "ffbf00b0",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "200ae0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_hud3_hook",
+      "recipe": "W 200ae0 27bdff10 081f1fac",
+      "expected": "27bdff10",
+      "replacement": "081f1fac"
+    },
+    {
+      "kind": "W",
+      "address": "200ae4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_hud3_hook",
+      "recipe": "W 200ae4 ffbf00b0 00000000",
+      "expected": "ffbf00b0",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "201020",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_hud4_hook",
+      "recipe": "W 201020 27bdff10 081f1fcb",
+      "expected": "27bdff10",
+      "replacement": "081f1fcb"
+    },
+    {
+      "kind": "W",
+      "address": "201024",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_hud4_hook",
+      "recipe": "W 201024 ffbf00b0 00000000",
+      "expected": "ffbf00b0",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "201560",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_hud5_hook",
+      "recipe": "W 201560 27bdff10 081f1fea",
+      "expected": "27bdff10",
+      "replacement": "081f1fea"
+    },
+    {
+      "kind": "W",
+      "address": "201564",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_hud5_hook",
+      "recipe": "W 201564 ffbf00b0 00000000",
+      "expected": "ffbf00b0",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "203490",
+      "group": "gauge",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gsm_options_hook",
+      "recipe": "W 203490 27bdffd0 081f13c9",
+      "expected": "27bdffd0",
+      "replacement": "081f13c9"
+    },
+    {
+      "kind": "W",
+      "address": "203494",
+      "group": "gauge",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gsm_options_hook",
+      "recipe": "W 203494 3c06007a 00000000",
+      "expected": "3c06007a",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "204180",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "cs_score_hook",
+      "recipe": "W 204180 27bdffd0 081f1c9d",
+      "expected": "27bdffd0",
+      "replacement": "081f1c9d"
+    },
+    {
+      "kind": "W",
+      "address": "204184",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "cs_score_hook",
+      "recipe": "W 204184 ffbf0020 00000000",
+      "expected": "ffbf0020",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "204990",
+      "group": "gauge",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gsm_history_hook",
+      "recipe": "W 204990 27bdffc0 081f13ff",
+      "expected": "27bdffc0",
+      "replacement": "081f13ff"
+    },
+    {
+      "kind": "W",
+      "address": "204994",
+      "group": "gauge",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gsm_history_hook",
+      "recipe": "W 204994 3083001f 00000000",
+      "expected": "3083001f",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "204d30",
+      "group": "gauge",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gsm_update_hook",
+      "recipe": "W 204d30 3c02007a 081f1389",
+      "expected": "3c02007a",
+      "replacement": "081f1389"
+    },
+    {
+      "kind": "W",
+      "address": "204d34",
+      "group": "gauge",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gsm_update_hook",
+      "recipe": "W 204d34 00041980 00000000",
+      "expected": "00041980",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "204d50",
+      "group": "gauge",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gsm_init_hook",
+      "recipe": "W 204d50 27bdffc0 081f13a4",
+      "expected": "27bdffc0",
+      "replacement": "081f13a4"
+    },
+    {
+      "kind": "W",
+      "address": "204d54",
+      "group": "gauge",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gsm_init_hook",
+      "recipe": "W 204d54 ffbf0030 00000000",
+      "expected": "ffbf0030",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "205200",
+      "group": "gauge",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gsm_retry_hook",
+      "recipe": "W 205200 27bdffc0 081f13e4",
+      "expected": "27bdffc0",
+      "replacement": "081f13e4"
+    },
+    {
+      "kind": "W",
+      "address": "205204",
+      "group": "gauge",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "gsm_retry_hook",
+      "recipe": "W 205204 3c02007a 00000000",
+      "expected": "3c02007a",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "2058b0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_index_hook",
+      "recipe": "W 2058b0 00041080 081f1e8f",
+      "expected": "00041080",
+      "replacement": "081f1e8f"
+    },
+    {
+      "kind": "W",
+      "address": "2058b4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_index_hook",
+      "recipe": "W 2058b4 00441821 00000000",
+      "expected": "00441821",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "2058e0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_index_set_hook",
+      "recipe": "W 2058e0 00041880 081f1eae",
+      "expected": "00041880",
+      "replacement": "081f1eae"
+    },
+    {
+      "kind": "W",
+      "address": "2058e4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fhs_index_set_hook",
+      "recipe": "W 2058e4 00643021 00000000",
+      "expected": "00643021",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "2059d0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "lift_hidden_hook",
+      "recipe": "W 2059d0 00041080 081f1df4",
+      "expected": "00041080",
+      "replacement": "081f1df4"
+    },
+    {
+      "kind": "W",
+      "address": "2059d4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "lift_hidden_hook",
+      "recipe": "W 2059d4 00441821 00000000",
+      "expected": "00441821",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "205b80",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "lq_allscr_hook",
+      "recipe": "W 205b80 3c02007a 081f20e0",
+      "expected": "3c02007a",
+      "replacement": "081f20e0"
+    },
+    {
+      "kind": "W",
+      "address": "205b84",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "lq_allscr_hook",
+      "recipe": "W 205b84 904232c8 00000000",
+      "expected": "904232c8",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "205c10",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "lq_hran_hook",
+      "recipe": "W 205c10 3c02007a 081f20c1",
+      "expected": "3c02007a",
+      "replacement": "081f20c1"
+    },
+    {
+      "kind": "W",
+      "address": "205c14",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "lq_hran_hook",
+      "recipe": "W 205c14 8c4232c4 00000000",
+      "expected": "8c4232c4",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "210d70",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fl_hook",
+      "recipe": "W 210d70 08084b20 081f23a6",
+      "expected": "08084b20",
+      "replacement": "081f23a6"
+    },
+    {
+      "kind": "W",
+      "address": "2113b0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fc_hook",
+      "recipe": "W 2113b0 08084a58 081f238b",
+      "expected": "08084a58",
+      "replacement": "081f238b"
+    },
+    {
+      "kind": "W",
+      "address": "2113c0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fo_hook",
+      "recipe": "W 2113c0 0808462c 081f23c1",
+      "expected": "0808462c",
+      "replacement": "081f23c1"
+    },
+    {
+      "kind": "W",
+      "address": "2114c4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fb_hook",
+      "recipe": "W 2114c4 0c084d54 0c1f2353",
+      "expected": "0c084d54",
+      "replacement": "0c1f2353"
+    },
+    {
+      "kind": "W",
+      "address": "2115b4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "fb_hook",
+      "recipe": "W 2115b4 0c084d54 0c1f2353",
+      "expected": "0c084d54",
+      "replacement": "0c1f2353"
+    },
+    {
+      "kind": "W",
+      "address": "216cb0",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_cached_rival_delta",
+      "recipe": "W 216cb0 00061080 081f1787",
+      "expected": "00061080",
+      "replacement": "081f1787"
+    },
+    {
+      "kind": "W",
+      "address": "216cb4",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_cached_rival_delta",
+      "recipe": "W 216cb4 3c030002 00000000",
+      "expected": "3c030002",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "216d50",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_cached_grade_delta",
+      "recipe": "W 216d50 27bdffb0 081f1793",
+      "expected": "27bdffb0",
+      "replacement": "081f1793"
+    },
+    {
+      "kind": "W",
+      "address": "216d54",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "resource_cached_grade_delta",
+      "recipe": "W 216d54 ffbf0040 00000000",
+      "expected": "ffbf0040",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "21a294",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21a294 28630008 28630009",
+      "expected": "28630008",
+      "replacement": "28630009"
+    },
+    {
+      "kind": "W",
+      "address": "21a6f8",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21a6f8 80570000 805701a8",
+      "expected": "80570000",
+      "replacement": "805701a8"
+    },
+    {
+      "kind": "W",
+      "address": "21a748",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21a748 8044002c 804401e8",
+      "expected": "8044002c",
+      "replacement": "804401e8"
+    },
+    {
+      "kind": "W",
+      "address": "21abd4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21abd4 817e0000 817e01a8",
+      "expected": "817e0000",
+      "replacement": "817e01a8"
+    },
+    {
+      "kind": "W",
+      "address": "21ac08",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21ac08 8164002c 816401e8",
+      "expected": "8164002c",
+      "replacement": "816401e8"
+    },
+    {
+      "kind": "W",
+      "address": "21aeec",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21aeec ac89008c ac890228",
+      "expected": "ac89008c",
+      "replacement": "ac890228"
+    },
+    {
+      "kind": "W",
+      "address": "21aef4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21aef4 248a008c 248a0228",
+      "expected": "248a008c",
+      "replacement": "248a0228"
+    },
+    {
+      "kind": "W",
+      "address": "21b00c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21b00c 80560000 805601a8",
+      "expected": "80560000",
+      "replacement": "805601a8"
+    },
+    {
+      "kind": "W",
+      "address": "21b014",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21b014 8044002c 804401e8",
+      "expected": "8044002c",
+      "replacement": "804401e8"
+    },
+    {
+      "kind": "W",
+      "address": "21b1dc",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21b1dc 8c53008c 8c530228",
+      "expected": "8c53008c",
+      "replacement": "8c530228"
+    },
+    {
+      "kind": "W",
+      "address": "21b38c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21b38c acaa008c acaa0228",
+      "expected": "acaa008c",
+      "replacement": "acaa0228"
+    },
+    {
+      "kind": "W",
+      "address": "21b394",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21b394 24ab008c 24ab0228",
+      "expected": "24ab008c",
+      "replacement": "24ab0228"
+    },
+    {
+      "kind": "W",
+      "address": "21b4b4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21b4b4 8c72008c 8c720228",
+      "expected": "8c72008c",
+      "replacement": "8c720228"
+    },
+    {
+      "kind": "W",
+      "address": "21b4b8",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21b4b8 26a2002c 26a201e8",
+      "expected": "26a2002c",
+      "replacement": "26a201e8"
+    },
+    {
+      "kind": "W",
+      "address": "21b4c0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21b4c0 2477008c 24770228",
+      "expected": "2477008c",
+      "replacement": "24770228"
+    },
+    {
+      "kind": "W",
+      "address": "21b4d0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21b4d0 82a4002c 82a401e8",
+      "expected": "82a4002c",
+      "replacement": "82a401e8"
+    },
+    {
+      "kind": "W",
+      "address": "21b4ec",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21b4ec 82be0000 82be01a8",
+      "expected": "82be0000",
+      "replacement": "82be01a8"
+    },
+    {
+      "kind": "W",
+      "address": "21b570",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21b570 82b50000 82b501a8",
+      "expected": "82b50000",
+      "replacement": "82b501a8"
+    },
+    {
+      "kind": "W",
+      "address": "21b614",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21b614 8c72008c 8c720228",
+      "expected": "8c72008c",
+      "replacement": "8c720228"
+    },
+    {
+      "kind": "W",
+      "address": "21b618",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21b618 26a2002c 26a201e8",
+      "expected": "26a2002c",
+      "replacement": "26a201e8"
+    },
+    {
+      "kind": "W",
+      "address": "21b620",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21b620 2477008c 24770228",
+      "expected": "2477008c",
+      "replacement": "24770228"
+    },
+    {
+      "kind": "W",
+      "address": "21b630",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21b630 82a4002c 82a401e8",
+      "expected": "82a4002c",
+      "replacement": "82a401e8"
+    },
+    {
+      "kind": "W",
+      "address": "21b64c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21b64c 82be0000 82be01a8",
+      "expected": "82be0000",
+      "replacement": "82be01a8"
+    },
+    {
+      "kind": "W",
+      "address": "21b6d0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21b6d0 82b50000 82b501a8",
+      "expected": "82b50000",
+      "replacement": "82b501a8"
+    },
+    {
+      "kind": "W",
+      "address": "21b87c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21b87c 8c74008c 8c740228",
+      "expected": "8c74008c",
+      "replacement": "8c740228"
+    },
+    {
+      "kind": "W",
+      "address": "21b888",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21b888 80520000 805201a8",
+      "expected": "80520000",
+      "replacement": "805201a8"
+    },
+    {
+      "kind": "W",
+      "address": "21b88c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21b88c 8044002c 804401e8",
+      "expected": "8044002c",
+      "replacement": "804401e8"
+    },
+    {
+      "kind": "W",
+      "address": "21b9f4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21b9f4 0240202d 264401a8",
+      "expected": "0240202d",
+      "replacement": "264401a8"
+    },
+    {
+      "kind": "W",
+      "address": "21ba04",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21ba04 2406002c 24060080",
+      "expected": "2406002c",
+      "replacement": "24060080"
+    },
+    {
+      "kind": "W",
+      "address": "21ba18",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21ba18 2644008c 26440228",
+      "expected": "2644008c",
+      "replacement": "26440228"
+    },
+    {
+      "kind": "W",
+      "address": "21ba24",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21ba24 240600b0 24060100",
+      "expected": "240600b0",
+      "replacement": "24060100"
+    },
+    {
+      "kind": "W",
+      "address": "21bf54",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21bf54 2484002c 248401e8",
+      "expected": "2484002c",
+      "replacement": "248401e8"
+    },
+    {
+      "kind": "W",
+      "address": "21bf80",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "wcopy_hook",
+      "recipe": "W 21bf80 0c04ab52 0c1f134c",
+      "expected": "0c04ab52",
+      "replacement": "0c1f134c"
+    },
+    {
+      "kind": "W",
+      "address": "21c73c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21c73c 04600009 00000000",
+      "expected": "04600009",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "21c744",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21c744 28630063 2863007c",
+      "expected": "28630063",
+      "replacement": "2863007c"
+    },
+    {
+      "kind": "W",
+      "address": "21cc78",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21cc78 04600009 00000000",
+      "expected": "04600009",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "21cc80",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21cc80 28630063 2863007c",
+      "expected": "28630063",
+      "replacement": "2863007c"
+    },
+    {
+      "kind": "W",
+      "address": "21cde8",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21cde8 0460000b 00000000",
+      "expected": "0460000b",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "21cdf0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21cdf0 28630063 2863007c",
+      "expected": "28630063",
+      "replacement": "2863007c"
+    },
+    {
+      "kind": "W",
+      "address": "21cfe4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21cfe4 04600009 00000000",
+      "expected": "04600009",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "21cfec",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21cfec 28630063 2863007c",
+      "expected": "28630063",
+      "replacement": "2863007c"
+    },
+    {
+      "kind": "W",
+      "address": "21d2c4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21d2c4 28420063 2842007c",
+      "expected": "28420063",
+      "replacement": "2842007c"
+    },
+    {
+      "kind": "W",
+      "address": "21d444",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21d444 04600009 00000000",
+      "expected": "04600009",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "21d44c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21d44c 28630063 2863007c",
+      "expected": "28630063",
+      "replacement": "2863007c"
+    },
+    {
+      "kind": "W",
+      "address": "21d580",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21d580 04600009 00000000",
+      "expected": "04600009",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "21d588",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21d588 28630063 2863007c",
+      "expected": "28630063",
+      "replacement": "2863007c"
+    },
+    {
+      "kind": "W",
+      "address": "21d6a4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21d6a4 04600009 00000000",
+      "expected": "04600009",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "21d6ac",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21d6ac 28630063 2863007c",
+      "expected": "28630063",
+      "replacement": "2863007c"
+    },
+    {
+      "kind": "W",
+      "address": "21d7e0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21d7e0 04600009 00000000",
+      "expected": "04600009",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "21d7e8",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21d7e8 28630063 2863007c",
+      "expected": "28630063",
+      "replacement": "2863007c"
+    },
+    {
+      "kind": "W",
+      "address": "21d900",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21d900 04600009 00000000",
+      "expected": "04600009",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "21d908",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21d908 28630063 2863007c",
+      "expected": "28630063",
+      "replacement": "2863007c"
+    },
+    {
+      "kind": "W",
+      "address": "21db74",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21db74 04600009 00000000",
+      "expected": "04600009",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "21db7c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21db7c 28630063 2863007c",
+      "expected": "28630063",
+      "replacement": "2863007c"
+    },
+    {
+      "kind": "W",
+      "address": "21dc9c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21dc9c 04600009 00000000",
+      "expected": "04600009",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "21dca4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21dca4 28630063 2863007c",
+      "expected": "28630063",
+      "replacement": "2863007c"
+    },
+    {
+      "kind": "W",
+      "address": "21ddcc",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21ddcc 04600009 00000000",
+      "expected": "04600009",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "21ddd4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21ddd4 28630063 2863007c",
+      "expected": "28630063",
+      "replacement": "2863007c"
+    },
+    {
+      "kind": "W",
+      "address": "21decc",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21decc 04600009 00000000",
+      "expected": "04600009",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "21ded4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21ded4 28630063 2863007c",
+      "expected": "28630063",
+      "replacement": "2863007c"
+    },
+    {
+      "kind": "W",
+      "address": "21dfd4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21dfd4 04600009 00000000",
+      "expected": "04600009",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "21dfdc",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21dfdc 28630063 2863007c",
+      "expected": "28630063",
+      "replacement": "2863007c"
+    },
+    {
+      "kind": "W",
+      "address": "21e0f4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21e0f4 04600009 00000000",
+      "expected": "04600009",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "21e0fc",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21e0fc 28630063 2863007c",
+      "expected": "28630063",
+      "replacement": "2863007c"
+    },
+    {
+      "kind": "W",
+      "address": "21e228",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21e228 04e0008d 00000000",
+      "expected": "04e0008d",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "21e230",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21e230 28e30063 28e3007c",
+      "expected": "28e30063",
+      "replacement": "28e3007c"
+    },
+    {
+      "kind": "W",
+      "address": "21e278",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21e278 04e0007b 00000000",
+      "expected": "04e0007b",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "21e280",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21e280 28e30063 28e3007c",
+      "expected": "28e30063",
+      "replacement": "28e3007c"
+    },
+    {
+      "kind": "W",
+      "address": "21e2b4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21e2b4 046000ab 00000000",
+      "expected": "046000ab",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "21e2bc",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21e2bc 28630063 2863007c",
+      "expected": "28630063",
+      "replacement": "2863007c"
+    },
+    {
+      "kind": "W",
+      "address": "21e364",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21e364 04e0009e 00000000",
+      "expected": "04e0009e",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "21e36c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21e36c 28e30063 28e3007c",
+      "expected": "28e30063",
+      "replacement": "28e3007c"
+    },
+    {
+      "kind": "W",
+      "address": "21e71c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21e71c 04800070 00000000",
+      "expected": "04800070",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "21e724",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21e724 28830063 2883007c",
+      "expected": "28830063",
+      "replacement": "2883007c"
+    },
+    {
+      "kind": "W",
+      "address": "21e788",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21e788 04600073 00000000",
+      "expected": "04600073",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "21e790",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21e790 28630063 2863007c",
+      "expected": "28630063",
+      "replacement": "2863007c"
+    },
+    {
+      "kind": "W",
+      "address": "21e8a4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21e8a4 0460004a 00000000",
+      "expected": "0460004a",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "21e8ac",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21e8ac 28630063 2863007c",
+      "expected": "28630063",
+      "replacement": "2863007c"
+    },
+    {
+      "kind": "W",
+      "address": "21ea58",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21ea58 04400045 00000000",
+      "expected": "04400045",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "21ea60",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21ea60 28420063 2842007c",
+      "expected": "28420063",
+      "replacement": "2842007c"
+    },
+    {
+      "kind": "W",
+      "address": "21ebb0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21ebb0 04600057 00000000",
+      "expected": "04600057",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "21ebb8",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21ebb8 28630063 2863007c",
+      "expected": "28630063",
+      "replacement": "2863007c"
+    },
+    {
+      "kind": "W",
+      "address": "21eccc",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21eccc 0460002e 00000000",
+      "expected": "0460002e",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "21ecd4",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21ecd4 28630063 2863007c",
+      "expected": "28630063",
+      "replacement": "2863007c"
+    },
+    {
+      "kind": "W",
+      "address": "21ee34",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 21ee34 24020063 2402007c",
+      "expected": "24020063",
+      "replacement": "2402007c"
+    },
+    {
+      "kind": "W",
+      "address": "226dec",
+      "group": "retry",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "qr_play_hook",
+      "recipe": "W 226dec 0c07c85c 0c1f211a",
+      "expected": "0c07c85c",
+      "replacement": "0c1f211a"
+    },
+    {
+      "kind": "W",
+      "address": "229c14",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 229c14 062000e4 00000000",
+      "expected": "062000e4",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "229c1c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 229c1c 2a210063 2a21007c",
+      "expected": "2a210063",
+      "replacement": "2a21007c"
+    },
+    {
+      "kind": "W",
+      "address": "22ae98",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 22ae98 044001f8 00000000",
+      "expected": "044001f8",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "22aea0",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 22aea0 28410063 2841007c",
+      "expected": "28410063",
+      "replacement": "2841007c"
+    },
+    {
+      "kind": "W",
+      "address": "22ccc0",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ranking_evaluate_hook",
+      "recipe": "W 22ccc0 3c09007b 081f1600",
+      "expected": "3c09007b",
+      "replacement": "081f1600"
+    },
+    {
+      "kind": "W",
+      "address": "22ccc4",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ranking_evaluate_hook",
+      "recipe": "W 22ccc4 3c07007b 00000000",
+      "expected": "3c07007b",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "22ce90",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ranking_load_hook",
+      "recipe": "W 22ce90 8f848aac 081f15e5",
+      "expected": "8f848aac",
+      "replacement": "081f15e5"
+    },
+    {
+      "kind": "W",
+      "address": "22ce94",
+      "group": "resources",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "ranking_load_hook",
+      "recipe": "W 22ce94 24020001 00000000",
+      "expected": "24020001",
+      "replacement": "00000000"
+    },
+    {
+      "kind": "W",
+      "address": "2360f4",
+      "group": "memory",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 2360f4 007c4700 00944700",
+      "expected": "007c4700",
+      "replacement": "00944700"
+    },
+    {
+      "kind": "W",
+      "address": "25f13c",
+      "group": "songlist",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "W 25f13c 00000000 0000001c",
+      "expected": "00000000",
+      "replacement": "0000001c"
+    },
+    {
+      "kind": "J",
+      "address": "14c984",
+      "group": "storage",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "J 14c984 0c0478c6 7ca518",
+      "expected": "0c0478c6",
+      "replacement": "7ca518"
+    },
+    {
+      "kind": "J",
+      "address": "14c9b0",
+      "group": "storage",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "J 14c9b0 0c0478ec 7ca530",
+      "expected": "0c0478ec",
+      "replacement": "7ca530"
+    },
+    {
+      "kind": "J",
+      "address": "14ca74",
+      "group": "storage",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "J 14ca74 0c0476e4 7ca4d8",
+      "expected": "0c0476e4",
+      "replacement": "7ca4d8"
+    },
+    {
+      "kind": "J",
+      "address": "14ca90",
+      "group": "storage",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "J 14ca90 0c0478ac 7ca4f8",
+      "expected": "0c0478ac",
+      "replacement": "7ca4f8"
+    },
+    {
+      "kind": "J",
+      "address": "14caa4",
+      "group": "storage",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "J 14caa4 0c0478b8 7ca500",
+      "expected": "0c0478b8",
+      "replacement": "7ca500"
+    },
+    {
+      "kind": "J",
+      "address": "14cab4",
+      "group": "storage",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "J 14cab4 0c0478de 7ca528",
+      "expected": "0c0478de",
+      "replacement": "7ca528"
+    },
+    {
+      "kind": "J",
+      "address": "14cad8",
+      "group": "storage",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "J 14cad8 0c0478de 7ca528",
+      "expected": "0c0478de",
+      "replacement": "7ca528"
+    },
+    {
+      "kind": "J",
+      "address": "14cb8c",
+      "group": "storage",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "J 14cb8c 0c0476e4 7ca4d8",
+      "expected": "0c0476e4",
+      "replacement": "7ca4d8"
+    },
+    {
+      "kind": "J",
+      "address": "14cbac",
+      "group": "storage",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "J 14cbac 0c04776c 7c9fe0",
+      "expected": "0c04776c",
+      "replacement": "7c9fe0"
+    },
+    {
+      "kind": "J",
+      "address": "14cbbc",
+      "group": "storage",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "J 14cbbc 0c0474de 7ca4d0",
+      "expected": "0c0474de",
+      "replacement": "7ca4d0"
+    },
+    {
+      "kind": "J",
+      "address": "14cbd4",
+      "group": "storage",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "J 14cbd4 0c0474de 7ca4d0",
+      "expected": "0c0474de",
+      "replacement": "7ca4d0"
+    },
+    {
+      "kind": "J",
+      "address": "14cc18",
+      "group": "storage",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "J 14cc18 0c047818 7ca4e0",
+      "expected": "0c047818",
+      "replacement": "7ca4e0"
+    },
+    {
+      "kind": "J",
+      "address": "14ccac",
+      "group": "storage",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "J 14ccac 0c0477e4 7ca4f0",
+      "expected": "0c0477e4",
+      "replacement": "7ca4f0"
+    },
+    {
+      "kind": "J",
+      "address": "14cda8",
+      "group": "storage",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "J 14cda8 0c0478de 7ca528",
+      "expected": "0c0478de",
+      "replacement": "7ca528"
+    },
+    {
+      "kind": "J",
+      "address": "14cdc8",
+      "group": "storage",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "J 14cdc8 0c0478de 7ca528",
+      "expected": "0c0478de",
+      "replacement": "7ca528"
+    },
+    {
+      "kind": "S",
+      "address": "12f7b8",
+      "group": "storage",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "S 12f7b8 12f7c0 EMPRESS/MODULES/IOPRP310.IMG",
+      "addiu": "12f7c0",
+      "path": "EMPRESS/MODULES/IOPRP310.IMG",
+      "expected_lui": "3c040026",
+      "expected_addiu": "248441e0"
+    },
+    {
+      "kind": "S",
+      "address": "12f828",
+      "group": "storage",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "S 12f828 12f830 EMPRESS/MODULES/LIBSD.IRX",
+      "addiu": "12f830",
+      "path": "EMPRESS/MODULES/LIBSD.IRX",
+      "expected_lui": "3c040026",
+      "expected_addiu": "24844200"
+    },
+    {
+      "kind": "S",
+      "address": "12f848",
+      "group": "storage",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "S 12f848 12f84c EMPRESS/MODULES/SDDRVIOP.IRX",
+      "addiu": "12f84c",
+      "path": "EMPRESS/MODULES/SDDRVIOP.IRX",
+      "expected_lui": "3c040026",
+      "expected_addiu": "24844220"
+    },
+    {
+      "kind": "S",
+      "address": "12f868",
+      "group": "storage",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "S 12f868 12f86c EMPRESS/MODULES/SIO2MAN.IRX",
+      "addiu": "12f86c",
+      "path": "EMPRESS/MODULES/SIO2MAN.IRX",
+      "expected_lui": "3c040026",
+      "expected_addiu": "24844240"
+    },
+    {
+      "kind": "S",
+      "address": "12f888",
+      "group": "storage",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "S 12f888 12f88c EMPRESS/MODULES/MCMAN.IRX",
+      "addiu": "12f88c",
+      "path": "EMPRESS/MODULES/MCMAN.IRX",
+      "expected_lui": "3c040026",
+      "expected_addiu": "24844260"
+    },
+    {
+      "kind": "S",
+      "address": "12f8a8",
+      "group": "storage",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "S 12f8a8 12f8ac EMPRESS/MODULES/MCSERV.IRX",
+      "addiu": "12f8ac",
+      "path": "EMPRESS/MODULES/MCSERV.IRX",
+      "expected_lui": "3c040026",
+      "expected_addiu": "24844280"
+    },
+    {
+      "kind": "S",
+      "address": "12f8c8",
+      "group": "storage",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "S 12f8c8 12f8cc EMPRESS/MODULES/PADMAN.IRX",
+      "addiu": "12f8cc",
+      "path": "EMPRESS/MODULES/PADMAN.IRX",
+      "expected_lui": "3c040026",
+      "expected_addiu": "248442a0"
+    },
+    {
+      "kind": "S",
+      "address": "12f8e8",
+      "group": "storage",
+      "implementation": "tools/offdisc/build_vdisc.py",
+      "symbol": "",
+      "recipe": "S 12f8e8 12f8ec EMPRESS/MODULES/CDVDSTM.IRX",
+      "addiu": "12f8ec",
+      "path": "EMPRESS/MODULES/CDVDSTM.IRX",
+      "expected_lui": "3c040026",
+      "expected_addiu": "248442c0"
+    }
+  ],
+  "limits": [
+    "USB boot and selected 2P AUTO charts passed on SCPH-50004; this is not universal device/scene qualification.",
+    "R157 Cyber allocation and earliest FHS/LIFT changes still await hardware acceptance.",
+    "This documents static recipes; relocated folder/catalog tables are also built from installed data at START."
+  ]
+}

@@ -1,0 +1,17 @@
+name BALLAD THE FEATHERS
+distorted 3
+record record.bin
+F c0 4 /a/7d/40
+F c4 4 /a/44/29
+F c8 4 /a/83/0a
+F d0 4 /a/77/50
+F d4 4 /a/57/4c
+F d8 4 /a/21/24
+F e8 2 /a/3a/44
+F ec 2 /a/76/10
+F 58 4 /a/08/52
+card /a/43/39
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

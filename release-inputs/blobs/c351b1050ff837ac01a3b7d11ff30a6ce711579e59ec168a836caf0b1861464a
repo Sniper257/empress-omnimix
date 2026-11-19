@@ -1,0 +1,19 @@
+name THE HOPE OF TOMORROW
+pb 37
+record record.bin
+F c0 4 /a/37/17
+F c4 4 /a/14/3a
+F c8 4 /a/29/1a
+F cc 4 /a/6a/5d
+F d0 4 /a/24/3f
+F d4 4 /a/22/21
+F d8 4 /a/59/19
+F e0 4 /a/7d/24
+F e8 2 /a/0a/0c
+F ec 2 /a/01/1d
+F 58 4 /a/10/57
+card /a/6f/0a
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

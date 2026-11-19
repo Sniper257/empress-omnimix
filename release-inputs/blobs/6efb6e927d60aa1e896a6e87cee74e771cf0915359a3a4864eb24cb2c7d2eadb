@@ -1,0 +1,20 @@
+name TROOPERS
+djt 55
+record record.bin
+F c0 4 /a/03/07
+F c4 4 /a/3b/38
+F c8 4 /a/43/1a
+F cc 4 /a/3e/18
+F d0 4 /a/56/5c
+F d4 4 /a/81/09
+F d8 4 /a/3e/27
+F e0 4 /a/07/46
+F e8 2 /a/82/07
+F ec 2 /a/19/20
+F 58 4 /a/07/01
+card /a/28/50
+D 0 /a/05/25
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

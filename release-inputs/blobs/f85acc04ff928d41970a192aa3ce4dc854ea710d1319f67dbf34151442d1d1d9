@@ -1,0 +1,17 @@
+name ECHOES
+ninth 21
+record record.bin
+F c0 4 /a/34/33
+F c4 4 /a/1f/26
+F c8 4 /a/33/0e
+F d0 4 /a/4d/4c
+F d4 4 /a/78/32
+F d8 4 /a/5c/07
+F e8 2 /a/29/39
+F ec 2 /a/04/04
+F 58 4 /a/2d/08
+card /a/22/19
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

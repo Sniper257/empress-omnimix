@@ -1,0 +1,17 @@
+name SOLID STATE SQUAD
+distorted 87
+record record.bin
+F c0 4 /a/4b/09
+F c4 4 /a/1f/29
+F c8 4 /a/52/02
+F cc 4 /a/2f/56
+F d0 4 /a/0e/4d
+F d4 4 /a/55/46
+F e8 2 /a/24/58
+F ec 2 /a/3e/34
+F 58 4 /a/57/08
+card /a/63/51
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

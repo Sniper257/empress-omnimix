@@ -1,0 +1,17 @@
+name GHO
+gold 15
+record record.bin
+F c0 4 /a/4f/5a
+F c4 4 /a/54/40
+F c8 4 /a/87/39
+F d0 4 /a/7c/04
+F d4 4 /a/5a/06
+F d8 4 /a/78/5c
+F e8 2 /a/33/4b
+F ec 2 /a/5a/13
+F 58 4 /a/26/14
+card /a/72/47
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

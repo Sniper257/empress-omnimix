@@ -1,0 +1,17 @@
+name THE SHINING POLARIS (OLD CS4)
+fourth 48
+record record.bin
+card /a/76/02
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/6a/18
+F c4 4 /a/07/31
+F d0 4 /a/84/46
+F d4 4 /a/61/4a
+F e8 2 /a/13/39
+F ec 2 /a/65/50
+F f8 2 /a/15/37
+F fc 2 /a/6b/57
+F 58 4 /a/63/07

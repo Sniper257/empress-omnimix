@@ -1,0 +1,23 @@
+name V
+usa 65
+record record.bin
+F c0 4 /a/35/01
+F c4 4 /a/39/5d
+F c8 4 /a/23/53
+F d0 4 /a/3e/58
+F d4 4 /a/44/3e
+F d8 4 /a/3e/59
+F e8 2 /a/1b/3c
+F ec 2 /a/04/3e
+F f0 2 /a/1b/3c
+F f4 2 /a/04/3e
+F f8 2 /a/1b/3c
+F fc 2 /a/04/3e
+F 100 2 /a/1b/3c
+F 104 2 /a/04/3e
+F 58 4 /a/5e/1c
+card /a/16/47
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

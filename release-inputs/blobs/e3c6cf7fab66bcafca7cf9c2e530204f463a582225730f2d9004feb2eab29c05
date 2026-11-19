@@ -1,0 +1,18 @@
+name RAINBOW RAINBOW
+pb 44
+record record.bin
+F c0 4 /a/15/00
+F c4 4 /a/77/09
+F c8 4 /a/79/5d
+F cc 4 /a/48/17
+F d0 4 /a/30/2d
+F d4 4 /a/42/1c
+F d8 4 /a/0d/11
+F e8 2 /a/59/24
+F ec 2 /a/5b/05
+F 58 4 /a/5e/3d
+card /a/29/2e
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

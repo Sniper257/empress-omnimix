@@ -1,0 +1,17 @@
+name REINCARNATION
+tenth 74
+record record.bin
+F c0 4 /a/6d/2c
+F c4 4 /a/84/1c
+F c8 4 /a/11/45
+F cc 4 /a/6c/13
+F d0 4 /a/30/52
+F d4 4 /a/3c/5a
+F e8 2 /a/56/40
+F ec 2 /a/47/02
+F 58 4 /a/2d/24
+card /a/57/14
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

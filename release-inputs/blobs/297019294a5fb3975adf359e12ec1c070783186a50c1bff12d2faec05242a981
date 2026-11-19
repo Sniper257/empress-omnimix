@@ -1,0 +1,18 @@
+name NEMESIS
+pb 72
+record record.bin
+F c0 4 /a/21/33
+F c4 4 /a/1b/10
+F c8 4 /a/30/19
+F cc 4 /a/18/12
+F d0 4 /a/22/2f
+F d4 4 /a/7b/32
+F d8 4 /a/4b/55
+F e8 2 /a/5d/08
+F ec 2 /a/5b/21
+F 58 4 /a/77/1f
+card /a/70/43
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

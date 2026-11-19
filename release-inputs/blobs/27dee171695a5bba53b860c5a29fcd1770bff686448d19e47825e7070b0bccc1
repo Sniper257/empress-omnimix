@@ -1,0 +1,23 @@
+name g.m.d. (US)
+usa 40
+record record.bin
+F c0 4 /a/6a/45
+F c4 4 /a/0c/22
+F c8 4 /a/48/54
+F d0 4 /a/0b/35
+F d4 4 /a/3f/09
+F d8 4 /a/5c/35
+F e8 2 /a/6c/31
+F ec 2 /a/5b/48
+F f0 2 /a/6c/31
+F f4 2 /a/5b/48
+F f8 2 /a/6c/31
+F fc 2 /a/5b/48
+F 100 2 /a/6c/31
+F 104 2 /a/5b/48
+F 58 4 /a/54/4d
+card /a/4e/33
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

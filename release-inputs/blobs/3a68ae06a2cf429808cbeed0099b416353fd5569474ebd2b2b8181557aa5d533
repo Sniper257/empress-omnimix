@@ -1,0 +1,18 @@
+name ALFARSHEAR
+pb 19
+record record.bin
+F c0 4 /a/3d/4f
+F c4 4 /a/16/2b
+F c8 4 /a/30/1d
+F cc 4 /a/52/28
+F d0 4 /a/37/14
+F d4 4 /a/2e/0f
+F d8 4 /a/09/1d
+F e8 2 /a/4c/1c
+F ec 2 /a/22/4e
+F 58 4 /a/44/03
+card /a/50/13
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

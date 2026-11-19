@@ -1,0 +1,17 @@
+name SWI R
+djt 65
+record record.bin
+F c0 4 /a/41/4e
+F c4 4 /a/36/1a
+F c8 4 /a/36/4e
+F cc 4 /a/2e/26
+F d0 4 /a/2c/25
+F d4 4 /a/48/3e
+F e8 2 /a/59/06
+F ec 2 /a/28/29
+F 58 4 /a/29/32
+card /a/5f/01
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

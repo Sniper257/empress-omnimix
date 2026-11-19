@@ -1,0 +1,17 @@
+name MARMALADE REVERIE
+seventh 10
+record record.bin
+card /a/64/1b
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/42/11
+F c4 4 /a/07/49
+F c8 4 /a/4b/04
+F d0 4 /a/4f/2e
+F d4 4 /a/7b/4e
+F d8 4 /a/44/4c
+F e8 2 /a/2c/31
+F ec 2 /a/12/09
+F 58 4 /a/57/43

@@ -1,0 +1,18 @@
+name ALFARSHEAR
+distorted 0
+record record.bin
+F c0 4 /a/13/44
+F c4 4 /a/50/1a
+F c8 4 /a/26/52
+F cc 4 /a/0b/39
+F d0 4 /a/05/2f
+F d4 4 /a/26/30
+F d8 4 /a/34/2a
+F e8 2 /a/04/4b
+F ec 2 /a/02/5b
+F 58 4 /a/44/03
+card /a/2b/12
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

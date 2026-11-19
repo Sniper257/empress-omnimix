@@ -1,0 +1,94 @@
+{
+  "console": {
+    "template": {
+      "bytes": 3491924,
+      "sha256": "18dc1c41cf855f621b7680d0fe35c8003139367fdfaa70e3da29d42b2802e5a4"
+    },
+    "output": {
+      "bytes": 352372,
+      "sha256": "8bdcc9b0f73e70d23d08468eedcdfb395b3f95bdc7c7ee4333035a092d4365a3"
+    },
+    "recipe": {
+      "format": "megamix/iso-launcher-template-v1",
+      "source": "id",
+      "template_sha256": "18dc1c41cf855f621b7680d0fe35c8003139367fdfaa70e3da29d42b2802e5a4",
+      "unpacked_sha256": "5b27f4bfb45f7c9c043e4c978c11196288c2f1d9794a70f0c0d426c91103f03b",
+      "spans": [
+        {
+          "at": 569984,
+          "bytes": 278353,
+          "iso_offset": 620544,
+          "source_bytes": 278353,
+          "sha256": "1cf5475f533f04d161bbb4b08179df156afeb7b400f207c88dcf1e39466679b6",
+          "source_sha256": "1cf5475f533f04d161bbb4b08179df156afeb7b400f207c88dcf1e39466679b6",
+          "transform": "copy"
+        },
+        {
+          "at": 848384,
+          "bytes": 278353,
+          "iso_offset": 620544,
+          "source_bytes": 278353,
+          "sha256": "1cf5475f533f04d161bbb4b08179df156afeb7b400f207c88dcf1e39466679b6",
+          "source_sha256": "1cf5475f533f04d161bbb4b08179df156afeb7b400f207c88dcf1e39466679b6",
+          "transform": "copy"
+        },
+        {
+          "at": 1292928,
+          "bytes": 378400,
+          "iso_offset": 277774336,
+          "source_bytes": 1026048,
+          "source_sha256": "c3bea51ff25b5647142f52a4549e0aa2fa53414d2893fdb953d20e6c02863e84",
+          "sha256": "6c89604980268d59091f79cd73531675c020faf85c246daf6960d8314ed73b34",
+          "transform": "sprite-rgba32",
+          "sprite": 12,
+          "width": 440,
+          "height": 215
+        }
+      ]
+    },
+    "packing": {
+      "stub_sha256": "b136265b890deca0d09c6d9959f176b8d0e21e9cbbd30d3b03cde9ba4ef64d10",
+      "stub_base": 30408704,
+      "stub_entry": 30408732,
+      "stub_zero": 1116,
+      "stub_pointer_before": "0000b001"
+    },
+    "memory": {
+      "base": 10485760,
+      "entry": 10492456,
+      "bytes": 2106712,
+      "sha256": "e0e745be2259cf0d037a48ca84aa69b0235b447ae987aa3b9a133a711088e752"
+    }
+  },
+  "host": {
+    "template": {
+      "bytes": 2493148,
+      "sha256": "76db630a5cb7db504f65bd97ac326a77c34ec45c8dc9ee493fd45f82dd62cf26"
+    },
+    "output": {
+      "bytes": 2493148,
+      "sha256": "526277b5c4cbd76e5ad269b0faa55f2fd85d83e85323c480ca19c21382e53111"
+    },
+    "recipe": {
+      "format": "megamix/iso-launcher-template-v1",
+      "source": "id",
+      "template_sha256": "76db630a5cb7db504f65bd97ac326a77c34ec45c8dc9ee493fd45f82dd62cf26",
+      "unpacked_sha256": "526277b5c4cbd76e5ad269b0faa55f2fd85d83e85323c480ca19c21382e53111",
+      "spans": [
+        {
+          "at": 484352,
+          "bytes": 378400,
+          "iso_offset": 277774336,
+          "source_bytes": 1026048,
+          "source_sha256": "c3bea51ff25b5647142f52a4549e0aa2fa53414d2893fdb953d20e6c02863e84",
+          "sha256": "6c89604980268d59091f79cd73531675c020faf85c246daf6960d8314ed73b34",
+          "transform": "sprite-rgba32",
+          "sprite": 12,
+          "width": 440,
+          "height": 215
+        }
+      ]
+    },
+    "packing": null
+  }
+}

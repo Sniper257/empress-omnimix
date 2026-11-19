@@ -1,0 +1,18 @@
+name PARANOIA HADES
+djt 31
+record record.bin
+F c0 4 /a/36/34
+F c4 4 /a/6d/0d
+F c8 4 /a/40/20
+F cc 4 /a/86/22
+F d0 4 /a/4a/1b
+F d4 4 /a/0b/19
+F d8 4 /a/6a/1e
+F e8 2 /a/75/11
+F ec 2 /a/73/46
+F 58 4 /a/6e/29
+card /a/6d/0a
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

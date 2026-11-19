@@ -1,0 +1,18 @@
+name ROUTE 80S
+sixth 34
+record record.bin
+card /a/09/54
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/56/31
+F c4 4 /a/61/08
+F c8 4 /a/3f/11
+F cc 4 /a/68/51
+F d0 4 /a/74/0e
+F d4 4 /a/45/15
+F d8 4 /a/07/04
+F e8 2 /a/52/53
+F ec 2 /a/02/48
+F 58 4 /a/73/53

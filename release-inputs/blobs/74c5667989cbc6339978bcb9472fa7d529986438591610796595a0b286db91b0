@@ -1,0 +1,16 @@
+name BE ROCK U (1998 BURST STYLE)
+ninth 4
+record record.bin
+F c0 4 /a/24/5b
+F c4 4 /a/61/28
+F c8 4 /a/49/51
+F d0 4 /a/29/4d
+F d4 4 /a/84/3d
+F e8 2 /a/4c/03
+F ec 2 /a/40/5f
+F 58 4 /a/50/02
+card /a/3d/34
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

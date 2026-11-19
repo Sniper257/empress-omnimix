@@ -1,0 +1,17 @@
+name KODO
+djt 78
+record record.bin
+F c0 4 /a/07/0e
+F c4 4 /a/0d/3a
+F c8 4 /a/33/4d
+F cc 4 /a/12/23
+F d0 4 /a/00/35
+F d4 4 /a/39/1a
+F e8 2 /a/56/51
+F ec 2 /a/20/37
+F 58 4 /a/3d/3a
+card /a/7a/1b
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

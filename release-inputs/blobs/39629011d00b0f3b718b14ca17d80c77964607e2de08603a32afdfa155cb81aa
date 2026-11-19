@@ -1,0 +1,20 @@
+name UBERTREFFEN
+djt 56
+record record.bin
+F c0 4 /a/14/32
+F c4 4 /a/01/5a
+F c8 4 /a/06/5e
+F cc 4 /a/09/35
+F d0 4 /a/41/30
+F d4 4 /a/46/08
+F d8 4 /a/28/0d
+F e0 4 /a/7d/32
+F e4 4 /a/27/4a
+F e8 2 /a/66/2a
+F ec 2 /a/11/1a
+F 58 4 /a/30/26
+card /a/79/36
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

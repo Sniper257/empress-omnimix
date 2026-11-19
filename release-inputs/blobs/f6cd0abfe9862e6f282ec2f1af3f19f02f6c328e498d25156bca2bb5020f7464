@@ -1,0 +1,19 @@
+name OVERDOSER
+third 73
+record record.bin
+card /a/6a/22
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/0e/0a
+F c4 4 /a/71/1b
+F c8 4 /a/61/1b
+F d0 4 /a/66/53
+F d4 4 /a/46/2d
+F e8 2 /a/85/24
+F ea 2 /a/68/3a
+F ec 2 /a/28/08
+F ee 2 /a/02/39
+F 58 4 /a/28/1c
+D 0 /a/47/11

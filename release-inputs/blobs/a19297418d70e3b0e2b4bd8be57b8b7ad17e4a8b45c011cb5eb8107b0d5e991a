@@ -1,0 +1,18 @@
+name MOBO*MOGA
+seventh 74
+record record.bin
+card /a/3a/07
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/24/1f
+F c4 4 /a/42/2d
+F c8 4 /a/78/2f
+F cc 4 /a/81/23
+F d0 4 /a/70/5d
+F d4 4 /a/09/28
+F d8 4 /a/0d/24
+F e8 2 /a/52/37
+F ec 2 /a/54/15
+F 58 4 /a/44/17

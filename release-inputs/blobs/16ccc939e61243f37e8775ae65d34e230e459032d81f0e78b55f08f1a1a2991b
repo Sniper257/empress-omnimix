@@ -1,0 +1,17 @@
+name U GOTTA GROOVE -EXTEND JOY STYLE-
+ninth 51
+record record.bin
+F c0 4 /a/09/4a
+F c4 4 /a/55/3a
+F c8 4 /a/20/5a
+F cc 4 /a/49/18
+F d0 4 /a/57/3b
+F d4 4 /a/41/0c
+F e8 2 /a/50/00
+F ec 2 /a/01/2c
+F 58 4 /a/3b/3e
+card /a/5c/28
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

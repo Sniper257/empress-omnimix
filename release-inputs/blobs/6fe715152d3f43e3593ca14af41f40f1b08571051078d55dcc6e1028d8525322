@@ -1,0 +1,17 @@
+name QUASAR
+ninth 28
+record record.bin
+F c0 4 /a/6a/13
+F c4 4 /a/08/3d
+F c8 4 /a/57/4a
+F cc 4 /a/1a/55
+F d0 4 /a/02/37
+F d4 4 /a/09/31
+F e8 2 /a/38/26
+F ec 2 /a/7a/58
+F 58 4 /a/31/37
+card /a/72/56
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

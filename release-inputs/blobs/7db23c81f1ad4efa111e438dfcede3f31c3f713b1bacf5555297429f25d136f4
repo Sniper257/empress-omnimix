@@ -1,0 +1,18 @@
+name MEI
+happysky 26
+record record.bin
+F c0 4 /a/73/59
+F c4 4 /a/53/21
+F c8 4 /a/61/47
+F cc 4 /a/65/18
+F d0 4 /a/28/00
+F d4 4 /a/86/16
+F d8 4 /a/57/0a
+F e8 2 /a/6c/4e
+F ec 2 /a/2f/3f
+F 58 4 /a/5e/0f
+card /a/56/1f
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

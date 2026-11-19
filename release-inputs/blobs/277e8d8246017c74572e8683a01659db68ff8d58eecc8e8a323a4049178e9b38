@@ -1,0 +1,20 @@
+name HYPER BOUNDARY GATE
+sixth 64
+record record.bin
+card /a/1a/21
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
+F c0 4 /a/1a/32
+F c4 4 /a/20/5d
+F d0 4 /a/4e/2c
+F d4 4 /a/1c/5c
+F d8 4 /a/4e/0f
+F e8 2 /a/1e/4f
+F ec 2 /a/5e/52
+F f8 2 /a/1e/4f
+F fc 2 /a/54/3c
+F 100 2 /a/1e/4f
+F 104 2 /a/54/3c
+F 58 4 /a/85/46

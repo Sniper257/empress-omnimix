@@ -1,0 +1,18 @@
+name SUN FIELD
+distorted 34
+record record.bin
+F c0 4 /a/67/57
+F c4 4 /a/6b/09
+F c8 4 /a/7b/00
+F cc 4 /a/66/2f
+F d0 4 /a/6b/3e
+F d4 4 /a/14/14
+F d8 4 /a/10/05
+F e8 2 /a/14/1b
+F ec 2 /a/2d/5e
+F 58 4 /a/03/5b
+card /a/35/1c
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

@@ -1,0 +1,19 @@
+name BLOCKS
+red 0
+record record.bin
+F c0 4 /a/5f/38
+F c4 4 /a/0f/16
+F c8 4 /a/2e/27
+F cc 4 /a/1c/39
+F d0 4 /a/2b/01
+F d4 4 /a/66/31
+F d8 4 /a/1d/0e
+F e8 2 /a/75/21
+F ec 2 /a/56/2e
+F 58 4 /a/83/30
+card /a/03/10
+D 0 /a/0d/34
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

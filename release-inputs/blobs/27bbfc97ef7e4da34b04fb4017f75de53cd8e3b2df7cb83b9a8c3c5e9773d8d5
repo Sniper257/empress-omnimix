@@ -1,0 +1,19 @@
+name EDEN
+pb 28
+record record.bin
+F c0 4 /a/10/32
+F c4 4 /a/06/08
+F c8 4 /a/5d/07
+F cc 4 /a/08/27
+F d0 4 /a/5f/3d
+F d4 4 /a/33/5a
+F d8 4 /a/65/0f
+F e0 4 /a/38/01
+F e8 2 /a/50/48
+F ec 2 /a/25/4c
+F 58 4 /a/46/18
+card /a/85/27
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr

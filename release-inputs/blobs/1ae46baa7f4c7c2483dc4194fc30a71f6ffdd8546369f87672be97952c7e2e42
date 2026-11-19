@@ -1,0 +1,17 @@
+name KEY
+red 7
+record record.bin
+F c0 4 /a/63/2e
+F c4 4 /a/66/01
+F c8 4 /a/21/22
+F d0 4 /a/1f/38
+F d4 4 /a/42/06
+F d8 4 /a/3a/2f
+F e8 2 /a/5f/20
+F ec 2 /a/4e/4c
+F 58 4 /a/07/30
+card /a/24/4b
+S 12a b8 t12a_b8.spr
+S 12b b0 t12b_b0.spr
+S 12c ac t12c_ac.spr
+S 12d b4 t12d_b4.spr
