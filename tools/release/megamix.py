@@ -649,6 +649,10 @@ def _install(pack, root, progress, manifest, resolve):
 
 
 def main(argv=None):
+    # Redirected Windows output can use a legacy encoding even with Python 3.14.
+    # Keep that encoding, but don't let progress text or a filename abort a build.
+    for stream in (sys.stdout,sys.stderr):
+        if hasattr(stream,'reconfigure'):stream.reconfigure(errors='backslashreplace')
     argv=list(sys.argv[1:] if argv is None else argv)
     if argv and argv[0]=='cache':
         from cache_builder import generate

@@ -96,12 +96,14 @@ class ReleaseTests(unittest.TestCase):
         for name in ['megamix.py','vcdiff.py','xor_delta.py','audio_transform.py','folder_presentation.py','source_versions.py','source_versions.json']:
             shutil.copy2(Path(__file__).parent/name,clean/name)
         shutil.copy2(bundle,clean/'release.mmr')
-        env=dict(os.environ,PATH='',PYTHONPATH='',PYTHONNOUSERSITE='1')
-        dest=self.root/'standalone-base'
-        result=subprocess.run([sys.executable,'-S',str(clean/'megamix.py'),str(self.root/'id.iso'),str(dest)],env=env,cwd=clean,capture_output=True,text=True)
-        self.assertEqual(result.returncode,0,result.stdout+result.stderr)
-        result=subprocess.run([sys.executable,'-S',str(clean/'megamix.py'),'verify',str(dest)],env=env,cwd=clean,capture_output=True,text=True)
-        self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+        for encoding in ('utf-8','cp1252','ascii'):
+            with self.subTest(output_encoding=encoding):
+                env=dict(os.environ,PATH='',PYTHONPATH='',PYTHONNOUSERSITE='1',PYTHONUTF8='0',PYTHONIOENCODING=encoding+':strict')
+                dest=self.root/('standalone-base-'+encoding)
+                result=subprocess.run([sys.executable,'-S',str(clean/'megamix.py'),str(self.root/'id.iso'),str(dest)],env=env,cwd=clean,capture_output=True,text=True,encoding=encoding)
+                self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+                result=subprocess.run([sys.executable,'-S',str(clean/'megamix.py'),'verify',str(dest)],env=env,cwd=clean,capture_output=True,text=True,encoding=encoding)
+                self.assertEqual(result.returncode,0,result.stdout+result.stderr)
         with zipfile.ZipFile(bundle)as archive:
             recipe=json.loads(archive.read('recipes/id-console.json'))
             self.assertTrue(any(r['op']=='xor'for r in recipe['files'].values()))
