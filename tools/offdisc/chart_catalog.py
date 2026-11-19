@@ -16,7 +16,7 @@ def uid(kind, key):
 
 
 def load(path=REGISTRY):
-    data = json.loads(Path(path).read_text())
+    data = json.loads(Path(path).read_bytes())
     assert data['schema'] == 1
     keys = {f"{r['source']}:{r['sid']}:{ch}" for r in data['sources'] for ch in r['charts']}
     assert len({(r['source'], r['sid']) for r in data['sources']}) == len(data['sources'])
@@ -128,4 +128,4 @@ if __name__ == '__main__':
         raise SystemExit(__doc__)
     output = Path(sys.argv[1])
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(emit(load()))
+    output.write_bytes(emit(load()).encode('utf-8'))

@@ -1,6 +1,6 @@
 import base64,copy,json,struct,tempfile,unittest,zlib
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import Mock,patch
 import megamix as M,font_folder as F,deferred_text as D
 from text_assets import Generator
 from text_raster import Atlas
@@ -21,9 +21,15 @@ class FontFolders(unittest.TestCase):
  def test_unknown_folder_and_duplicate_case(self):
   p=self.root/'comapcta';p.mkdir();(p/'x.ttf').write_bytes(b'x')
   with self.assertRaisesRegex(ValueError,'Unrecognized'):F.scan(self.root)
-  (p/'x.ttf').unlink();(self.root/'compacta').mkdir();(self.root/'Compacta').mkdir()
-  for d in('compacta','Compacta'):(self.root/d/'x.ttf').write_bytes(b'x')
-  with self.assertRaisesRegex(ValueError,'Duplicate'):F.scan(self.root)
+  # Model both directory names without requiring a case-sensitive filesystem.
+  # Keep real font-file probes so only the directory listing is simulated.
+  directories=[]
+  for name in('compacta','Compacta'):
+   directory=Mock(spec=Path);directory.name=name
+   directory.is_dir.return_value=True;directory.rglob.return_value=[p/'x.ttf']
+   directories.append(directory)
+  with patch.object(Path,'iterdir',return_value=directories):
+   with self.assertRaisesRegex(ValueError,'Duplicate'):F.scan(self.root)
  def test_normal_width_upright_then_matching_weight(self):
   def face(name,**kw):return dict(name=name,italic=False,width=5,weight=400,sha256='a'*64,face=0,**kw)
   regular=face('Regular');bold=dict(regular,name='Bold',weight=700);extended=dict(bold,width=7);italic=dict(bold,italic=True)

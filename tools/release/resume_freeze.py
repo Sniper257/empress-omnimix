@@ -38,10 +38,10 @@ def matches(plan,disc,target,tree,recipe):
     return True
 
 def resume(plan_path,checkpoint,output,registry=None):
-    plan_path,checkpoint,output=map(Path,(plan_path,checkpoint,output));stage=plan_path.parent;plan=json.loads(plan_path.read_text())
+    plan_path,checkpoint,output=map(Path,(plan_path,checkpoint,output));stage=plan_path.parent;plan=json.loads(plan_path.read_bytes())
     if output.exists():raise ValueError('Final output exists')
     if registry:
-        fixed={d['source']:d for d in json.loads(Path(registry).read_text())['discs']}
+        fixed={d['source']:d for d in json.loads(Path(registry).read_bytes())['discs']}
         for d in plan['discs']:
             f=fixed[d['source']]
             if(d['iso']['sha256'],d['iso']['bytes'])!=(f['iso_sha256'],f['iso_bytes']):raise ValueError('Unpinned source')
@@ -91,7 +91,7 @@ def resume(plan_path,checkpoint,output,registry=None):
                     out.writestr(key,data)
                 for name,r in recipes.items():out.writestr(name,canonical(r))
                 out.writestr('release.json',canonical(release));out.writestr('freeze-stats.json',canonical(stats))
-            with temporary.open('rb')as f:os.fsync(f.fileno())
+            with temporary.open('r+b')as f:os.fsync(f.fileno())
             temporary.rename(output)
         finally:
             if new:new.close()

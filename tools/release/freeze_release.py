@@ -25,10 +25,10 @@ from megamix import Extent
 
 
 def freeze(plan_path, output, registry=None):
-    plan=json.loads(Path(plan_path).read_text());output=Path(output)
+    plan=json.loads(Path(plan_path).read_bytes());output=Path(output)
     if output.exists():raise ValueError('Release output already exists')
     if registry is not None:
-        pinned={d['source']:d for d in json.loads(Path(registry).read_text())['discs']}
+        pinned={d['source']:d for d in json.loads(Path(registry).read_bytes())['discs']}
         for d in plan['discs']:
             known=pinned.get(d['source'])
             if not known or d['iso']['sha256']!=known['iso_sha256'] or d['iso']['bytes']!=known['iso_bytes']:
@@ -195,7 +195,8 @@ def freeze(plan_path, output, registry=None):
         if registry is not None:release['disc_registry_sha256']=hash_file(registry)
         archive.writestr('release.json',canonical(release))
         archive.writestr('freeze-stats.json',canonical(stats))
-    with stage.open('rb') as f:os.fsync(f.fileno())
+    # Windows requires a writable descriptor when committing buffered file data.
+    with stage.open('r+b') as f:os.fsync(f.fileno())
     stage.rename(output)
     print('Release frozen:',output,'(',output.stat().st_size,'bytes )',flush=True)
     return stats

@@ -54,6 +54,26 @@ class ReleaseTests(unittest.TestCase):
         p=self.root/'plan.json';p.write_text(json.dumps(plan));bundle=self.root/'release.mmr';freeze(p,bundle)
         return bundle
 
+    def test_freezer_fsync_accepts_windows_descriptor_rules(self):
+        native_open=Path.open;native_fsync=os.fsync;handles={};synced=[]
+        def tracked_open(path,*args,**kwargs):
+            f=native_open(path,*args,**kwargs);handles[f.fileno()]=f
+            return f
+        def windows_fsync(fd):
+            f=handles[fd]
+            if not f.writable():raise OSError(9,'Bad file descriptor')
+            synced.append(f.name);native_fsync(fd)
+        with patch.object(Path,'open',autospec=True,side_effect=tracked_open),patch('os.fsync',side_effect=windows_fsync):
+            bundle=self.bundle(('id',));resumed=self.root/'resumed.mmr'
+            plan_path=self.root/'plan.json';plan=json.loads(plan_path.read_bytes())
+            with zipfile.ZipFile(bundle)as archive:plan['asset_map']=json.loads(archive.read('recipes/id-console.json'))['package']['asset_map']
+            plan_path.write_bytes(M.canonical(plan))
+            resume(plan_path,bundle,resumed)
+        self.assertTrue(bundle.is_file());self.assertTrue(resumed.is_file())
+        self.assertEqual(len(synced),2)
+        self.assertFalse(bundle.with_name(bundle.name+'.incomplete').exists())
+        self.assertFalse(resumed.with_suffix('.merged.incomplete').exists())
+
     def test_no_external_user_dependencies_and_idempotent_install(self):
         bundle=self.bundle();base=self.root/'MEGAMIX';red=self.root/'red-pack'
         # The consumer needs no PATH executables, site packages or font files.

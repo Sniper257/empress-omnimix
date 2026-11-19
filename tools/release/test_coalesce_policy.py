@@ -1,10 +1,18 @@
 import unittest,sys
+from unittest.mock import patch
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'offdisc'))
 import chart_catalog as C
 class CoalescePolicyTests(unittest.TestCase):
  def setUp(self):self.data=C.load(Path(__file__).with_name('published_catalog.json'))
  def charts(self,source,sid,charts):return {f'{source}:{sid}:{ch}':1 for ch in charts}
+ def test_catalog_load_ignores_legacy_locale_encoding(self):
+  native_open=Path.open
+  def legacy_open(path,mode='r',buffering=-1,encoding=None,errors=None,newline=None,**kwargs):
+   if 'b'not in mode and encoding is None:encoding='cp1252'
+   return native_open(path,mode,buffering,encoding,errors,newline,**kwargs)
+  with patch.object(Path,'open',autospec=True,side_effect=legacy_open):
+   self.assertEqual(C.load(Path(__file__).with_name('published_catalog.json')),self.data)
  def test_combined_entry_has_every_noncolliding_chart(self):
   usa=self.charts('usa',68,['SPN','SPH','SPB','DPN','DPH']);red=self.charts('red',88,['SPN','SPH','SPA','DPN','DPH','DPA'])
   self.assertEqual(C.resolve(self.data,usa|red),set(self.charts('usa',68,['SPN','SPH','SPA','SPB','DPN','DPH','DPA'])))
