@@ -2,6 +2,7 @@
 """Measure how IIDX 17 SIRIUS arcade data maps onto EMPRESS's native song files.
 
   python3 sirius_probe.py SIRIUS_DATA MEGAMIX_DIR [--pair empress/id_97=17000 ...] [-o report.json]
+  python3 sirius_probe.py --bms SIRIUS_BMS MEGAMIX_DIR [--pair empress/id_97=FOLDER ...]
 
 SIRIUS_DATA is the arcade data/ folder. Song files (<id>.1, <id>.2dx) are found
 anywhere under sound/ or sd_data/ (or --sound); music_data.bin anywhere below it.
@@ -249,6 +250,120 @@ def sirius_song(files, sid):
     return out, charts
 
 
+def bms_songs(root):
+    """{key: (folder, {difficulty/file: Chart})} for every BMS song folder."""
+    import bms
+    out = {}
+    for i, (folder, paths) in enumerate(bms.song_folders(root).items()):
+        charts = {}
+        for path in paths:
+            try:
+                chart = bms.read(path)
+            except (A.FormatError, ValueError, OSError) as e:
+                charts[path.name] = e
+                continue
+            charts[chart.difficulty + ':' + path.name] = chart
+        out[i] = (folder, charts)
+    return out
+
+
+def bms_summary(folder, charts, ffmpeg=None):
+    import bms
+    out = {'folder': folder.name, 'charts': {}}
+    wavs = {}
+    for name, chart in charts.items():
+        if isinstance(chart, Exception):
+            out['charts'][name] = {'error': str(chart)}
+            continue
+        row = chart_summary(chart.events)
+        row.update(notes_p1p2=list(chart.notes), random=chart.random, ignored=chart.ignored, bga_images=chart.bga,
+                   header={k: chart.header[k] for k in ('TITLE', 'SUBTITLE', 'ARTIST', 'GENRE', 'BPM', 'PLAYLEVEL', 'RANK', 'TOTAL', 'DIFFICULTY', 'PLAYER') if k in chart.header})
+        out['charts'][name] = row
+        wavs.update(chart.wav)
+    index = {p.name.lower(): p for p in folder.iterdir() if p.is_file()}
+    found = {k: bms.find_audio(folder, v, index) for k, v in wavs.items()}
+    out['keysounds'] = {'defined': len(wavs), 'missing': sum(1 for v in found.values() if v is None),
+                        'extensions': histogram(v.suffix.lower() for v in found.values() if v),
+                        'bytes': sum(v.stat().st_size for v in found.values() if v)}
+    sample = [v for v in found.values() if v][:3]
+    formats = []
+    for path in sample:
+        try:
+            if path.suffix.lower() == '.wav':
+                i = A.wav_info(path.read_bytes())
+                formats.append([i['format'], i['channels'], i['rate'], i['bits']])
+            else:
+                rate, ch = bms.decode_audio(path, ffmpeg)
+                formats.append(['decoded', len(ch), rate, len(ch[0])])
+        except (A.FormatError, OSError, ValueError) as e:
+            formats.append(str(e))
+    out['keysounds']['sample_formats'] = formats
+    return out
+
+
+def bms_pairs(root, songs, limit):
+    """Pair BMS songs with installed EMPRESS songs by chart note counts."""
+    prints = empress_fingerprints(root)
+    counts = {k: {sum(c.notes) for c in charts.values() if not isinstance(c, Exception)} for k, (_, charts) in songs.items()}
+    rows, scores = {}, {}
+    for folder, got in prints.items():
+        need = min(3, len(got))
+        if need < 2:
+            continue
+        hits = sorted((sum(1 for c in got if c in have), k) for k, have in counts.items())
+        hits = [h for h in hits if h[0] >= need]
+        if hits and (len(hits) == 1 or hits[-1][0] > hits[-2][0]):
+            rows[folder] = hits[-1][1]
+            scores[folder] = hits[-1][0]
+    order = sorted(rows, key=lambda f: (f not in ('empress/id_97', 'empress/id_98'), not f.split('/')[1].startswith('id_'), -scores[f], f))
+    return {f: rows[f] for f in order[:limit]}, {'empress_songs_with_charts': len(prints), 'matched': len(rows)}
+
+
+def bms_main(a):
+    songs = bms_songs(a.bms)
+    if not songs:
+        raise SystemExit('No .bms/.bme/.bml charts found under ' + str(a.bms))
+    print('Found', len(songs), 'BMS song folders')
+    report = {'probe': 5, 'source': 'bms', 'song_folders': len(songs),
+              'charts': sum(len(c) for _, c in songs.values())}
+    errors = {}
+    diffs = {}
+    for _, charts in songs.values():
+        for name, chart in charts.items():
+            if isinstance(chart, Exception):
+                errors[str(chart)] = errors.get(str(chart), 0) + 1
+            else:
+                diffs[chart.difficulty] = diffs.get(chart.difficulty, 0) + 1
+    report['chart_errors'] = errors
+    report['difficulties'] = dict(sorted(diffs.items()))
+    by_name = {folder.name: k for k, (folder, _) in songs.items()}
+    if a.pair:
+        pairs = {k: by_name[v] if v in by_name else int(v) for k, v in (x.split('=', 1) for x in a.pair)}
+    else:
+        print('Matching songs by chart note counts...')
+        pairs, report['count_pairing'] = bms_pairs(a.megamix, songs, a.limit)
+        if not report['count_pairing']['empress_songs_with_charts']:
+            report['megamix_diagnostics'] = empress_diagnostics(a.megamix)
+            print('No EMPRESS charts found in', a.megamix, '- see megamix_diagnostics in the report')
+    report['pairs'] = []
+    for folder, key in pairs.items():
+        bms_folder, charts = songs[key]
+        row = {'empress_folder': folder, 'bms_folder': bms_folder.name}
+        try:
+            row['empress'], ec = empress_song(a.megamix, folder)
+            row['bms'] = bms_summary(bms_folder, charts, a.ffmpeg)
+            good = {n: c.events for n, c in charts.items() if not isinstance(c, Exception)}
+            row['matches'] = compare(ec, good)
+        except (OSError, ValueError, KeyError, struct.error) as e:
+            row['error'] = type(e).__name__ + ': ' + str(e)
+        report['pairs'].append(row)
+        print('compared', folder, '<->', bms_folder.name, '|', len(row.get('matches', [])), 'chart matches', row.get('error', ''))
+    keys = sorted(songs)
+    report['survey'] = [bms_summary(*songs[k], a.ffmpeg) | {'charts': None} for k in keys[::max(1, len(keys) // 10)]]
+    a.output.write_text(json.dumps(report, indent=1, ensure_ascii=False) + '\n', encoding='utf-8')
+    print('Wrote', a.output)
+
+
 def fit(xs, ys):
     n = len(xs)
     mx, my = sum(xs) / n, sum(ys) / n
@@ -429,8 +544,10 @@ def empress_diagnostics(root, limit=3):
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument('sirius', type=Path, help='SIRIUS arcade data/ folder')
-    p.add_argument('megamix', type=Path, help='built MEGAMIX base folder')
+    p.add_argument('sirius', type=Path, nargs='?', help='SIRIUS arcade data/ folder (omit with --bms)')
+    p.add_argument('megamix', type=Path, nargs='?', help='built MEGAMIX base folder')
+    p.add_argument('--bms', type=Path, help='folder of SIRIUS songs as BMS (one subfolder per song), instead of arcade data')
+    p.add_argument('--ffmpeg', help='ffmpeg executable for OGG/FLAC keysounds (default: ffmpeg on PATH)')
     p.add_argument('--keysounds', type=Path, help='folder of decrypted .2dx files (same names as in sd_data), used instead of the encrypted ones')
     p.add_argument('--music', type=Path, help='song list file if it is not named music_data.bin')
     p.add_argument('--sound', type=Path, help='folder holding the song files (default: sound/ or sd_data/ under SIRIUS_DATA)')
@@ -438,6 +555,14 @@ def main(argv=None):
     p.add_argument('--limit', type=int, default=6, help='songs to compare when pairing automatically')
     p.add_argument('-o', '--output', type=Path, default=Path('sirius-probe.json'))
     a = p.parse_args(argv)
+    if a.bms:
+        if a.megamix is None and a.sirius is not None:
+            a.megamix, a.sirius = a.sirius, None
+        if a.megamix is None:
+            raise SystemExit('Give the MEGAMIX folder: sirius_probe.py --bms SONGS MEGAMIX')
+        return bms_main(a)
+    if a.sirius is None or a.megamix is None:
+        raise SystemExit('Usage: sirius_probe.py SIRIUS_DATA MEGAMIX, or sirius_probe.py --bms SONGS MEGAMIX')
     if not a.sirius.is_dir():
         raise SystemExit('Not a folder: ' + str(a.sirius))
     files, music = locate(a.sirius, a.sound, a.keysounds)

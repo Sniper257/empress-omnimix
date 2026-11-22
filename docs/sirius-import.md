@@ -9,7 +9,8 @@ lines in `song.txt`, see `tools/offdisc/launcher/main.c`).
 
 | Part | State |
 | --- | --- |
-| Read `.1` charts, `.2dx` keysounds (PCM16/MS-ADPCM WAV), `music_data.bin` | done: `arcade_data.py` |
+| Read SIRIUS as BMS (one folder per song; WAV keysounds, OGG/FLAC via ffmpeg) | done: `bms.py` |
+| Read arcade `.1` charts, `.2dx` keysounds (PCM/MS-ADPCM WAV), `music_data.bin` | done: `arcade_data.py` (the tested dump's `.2dx` files are wrapped in `%hid` and are not read) |
 | SPU2 ADPCM encoder/decoder, EMPRESS frame disguise, backing-stream writer | done: `spu_adpcm.py` |
 | Measure arcade→EMPRESS mappings on songs that are in both games | done: `sirius_probe.py` |
 | Chart conversion (time unit, slot→field order, stream trigger) | waiting for probe report |
@@ -37,7 +38,19 @@ lines in `song.txt`, see `tools/offdisc/launcher/main.c`).
 
 ## What the probe measures
 
-Run it on your arcade data and a built MEGAMIX base. Song files are found
+With BMS songs (recommended), run it on the BMS folder and a built MEGAMIX base,
+the folder `megamix.py` created from EMPRESS Disc 1:
+
+```sh
+cd tools/release
+python3 sirius_probe.py --bms /path/to/sirius-bms /path/to/MEGAMIX -o sirius-probe.json
+```
+
+BMS charts are read into the same event list as arcade `.1` charts (times in
+ms), so the conversion is the same for both sources. Titles, artist, genre,
+BPM and levels come from the BMS headers.
+
+With arcade data, run it on the data folder and a built MEGAMIX base. Song files are found
 under `sound/` or `sd_data/` (or pass `--sound FOLDER`):
 
 ```sh

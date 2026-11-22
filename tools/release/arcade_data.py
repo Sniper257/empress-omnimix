@@ -180,15 +180,31 @@ def _msadpcm(info):
 
 
 def decode_wav(wav):
-    """Return (rate, [channel samples as int lists]) for PCM16 or MS-ADPCM WAVs."""
+    """Return (rate, [channel samples as int16-range lists]) for PCM (8/16/24/32-bit,
+    float32, WAVE_FORMAT_EXTENSIBLE) or MS-ADPCM WAVs."""
     info = wav_info(wav)
-    if info['format'] == 1 and info['bits'] == 16:
-        n = len(info['data']) // (2 * info['channels'])
-        flat = struct.unpack_from('<%dh' % (n * info['channels']), info['data'])
-        return info['rate'], [list(flat[k::info['channels']]) for k in range(info['channels'])]
-    if info['format'] == 2:
+    tag, bits, ch, data = info['format'], info['bits'], info['channels'], info['data']
+    if tag == 0xfffe and len(info['extra']) >= 24:
+        tag = struct.unpack_from('<H', info['extra'], 8)[0]   # SubFormat GUID starts with the format tag
+    if tag == 2:
         return info['rate'], _msadpcm(info)
-    raise FormatError('Unsupported WAVE format tag %d' % info['format'])
+    if tag == 1 and bits == 16:
+        n = len(data) // (2 * ch)
+        flat = struct.unpack_from('<%dh' % (n * ch), data)
+    elif tag == 1 and bits == 8:
+        flat = [(b - 128) << 8 for b in data[:len(data) // ch * ch]]
+    elif tag == 1 and bits == 24:
+        n = len(data) // (3 * ch) * ch
+        flat = [int.from_bytes(data[i * 3:i * 3 + 3], 'little', signed=True) >> 8 for i in range(n)]
+    elif tag == 1 and bits == 32:
+        n = len(data) // (4 * ch)
+        flat = [v >> 16 for v in struct.unpack_from('<%di' % (n * ch), data)]
+    elif tag == 3 and bits == 32:
+        n = len(data) // (4 * ch)
+        flat = [max(-32768, min(32767, int(round(v * 32767)))) for v in struct.unpack_from('<%df' % (n * ch), data)]
+    else:
+        raise FormatError('Unsupported WAVE format tag %d / %d bits' % (tag, bits))
+    return info['rate'], [list(flat[k::ch]) for k in range(ch)]
 
 
 # -------------------------------------------------------------- music_data.bin
