@@ -3,7 +3,8 @@
 
   python3 sirius_probe.py SIRIUS_DATA MEGAMIX_DIR [--pair empress/id_97=17000 ...] [-o report.json]
 
-SIRIUS_DATA is the arcade data/ folder (sound/, info/music_data.bin, movie/).
+SIRIUS_DATA is the arcade data/ folder. Song files (<id>.1, <id>.2dx) are found
+anywhere under sound/ or sd_data/ (or --sound); music_data.bin anywhere below it.
 MEGAMIX_DIR is a built MEGAMIX base. Songs that exist in both games (EMPRESS's
 arcade songs, Bad Maniacs, DOMINION...) are compared to measure, from real
 files rather than guesses:
@@ -168,18 +169,54 @@ def empress_song(root, folder):
 
 # ------------------------------------------------------------------ Sirius side
 
-def sirius_song(data_dir, sid):
-    folder = data_dir / 'sound' / str(sid)
-    out = {'id': sid, 'files': sorted(p.name for p in folder.iterdir()) if folder.is_dir() else []}
+SOUND_DIRS = ('sound', 'sd_data')
+
+
+def locate(data_dir, sound=None):
+    """Find song files anywhere under the data folder: {id: {'.1': path, '.2dx': path, ...}}.
+
+    Arcade dumps differ (sound/<id>/<id>.1, sd_data/<id>.1, ...), so the song id
+    is taken from each file name, e.g. 17010.1, 17010.2dx, 17010_pre.2dx.
+    """
+    roots = [sound] if sound else [data_dir / d for d in SOUND_DIRS if (data_dir / d).is_dir()] or [data_dir]
+    songs, music = {}, None
+    for root in roots:
+        for path in sorted(root.rglob('*')):
+            if not path.is_file():
+                continue
+            stem, suffix = path.stem.lower(), path.suffix.lower()
+            sid = stem[:-4] if stem.endswith('_pre') else stem
+            if suffix in ('.1', '.2dx') and sid.isdigit():
+                key = suffix if not stem.endswith('_pre') else '_pre' + suffix
+                songs.setdefault(int(sid), {})[key] = path
+    for path in sorted(data_dir.rglob('music_data.bin')):
+        music = path
+        break
+    return songs, music
+
+
+def layout(data_dir, limit=40):
+    """Short folder summary for reports when no song files are recognised."""
+    out = {'top': sorted(p.name + ('/' if p.is_dir() else '') for p in data_dir.iterdir())[:limit], 'extensions': {}}
+    for path in data_dir.rglob('*'):
+        if path.is_file():
+            ext = path.suffix.lower() or '(none)'
+            out['extensions'][ext] = out['extensions'].get(ext, 0) + 1
+    return out
+
+
+def sirius_song(files, sid):
+    paths = files.get(sid, {})
+    out = {'id': sid, 'files': sorted(k + ':' + v.name for k, v in paths.items())}
     charts = {}
-    one = folder / (str(sid) + '.1')
-    if one.is_file():
+    one = paths.get('.1')
+    if one:
         raw = one.read_bytes()
         out['directory'] = [list(r) for r in A.chart_directory(raw)]
         charts = A.read_charts(raw)
         out['charts'] = {str(k): chart_summary(v) for k, v in charts.items()}
-    two = folder / (str(sid) + '.2dx')
-    if two.is_file():
+    two = paths.get('.2dx')
+    if two:
         try:
             name, entries = A.read_2dx(two.read_bytes())
             fmts = []
@@ -229,10 +266,9 @@ def compare(emp_charts, arc_charts):
 
 # ---------------------------------------------------------------- music_data
 
-def music_summary(data_dir, ids):
-    path = data_dir / 'info' / 'music_data.bin'
-    if not path.is_file():
-        return {'error': 'info/music_data.bin not found'}
+def music_summary(path, ids):
+    if path is None:
+        raise ValueError('music_data.bin not found under the data folder')
     md = A.read_music_data(path.read_bytes())
     index = md['index']
     pairs = [(sid, index[sid]) for sid in ids if sid < len(index) and 0 <= index[sid] < md['count']]
@@ -274,18 +310,26 @@ def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument('sirius', type=Path, help='SIRIUS arcade data/ folder')
     p.add_argument('megamix', type=Path, help='built MEGAMIX base folder')
+    p.add_argument('--sound', type=Path, help='folder holding the song files (default: sound/ or sd_data/ under SIRIUS_DATA)')
     p.add_argument('--pair', action='append', default=[], metavar='STYLE/DIR=ID', help='e.g. empress/id_97=17010')
     p.add_argument('--limit', type=int, default=6, help='songs to compare when pairing automatically')
     p.add_argument('-o', '--output', type=Path, default=Path('sirius-probe.json'))
     a = p.parse_args(argv)
-    sound = a.sirius / 'sound'
-    if not sound.is_dir():
-        raise SystemExit('No sound/ folder in ' + str(a.sirius))
-    ids = sorted(int(d.name) for d in sound.iterdir() if d.is_dir() and d.name.isdigit())
-    report = {'probe': 1, 'sound_folders': len(ids), 'id_range': [ids[0], ids[-1]] if ids else None}
+    if not a.sirius.is_dir():
+        raise SystemExit('Not a folder: ' + str(a.sirius))
+    files, music = locate(a.sirius, a.sound)
+    ids = sorted(files)
+    if not ids:
+        print('No <id>.1 / <id>.2dx song files found under', a.sound or a.sirius)
+        print(json.dumps(layout(a.sound or a.sirius), indent=1, ensure_ascii=False))
+        raise SystemExit('Pass the folder that holds the songs with --sound, or share the summary above.')
+    print('Found', len(ids), 'songs', ids[0], '..', ids[-1], '| music_data.bin:', music or 'not found')
+    report = {'probe': 2, 'songs': len(ids), 'id_range': [ids[0], ids[-1]],
+              'with_chart': sum(1 for f in files.values() if '.1' in f), 'with_keysounds': sum(1 for f in files.values() if '.2dx' in f),
+              'example_paths': [str(p.relative_to(a.sirius)) if p.is_relative_to(a.sirius) else p.name for p in list(files[ids[0]].values())]}
     titles = {}
     try:
-        report['music_data'], _, titles = music_summary(a.sirius, ids)
+        report['music_data'], _, titles = music_summary(music, ids)
     except (A.FormatError, ValueError) as e:
         report['music_data'] = {'error': str(e)}
     pairs = dict(x.split('=', 1) for x in a.pair)
@@ -297,7 +341,7 @@ def main(argv=None):
         row = {'empress_folder': folder, 'sirius_id': sid}
         try:
             row['empress'], ec = empress_song(a.megamix, folder)
-            row['sirius'], ac = sirius_song(a.sirius, sid)
+            row['sirius'], ac = sirius_song(files, sid)
             row['matches'] = compare(ec, ac)
             if titles.get(sid):
                 row['sirius_strings'] = titles[sid]
@@ -308,7 +352,7 @@ def main(argv=None):
     survey = {'slots': {}, 'types': {}, 'wav': {}}
     for sid in ids[:: max(1, len(ids) // 40)]:
         try:
-            s, charts = sirius_song(a.sirius, sid)
+            s, charts = sirius_song(files, sid)
         except (OSError, ValueError) as e:
             survey.setdefault('errors', []).append([sid, str(e)])
             continue

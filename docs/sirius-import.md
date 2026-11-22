@@ -37,7 +37,8 @@ lines in `song.txt`, see `tools/offdisc/launcher/main.c`).
 
 ## What the probe measures
 
-Run it on your arcade data and a built MEGAMIX base:
+Run it on your arcade data and a built MEGAMIX base. Song files are found
+under `sound/` or `sd_data/` (or pass `--sound FOLDER`):
 
 ```sh
 cd tools/release

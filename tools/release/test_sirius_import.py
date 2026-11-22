@@ -165,6 +165,29 @@ class Probe(unittest.TestCase):
             bank_row = next(f for f in pair['empress']['files'] if f['kind'] == 'bank')
             self.assertEqual(bank_row['summary']['adpcm_bank_delta']['legal'], 1.0)
 
+    def test_locate_flat_sd_data_and_preview(self):
+        import sirius_probe
+        with tempfile.TemporaryDirectory() as tmp:
+            data = Path(tmp)
+            (data / 'sd_data').mkdir()
+            (data / 'info').mkdir()
+            for name in ('17010.1', '17010.2dx', '17010_pre.2dx', 'readme.txt'):
+                (data / 'sd_data' / name).write_bytes(b'x')
+            (data / 'info' / 'music_data.bin').write_bytes(b'x')
+            files, music = sirius_probe.locate(data)
+            self.assertEqual(sorted(files[17010]), ['.1', '.2dx', '_pre.2dx'])
+            self.assertEqual(music.name, 'music_data.bin')
+
+    def test_no_song_files_prints_layout(self):
+        import sirius_probe
+        with tempfile.TemporaryDirectory() as tmp:
+            (Path(tmp) / 'other').mkdir()
+            (Path(tmp) / 'other' / 'a.ifs').write_bytes(b'x')
+            buf = io.StringIO()
+            with redirect_stdout(buf), self.assertRaises(SystemExit):
+                sirius_probe.main([tmp, tmp])
+            self.assertIn('.ifs', buf.getvalue())
+
 
 if __name__ == '__main__':
     unittest.main()
