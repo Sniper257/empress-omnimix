@@ -144,6 +144,8 @@ class Probe(unittest.TestCase):
             mm = tmp / 'mm'
             (mm / 'a/00').mkdir(parents=True)
             (mm / 'a/00/01').write_bytes(crypt(lz_encode_opt(ply), 'empress'))
+            short = struct.pack('<II', 8, 16683) + b''.join(struct.pack('<IBBH', round(t * 1000 / 16683), k, p, v) for t, k, p, v in arc[:10] if k != 7) + struct.pack('<I', 0x7fff)
+            (mm / 'a/00/03').write_bytes(crypt(lz_encode_opt(short), 'empress'))
             bank = bytearray(0x8030)
             bank[:4] = b'wp\x03\x00'
             struct.pack_into('<4I', bank, 0x8000, 1, 32, 1, 0)
@@ -151,7 +153,7 @@ class Probe(unittest.TestCase):
             (mm / 'a/00/02').write_bytes(bank)
             song = mm / 'songs/empress/id_97'
             song.mkdir(parents=True)
-            (song / 'song.txt').write_text('name TEST SONG\nid 97\nE 1 1 9 a/00/01\nE 2 1 9 a/00/02\n')
+            (song / 'song.txt').write_text('name TEST SONG\nid 97\nE 1 1 9 a/00/01\nE 2 1 9 a/00/02\nE 3 1 9 a/00/03\n')
             out = tmp / 'r.json'
             with redirect_stdout(io.StringIO()):
                 sirius_probe.main([str(tmp / 'data'), str(mm), '-o', str(out)])
@@ -159,11 +161,20 @@ class Probe(unittest.TestCase):
             self.assertEqual(r['music_data']['entry_size'], 192)
             pair = r['pairs'][0]
             self.assertEqual((pair['empress_folder'], pair['sirius_id']), ('empress/id_97', 17010))
-            (m,) = pair['matches']
+            m = next(x for x in pair['matches'] if x['notes'] == 40)
+            self.assertEqual(sorted(x['arcade_slot'] for x in pair['matches']), [1, 2])
             self.assertEqual((m['arcade_slot'], m['notes'], m['same_lanes']), (1, 40, 40))
             self.assertAlmostEqual(m['fit']['scale'], 1000 / 16683, places=4)
             bank_row = next(f for f in pair['empress']['files'] if f['kind'] == 'bank')
             self.assertEqual(bank_row['summary']['adpcm_bank_delta']['legal'], 1.0)
+            # Without a song list, songs are paired by their chart note counts.
+            (info / 'music_data.bin').unlink()
+            with redirect_stdout(io.StringIO()):
+                sirius_probe.main([str(tmp / 'data'), str(mm), '-o', str(out)])
+            r = json.loads(out.read_text(encoding='utf-8'))
+            self.assertEqual(r['pairs'][0]['sirius_id'], 17010)
+            self.assertEqual(r['count_pairing'], {'empress_songs_with_charts': 1, 'matched': 1})
+            self.assertIn('layout', r)
 
     def test_locate_flat_sd_data_and_preview(self):
         import sirius_probe

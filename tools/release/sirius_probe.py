@@ -232,7 +232,7 @@ def sirius_song(files, sid):
                                 'unk': histogram(e['unk'] for e in entries), 'loop': histogram(e['loop'] for e in entries),
                                 'wav_bytes': sum(len(e['wav']) for e in entries)}
         except A.FormatError as err:
-            out['keysounds'] = {'error': str(err), 'head': hexrow(two.read_bytes()[:96])}
+            out['keysounds'] = {'error': str(err), 'head': hexrow(two.read_bytes()[:160])}
     return out, charts
 
 
@@ -306,10 +306,81 @@ def auto_pairs(root, titles):
     return rows
 
 
+def empress_fingerprints(root):
+    """{style/dir: sorted chart note counts} for every installed song, charts only (small files)."""
+    out = {}
+    for txt in sorted((root / 'songs').glob('*/*/song.txt')):
+        base = txt.parent
+        counts = []
+        for line in txt.read_text(encoding='utf-8').splitlines():
+            parts = line.split()
+            if parts[:1] == ['E'] and len(parts) == 5 and parts[3].isdigit() and int(parts[3]) < 1 << 20:
+                path = root / parts[4]
+            elif parts[:1] == ['F'] and len(parts) == 4 and parts[1] in ('c0', 'c4', 'c8', 'cc', 'd0', 'd4'):
+                path = root / parts[3].lstrip('/') if parts[3].startswith('/') else base / parts[3]
+            else:
+                continue
+            if not path.is_file() or path.stat().st_size >= 1 << 20:
+                continue
+            ply = empress_chart(path.read_bytes())
+            if ply:
+                n = sum(1 for e in ply['events'] if e[1] & 15 in (0, 1))
+                if n:
+                    counts.append(n)
+        if counts:
+            out[base.parent.name + '/' + base.name] = sorted(counts)
+    return out
+
+
+def count_pairs(root, files, limit):
+    """Pair songs by chart note counts when no titles are available."""
+    arcade = {}
+    for sid, paths in files.items():
+        if '.1' not in paths:
+            continue
+        try:
+            charts = A.read_charts(paths['.1'].read_bytes())
+        except (A.FormatError, OSError):
+            continue
+        arcade[sid] = {sum(A.note_count(ev)) for ev in charts.values()}
+    rows, scores = {}, {}
+    prints = empress_fingerprints(root)
+    for folder, counts in prints.items():
+        need = min(3, len(counts))
+        if need < 2:
+            continue
+        hits = [(sum(1 for c in counts if c in got), sid) for sid, got in arcade.items()]
+        hits = sorted(h for h in hits if h[0] >= need)
+        if hits and (len(hits) == 1 or hits[-1][0] > hits[-2][0]):
+            rows[folder] = hits[-1][1]
+            scores[folder] = [hits[-1][0], len(counts)]
+    # prefer EMPRESS disc songs (Bad Maniacs, DOMINION first), then strongest matches
+    order = sorted(rows, key=lambda f: (f not in ('empress/id_97', 'empress/id_98'), not f.split('/')[1].startswith('id_'), -scores[f][0], f))
+    return {f: rows[f] for f in order[:limit]}, {'empress_songs_with_charts': len(prints), 'matched': len(rows)}
+
+
+def metadata_candidates(data_dir, sound_roots, limit=40):
+    """Small files outside the song folders that may be the song list (music_data.bin is absent)."""
+    out = []
+    for path in sorted(data_dir.rglob('*')):
+        if not path.is_file() or any(path.is_relative_to(r) for r in sound_roots):
+            continue
+        size = path.stat().st_size
+        name = path.name.lower()
+        if 'music' in name or 'info' in str(path.parent).lower() or name.endswith(('.bin', '.xml', '.csv', '.dat', '.ifs')):
+            with path.open('rb') as f:
+                head = f.read(16)
+            out.append({'path': str(path.relative_to(data_dir)), 'bytes': size, 'head': head.hex()})
+            if len(out) >= limit:
+                break
+    return out
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument('sirius', type=Path, help='SIRIUS arcade data/ folder')
     p.add_argument('megamix', type=Path, help='built MEGAMIX base folder')
+    p.add_argument('--music', type=Path, help='song list file if it is not named music_data.bin')
     p.add_argument('--sound', type=Path, help='folder holding the song files (default: sound/ or sd_data/ under SIRIUS_DATA)')
     p.add_argument('--pair', action='append', default=[], metavar='STYLE/DIR=ID', help='e.g. empress/id_97=17010')
     p.add_argument('--limit', type=int, default=6, help='songs to compare when pairing automatically')
@@ -318,15 +389,21 @@ def main(argv=None):
     if not a.sirius.is_dir():
         raise SystemExit('Not a folder: ' + str(a.sirius))
     files, music = locate(a.sirius, a.sound)
+    if a.music:
+        music = a.music
     ids = sorted(files)
     if not ids:
         print('No <id>.1 / <id>.2dx song files found under', a.sound or a.sirius)
         print(json.dumps(layout(a.sound or a.sirius), indent=1, ensure_ascii=False))
         raise SystemExit('Pass the folder that holds the songs with --sound, or share the summary above.')
     print('Found', len(ids), 'songs', ids[0], '..', ids[-1], '| music_data.bin:', music or 'not found')
-    report = {'probe': 2, 'songs': len(ids), 'id_range': [ids[0], ids[-1]],
+    report = {'probe': 3, 'songs': len(ids), 'id_range': [ids[0], ids[-1]],
               'with_chart': sum(1 for f in files.values() if '.1' in f), 'with_keysounds': sum(1 for f in files.values() if '.2dx' in f),
               'example_paths': [str(p.relative_to(a.sirius)) if p.is_relative_to(a.sirius) else p.name for p in list(files[ids[0]].values())]}
+    report['layout'] = layout(a.sirius)
+    roots = [a.sound] if a.sound else [a.sirius / d for d in SOUND_DIRS if (a.sirius / d).is_dir()]
+    if music is None:
+        report['metadata_candidates'] = metadata_candidates(a.sirius, roots)
     titles = {}
     try:
         report['music_data'], _, titles = music_summary(music, ids)
@@ -336,6 +413,9 @@ def main(argv=None):
     pairs = {k: int(v) for k, v in pairs.items()}
     if not pairs:
         pairs = dict(list(auto_pairs(a.megamix, titles).items())[:a.limit])
+    if not pairs:
+        print('Matching songs by chart note counts...')
+        pairs, report['count_pairing'] = count_pairs(a.megamix, files, a.limit)
     report['pairs'] = []
     for folder, sid in pairs.items():
         row = {'empress_folder': folder, 'sirius_id': sid}
@@ -360,7 +440,15 @@ def main(argv=None):
             survey['slots'][str(slot)] = survey['slots'].get(str(slot), 0) + 1
             for e in ev:
                 survey['types'][str(e[1])] = survey['types'].get(str(e[1]), 0) + 1
-        for k, v in s.get('keysounds', {}).get('formats', {}).items():
+        ks = s.get('keysounds', {})
+        if 'error' in ks:
+            errs = survey.setdefault('keysound_errors', {})
+            errs[ks['error']] = errs.get(ks['error'], 0) + 1
+            if len(survey.setdefault('keysound_error_heads', [])) < 3:
+                survey['keysound_error_heads'].append({'id': sid, 'bytes': files[sid]['.2dx'].stat().st_size, 'head': ks.get('head')})
+        elif ks and len(survey.setdefault('keysound_samples', [])) < 3:
+            survey['keysound_samples'].append({'id': sid, **{k: ks[k] for k in ('count', 'formats', 'attenuation', 'unk', 'loop')}})
+        for k, v in ks.get('formats', {}).items():
             survey['wav'][k] = survey['wav'].get(k, 0) + v
     report['survey'] = survey
     a.output.write_text(json.dumps(report, indent=1, ensure_ascii=False) + '\n', encoding='utf-8')
