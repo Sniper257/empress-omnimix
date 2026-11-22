@@ -104,6 +104,36 @@ def read_2dx(data):
     return name, entries
 
 
+# -------------------------------------------------------------------------- .s3p
+
+ASF_GUID = bytes.fromhex('3026b2758e66cf11a6d900aa0062ce6c')   # ASF header object (WMA)
+
+
+def read_s3p(data):
+    """Keysound archive of newer arcade games: "S3P0", u32 count, count x (u32 offset, u32 size);
+    each entry is an "S3V0" header followed by an ASF/WMA file. Returns [entry dict]."""
+    if len(data) < 8 or data[:4] != b'S3P0' or len(data) > MAX_ARCHIVE:
+        raise FormatError('Not an .s3p archive')
+    count = struct.unpack_from('<I', data, 4)[0]
+    if count > 8192 or 8 + 8 * count > len(data):
+        raise FormatError('Invalid .s3p header')
+    entries = []
+    for index in range(count):
+        at, size = struct.unpack_from('<II', data, 8 + 8 * index)
+        if at + size > len(data) or size < 8:
+            raise FormatError('.s3p entry %d exceeds the archive' % index)
+        blob = data[at:at + size]
+        if blob[:4] != b'S3V0':
+            raise FormatError('.s3p entry %d is not S3V0' % index)
+        start = blob.find(ASF_GUID)
+        if start < 0:
+            raise FormatError('.s3p entry %d has no WMA/ASF stream' % index)
+        head = blob[:start]
+        entries.append({'index': index, 'header': head, 'audio': blob[start:],
+                        'header_size': struct.unpack_from('<I', blob, 4)[0] if len(blob) >= 8 else 0})
+    return entries
+
+
 # ------------------------------------------------------------------------- WAVE
 
 ADAPT = (230, 230, 230, 230, 307, 409, 512, 614, 768, 614, 512, 409, 307, 230, 230, 230)

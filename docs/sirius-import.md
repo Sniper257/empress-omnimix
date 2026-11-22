@@ -9,6 +9,8 @@ lines in `song.txt`, see `tools/offdisc/launcher/main.c`).
 
 | Part | State |
 | --- | --- |
+| Read a newer arcade omnimix (e.g. Sparkle Shower): `.s3p` WMA keysounds (decoded with ffmpeg), `data_mods` layers, SIRIUS = ids 17000–17999 | done: `arcade_data.read_s3p`, `sirius_probe.py` |
+| CN/BSS for EMPRESS | later: needs a new runtime module written against `EMPRESS/SLPM_552.21` (the `tools/cn` prototype's sources are not public and its hook sites are now used by FAST/SLOW and input hooks) |
 | Read SIRIUS as BMS (one folder per song; WAV keysounds, OGG/FLAC via ffmpeg) | done: `bms.py` |
 | Read arcade `.1` charts, `.2dx` keysounds (PCM/MS-ADPCM WAV), `music_data.bin` | done: `arcade_data.py` (the tested dump's `.2dx` files are wrapped in `%hid` and are not read) |
 | SPU2 ADPCM encoder/decoder, EMPRESS frame disguise, backing-stream writer | done: `spu_adpcm.py` |
@@ -38,7 +40,14 @@ lines in `song.txt`, see `tools/offdisc/launcher/main.c`).
 
 ## What the probe measures
 
-With BMS songs (recommended), run it on the BMS folder and a built MEGAMIX base,
+With a newer arcade omnimix, point it at the game folder that holds `data/`
+and `data_mods/` (ffmpeg on PATH, or `--ffmpeg`, decodes the WMA keysounds):
+
+```sh
+python3 sirius_probe.py /path/to/contents /path/to/MEGAMIX -o sirius-probe.json
+```
+
+With BMS songs, run it on the BMS folder and a built MEGAMIX base,
 the folder `megamix.py` created from EMPRESS Disc 1:
 
 ```sh

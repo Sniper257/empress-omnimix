@@ -4,8 +4,10 @@
   python3 sirius_probe.py SIRIUS_DATA MEGAMIX_DIR [--pair empress/id_97=17000 ...] [-o report.json]
   python3 sirius_probe.py --bms SIRIUS_BMS MEGAMIX_DIR [--pair empress/id_97=FOLDER ...]
 
-SIRIUS_DATA is the arcade data/ folder. Song files (<id>.1, <id>.2dx) are found
-anywhere under sound/ or sd_data/ (or --sound); music_data.bin anywhere below it.
+SIRIUS_DATA is an arcade game folder (SIRIUS, or a newer omnimix such as Sparkle
+Shower: pass the folder holding data/ and data_mods/). Song files (<id>.1,
+<id>.2dx, <id>.s3p) are found in every sound/ or sd_data/ folder, mod layers
+replacing base files; the song list is the last music*.bin found.
 MEGAMIX_DIR is a built MEGAMIX base. Songs that exist in both games (EMPRESS's
 arcade songs, Bad Maniacs, DOMINION...) are compared to measure, from real
 files rather than guesses:
@@ -171,35 +173,57 @@ def empress_song(root, folder):
 # ------------------------------------------------------------------ Sirius side
 
 SOUND_DIRS = ('sound', 'sd_data')
+FFMPEG = None   # set from --ffmpeg / PATH in main
+
+
+SONG_SUFFIXES = ('.1', '.2dx', '.s3p')
+
+
+def _ident(path):
+    stem = path.stem.lower()
+    pre = stem.endswith('_pre')
+    sid = stem[:-4] if pre else stem
+    return (int(sid), ('_pre' if pre else '') + path.suffix.lower()) if sid.isdigit() else None
+
+
+def sound_roots(data_dir):
+    """Every sound/ or sd_data/ folder below data_dir, base layers first and data_mods (omnimix) last,
+    so a mod layer's files replace the base game's like the game's own layered loader does."""
+    found = [p for p in data_dir.rglob('*') if p.is_dir() and p.name.lower() in SOUND_DIRS]
+    if data_dir.name.lower() in SOUND_DIRS:
+        found.append(data_dir)
+    found = [p for p in found if not any(q != p and p.is_relative_to(q) for q in found)]
+    return sorted(found, key=lambda p: ('data_mods' in [x.lower() for x in p.parts], str(p)))
+
+
+def music_files(data_dir):
+    """Song-list candidates (music_data.bin, omnimix music_omni*.bin ...), mod layers last."""
+    found = [p for p in data_dir.rglob('*.bin') if p.is_file() and p.name.lower().startswith('music')]
+    return sorted(found, key=lambda p: ('data_mods' in [x.lower() for x in p.parts], 'omni' in p.name.lower(), str(p)))
 
 
 def locate(data_dir, sound=None, keysounds=None):
-    """Find song files anywhere under the data folder: {id: {'.1': path, '.2dx': path, ...}}.
+    """Find song files: {id: {'.1': path, '.2dx'/'.s3p': path, '_pre.2dx': path}} and the song list.
 
-    Arcade dumps differ (sound/<id>/<id>.1, sd_data/<id>.1, ...), so the song id
-    is taken from each file name, e.g. 17010.1, 17010.2dx, 17010_pre.2dx.
+    Arcade dumps differ (sound/<id>/<id>.1, sd_data/<id>.1, data_mods/omnimix/sound/...),
+    so the song id is taken from each file name.
     """
-    roots = [sound] if sound else [data_dir / d for d in SOUND_DIRS if (data_dir / d).is_dir()] or [data_dir]
-    songs, music = {}, None
+    roots = [sound] if sound else sound_roots(data_dir) or [data_dir]
+    songs = {}
     for root in roots:
         for path in sorted(root.rglob('*')):
-            if not path.is_file():
-                continue
-            stem, suffix = path.stem.lower(), path.suffix.lower()
-            sid = stem[:-4] if stem.endswith('_pre') else stem
-            if suffix in ('.1', '.2dx') and sid.isdigit():
-                key = suffix if not stem.endswith('_pre') else '_pre' + suffix
-                songs.setdefault(int(sid), {})[key] = path
+            if path.is_file() and path.suffix.lower() in SONG_SUFFIXES:
+                ident = _ident(path)
+                if ident:
+                    songs.setdefault(ident[0], {})[ident[1]] = path
     if keysounds:
         for path in sorted(keysounds.rglob('*')):
-            stem = path.stem.lower()
-            sid = stem[:-4] if stem.endswith('_pre') else stem
-            if path.is_file() and path.suffix.lower() == '.2dx' and sid.isdigit():
-                songs.setdefault(int(sid), {})['_pre.2dx' if stem.endswith('_pre') else '.2dx'] = path
-    for path in sorted(data_dir.rglob('music_data.bin')):
-        music = path
-        break
-    return songs, music
+            if path.is_file() and path.suffix.lower() in ('.2dx', '.s3p'):
+                ident = _ident(path)
+                if ident:
+                    songs.setdefault(ident[0], {})[ident[1]] = path
+    music = music_files(data_dir)
+    return songs, (music[-1] if music else None)
 
 
 def layout(data_dir, limit=40):
@@ -225,8 +249,29 @@ def sirius_song(files, sid):
         out['directory'] = [list(r) for r in A.chart_directory(raw)]
         charts = A.read_charts(raw)
         out['charts'] = {str(k): chart_summary(v) for k, v in charts.items()}
+    s3p = paths.get('.s3p')
+    if s3p:
+        try:
+            entries = A.read_s3p(s3p.read_bytes())
+            out['keysounds'] = {'container': 's3p', 'count': len(entries),
+                                'header_sizes': histogram(e['header_size'] for e in entries),
+                                's3v_header_sample': hexrow(entries[0]['header'], 64) if entries else None,
+                                'audio_bytes': sum(len(e['audio']) for e in entries)}
+            if entries and FFMPEG:
+                import bms, tempfile, os
+                with tempfile.NamedTemporaryFile(suffix='.wma', delete=False) as f:
+                    f.write(entries[0]['audio'])
+                try:
+                    rate, ch = bms.decode_audio(f.name, FFMPEG)
+                    out['keysounds']['decoded_sample'] = {'rate': rate, 'channels': len(ch), 'samples': len(ch[0])}
+                except Exception as e:   # report only
+                    out['keysounds']['decoded_sample'] = str(e)
+                finally:
+                    os.unlink(f.name)
+        except A.FormatError as err:
+            out['keysounds'] = {'container': 's3p', 'error': str(err), 'head': hexrow(s3p.read_bytes()[:160])}
     two = paths.get('.2dx')
-    if two:
+    if two and not s3p:
         head = two.open('rb').read(4)
         if head[:1] == b'%':
             out['keysounds'] = {'error': 'encrypted .2dx (' + head.decode('latin-1') + ')'}
@@ -549,12 +594,16 @@ def main(argv=None):
     p.add_argument('--bms', type=Path, help='folder of SIRIUS songs as BMS (one subfolder per song), instead of arcade data')
     p.add_argument('--ffmpeg', help='ffmpeg executable for OGG/FLAC keysounds (default: ffmpeg on PATH)')
     p.add_argument('--keysounds', type=Path, help='folder of decrypted .2dx files (same names as in sd_data), used instead of the encrypted ones')
+    p.add_argument('--version', type=int, default=17, help='game version to survey (song ids 17000-17999 = SIRIUS)')
     p.add_argument('--music', type=Path, help='song list file if it is not named music_data.bin')
     p.add_argument('--sound', type=Path, help='folder holding the song files (default: sound/ or sd_data/ under SIRIUS_DATA)')
     p.add_argument('--pair', action='append', default=[], metavar='STYLE/DIR=ID', help='e.g. empress/id_97=17010')
     p.add_argument('--limit', type=int, default=6, help='songs to compare when pairing automatically')
     p.add_argument('-o', '--output', type=Path, default=Path('sirius-probe.json'))
     a = p.parse_args(argv)
+    global FFMPEG
+    import shutil
+    FFMPEG = a.ffmpeg or shutil.which('ffmpeg')
     if a.bms:
         if a.megamix is None and a.sirius is not None:
             a.megamix, a.sirius = a.sirius, None
@@ -574,18 +623,22 @@ def main(argv=None):
         print(json.dumps(layout(a.sound or a.sirius), indent=1, ensure_ascii=False))
         raise SystemExit('Pass the folder that holds the songs with --sound, or share the summary above.')
     print('Found', len(ids), 'songs', ids[0], '..', ids[-1], '| music_data.bin:', music or 'not found')
-    report = {'probe': 4, 'songs': len(ids), 'id_range': [ids[0], ids[-1]],
+    report = {'probe': 6, 'songs': len(ids), 'id_range': [ids[0], ids[-1]],
               'with_chart': sum(1 for f in files.values() if '.1' in f), 'with_keysounds': sum(1 for f in files.values() if '.2dx' in f),
               'example_paths': [str(p.relative_to(a.sirius)) if p.is_relative_to(a.sirius) else p.name for p in list(files[ids[0]].values())]}
     report['layout'] = layout(a.sirius)
     roots = [a.sound] if a.sound else [a.sirius / d for d in SOUND_DIRS if (a.sirius / d).is_dir()]
     if music is None:
         report['metadata_candidates'] = metadata_candidates(a.sirius, roots)
+    report['music_files'] = [{'path': str(p.relative_to(a.sirius)), 'bytes': p.stat().st_size, 'head': p.open('rb').read(32).hex()} for p in music_files(a.sirius)[:12]]
     titles = {}
     try:
         report['music_data'], _, titles = music_summary(music, ids)
-    except (A.FormatError, ValueError) as e:
+        report['music_data']['file'] = str(music.relative_to(a.sirius)) if music.is_relative_to(a.sirius) else str(music)
+    except (A.FormatError, ValueError, struct.error) as e:
         report['music_data'] = {'error': str(e)}
+    report['by_version'] = histogram(sid // 1000 for sid in ids if sid >= 1000)
+    report['sound_roots'] = [str(r.relative_to(a.sirius)) if r.is_relative_to(a.sirius) else str(r) for r in (sound_roots(a.sirius) if not a.sound else [a.sound])]
     pairs = dict(x.split('=', 1) for x in a.pair)
     pairs = {k: int(v) for k, v in pairs.items()}
     if not pairs:
@@ -610,7 +663,9 @@ def main(argv=None):
         report['pairs'].append(row)
         print('compared', folder, '<->', sid, '|', len(row.get('matches', [])), 'chart matches', row.get('error', ''))
     survey = {'slots': {}, 'types': {}, 'wav': {}}
-    for sid in ids[:: max(1, len(ids) // 40)]:
+    pool = [i for i in ids if i // 1000 == a.version] or ids
+    report['survey_version'] = a.version if pool is not ids else None
+    for sid in pool[:: max(1, len(pool) // 40)]:
         try:
             s, charts = sirius_song(files, sid)
         except (OSError, ValueError) as e:
@@ -625,9 +680,13 @@ def main(argv=None):
             errs = survey.setdefault('keysound_errors', {})
             errs[ks['error']] = errs.get(ks['error'], 0) + 1
             if len(survey.setdefault('keysound_error_heads', [])) < 3:
-                survey['keysound_error_heads'].append({'id': sid, 'bytes': files[sid]['.2dx'].stat().st_size, 'head': ks.get('head')})
+                path = files[sid].get('.s3p') or files[sid].get('.2dx')
+                survey['keysound_error_heads'].append({'id': sid, 'bytes': path.stat().st_size if path else None, 'head': ks.get('head')})
         elif ks and len(survey.setdefault('keysound_samples', [])) < 3:
-            survey['keysound_samples'].append({'id': sid, **{k: ks[k] for k in ('count', 'formats', 'attenuation', 'unk', 'loop')}})
+            survey['keysound_samples'].append({'id': sid, **{k: v for k, v in ks.items() if k != 'name'}})
+        if ks.get('container'):
+            survey['containers'] = survey.get('containers', {})
+            survey['containers'][ks['container']] = survey['containers'].get(ks['container'], 0) + 1
         for k, v in ks.get('formats', {}).items():
             survey['wav'][k] = survey['wav'].get(k, 0) + v
     report['survey'] = survey

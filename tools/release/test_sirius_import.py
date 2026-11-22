@@ -212,6 +212,31 @@ class Probe(unittest.TestCase):
             self.assertEqual(r['megamix_diagnostics']['song_txt_found'], 0)
             self.assertEqual(r['survey']['keysound_errors'], {'encrypted .2dx (%hid)': 1})
 
+    def test_s3p_entries_and_layered_omnimix(self):
+        import sirius_probe
+        wma = A.ASF_GUID + b'wma payload'
+        s3v = b'S3V0' + struct.pack('<II', 32, len(wma)) + bytes(20) + wma
+        s3p = b'S3P0' + struct.pack('<III', 1, 16, len(s3v)) + s3v
+        (e,) = A.read_s3p(s3p)
+        self.assertEqual((e['audio'], e['header_size']), (wma, 32))
+        with tempfile.TemporaryDirectory() as tmp:
+            game = Path(tmp)
+            base = game / 'data/sound/17010'
+            mod = game / 'data_mods/omnimix/sound/17010'
+            for folder in (base, mod):
+                folder.mkdir(parents=True)
+                (folder / '17010.1').write_bytes(one_file({0: [(0, 0, 0, 0)]}))
+            (base / '17010.s3p').write_bytes(s3p)
+            for name in ('data/info/0/music_data.bin', 'data_mods/omnimix/info/0/music_omni.bin'):
+                (game / name).parent.mkdir(parents=True)
+                (game / name).write_bytes(b'IIDX')
+            files, music = sirius_probe.locate(game)
+            self.assertEqual(files[17010]['.1'].parent, mod)        # mod layer wins
+            self.assertEqual(files[17010]['.s3p'].parent, base)    # base file kept when not replaced
+            self.assertEqual(music.name, 'music_omni.bin')
+            info, _ = sirius_probe.sirius_song(files, 17010)
+            self.assertEqual((info['keysounds']['container'], info['keysounds']['count']), ('s3p', 1))
+
     def test_no_song_files_prints_layout(self):
         import sirius_probe
         with tempfile.TemporaryDirectory() as tmp:
