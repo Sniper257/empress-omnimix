@@ -172,7 +172,7 @@ def empress_song(root, folder):
 SOUND_DIRS = ('sound', 'sd_data')
 
 
-def locate(data_dir, sound=None):
+def locate(data_dir, sound=None, keysounds=None):
     """Find song files anywhere under the data folder: {id: {'.1': path, '.2dx': path, ...}}.
 
     Arcade dumps differ (sound/<id>/<id>.1, sd_data/<id>.1, ...), so the song id
@@ -189,6 +189,12 @@ def locate(data_dir, sound=None):
             if suffix in ('.1', '.2dx') and sid.isdigit():
                 key = suffix if not stem.endswith('_pre') else '_pre' + suffix
                 songs.setdefault(int(sid), {})[key] = path
+    if keysounds:
+        for path in sorted(keysounds.rglob('*')):
+            stem = path.stem.lower()
+            sid = stem[:-4] if stem.endswith('_pre') else stem
+            if path.is_file() and path.suffix.lower() == '.2dx' and sid.isdigit():
+                songs.setdefault(int(sid), {})['_pre.2dx' if stem.endswith('_pre') else '.2dx'] = path
     for path in sorted(data_dir.rglob('music_data.bin')):
         music = path
         break
@@ -200,8 +206,11 @@ def layout(data_dir, limit=40):
     out = {'top': sorted(p.name + ('/' if p.is_dir() else '') for p in data_dir.iterdir())[:limit], 'extensions': {}}
     for path in data_dir.rglob('*'):
         if path.is_file():
+            rel = path.relative_to(data_dir).parts
+            top = rel[0] if len(rel) > 1 else '.'
             ext = path.suffix.lower() or '(none)'
-            out['extensions'][ext] = out['extensions'].get(ext, 0) + 1
+            row = out['extensions'].setdefault(top, {})
+            row[ext] = row.get(ext, 0) + 1
     return out
 
 
@@ -217,6 +226,10 @@ def sirius_song(files, sid):
         out['charts'] = {str(k): chart_summary(v) for k, v in charts.items()}
     two = paths.get('.2dx')
     if two:
+        head = two.open('rb').read(4)
+        if head[:1] == b'%':
+            out['keysounds'] = {'error': 'encrypted .2dx (' + head.decode('latin-1') + ')'}
+            return out, charts
         try:
             name, entries = A.read_2dx(two.read_bytes())
             fmts = []
@@ -359,20 +372,58 @@ def count_pairs(root, files, limit):
     return {f: rows[f] for f in order[:limit]}, {'empress_songs_with_charts': len(prints), 'matched': len(rows)}
 
 
-def metadata_candidates(data_dir, sound_roots, limit=40):
-    """Small files outside the song folders that may be the song list (music_data.bin is absent)."""
+def metadata_candidates(data_dir, sound_roots, limit=60):
+    """Files under info/ (and other non-song, non-graphics folders): the song list is one of them."""
     out = []
-    for path in sorted(data_dir.rglob('*')):
-        if not path.is_file() or any(path.is_relative_to(r) for r in sound_roots):
+    skip = [data_dir / 'graph_data', data_dir / 'movie', *sound_roots]
+    paths = sorted(data_dir.rglob('*'), key=lambda p: ('info' not in [x.lower() for x in p.relative_to(data_dir).parts[:1]], str(p)))
+    for path in paths:
+        if not path.is_file() or any(path.is_relative_to(r) for r in skip):
             continue
-        size = path.stat().st_size
-        name = path.name.lower()
-        if 'music' in name or 'info' in str(path.parent).lower() or name.endswith(('.bin', '.xml', '.csv', '.dat', '.ifs')):
-            with path.open('rb') as f:
-                head = f.read(16)
-            out.append({'path': str(path.relative_to(data_dir)), 'bytes': size, 'head': head.hex()})
-            if len(out) >= limit:
+        with path.open('rb') as f:
+            head = f.read(32)
+        out.append({'path': str(path.relative_to(data_dir)), 'bytes': path.stat().st_size, 'head': head.hex()})
+        if len(out) >= limit:
+            break
+    return out
+
+
+def empress_diagnostics(root, limit=3):
+    """Why no EMPRESS charts were found: song.txt count, a sample, and decode attempts."""
+    songs = sorted((root / 'songs').glob('*/*/song.txt')) if (root / 'songs').is_dir() else []
+    out = {'megamix_top': sorted(p.name for p in root.iterdir())[:40] if root.is_dir() else 'not a folder',
+           'song_txt_found': len(songs), 'has_package_json': (root / 'megamix-package.json').is_file()}
+    if not songs:
+        return out
+    from chart_transform import crypt
+    out['sample_song_txt'] = songs[0].read_text(encoding='utf-8').splitlines()[:16]
+    tries = []
+    for txt in songs[:10]:
+        for line in txt.read_text(encoding='utf-8').splitlines():
+            parts = line.split()
+            path = None
+            if parts[:1] == ['E'] and len(parts) == 5:
+                path = root / parts[4]
+            elif parts[:1] == ['F'] and len(parts) == 4 and parts[1] in ('c0', 'c4'):
+                path = root / parts[3].lstrip('/') if parts[3].startswith('/') else txt.parent / parts[3]
+            if path is None:
+                continue
+            row = {'song': txt.parent.name, 'line': line, 'exists': path.is_file()}
+            if path.is_file() and path.stat().st_size < 1 << 20:
+                raw = path.read_bytes()
+                row['bytes'] = len(raw)
+                row['head'] = raw[:16].hex()
+                try:
+                    row['decrypted_head'] = crypt(raw, 'empress', True)[:16].hex()
+                except ValueError as e:
+                    row['decrypted_head'] = str(e)
+                row['decoded'] = empress_chart(raw) is not None
+                tries.append(row)
+            if len(tries) >= limit * 3:
                 break
+        if len(tries) >= limit * 3:
+            break
+    out['chart_attempts'] = tries
     return out
 
 
@@ -380,6 +431,7 @@ def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument('sirius', type=Path, help='SIRIUS arcade data/ folder')
     p.add_argument('megamix', type=Path, help='built MEGAMIX base folder')
+    p.add_argument('--keysounds', type=Path, help='folder of decrypted .2dx files (same names as in sd_data), used instead of the encrypted ones')
     p.add_argument('--music', type=Path, help='song list file if it is not named music_data.bin')
     p.add_argument('--sound', type=Path, help='folder holding the song files (default: sound/ or sd_data/ under SIRIUS_DATA)')
     p.add_argument('--pair', action='append', default=[], metavar='STYLE/DIR=ID', help='e.g. empress/id_97=17010')
@@ -388,7 +440,7 @@ def main(argv=None):
     a = p.parse_args(argv)
     if not a.sirius.is_dir():
         raise SystemExit('Not a folder: ' + str(a.sirius))
-    files, music = locate(a.sirius, a.sound)
+    files, music = locate(a.sirius, a.sound, a.keysounds)
     if a.music:
         music = a.music
     ids = sorted(files)
@@ -397,7 +449,7 @@ def main(argv=None):
         print(json.dumps(layout(a.sound or a.sirius), indent=1, ensure_ascii=False))
         raise SystemExit('Pass the folder that holds the songs with --sound, or share the summary above.')
     print('Found', len(ids), 'songs', ids[0], '..', ids[-1], '| music_data.bin:', music or 'not found')
-    report = {'probe': 3, 'songs': len(ids), 'id_range': [ids[0], ids[-1]],
+    report = {'probe': 4, 'songs': len(ids), 'id_range': [ids[0], ids[-1]],
               'with_chart': sum(1 for f in files.values() if '.1' in f), 'with_keysounds': sum(1 for f in files.values() if '.2dx' in f),
               'example_paths': [str(p.relative_to(a.sirius)) if p.is_relative_to(a.sirius) else p.name for p in list(files[ids[0]].values())]}
     report['layout'] = layout(a.sirius)
@@ -416,6 +468,9 @@ def main(argv=None):
     if not pairs:
         print('Matching songs by chart note counts...')
         pairs, report['count_pairing'] = count_pairs(a.megamix, files, a.limit)
+        if not report['count_pairing']['empress_songs_with_charts']:
+            report['megamix_diagnostics'] = empress_diagnostics(a.megamix)
+            print('No EMPRESS charts found in', a.megamix, '- see megamix_diagnostics in the report')
     report['pairs'] = []
     for folder, sid in pairs.items():
         row = {'empress_folder': folder, 'sirius_id': sid}

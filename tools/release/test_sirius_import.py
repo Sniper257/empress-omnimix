@@ -189,6 +189,29 @@ class Probe(unittest.TestCase):
             self.assertEqual(sorted(files[17010]), ['.1', '.2dx', '_pre.2dx'])
             self.assertEqual(music.name, 'music_data.bin')
 
+    def test_encrypted_2dx_and_decrypted_override(self):
+        import sirius_probe
+        with tempfile.TemporaryDirectory() as tmp:
+            data = Path(tmp) / 'data'
+            (data / 'sd_data/0100').mkdir(parents=True)
+            (data / 'sd_data/0100/0100.1').write_bytes(one_file({0: [(0, 0, 0, 0)]}))
+            (data / 'sd_data/0100/0100.2dx').write_bytes(b'%hid' + bytes(60))
+            files, _ = sirius_probe.locate(data)
+            self.assertIn('encrypted', sirius_probe.sirius_song(files, 100)[0]['keysounds']['error'])
+            plain = Path(tmp) / 'plain'
+            plain.mkdir()
+            (plain / '0100.2dx').write_bytes(twodx([pcm_wav([0] * 4)]))
+            files, _ = sirius_probe.locate(data, keysounds=plain)
+            self.assertEqual(sirius_probe.sirius_song(files, 100)[0]['keysounds']['count'], 1)
+            mm = Path(tmp) / 'mm'
+            mm.mkdir()
+            out = Path(tmp) / 'r.json'
+            with redirect_stdout(io.StringIO()):
+                sirius_probe.main([str(data), str(mm), '-o', str(out)])
+            r = json.loads(out.read_text(encoding='utf-8'))
+            self.assertEqual(r['megamix_diagnostics']['song_txt_found'], 0)
+            self.assertEqual(r['survey']['keysound_errors'], {'encrypted .2dx (%hid)': 1})
+
     def test_no_song_files_prints_layout(self):
         import sirius_probe
         with tempfile.TemporaryDirectory() as tmp:
