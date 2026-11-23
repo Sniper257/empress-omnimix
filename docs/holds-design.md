@@ -97,3 +97,33 @@ original words at the prototype's hook sites match.
 Round 2 (`disasm_sites.py` without `--sites-only`) dumps these functions in
 full. It also lists every instruction that uses the `$gp` variables above, and
 every reference to the ring and tables.
+
+## Engine findings, round 2
+
+- **Spawn**: `0x1e7720` makes a note object for each chart event. Notes the
+  player must judge get `+0x0b = 1` (at `0x1e7fac`) and continue to
+  `0x1e7d14`, so every spawned note passes the prototype's `hook_spawn`
+  site. It is the one place to mark hold heads. Lane comes from a per-side
+  table at `0x79dad0` (the lane-shuffle options rewrite `+0x09` right after).
+- **Key judge** `0x1e85d0`: presses are a bitmask (P1 bits 0–6, P2 bits 7–13).
+  It comes from `0x130950()`, or from `gp-0x7770` (notes at this tick) when
+  autoplay bits `gp-0x77b0` are set. That is a press edge, so CN releases
+  need a held-key reading (round 3). Each lane takes its nearest note from
+  `0x79dae0` and compares the distance with the key windows at `0x79d940`
+  (outer, then 5 thresholds):
+  - 4–8 = PGREAT, GREAT, GOOD, BAD, POOR
+  - 9 = POOR that still uses up the note
+  - `0xb` = no note in range
+
+  Notes with `+0x0b == 0` are never judged, so a hold module can take a
+  note out of native judging by clearing that byte.
+- **Misses**: `0x1e6f50` logs `0xe`/`0xf` (`0xf` when `+0x0c` is clear) for
+  a note that leaves its window with `+0x0b` still set.
+- **One ring for everything**: key, turntable and miss judgements, plus the
+  per-tick codes `0x10`–`0x14`, are all written with `0x1ed5a0`. Its read
+  index `gp-0x7714` is only used inside the block that starts at `0x1ec860`.
+  That block is the reader that should apply score, combo and gauge
+  (round 3 dumps it as a raw range).
+- Round 2's "function" attribution for frameless leaf functions was wrong (it
+  walked back to an older prologue). `function_start` now also stops at the
+  previous `jr $ra`.

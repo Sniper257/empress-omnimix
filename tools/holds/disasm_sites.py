@@ -46,6 +46,14 @@ FUNCTIONS = {
     0x1e4ab0: 'called on note at its tick', 0x205d40: 'mode flag', 0x205d50: 'mode flag (autoplay?)',
     0x205780: 'called for judge code 4', 0x140260: 'play keysound', 0x1fec30: 'side lookup',
 }
+# round 3: the ring reader block, everything that walks the active note list, windows and pad input
+RANGES = {(0x1ec860, 0x1ed5a0): 'judgement ring reader block (gp-0x7714 read index)',
+          (0x1308a0, 0x130b40): 'pad input around 0x130950 (key press bits)'}
+ROUND3_FUNCTIONS = {0x1eb900: 'judge window setup (writes 0x79d960)', 0x1eba60: 'judge window setup 2',
+                    0x1ebed0: 'allocate note', 0x1ebee0: 'link note into active list', 0x1ebec0: 'active list head',
+                    0x1e9420: 'auto-scratch helper (reads gp-0x77b4)', 0x1ea000: 'sets gp-0x776c'}
+CALLERS_OF = {0x1ebec0: 'walks the active note list (renderer is one of these)', 0x1ec860: 'calls the ring reader block',
+              0x130950: 'reads key presses'}
 GP_OFFSETS = (-0x7710, -0x7714, -0x7788, -0x7780, -0x7770, -0x77b4, -0x77b0, -0x776c, -0x7720)
 ABS_DATA = {0x79e300: 'judgement ring (code)', 0x79e302: 'judgement ring (lane id)', 0x79d960: 'judge windows',
             0x79dae0: 'per-lane nearest note table', 0x79db60: 'per-lane notes-in-range count',
@@ -127,13 +135,21 @@ def function(md, img, start, limit=600):
 
 
 def function_start(img, va, limit=8192):
-    """Walk back to the function prologue (addiu $sp, $sp, -N) containing va."""
+    """Start of the function containing va: the nearest of a prologue (addiu $sp, $sp, -N)
+    or the instruction after the previous function's jr $ra + delay slot (leaf functions
+    have no prologue), skipping padding nops."""
     for i in range(limit):
-        w = img.word(va - 4 * i)
+        at = va - 4 * i
+        w = img.word(at)
         if w is None:
-            break
+            return va
         if w >> 16 == 0x27bd and w & 0x8000:
-            return va - 4 * i
+            return at
+        if i >= 2 and w == 0x03e00008:          # jr $ra of the previous function
+            start = at + 8
+            while start < va and img.word(start) == 0:
+                start += 4
+            return start
     return va
 
 
@@ -166,6 +182,18 @@ def abs_refs(img, address):
                         hits.append(base + at)
                         break
     return hits
+
+
+def megamix_report(data):
+    """Why a file is or is not a MEGAMIX build: length and how many recipe edits are present."""
+    recipe = HERE.parents[1] / 'release-inputs' / 'recipes' / 'id-console.json'
+    if not recipe.is_file():
+        return 'recipe not found (run from a full checkout)'
+    edit = json.loads(recipe.read_text(encoding='utf-8'))['files'].get('EMPRESS/SLPM_552.21', {})
+    after = sum(1 for e in edit.get('edits', []) if data[e['at']:e['at'] + len(e['after']) // 2] == bytes.fromhex(e['after']))
+    before = sum(1 for e in edit.get('edits', []) if data[e['at']:e['at'] + len(e['before']) // 2] == bytes.fromhex(e['before']))
+    return 'length %d (recipe %s), MEGAMIX edits present %d/%d, retail bytes at those spots %d' % (
+        len(data), edit.get('length'), after, len(edit.get('edits', [])), before)
 
 
 def megamix_original(data):
@@ -204,6 +232,7 @@ def main(argv=None):
     p.add_argument('exe', type=Path)
     p.add_argument('-o', '--output', type=Path, default=Path('holds-sites.txt'))
     p.add_argument('--context', type=int, default=48, help='instructions shown before and after each site')
+    p.add_argument('--round', type=int, default=3, choices=(2, 3), help='2: hook sites + round-2 functions; 3 (default): round-3 targets only')
     p.add_argument('--sites-only', action='store_true', help='only the hook sites (round 1)')
     p.add_argument('--extra', type=lambda s: int(s, 16), action='append', default=[], help='more functions to dump (hex VA)')
     a = p.parse_args(argv)
@@ -214,7 +243,10 @@ def main(argv=None):
         orig = megamix_original(data)
         kind = 'MEGAMIX build of retail EMPRESS' if orig and hashlib.sha256(orig).hexdigest() == EXE_SHA256 else 'NOT a known EMPRESS executable'
     img, md = Image(data), disassembler()
-    out = ['# EMPRESS hold-module sites', '# exe sha256 %s (%s)' % (digest, kind), '']
+    out = ['# EMPRESS hold-module sites', '# exe sha256 %s (%s)' % (digest, kind)]
+    if kind != 'retail EMPRESS':
+        out.append('# ' + megamix_report(data))
+    out.append('')
     out.append('## Original words expected by tools/cn/build.py')
     for va, want in sorted(ORIG.items()):
         got = img.word(va)
@@ -238,6 +270,37 @@ def main(argv=None):
         out.append('# call sites: ' + ' '.join('%08x' % c for c in callers(img, target)))
         out.append(fmt(rows))
         out.append('')
+    if a.round == 3:
+        out.append('# ===== round 3: address ranges =====')
+        for (lo, hi), what in sorted(RANGES.items()):
+            out.append('## %08x-%08x %s' % (lo, hi, what))
+            out.append(fmt(lines(md, img, lo, (hi - lo) // 4)))
+            out.append('')
+        out.append('# ===== round 3: functions =====')
+        for va, what in sorted(ROUND3_FUNCTIONS.items()):
+            start = va if callers(img, va) else function_start(img, va)   # call targets are exact starts
+            rows = function(md, img, start, limit=3000)
+            out.append('## %s: function %08x (from %08x), %d instructions' % (what, start, va, len(rows)))
+            out.append('# call sites: ' + ' '.join('%08x' % c for c in callers(img, start)))
+            out.append(fmt(rows, {va}))
+            out.append('')
+        out.append('# ===== round 3: callers =====')
+        for target, what in sorted(CALLERS_OF.items()):
+            sites = callers(img, target)
+            out.append('## %d calls to %08x (%s): %s' % (len(sites), target, what, ' '.join('%08x' % c for c in sites)))
+            done = set()
+            for site in sites:
+                start = function_start(img, site)
+                if start in done or start in (0x1e6bb0, 0x1e85d0, 0x1e8d50):   # already in round 2
+                    continue
+                done.add(start)
+                rows = function(md, img, start, limit=2500)
+                out.append('### function %08x (calls at %08x), %d instructions' % (start, site, len(rows)))
+                out.append(fmt(rows, set(sites)))
+                out.append('')
+        a.output.write_text('\n'.join(out) + '\n', encoding='utf-8')
+        print('Wrote', a.output, '(' + kind + ')')
+        return
     if not a.sites_only:
         out.append('# ===== round 2: whole functions =====')
         done = set()
