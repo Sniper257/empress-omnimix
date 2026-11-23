@@ -149,3 +149,15 @@ every reference to the ring and tables.
 - Round 2's "function" attribution for frameless leaf functions was wrong (it
   walked back to an older prologue). `function_start` now also stops at the
   previous `jr $ra`.
+
+## Arcade constants
+
+`tools/holds/arcade_scan.py bm2dx.dll` looks for the values the rules still
+guess: the CN/BSS release window, the BSS stop grace, the HCN tick spacing
+and any high-BPM limit. It handles 32-bit (SIRIUS era) and 64-bit (recent)
+DLLs. It lists judgement, hold and gauge strings and window-shaped tables
+(rising ints in frames or ms, floats like 16.67/33.33), each with short
+disassembly of the code that uses it.
+
+SIRIUS's DLL is the era-correct source for CN and BSS. HCN exists only in
+copula (23) and later, so its values have to come from a newer DLL.
