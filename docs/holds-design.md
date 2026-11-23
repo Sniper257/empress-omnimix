@@ -57,3 +57,43 @@ the runtime hooks that already sit nearby. From that we need:
 4. Play start, to call `holds_reset` with this chart's `holds.bin`, chained
    with `input_start_hook` (hook_reset).
 5. The combo, gauge and judgement-counter routines the events are applied with.
+
+## Engine findings, round 1 (from a MEGAMIX build of retail SLPM_552.21)
+
+MEGAMIX builds make 25 byte edits to the executable (rating changes, around
+`0x23a0xx` and `0x2789xx`). They are nowhere near the play code, and all six
+original words at the prototype's hook sites match.
+
+- **Time**: the play loop (`0x1e5c50`) steps a processed-tick counter
+  (`gp-0x7780`, u64) up to the target tick (`gp-0x7788`) and calls
+  `0x1e6bb0(tick)` once per tick. Note times are s16 at `note+0x18`, which
+  matches the `0x7fff` chart terminator and the 16683 µs header clock: one tick
+  is one 60 Hz frame. Arcade/BMS milliseconds convert as `ms * 1000 / 16683`,
+  and holds.bin uses the same ticks.
+- **Note object**: `+0x00` chart event, `+0x04` next, `+0x08` keysound slot,
+  `+0x09` lane (7 = turntable; `0x40` once consumed), `+0x0a` side,
+  `+0x0d` bit 0 = entered judge range (21 ticks ahead), `+0x18` time,
+  `+0x1e` flags. Notes are freed 60 ticks after their time. `0x1ebec0` gives
+  the active list head; `0x1ebf20`/`0x1ebf00` unlink and free.
+- **Per-tick lane table** `0x79dae0`: per side, 8 lanes of (u32 note,
+  u32 distance), reset to (0, 0x400) every tick, filled by `0x1e6f50`.
+- **Turntable judge** `0x1e8d50` (both sides; called at `0x1e89c4`): input
+  `0x13acd0(side)`, nonzero = moving, bit `0x80` = direction. Spin state
+  per side at `0x79e2f0` (u8 direction 1/2, s16 distance, s16 tick of the
+  last spin). A direction flip, or a spin after 4 still ticks, starts a new
+  judgement. During a BSS body the hook must not let this judge treat each
+  spin as a new note. `gp-0x77b4` = auto-scratch side bits.
+- **Windows** `0x79d960`: an outer window, then five thresholds giving
+  codes 4–8 (9–11 are special cases).
+- **Judgement log** `0x1ed5a0(code, side<<15 | lane)`: a 128-entry ring at
+  `0x79e300`. Every key and turntable judgement goes through it, as do codes
+  `0x10`–`0x14` from the per-tick code. FAST/SLOW already hooks it. If the
+  ring's reader applies score, combo, gauge and the judgement sprite, the hold
+  module can apply tails and HCN ticks by logging into it (round 2 checks this).
+- **Keysounds**: `0x140260(slot | 0x1000000 or 0x2000000 side | 0x20000000)`.
+- The prototype's `hook_spawn` site (`0x1e7d14`) is on the auto-scratch path
+  only. Drawing hold bodies needs the general spawner (round 2).
+
+Round 2 (`disasm_sites.py` without `--sites-only`) dumps these functions in
+full. It also lists every instruction that uses the `$gp` variables above, and
+every reference to the ring and tables.
