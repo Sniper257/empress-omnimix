@@ -1,7 +1,10 @@
 """holds.bin: CN/HCN/BSS/HBSS list of one chart, read by the runtime hold module. Stdlib only.
 
   b'MMHL', u16 version (1), u16 count, then count x hold_def:
-  s32 start, s32 end, u8 lane, u8 kind, u16 0            (tools/holds/holds.h, 12 bytes)
+  s32 start, s32 end, u8 lane, u8 kind, u16 tick64       (tools/holds/holds.h, 12 bytes)
+
+tick64 is the 16th-note length at the hold's start, in 1/64 chart ticks: HCN and
+HBSS gain or lose gauge once per 16th (docs/holds-design.md). It is 0 for CN/BSS.
 
 Lanes 0..6 P1 keys, 7 P1 turntable, 8..14 P2 keys, 15 P2 turntable. Kinds: 0 CN,
 1 HCN, 2 BSS, 3 HBSS. Records are sorted by (start, lane). Times are chart time
@@ -16,6 +19,7 @@ import struct
 MAGIC = b'MMHL'
 VERSION = 1
 RECORD = struct.Struct('<iiBBH')
+FP = 64                     # holds.h HOLDS_FP
 CN, HCN, BSS, HBSS = range(4)
 MAX_HOLDS = 1024
 
@@ -25,11 +29,24 @@ def kind_for(lane, hell):
     return (HBSS if hell else BSS) if spin else (HCN if hell else CN)
 
 
-def from_events(events, hell=False, time=lambda t: t):
+def bpm_at(events, t, default=130.0):
+    """BPM in force at source time t, from tempo events (type 4: value / param)."""
+    bpm = default
+    for et, kind, param, value in sorted(e for e in events if e[1] == 4):
+        if et > t:
+            break
+        if param > 0 and value > 0:
+            bpm = value / param
+    return bpm
+
+
+def from_events(events, hell=False, time=lambda t: t, ticks_per_ms=1.0):
     """Holds of an arcade-style event list: notes (type 0/1) with value > 0.
 
-    `time` maps source time (ms for BMS/arcade) to EMPRESS chart time; it must be
-    monotonic. Returns a sorted list of (start, end, lane, kind).
+    `time` maps source time (ms for BMS/arcade) to EMPRESS chart time and must be
+    monotonic; `ticks_per_ms` is the same scale as a number (1000 / 16683 for
+    EMPRESS frames), used for the 16th-note tick length. Returns a sorted list of
+    (start, end, lane, kind, tick64).
     """
     holds = []
     for t, kind, param, value in events:
@@ -41,7 +58,11 @@ def from_events(events, hell=False, time=lambda t: t):
         start, end = time(t), time(t + value)
         if end <= start:
             end = start + 1
-        holds.append((start, end, lane, kind_for(lane, hell)))
+        k = kind_for(lane, hell)
+        tick64 = 0
+        if k in (HCN, HBSS):
+            tick64 = max(1, min(0xffff, round(15000.0 / bpm_at(events, t) * ticks_per_ms * FP)))
+        holds.append((start, end, lane, k, tick64))
     holds.sort()
     for a, b in zip(holds, holds[1:]):
         if a[2] == b[2] and b[0] < a[1]:
@@ -53,7 +74,7 @@ def from_events(events, hell=False, time=lambda t: t):
 
 def pack(holds):
     holds = sorted(holds)
-    return MAGIC + struct.pack('<HH', VERSION, len(holds)) + b''.join(RECORD.pack(s, e, l, k, 0) for s, e, l, k in holds)
+    return MAGIC + struct.pack('<HH', VERSION, len(holds)) + b''.join(RECORD.pack(*h) for h in holds)
 
 
 def unpack(data):
@@ -64,10 +85,12 @@ def unpack(data):
         raise ValueError('Unsupported or truncated holds.bin')
     out = []
     for i in range(count):
-        s, e, lane, kind, pad = RECORD.unpack_from(data, 8 + RECORD.size * i)
-        if pad or lane > 15 or kind > HBSS or e <= s or ((lane & 7) == 7) != (kind in (BSS, HBSS)):
+        s, e, lane, kind, tick64 = RECORD.unpack_from(data, 8 + RECORD.size * i)
+        if lane > 15 or kind > HBSS or e <= s or ((lane & 7) == 7) != (kind in (BSS, HBSS)):
             raise ValueError('Invalid hold record %d' % i)
-        out.append((s, e, lane, kind))
+        if (kind in (HCN, HBSS)) != (tick64 > 0):
+            raise ValueError('Hold record %d: tick64 must be set for HCN/HBSS only' % i)
+        out.append((s, e, lane, kind, tick64))
     if out != sorted(out):
         raise ValueError('holds.bin records are not sorted')
     return out

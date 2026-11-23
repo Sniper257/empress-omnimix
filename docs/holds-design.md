@@ -14,27 +14,49 @@ module built in three layers.
 
 ## Rules (holds.c)
 
-- **CN**: the head is judged by the game as an ordinary note. If it's GOOD or
-  better, the lane is held. Releasing it within the tail window judges the tail
-  by its offset from the end. Releasing earlier is a POOR. A missed head makes
-  the tail a POOR at the end.
-- **HCN**: like CN, but every `tick` while held gives combo and gauge
-  (`HE_TICK_GAIN`). Letting go breaks combo once (`HE_BREAK`) and costs gauge
-  every tick (`HE_TICK_LOSS`). The lane can be grabbed again until the end.
-- **BSS**: the turntable must keep moving in the head's direction. Standing
-  still is allowed for `spin_grace`. Spinning back judges the tail.
-- **HBSS**: BSS with HCN ticks; spinning the head's way again re-grabs.
-- Holding past the end: `OVERHOLD_RELEASE` (the tail must be released, POOR
-  after the BAD window) or `OVERHOLD_AUTO` (held at the end = PGREAT). Which one
-  matches the arcade, and the exact tail windows and tick rate, are settings in
-  `holds_cfg`. They should be checked against arcade footage before release.
+- **CN**: the head is judged by the game as an ordinary note. Releasing inside
+  the tail window is a PGREAT: one window, wider than a normal PGREAT
+  (`tail_graded = 1` grades releases instead). Releasing earlier is a POOR.
+  Still holding after the window is a POOR, per the project owner
+  (`overhold_judge`; the SP攻略 wiki lists BAD for current arcade versions, so
+  that is a setting). A missed head makes the tail a POOR at the end.
+- **BSS**: keep the turntable moving in the head's direction (standing still
+  is allowed for `spin_grace`). Spinning back, or stopping, inside the tail
+  window releases it like a CN.
+- **HCN / HBSS** (from copula; there were none in SIRIUS charts, but omnimix
+  and BMS charts can have them):
+  - While held: `HE_TICK_GAIN` every 16th note, the same recovery as a hit
+    note, with no combo.
+  - Letting go, or missing the head: a real POOR and an empty POOR at once
+    (`HE_BREAK` + `HE_TICK_LOSS`; -8% on NORMAL), then an empty POOR
+    (`HE_TICK_LOSS`, -2% on NORMAL) every 16th counted from that moment.
+  - The lane can be grabbed again until the end.
+  - The end never adds a POOR or a gauge loss. Once broken, the tail scores
+    nothing (`J_NONE`), even after re-grabbing.
+  - The 16th length is stored per hold (`tick64`, from the BPM at the head)
+    in 1/64 ticks: 6.16 frames at BPM 146.
+- A release or re-grab on the same tick as a 16th boundary decides that tick.
 
-The engine layer turns `hold_event`s into the game's own judgement, combo and
-gauge calls, and asks `holds_is_tail` so the game never judges a tail itself.
+Sources (Japanese community measurements and wikis):
+- beatmania IIDX SP攻略 @ wiki, ゲーム仕様解説 (CN end judgements, HCN
+  16th-note empty POORs, gauge damage table):
+  https://w.atwiki.jp/bemani2sp/pages/4662.html
+- まったり観戦・予想・回顧, HCNのゲージ減少率について その2 (frame-by-frame
+  measurement of release, head miss, tick interval and recovery on NORMAL):
+  https://leisurely1.blog.jp/archives/10099011.html
+- beatmania IIDX 攻略wiki, ゲームシステム (combo while holding an HCN):
+  https://wikiwiki.jp/iidx/
+- e-amusement, beatmania IIDX 26 Rootage HELL CHARGE how-to (official):
+  https://p.eagate.573.jp/game/2dx/26/howto/play/hell_charge.html
+
+Still to check against play: the width of the tail window, and the high-BPM
+case. The wiki says the 16th interval behaves differently there and needs
+testing.
 
 ## Data (holds.bin)
 
-`MMHL`, version, count, then the 12-byte `hold_def` records sorted by start.
+`MMHL`, version, count, then the 12-byte `hold_def` records sorted by start
+(start, end, lane, kind, tick64).
 Heads stay ordinary notes in the native chart (`strip_lengths`). Score and gauge
 totals count each hold twice (`note_total`). Hell variants are chosen for the
 whole chart (`hell=True`; BMS `#LNMODE 3`).

@@ -1,6 +1,5 @@
-/* Host tests for holds.c: cc -Wall -Wextra -o test_holds test_holds.c holds.c && ./test_holds */
+/* Host tests for holds.c: cc -std=c99 -Wall -Wextra -o test_holds test_holds.c holds.c && ./test_holds */
 #include <stdio.h>
-#include <string.h>
 #include "holds.h"
 
 static int failures;
@@ -9,9 +8,9 @@ static int failures;
 static holds_t H;
 static hold_event ev[256];
 static hu32 nev;
-static const holds_cfg CFG = { {1, 2, 4, 6}, 6, 4, 2, OVERHOLD_RELEASE, {0, 0, 0} };
+/* PGREAT window 6 ticks, 16th = 4 ticks, turntable may stand still 2 ticks, held past the window = POOR */
+static const holds_cfg CFG = { {1, 2, 4, 6}, 6, 4 * HOLDS_FP, 2, OVERHOLD_RELEASE, J_POOR, 0, 0 };
 
-/* run frames t0..t1 inclusive with a key/turntable script; collect events */
 typedef void (*input_fn)(hs32 t, hu32 *keys, hs8 tt[2]);
 static void run(hs32 t0, hs32 t1, input_fn f)
 {
@@ -25,72 +24,70 @@ static void run(hs32 t0, hs32 t1, input_fn f)
 }
 static int count(hu32 kind) { hu32 i; int n = 0; for (i = 0; i < nev; i++) n += ev[i].kind == kind; return n; }
 static const hold_event *tail(void) { hu32 i; for (i = 0; i < nev; i++) if (ev[i].kind == HE_TAIL) return &ev[i]; return 0; }
-static void setup(const hold_def *d, hu32 n, const holds_cfg *c) { nev = 0; CHECK(holds_reset(&H, d, n, c ? c : &CFG) == 0); }
+static void setup(const hold_def *d, const holds_cfg *c) { nev = 0; CHECK(holds_reset(&H, d, 1, c ? c : &CFG) == 0); }
+static int tail_is(hu32 judge, hs32 offset) { const hold_event *e = tail(); return e && e->judge == judge && e->offset == offset && count(HE_TAIL) == 1; }
 
 static hs32 release_at;
 static void hold_key0(hs32 t, hu32 *k, hs8 *tt) { (void)tt; if (t < release_at) *k = 1; }
-static void hold_cn_gap(hs32 t, hu32 *k, hs8 *tt) { (void)tt; if (t < 20 || (t >= 28 && t < 40)) *k = 1; }
+static void hold_gap(hs32 t, hu32 *k, hs8 *tt) { (void)tt; if (t < 20 || (t >= 28 && t < 40)) *k = 1; }
 static void spin_then_back(hs32 t, hu32 *k, hs8 *tt) { (void)k; tt[0] = t < release_at ? 1 : -1; }
-static void spin_stop(hs32 t, hu32 *k, hs8 *tt) { (void)k; tt[0] = t < 15 ? 1 : 0; }
+static void spin_then_stop(hs32 t, hu32 *k, hs8 *tt) { (void)k; tt[0] = t < release_at ? 1 : 0; }
 static void spin_back_and_again(hs32 t, hu32 *k, hs8 *tt) { (void)k; tt[0] = t < 20 ? 1 : t < 24 ? -1 : t < 40 ? 1 : -1; }
 static void nothing(hs32 t, hu32 *k, hs8 *tt) { (void)t; (void)k; (void)tt; }
 
 int main(void)
 {
     hold_def cn = {10, 40, 0, HOLD_CN, 0};
-    hold_def hcn = {10, 40, 0, HOLD_HCN, 0};
+    hold_def hcn = {10, 40, 0, HOLD_HCN, 4 * HOLDS_FP};
     hold_def bss = {10, 40, 7, HOLD_BSS, 0};
-    hold_def hbss = {10, 40, 7, HOLD_HBSS, 0};
-    const hold_event *e;
+    hold_def hbss = {10, 40, 7, HOLD_HBSS, 4 * HOLDS_FP};
 
-    /* CN released exactly at the end -> PGREAT; 3 late -> GOOD; far early -> POOR */
-    setup(&cn, 1, 0); CHECK(holds_head(&H, 0, 10, J_PGREAT) == 0);
-    release_at = 40; run(10, 50, hold_key0); e = tail();
-    CHECK(e && e->judge == J_PGREAT && e->offset == 0 && count(HE_TAIL) == 1);
-    setup(&cn, 1, 0); holds_head(&H, 0, 10, J_GREAT);
-    release_at = 43; run(10, 50, hold_key0); e = tail(); CHECK(e && e->judge == J_GOOD && e->offset == 3);
-    setup(&cn, 1, 0); holds_head(&H, 0, 10, J_GREAT);
-    release_at = 20; run(10, 50, hold_key0); e = tail(); CHECK(e && e->judge == J_POOR && e->offset == -20);
+    /* CN: a release anywhere in the wide window is PGREAT; early is POOR; held too long is POOR */
+    setup(&cn, 0); CHECK(holds_head(&H, 0, 10, J_PGREAT, 10) == 0);
+    release_at = 40; run(10, 50, hold_key0); CHECK(tail_is(J_PGREAT, 0));
+    setup(&cn, 0); holds_head(&H, 0, 10, J_GREAT, 10); release_at = 45; run(10, 50, hold_key0); CHECK(tail_is(J_PGREAT, 5));
+    setup(&cn, 0); holds_head(&H, 0, 10, J_GREAT, 10); release_at = 33; run(10, 50, hold_key0); CHECK(tail_is(J_POOR, -7));
+    setup(&cn, 0); holds_head(&H, 0, 10, J_PGREAT, 10); release_at = 99; run(10, 60, hold_key0); CHECK(tail_is(J_POOR, 7));
+    { holds_cfg c = CFG; c.overhold_judge = J_BAD; setup(&cn, &c); }
+    holds_head(&H, 0, 10, J_PGREAT, 10); run(10, 60, hold_key0); CHECK(tail_is(J_BAD, 7));
+    { holds_cfg c = CFG; c.overhold = OVERHOLD_AUTO; setup(&cn, &c); }
+    holds_head(&H, 0, 10, J_PGREAT, 10); run(10, 60, hold_key0); CHECK(tail_is(J_PGREAT, 0));
+    { holds_cfg c = CFG; c.tail_graded = 1; setup(&cn, &c); }
+    holds_head(&H, 0, 10, J_PGREAT, 10); release_at = 43; run(10, 50, hold_key0); CHECK(tail_is(J_GOOD, 3));
 
-    /* overhold: RELEASE policy -> POOR after the BAD window; AUTO -> PGREAT at the end */
-    setup(&cn, 1, 0); holds_head(&H, 0, 10, J_PGREAT);
-    release_at = 99; run(10, 60, hold_key0); e = tail(); CHECK(e && e->judge == J_POOR && e->offset == 7);
-    { holds_cfg c = CFG; c.overhold = OVERHOLD_AUTO; setup(&cn, 1, &c); }
-    holds_head(&H, 0, 10, J_PGREAT); run(10, 60, hold_key0); e = tail(); CHECK(e && e->judge == J_PGREAT && e->offset == 0);
+    /* CN head missed (BAD, or never reported): tail POOR at the end, nothing earlier */
+    setup(&cn, 0); holds_head(&H, 0, 10, J_BAD, 10); release_at = 99; run(10, 39, hold_key0); CHECK(count(HE_TAIL) == 0);
+    run(40, 40, hold_key0); CHECK(tail_is(J_POOR, 0));
+    setup(&cn, 0); run(0, 45, nothing); CHECK(tail() && tail()->judge == J_POOR);
+    CHECK(holds_head(&H, 0, 10, J_PGREAT, 20) == -1);
 
-    /* missed head (BAD) or never reported -> tail POOR at the end, no early judgement */
-    setup(&cn, 1, 0); holds_head(&H, 0, 10, J_BAD);
-    release_at = 99; run(10, 39, hold_key0); CHECK(count(HE_TAIL) == 0);
-    run(40, 40, hold_key0); e = tail(); CHECK(e && e->judge == J_POOR);
-    setup(&cn, 1, 0); run(0, 45, nothing); e = tail(); CHECK(e && e->judge == J_POOR);
-    CHECK(holds_head(&H, 0, 10, J_PGREAT) == -1);   /* too late: already a miss */
+    /* HCN held throughout: a gain every 16th (14, 18 .. 38), tail judged like a CN */
+    setup(&hcn, 0); holds_head(&H, 0, 10, J_PGREAT, 10); release_at = 40; run(10, 50, hold_key0);
+    CHECK(count(HE_TICK_GAIN) == 7 && count(HE_TICK_LOSS) == 0 && count(HE_BREAK) == 0 && tail_is(J_PGREAT, 0));
+    /* let go at 20: real POOR + empty POOR at once, empty POOR at 24; re-grab at 28: gains at 32, 36;
+       broken, so the tail is J_NONE */
+    setup(&hcn, 0); holds_head(&H, 0, 10, J_PGREAT, 10); run(10, 50, hold_gap);
+    CHECK(count(HE_BREAK) == 1 && count(HE_TICK_LOSS) == 2 && count(HE_TICK_GAIN) == 4);
+    CHECK(tail_is(J_NONE, 0));
+    /* HCN head missed: the game's POOR, an empty POOR at once, then every 16th; the end adds nothing */
+    setup(&hcn, 0); holds_head(&H, 0, 10, J_POOR, 10); release_at = 0; run(10, 50, hold_key0);
+    CHECK(count(HE_BREAK) == 0 && count(HE_TICK_LOSS) == 8 && count(HE_TICK_GAIN) == 0 && tail_is(J_NONE, 0));
 
-    /* HCN: ticks every 4 while held; letting go breaks once and loses; grabbing again gains */
-    setup(&hcn, 1, 0); holds_head(&H, 0, 10, J_PGREAT); run(10, 50, hold_cn_gap);
-    CHECK(count(HE_BREAK) == 1);
-    CHECK(count(HE_TICK_GAIN) == 5 && count(HE_TICK_LOSS) == 2);   /* ticks 14..38: held 14,18 | 22,26 loose | 30,34,38 held */
-    e = tail(); CHECK(e && e->judge == J_PGREAT && e->offset == 0);
-    /* HCN head missed: body loses until grabbed */
-    setup(&hcn, 1, 0); holds_head(&H, 0, 10, J_POOR); release_at = 0; run(10, 50, hold_key0);
-    CHECK(count(HE_TICK_GAIN) == 0 && count(HE_TICK_LOSS) == 7); e = tail(); CHECK(e && e->judge == J_POOR);
+    /* BSS: spinning back at the end is PGREAT; stopping inside the window too; stopping early is POOR */
+    setup(&bss, 0); holds_head(&H, 7, 10, J_PGREAT, 10); release_at = 41; run(10, 50, spin_then_back);
+    CHECK(tail_is(J_PGREAT, 1) && tail()->lane == 7);
+    setup(&bss, 0); holds_head(&H, 7, 10, J_PGREAT, 10); release_at = 37; run(10, 50, spin_then_stop); CHECK(tail_is(J_PGREAT, -3));
+    setup(&bss, 0); holds_head(&H, 7, 10, J_PGREAT, 10); release_at = 15; run(10, 50, spin_then_stop); CHECK(tail_is(J_POOR, -22));
+    /* HBSS: spinning back early lets go; spinning the head's way again re-grabs */
+    setup(&hbss, 0); holds_head(&H, 7, 10, J_PGREAT, 10); run(10, 50, spin_back_and_again);
+    CHECK(count(HE_BREAK) == 1 && count(HE_TICK_LOSS) >= 1 && count(HE_TICK_GAIN) >= 4 && tail_is(J_NONE, 0));
 
-    /* BSS: reversing at the end -> PGREAT; standing still past the grace early -> POOR */
-    setup(&bss, 1, 0); holds_head(&H, 7, 10, J_PGREAT); release_at = 41; run(10, 50, spin_then_back);
-    e = tail(); CHECK(e && e->judge == J_PGREAT && e->offset == 1 && e->lane == 7);
-    setup(&bss, 1, 0); holds_head(&H, 7, 10, J_PGREAT); run(10, 50, spin_stop);
-    e = tail(); CHECK(e && e->judge == J_POOR && e->offset < 0);
-    /* HBSS: reversing early lets go (break, losses); spinning the head's way again re-grabs */
-    setup(&hbss, 1, 0); holds_head(&H, 7, 10, J_PGREAT); run(10, 50, spin_back_and_again);
-    CHECK(count(HE_BREAK) == 1 && count(HE_TICK_LOSS) >= 1 && count(HE_TICK_GAIN) >= 5);
-    e = tail(); CHECK(e && e->judge == J_PGREAT);
-
-    /* holds.bin records (tools/release/holds_format.py) are this struct, 12 bytes */
-    CHECK(sizeof(hold_def) == 12);
-    /* validation and tail lookup */
+    /* records, validation, helpers */
+    CHECK(sizeof(hold_def) == 12);          /* holds.bin records (tools/release/holds_format.py) */
     { hold_def bad_bss = {10, 40, 0, HOLD_BSS, 0}; CHECK(holds_reset(&H, &bad_bss, 1, &CFG) == -1); }
     { hold_def two[2] = {{20, 30, 0, HOLD_CN, 0}, {10, 30, 1, HOLD_CN, 0}}; CHECK(holds_reset(&H, two, 2, &CFG) == -1); }
-    setup(&cn, 1, 0); CHECK(holds_is_tail(&H, 0, 40) && !holds_is_tail(&H, 1, 40) && !holds_is_tail(&H, 0, 10));
-    holds_head(&H, 0, 10, J_GREAT); { hs8 tt[2] = {0, 0}; holds_frame(&H, 11, 1, tt); } CHECK(holds_lane_held(&H, 0));
+    setup(&cn, 0); CHECK(holds_is_tail(&H, 0, 40) && !holds_is_tail(&H, 1, 40) && !holds_is_tail(&H, 0, 10));
+    holds_head(&H, 0, 10, J_GREAT, 10); { hs8 tt[2] = {0, 0}; holds_frame(&H, 11, 1, tt); } CHECK(holds_lane_held(&H, 0));
 
     if (failures) { printf("%d failures\n", failures); return 1; }
     printf("holds: all tests passed\n");
