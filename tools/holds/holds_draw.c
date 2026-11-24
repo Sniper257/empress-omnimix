@@ -50,13 +50,16 @@ extern hu32 lift_y[2];
 #endif
 
 static hs32 hd_head_y[HOLDS_LANES], hd_head_at[HOLDS_LANES], hd_tail_at[HOLDS_LANES], hd_x[HOLDS_LANES];
+/* the pending hold whose head note was last drawn on each lane, and the frame it was drawn in */
+static hs32 hd_head_i[HOLDS_LANES];
+static hu32 hd_head_frame[HOLDS_LANES], hd_frames;
 static hu32 hd_clip[2], hd_cont[2];
 
 /* a new chart: forget where notes were */
 static void hd_reset(void)
 {
     hu32 i;
-    for (i = 0; i < HOLDS_LANES; i++) { hd_head_at[i] = hd_tail_at[i] = -100; hd_x[i] = -1; LOOP_PAD(); }
+    for (i = 0; i < HOLDS_LANES; i++) { hd_head_at[i] = hd_tail_at[i] = -100; hd_x[i] = -1; hd_head_i[i] = -1; LOOP_PAD(); }
     hd_cont[0] = hd_cont[1] = 0;
 }
 
@@ -141,6 +144,7 @@ int holds_note_hook(hu8 *note, hu32 handle, hs32 x, hs32 y, hu32 side, hu32 clip
     if (!tail) {
         hd_head_y[lane] = y;
         hd_head_at[lane] = hd_now;
+        if (holds.state[i] == HS_PENDING) { hd_head_i[lane] = i; hd_head_frame[lane] = hd_frames; }
         if (hd_tail_at[lane] < hd_now - 1)                     /* tail still above the screen */
             hd_body(body, kind, x, HD_TOP_Y, HD_BASE(y) - hd_cap_h[kind], clip);
         HD_DRAW(base, x, HD_BASE(y), 100, hd_w[kind] / 2, hd_cap_h[kind], clip);   /* start cap */
@@ -181,5 +185,28 @@ static void hd_frame(void)
         hd_body(last - (HD_SPRITES - 1) + group + 2 + hd_state((hu32)i, chart_defs[i].kind == HOLD_HCN || chart_defs[i].kind == HOLD_HBSS),
                 kind, hd_x[lane], HD_TOP_Y, HD_BASE(judge) - hd_cap_h[kind], hd_clip[side]);
         HD_DRAW(last - (HD_SPRITES - 1) + group, hd_x[lane], HD_BASE(judge), 100, hd_w[kind] / 2, hd_cap_h[kind], hd_clip[side]);
+    }
+}
+
+/* Called once per frame before the rules. The game stops drawing a note once it has judged it, and
+ * keeps a missed note on screen until it reports the miss. So a pending hold whose head note was
+ * drawn last frame, is gone now and has its key down was hit, even if no judgement reached
+ * holds_on_judgement (seen in PCSX2: some hits are never reported). It counts as GREAT; the game
+ * scores the head itself. */
+static void hd_heads_gone(hu32 keys)
+{
+    hu32 lane;
+    hs32 i;
+    hd_frames++;
+    for (lane = 0; lane < HOLDS_LANES; lane++) {
+        LOOP_PAD();
+        i = hd_head_i[lane];
+        if (i < 0) continue;
+        if (holds.state[i] != HS_PENDING) { hd_head_i[lane] = -1; continue; }
+        if (hd_frames - hd_head_frame[lane] < 2u) continue;                 /* drawn last frame */
+        hd_head_i[lane] = -1;
+        if (hd_now > chart_defs[i].start + default_cfg.head_late) continue;   /* the late rule decides */
+        if (!((keys >> lane) & 1u)) continue;
+        if (holds_head(&holds, lane, chart_defs[i].start, J_GREAT, hd_now) >= 0) dbg_report(0xfe, lane_id(lane), i);
     }
 }

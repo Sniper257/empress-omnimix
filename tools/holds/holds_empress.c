@@ -90,6 +90,7 @@ static void dbg_event(const hold_event *e)
     holds_dbg[17 + 2 * k] = (hu32)e->judge << 28 | (e->index & 0xfffu) << 16 | (hu32)e->lane << 8 | (dbg_keys & 0xffu);
 }                 /* tick being processed (holds_draw.c stamps note draws with it) */
 static void hd_reset(void);
+static void hd_heads_gone(hu32 keys);
 static void hd_frame(void);
 static const hold_def *chart_defs;
 static hu32 chart_n, armed;
@@ -249,6 +250,7 @@ void holds_frame_hook(long long tick)
 #endif
     tt[0] = spin(0);
     tt[1] = spin(1);
+    hd_heads_gone(keys);
     holds_frame(&holds, (hs32)tick, keys, tt);
     while ((n = holds_pop(&holds, ev, 16)) != 0)
         for (i = 0; i < n; i++) apply(&ev[i]);

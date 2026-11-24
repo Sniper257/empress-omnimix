@@ -117,6 +117,32 @@ int main(void)
         CHECK(holds_note_hook(n, 109u << 16 | 601, 80, 0x140, 0, 0) == 1 && ndraw == 0);
         keys[0] = 0;
     }
+    /* a hit the game never reports: the head note stops being drawn while its key is down */
+    {
+        static hu8 n[0x20] __attribute__((aligned(4)));
+        static const hold_def one[1] = {{300, 400, 2, HOLD_HCN, 6 * HOLDS_FP}};
+        long long tt;
+        hu32 i;
+        int bad = 0;
+        holds_set_chart(one, 1);
+        keys[0] = keys[1] = 0;
+        for (tt = 0; tt < 280; tt++) holds_frame_hook(tt);
+        nring = 0; gains = 0;
+        for (tt = 280; tt < 298; tt++) { holds_frame_hook(tt); make_note(n, 0, 2, 300); holds_note_hook(n, 109u << 16 | 601, 80, 200, 0, 0); }
+        keys[0] = 1u << 2;                         /* hit at 298: the note is gone from then on */
+        for (tt = 298; tt < 360; tt++) holds_frame_hook(tt);
+        for (i = 0; i < nring; i++) if (ring_code[i] == 0xf || ring_code[i] == 0xb) bad++;
+        CHECK(bad == 0 && gains >= 8);
+        /* the same with the key up: the late rule still makes it a miss */
+        holds_set_chart(one, 1);
+        keys[0] = 0;
+        for (tt = 0; tt < 280; tt++) holds_frame_hook(tt);
+        nring = 0;
+        for (tt = 280; tt < 298; tt++) { holds_frame_hook(tt); make_note(n, 0, 2, 300); holds_note_hook(n, 109u << 16 | 601, 80, 200, 0, 0); }
+        for (tt = 298; tt < 330; tt++) holds_frame_hook(tt);
+        for (i = 0, bad = 0; i < nring; i++) if (ring_code[i] == 0xb) bad++;
+        CHECK(bad >= 1);
+    }
     /* the held mask lags the press by a tick: the press-tick mask keeps the HCN from breaking */
     {
         static const hold_def one[1] = {{300, 400, 2, HOLD_HCN, 6 * HOLDS_FP}};
