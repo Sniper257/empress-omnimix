@@ -132,6 +132,8 @@ int main(void)
         for (tt = 401; tt < 410; tt++) holds_frame_hook(tt);
         make_note(n, 0, 2, 400); ndraw = 0;
         CHECK(holds_note_hook(n, 109u << 16 | 601, 80, 0x140, 0, 0) == 1 && ndraw == 0);
+        CHECK(n[9] == (0x40 | 2));                                      /* retired: consumed, like a judged note */
+        CHECK(holds_note_hook(n, 109u << 16 | 601, 80, 0x148, 0, 0) == 1 && ndraw == 0);   /* and stays hidden */
         keys[0] = 0;
     }
     /* CN held past the tail window: BAD (code 8) on that lane, like the arcade */

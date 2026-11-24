@@ -56,7 +56,7 @@ static hs32 hd_x[HOLDS_LANES];
 static hs32 hd_head_at[HOLDS_MAX], hd_tail_at[HOLDS_MAX], hd_head_y[HOLDS_MAX];
 static hu32 hd_head_frame[HOLDS_MAX], hd_frames;
 /* holds_ddbg: [1] head draws, [2] tail draws, [3] frame-pass bodies, [4] heads found gone,
- * [5] / [6] / [7] last tail drawn: tick, hold index, y; [8] bodies clamped */
+ * [5] / [6] / [7] last tail drawn: tick, hold index, y; [8] bodies clamped; [9] tails retired */
 volatile hu32 holds_ddbg[12] = {0x52444448u};
 /* scroll speed per side in 1/256 pixel per tick, measured on tail notes above the line: the tail
  * note may sit a tick or two off the hold's end, and is drawn where the end is */
@@ -140,7 +140,13 @@ int holds_note_hook(hu8 *note, hu32 handle, hs32 x, hs32 y, hu32 side, hu32 clip
     int tail = 0;
     holds_dbg[3]++;
     holds_dbg[11] = cont;
-    if (!armed || note[9] > 7 || side > 1) return 0;
+    if (!armed || side > 1) return 0;
+    if (note[9] & 0x40) {                     /* consumed: a tail retired here is never drawn again */
+        int tl;
+        if ((note[9] & 0x3f) > 7) return 0;
+        return hd_find(side * 8u + (note[9] & 7u), *(const short *)(note + 0x18), &tl) >= 0 && tl;
+    }
+    if (note[9] > 7) return 0;
     lane = side * 8u + note[9];
     t = *(const short *)(note + 0x18);
     if ((i = hd_find(lane, t, &tail)) < 0) return 0;
@@ -171,7 +177,13 @@ int holds_note_hook(hu8 *note, hu32 handle, hs32 x, hs32 y, hu32 side, hu32 clip
         /* the tail note is never judged, so the game keeps it (at or below the line) for up to 60
          * ticks after its time: once the hold has ended, nothing more is drawn for it */
         hd_tail_at[i] = hd_now;                                 /* on screen: the frame pass leaves it alone */
-        if (hd_now > d->end || y > judge) return 1;
+        if (hd_now > d->end || y > judge) {
+            /* over: mark the tail consumed (+9 bit 0x40, as the game marks a judged note), so it stops
+             * competing for the lane with the next note on that key; PCSX2 crashed when the next CN's
+             * head reached the line while the last one's tail was still live (Elisha SPN) */
+            if (holds.state[i] == HS_DONE && hd_now >= d->end) { note[9] |= 0x40; holds_ddbg[9]++; }
+            return 1;
+        }
         head_seen = hd_head_at[i] >= hd_now - 1;
         hs32 bottom = head_seen ? hd_head_y[i] : judge;
         if (bottom > judge) bottom = judge;
