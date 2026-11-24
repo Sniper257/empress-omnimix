@@ -32,6 +32,10 @@ typedef unsigned short hu16;
 typedef signed char hs8;
 typedef unsigned char hu8;
 
+#ifndef LOOP_PAD
+#define LOOP_PAD() ((void)0)   /* the runtime pads short loops for the R5900 short-loop erratum */
+#endif
+
 #define HOLDS_MAX 1024          /* holds per chart (largest arcade charts stay well below) */
 #define HOLDS_EVENTS 64         /* events buffered between two holds_pop drains */
 #define HOLDS_LANES 16

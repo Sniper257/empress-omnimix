@@ -15,6 +15,7 @@ static hu32 keys[2];
 unsigned long long test_ring_body(hu32 code, hu32 lane) { if (nring < 64) { ring_code[nring] = code; ring_lane[nring++] = lane; } return 0; }
 hu32 test_keys(hu32 side) { return keys[side]; }
 hu32 test_turntable(hu32 side) { (void)side; return 0; }
+hu32 test_chart_cursor(void) { return 0; }   /* no chart in host memory: holds_set_chart provides the records */
 static int logged(hu32 code, hu32 lane) { hu32 i; int n = 0; for (i = 0; i < nring; i++) n += ring_code[i] == code && ring_lane[i] == lane; return n; }
 
 int main(void)

@@ -1,0 +1,114 @@
+"""IFS reading and arcade -> EMPRESS chart/stream conversion on synthetic data."""
+import struct
+import unittest
+
+import arcade_convert as C
+import holds_format as H
+import ifs
+
+try:
+    import numpy  # noqa: F401
+    HAVE_NUMPY = True
+except ImportError:
+    HAVE_NUMPY = False
+
+
+def sixbit(name):
+    bits = 0
+    for ch in name:
+        bits = bits << 6 | ifs.SIXBIT.index(ch)
+    n = (len(name) * 6 + 7) // 8
+    return bytes([len(name)]) + (bits << (n * 8 - len(name) * 6)).to_bytes(n, 'big')
+
+
+def tiny_ifs(files):
+    """IFS v1 with one directory node holding files {escaped name: bytes}."""
+    nodes = bytearray([1]) + sixbit('imgfs') + bytes([1]) + sixbit('song')
+    data = bytearray()
+    blobs = b''
+    for name, body in files.items():
+        nodes += bytes([31]) + sixbit(name) + bytes([190])
+        data += struct.pack('>III', len(blobs), len(body), 0)
+        blobs += body
+    nodes += bytes([190, 190, 191])
+    while len(nodes) % 4:
+        nodes.append(0)
+    kbin = bytes([0xa0, 0x42, 0x80, 0x7f]) + struct.pack('>I', len(nodes)) + nodes + struct.pack('>I', len(data)) + data
+    start = 20 + len(kbin)
+    return struct.pack('>IHHIII', ifs.MAGIC, 1, 0xfffe, 0, len(kbin), start) + kbin + blobs
+
+
+class Ifs(unittest.TestCase):
+    def test_manifest_and_names(self):
+        files = ifs.read(tiny_ifs({'_23069_E1': b'chart', '_23069__pre_E2dx': b'pre'}))
+        self.assertEqual(files, {'song/23069.1': b'chart', 'song/23069_pre.2dx': b'pre'})
+
+    def test_rejects_other_files(self):
+        with self.assertRaises(ifs.FormatError):
+            ifs.read(b'\0' * 64)
+        raw = bytearray(tiny_ifs({'_1_E1': b'x' * 8}))
+        raw = raw[:-4]
+        with self.assertRaisesRegex(ifs.FormatError, 'exceeds'):
+            ifs.read(bytes(raw))
+
+
+def parse(ply):
+    off, clock = struct.unpack_from('<II', ply)
+    ev = []
+    at = off
+    while True:
+        e = struct.unpack_from('<IBBH', ply, at)
+        if e[0] == C.END:
+            return clock, ev, ply[at + 8:]
+        ev.append(e)
+        at += 8
+
+
+class Chart(unittest.TestCase):
+    def test_event_encoding(self):
+        events = [(0, 4, 1, 300), (0, 5, 4, 4), (0, 7, 0, 5), (500, 7, 0, 6), (0, 16, 0, 2), (0, 8, 2, 255),
+                  (1000, 2, 3, 12), (1000, 0, 3, 0), (2000, 1, 7, 0), (0, 12, 1, 0), (3000, 6, 0, 0)]
+        ply, warnings = C.empress_events(events)
+        clock, ev, rest = parse(ply)
+        self.assertEqual((clock, rest, warnings), (16683, b'', []))
+        self.assertIn((0, 4 | 1 << 4, 300 & 0xff, 0), ev)          # BPM 300 = 0x12c: high nibble 1, c2 0x2c
+        self.assertEqual([e for e in ev if e[1] & 15 == 7], [(0, 7, 0, 1)])   # one stream start, BGM dropped
+        self.assertIn((60, 0 | 3 << 4, 0, 0), ev)                  # 1000 ms = 60 ticks, column 3
+        self.assertIn((60, 2 | 3 << 4, 0, 0), ev)                  # keysound slot 0 until banks exist
+        self.assertIn((120, 1 | 7 << 4, 0, 0), ev)                 # P2 scratch
+        self.assertIn((0, 8 | 2 << 4, 255, 0), ev)
+        self.assertEqual(ev[-1][1] & 15, 6)
+        self.assertFalse(any(e[1] & 15 == 0 and e[1] >> 4 == 0 and e[0] == 0 for e in ev))
+        self.assertEqual(sum(1 for e in ev if e[1] == 16), 0)
+
+    def test_hold_trailer_follows_terminator(self):
+        events = [(0, 4, 1, 120), (1000, 0, 2, 500), (2000, 6, 0, 0)]
+        holds = H.from_events(events, hell=True, time=C.tick, ticks_per_ms=1000 / C.CLOCK)
+        ply, _ = C.empress_events(events, holds)
+        _, ev, rest = parse(ply)
+        self.assertEqual(H.unpack(rest), holds)
+        self.assertEqual([e for e in ev if e[1] & 15 == 0], [(60, 2 << 4, 0, 0)])   # the head stays a plain note
+        self.assertEqual(holds[0][:4], (60, 90, 2, H.HCN))
+
+    def test_fractional_bpm_warns_and_long_chart_fails(self):
+        _, warnings = C.empress_events([(0, 4, 100, 15050)])
+        self.assertTrue(warnings)
+        with self.assertRaisesRegex(ValueError, 'longer'):
+            C.empress_events([(10 * 60 * 1000, 0, 0, 0)])
+
+    @unittest.skipUnless(HAVE_NUMPY, 'numpy not installed')
+    def test_render_places_note_and_bgm_sounds(self):
+        import arcade_data as A
+        from test_sirius_import import pcm_wav
+        keys = [{'wav': pcm_wav([1000] * 10)}, {'wav': pcm_wav([-500] * 5)}]
+        events = [(0, 2, 0, 1), (100, 0, 0, 0), (200, 7, 0, 2)]
+        rate, (left, right), info = C.render(events, keys)
+        at = 100 * 44100 // 1000
+        self.assertEqual((left[at], left[at + 9], left[at + 10]), (1000, 1000, 0))
+        self.assertEqual(left[200 * 44100 // 1000], -500)
+        self.assertEqual((left, info['keysounds_played']), (right, 2))
+        self.assertTrue(A)
+
+
+if __name__ == '__main__':
+    unittest.main()

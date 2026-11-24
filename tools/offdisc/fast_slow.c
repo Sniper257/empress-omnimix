@@ -155,11 +155,17 @@ static void fs_record(u32 event,u32 lane,u32 side,s32 delta,u32 timed)
 }
 unsigned long long fs_timed(FS_ARGS)
 {
+#ifdef HOLDS
+    holds_on_judgement((u32)a&65535,(u32)b&65535);
+#endif
     fs_record((u32)a&65535,(u32)b&65535,(u32)c,(s32)d,1);
     return fs_ring_body(a,b,0,0,0,0,0,0);
 }
 unsigned long long fs_ring(FS_ARGS)
 {
+#ifdef HOLDS
+    holds_on_judgement((u32)a&65535,(u32)b&65535);
+#endif
     fs_record((u32)a&65535,(u32)b&65535,((u32)b>>15)&1,0,0);
     return fs_ring_body(FS_PASS);
 }

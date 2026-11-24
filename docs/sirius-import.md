@@ -15,8 +15,10 @@ lines in `song.txt`, see `tools/offdisc/launcher/main.c`).
 | Read arcade `.1` charts, `.2dx` keysounds (PCM/MS-ADPCM WAV), `music_data.bin` | done: `arcade_data.py` (the tested dump's `.2dx` files are wrapped in `%hid` and are not read) |
 | SPU2 ADPCM encoder/decoder, EMPRESS frame disguise, backing-stream writer | done: `spu_adpcm.py` |
 | Measure arcade→EMPRESS mappings on songs that are in both games | done: `sirius_probe.py` |
-| Chart conversion (time unit, slot→field order, stream trigger) | waiting for probe report |
-| Keysound split: player sounds → bank, BGM events → mixed stream | waiting for probe report (bank table layout) |
+| Arcade song archives (`.ifs`, kbinxml manifest) | done: `ifs.py` |
+| Chart conversion: arcade `.1` → encrypted EMPRESS chart with hold trailer | done: `arcade_convert.py` (tested on 23069: 6 charts) |
+| Backing stream rendered from one chart's keysounds (autoplay mix) | done: `arcade_convert.py --stream CHART` (numpy) |
+| Keysound split: player sounds → bank, BGM events → mixed stream | waiting for an EMPRESS bank sample (table layout); until then key presses are silent and the stream carries all audio |
 | `record.bin` from `music_data.bin` (levels, BPM, genre, file fields) | waiting for probe report (entry layout) |
 | Title/genre/artist sprites, title card | will reuse `text_assets` / `font_folder` |
 | BGA (`movie/`) | later; songs work without it |
@@ -81,3 +83,16 @@ For each song found in both games, it reports:
 
 The report contains structure and statistics only: no audio, charts or
 artwork. It is safe to attach to an issue.
+
+## Converting a song (current state)
+
+```sh
+cd tools/release
+python3 arcade_convert.py /path/to/23069.ifs OUT --stream SPA      # --hell for HCN charts
+```
+
+This gives `OUT/SPN.bin` … `OUT/DPA.bin` (EMPRESS charts), `OUT/stream.bin`
+and `OUT/convert.json`. Arcade times are ms (the 23069 end event is at
+126000), and they become 60 Hz ticks. The chart's own timing-window
+events (type 8) are kept. The song folder (`record.bin`, `song.txt`, title
+sprites) is the next step.

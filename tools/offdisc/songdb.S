@@ -1596,6 +1596,10 @@ input_snapshot_hook:
         GSM_BODY fs_result_body, 0x27bdff50, 0xffbf0090, 0x17c578
         GSM_BODY fs_input_body, 0x27bdffc0, 0xffbf0030, 0x13bbf8
         ASSET_HOOK fs_ring_hook, fs_ring
+#ifdef HOLDS
+        # replaces jal 0x1e6bb0(tick) at 0x1e5cb8; a0 = tick (the delay slot's ld)
+        ASSET_HOOK holds_frame_entry, holds_frame_hook
+#endif
         ASSET_HOOK fs_play_hook, fs_play
         GSM_BODY fs_ghost_body,0x27bdfe10,0xffbf00a0,0x1fb958
         ASSET_HOOK fs_ghost_draw_hook,fs_ghost_call

@@ -815,6 +815,10 @@ s32 variant_song(void)
 #include "gauge_shift.c"
 static void bn_reset(void),bn_start(void),bn_draw(void);
 static u32 fh_wait_field(void);
+#ifdef HOLDS
+#include "../holds/holds.c"
+#include "../holds/holds_empress.c"
+#endif
 #include "fast_slow.c"
 #include "customize_judgement.c"
 #include "customize_assets.c"

@@ -478,12 +478,16 @@ def main():
     play_preview=usb_hid or host_bench
     if host_bench: defs.append('-DPLAY_PREVIEW')
     defs+=['-DSPR_ASYNC','-DPLAY_LIFT']
+    holds=os.environ.get('HOLDS')=='1'   # CN/HCN/BSS module (tools/holds), off in release builds
+    if holds:defs.append('-DHOLDS')
     probe_id=None
     if os.environ.get('INPUT_LOG')=='1':
         h=hashlib.sha256()
         for name in ('vdisc.c','songdb.c','songdb.S','random_title.h','save_runtime.c','save_text.h','save_compact.c','profile_location.h','save_checkpoint.c','save_checkpoint.h','profile_format.c','profile_format.h','profile_wire.h','profile_schema.c','profile_schema.h','profile_async.c','profile_async.h','profile_transaction.c','profile_transaction.h','profile_mc.c','profile_mc.h','songdb.h','song_window.c','menu_settings.h','mod_menu.c','play_preview.c','play_preview_editor.c','customize_settings.h','custom_art.h','customize_render.c','customize_judgement.c','customize_assets.c','ui_overlay.c','live_controller.c','quick_retry.c','lane_options.c','native_modifiers.c','floating_hispeed.c','lift.c','bpm_notice.c','gauge_shift.c','fast_slow.c','audio_dispatch.c','ranking.c','song_reference.c','song_resources.c','song_resources.h','result_title.c','select_artwork.c','wheel_cache.h','asset_memory.c','eighth_hud.c','eighth_hud_assets.h','input_probe.c','input_probe.h','io_probe.c','io_probe.h','build_vdisc.py'):
             h.update(name.encode()+b'\0'+open(os.path.join(HERE,name),'rb').read())
         h.update(('FILE_IO_LOG='+os.environ.get('FILE_IO_LOG','0')+' USB_BENCH='+os.environ.get('USB_BENCH','0')+' MMCE_BENCH='+os.environ.get('MMCE_BENCH','0')+' PORTABLE_LAUNCHER='+os.environ.get('PORTABLE_LAUNCHER','0')).encode())
+        if holds:
+            for name in ('holds.h','holds.c','holds_empress.c'):h.update(b'HOLDS/'+name.encode()+b'\0'+open(os.path.join(HERE,'..','holds',name),'rb').read())
         if frame_order:h.update(b'ASSET_FRAME_ORDER=1')
         if split_texture:h.update(b'ASSET_SPLIT_TEXTURE=1')
         if host_bench:h.update(b'HOST_BENCH=1')
@@ -642,6 +646,10 @@ def main():
     for va,w0,w1,sym in [(0x1ed5a0,0x8f8688f0,0x3c07007a,'fs_ring_hook'),(0x1fe450,0x27bdffc0,0xffbf0030,'fs_play_hook'),(0x17c570,0x27bdff50,0xffbf0090,'fs_result_hook'),(0x13bbf0,0x27bdffc0,0xffbf0030,'fs_input_hook')]:
         assert (word(va),word(va+4))==(w0,w1)
         lines += ['W %x %08x %08x' % (va,w0,2<<26|syms[sym]>>2),'W %x %08x 00000000' % (va+4,w1)]
+    if holds:
+        # per-tick hold rules after the native note update; delay slot (ld a0 tick) unchanged
+        assert word(0x1e5cb8)==JAL(0x1e6bb0),(hex(word(0x1e5cb8)),)
+        lines.append('W %x %08x %08x' % (0x1e5cb8,word(0x1e5cb8),JAL(syms['holds_frame_entry'])))
     for va,sym in [(0x1fbd24,'fs_ghost_hook'),(0x1f6900,'fs_counts_single_hook'),(0x1f6c34,'fs_counts_battle_hook')]:
         assert word(va)==JAL(0x1e1730)
         lines.append('W %x %08x %08x' % (va,word(va),JAL(syms[sym])))

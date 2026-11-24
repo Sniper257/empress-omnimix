@@ -10,7 +10,7 @@ module built in three layers.
 | --- | --- | --- |
 | Rules: when a hold is held, released, judged, ticked | `tools/holds/holds.c`, `holds.h`, `test_holds.c` | done; host tested, builds freestanding for the EE (n32, no libc, ~2.5 KB) |
 | Data: which notes are holds | `tools/release/holds_format.py` (`holds.bin` per chart) | done |
-| Engine: hooks into SLPM_552.21 | `tools/holds/holds_empress.c`, `test_holds_empress.c` | written and host tested against a faked engine; not in the runtime build yet |
+| Engine: hooks into SLPM_552.21 | `tools/holds/holds_empress.c`, `test_holds_empress.c` | in the runtime with `HOLDS=1` (off by default); host tested, not yet run in PCSX2 |
 
 ## Rules (holds.c)
 
@@ -205,19 +205,27 @@ codes, and the game applies them like any other judgement:
 - **Totals**: tails are not native notes, so the converter writes the chart's
   note-count events with `holds_format.note_total` (each hold counts twice).
 
-To do before enabling:
-1. Wire into `build_vdisc.py` behind a `HOLDS` define:
-   - compile `holds.c` and `holds_empress.c`
-   - patch `0x1e5cb8` to `holds_frame_hook`
-   - call `holds_on_judgement` at the top of `fs_ring()`
-2. Load `holds.bin` per chart in the song loader (a new `song.txt` field)
-   and call `holds_set_chart`.
-3. Check in PCSX2:
+Building and loading:
+- `HOLDS=1 python3 tools/offdisc/build_vdisc.py OUT --reference-words tools/offdisc/reference-words.json`
+  does three things:
+  - includes `holds.c` and `holds_empress.c` from `songdb.c`
+  - patches `0x1e5cb8` to `holds_frame_entry` (an `ASSET_HOOK` wrapper in `songdb.S`)
+  - calls `holds_on_judgement` from both `fs_timed` and `fs_ring`
+
+  Without `HOLDS=1` the runtime is byte-identical to before.
+- Holds travel inside the chart: `arcade_convert.py` writes an 8-byte
+  `0x7fff` terminator and then the holds.bin records. At play start the
+  module scans from the spawner's chart cursor (`gp-0x77dc`) to the
+  terminator and reads the records. Native charts have no trailer, so
+  nothing changes for them. No `song.txt` field is needed.
+
+To do before enabling by default:
+1. Check in PCSX2:
    - whether `0x13acd0(side)` reports continuous turntable motion (BSS)
    - the CN release window (default: PGREAT within 7 ticks)
-4. HCN gain ticks: find a gauge-only routine (a candidate is
+2. HCN gain ticks: find a gauge-only routine (a candidate is
    `0x204d30(side, kind)`, called from the ring reader) for `HOLDS_GAIN_GAUGE`.
    Until then held HCN ticks add no gauge.
-5. Hold bodies are not drawn yet: the head shows as a normal note and the
+3. Hold bodies are not drawn yet: the head shows as a normal note and the
    tail is invisible. Drawing needs the note renderer, one of the active-list
    walkers in round 3.

@@ -1,4 +1,4 @@
-/* EMPRESS glue for the hold rules (holds.c). Not yet in the runtime build.
+/* EMPRESS glue for the hold rules (holds.c), built into the runtime with HOLDS=1.
  *
  * Engine facts used (docs/holds-design.md, rounds 1-3 of disasm_sites.py):
  *   confirmed
@@ -20,10 +20,14 @@
  *   J_NONE -> nothing.
  * Chart totals: the converter counts each hold twice (holds_format.note_total),
  * so scores and gauge recovery include the tails.
+ * Holds come from the chart itself (holds_in_chart). Build with HOLDS=1
+ * (tools/offdisc/build_vdisc.py), which includes this file from songdb.c.
  */
 #include "holds.h"
 
 #ifdef HOLDS_TEST
+extern hu32 test_chart_cursor(void);
+#define H_CHART_CURSOR() test_chart_cursor()
 extern unsigned long long test_ring_body(hu32 code, hu32 lane);
 extern hu32 test_keys(hu32 side);
 extern hu32 test_turntable(hu32 side);
@@ -32,7 +36,12 @@ extern hu32 test_turntable(hu32 side);
 #define H_TT(side) test_turntable(side)
 #define H_NATIVE_TICK(tick) ((void)(tick))
 #else
+static hu32 h_gp(void) { hu32 g; __asm__ volatile("move %0, $28" : "=r"(g)); return g; }
+/* chart event cursor of the spawner (0x1e9790 reads gp-0x77dc): an address inside the decoded chart */
+#define H_CHART_CURSOR() (*(volatile hu32 *)(unsigned long)(h_gp() - 0x77dc))
+#ifndef FS_ARGS
 #define FS_ARGS unsigned long long a,unsigned long long b,unsigned long long c,unsigned long long d,unsigned long long e,unsigned long long f,unsigned long long g,unsigned long long h
+#endif
 extern unsigned long long fs_ring_body(FS_ARGS);
 #define H_RING(code, lane) fs_ring_body((code), (lane), 0, 0, 0, 0, 0, 0)
 #define H_KEYS(side) (*(volatile hu32 *)(unsigned long)(0x724cf0 + (side) * 0x1c0) & 0x7fu)
@@ -56,7 +65,26 @@ static hs32 last_tick = -1;
  * GOOD window (7 ticks), POOR after it; HCN 16ths come from holds.bin. */
 static const holds_cfg default_cfg = { {1, 2, 4, 7}, 16, 6 * HOLDS_FP, 4, OVERHOLD_RELEASE, J_POOR, 0, 0 };
 
-/* The song loader calls this with the chart's holds.bin records before play. */
+/* Converted charts carry their holds after the 0x7fff terminator: an 8-byte
+ * terminator event, then holds.bin ('MMHL', u16 1, u16 count, 12-byte records).
+ * The game stops reading at the terminator, so native charts are unaffected. */
+#define CHART_SCAN 32768u
+static const hold_def *holds_in_chart(hu32 cursor, hu32 *count)
+{
+    hu32 at, i;
+    const volatile hu8 *b;
+    if (cursor < 0x100000u || cursor >= 0x2000000u || (cursor & 3u)) return 0;
+    for (i = 0, at = cursor; i < CHART_SCAN && at + 24 < 0x2000000u; i++, at += 8) {
+        if (*(const volatile hu32 *)(unsigned long)at != 0x7fffu) { LOOP_PAD(); continue; }
+        b = (const volatile hu8 *)(unsigned long)(at + 8);
+        if (b[0] != 'M' || b[1] != 'M' || b[2] != 'H' || b[3] != 'L' || (b[4] | b[5] << 8) != 1) return 0;
+        *count = b[6] | b[7] << 8;
+        return *count <= HOLDS_MAX ? (const hold_def *)(unsigned long)(at + 16) : 0;
+    }
+    return 0;
+}
+
+/* Tests and other loaders can hand over a chart's records directly. */
 void holds_set_chart(const hold_def *defs, hu32 n)
 {
     chart_defs = defs;
@@ -117,7 +145,11 @@ void holds_frame_hook(long long tick)
     hu32 n, i, keys;
     hs8 tt[2];
     H_NATIVE_TICK(tick);
-    if ((hs32)tick < last_tick || !armed) {      /* a new play started (tick counter restarted) */
+    if ((hs32)tick < last_tick) armed = 0;        /* a new play started (tick counter restarted) */
+    if (!armed && tick < 600) {                   /* the cursor is set once the chart is loaded */
+        hu32 n = 0;
+        const hold_def *found = holds_in_chart(H_CHART_CURSOR(), &n);
+        if (found) { chart_defs = found; chart_n = n; }
         armed = chart_n && holds_reset(&holds, chart_defs, chart_n, &default_cfg) == 0;
     }
     last_tick = (hs32)tick;

@@ -6,7 +6,7 @@ static void copy(void *dst, const void *src, hu32 n)
 {
     volatile hu8 *d = (volatile hu8 *)dst;
     const hu8 *s = (const hu8 *)src;
-    while (n--) *d++ = *s++;
+    while (n--) { *d++ = *s++; LOOP_PAD(); }
 }
 
 static void emit(holds_t *h, hu32 kind, hu32 index, hu32 judge, hs32 offset)
@@ -211,6 +211,6 @@ int holds_is_tail(const holds_t *h, hu32 lane, hs32 time)
 {
     hu32 i;
     for (i = 0; i < h->n; i++)
-        if (h->defs[i].lane == lane && h->defs[i].end == time) return 1;
+    { if (h->defs[i].lane == lane && h->defs[i].end == time) return 1; LOOP_PAD(); }
     return 0;
 }
