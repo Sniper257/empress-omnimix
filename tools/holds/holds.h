@@ -12,7 +12,7 @@
  * Rules (docs/holds-design.md has the sources):
  *   CN/BSS  head judged by the game. Release inside the tail window: PGREAT
  *           (one wide window unless tail_graded). Release earlier: POOR.
- *           Still held after the window: overhold_judge (POOR by default).
+ *           Still held after the window: overhold_judge (the runtime uses BAD).
  *           BSS: spinning back, or stopping, inside the window releases it.
  *   HCN/HBSS while held, every 16th note (the hold's tick64): HE_TICK_GAIN
  *           (gauge as for a hit, no combo), and one more at the end if still
@@ -73,7 +73,7 @@ typedef struct {
     hs32 tick64;          /* fallback 16th length for holds without one, 1/64 ticks */
     hs32 spin_grace;      /* BSS: turntable may stand still this long without letting go */
     hu8 overhold;         /* OVERHOLD_RELEASE: held past the window = overhold_judge; OVERHOLD_AUTO: held at end = PGREAT */
-    hu8 overhold_judge;   /* J_POOR (default) or J_BAD (later arcade versions) */
+    hu8 overhold_judge;   /* J_POOR or J_BAD (arcade, SP攻略 wiki; holds_empress.c default) */
     hu8 tail_graded;      /* 0: one PGREAT window (arcade); 1: grade releases PGREAT..BAD by offset */
     hu8 release_grace;    /* keys: a held key must read up this many ticks in a row before it counts as
                              released (the release is timed at the first up tick); 0 = at once. Covers

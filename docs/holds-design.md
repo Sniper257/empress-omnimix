@@ -17,9 +17,9 @@ module built in three layers.
 - **CN**: the head is judged by the game as an ordinary note. Releasing inside
   the tail window is a PGREAT: one window, wider than a normal PGREAT
   (`tail_graded = 1` grades releases instead). Releasing earlier is a POOR.
-  Still holding after the window is a POOR, per the project owner
-  (`overhold_judge`; the SP攻略 wiki lists BAD for current arcade versions, so
-  that is a setting). A missed head makes the tail a POOR at the end.
+  Still holding after the window is a BAD, as the SP攻略 wiki lists
+  (`overhold_judge`; POOR is the other setting). A missed head makes the tail
+  a POOR at the end (two POORs, as namu.wiki describes).
 - **BSS**: keep the turntable moving in the head's direction (standing still
   is allowed for `spin_grace`). Spinning back, or stopping, inside the tail
   window releases it like a CN.
@@ -189,12 +189,15 @@ copula (23) and later, so its values have to come from a newer DLL.
 Round 3 showed the ring reader (`0x1ec860`) handing each code to the
 game's judgement-counter, score, gauge, combo and display routines. So the
 hold module reads heads from the ring and writes its results back as ring
-codes, and the game applies them like any other judgement:
+codes, and the game applies them like any other judgement. The codes follow
+`fast_slow.c` fs_band (bands 0..3 FAST, 4 PGREAT, 5..8 SLOW): `0xa` PGREAT, 6
+GREAT, 5 / 7 GOOD fast / slow, 4 / 8 BAD fast / slow, 9 / `0xe` / `0xf` POOR,
+`0xb` empty POOR.
 
 | Hold result | Ring code |
 | --- | --- |
-| tail PGREAT | 4 |
-| tail BAD (`overhold_judge`) | 7 |
+| tail PGREAT | `0xa` |
+| tail BAD (`overhold_judge`) | 8 (slow BAD) |
 | tail POOR, HCN let go (`HE_BREAK`) | `0xf` (missed POOR) |
 | HCN empty POOR (`HE_TICK_LOSS`) | `0xb` |
 | `J_NONE` | nothing |

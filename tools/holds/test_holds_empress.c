@@ -134,6 +134,21 @@ int main(void)
         CHECK(holds_note_hook(n, 109u << 16 | 601, 80, 0x140, 0, 0) == 1 && ndraw == 0);
         keys[0] = 0;
     }
+    /* CN held past the tail window: BAD (code 8) on that lane, like the arcade */
+    {
+        static const hold_def one[1] = {{300, 360, 3, HOLD_CN, 0}};
+        long long tt;
+        holds_set_chart(one, 1);
+        keys[0] = keys[1] = 0;
+        for (tt = 0; tt < 300; tt++) holds_frame_hook(tt);
+        nring = 0;
+        holds_on_judgement(0xa, 3);
+        keys[0] = 1u << 3;
+        for (tt = 300; tt < 380; tt++) holds_frame_hook(tt);
+        keys[0] = 0;
+        for (tt = 380; tt < 400; tt++) holds_frame_hook(tt);
+        CHECK(logged(8, 3) == 1 && logged(0xa, 3) == 0 && logged(0xf, 3) == 0);
+    }
     /* a hit the game never reports: the head note stops being drawn while its key is down */
     {
         static hu8 n[0x20] __attribute__((aligned(4)));
