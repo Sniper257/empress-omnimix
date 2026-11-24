@@ -12,6 +12,12 @@ import holds_format as H  # noqa: E402
 
 
 class SongFolder(unittest.TestCase):
+    def test_chart_fields_match_the_launcher(self):
+        import re
+        h = (Path(__file__).resolve().parents[1] / 'offdisc' / 'launcher' / 'coalesce_catalog.h').read_text()
+        fields = [int(x, 16) for x in re.search(r'fields\[10\]=\{([^}]*)\}', h).group(1).split(',')]
+        self.assertEqual([F.CHART_FIELD[n] for n in F.ORDER], fields)
+
     def test_record_and_song_txt(self):
         with tempfile.TemporaryDirectory() as tmp:
             conv, out = Path(tmp) / 'conv', Path(tmp) / 'songs' / 'test_song'
@@ -37,10 +43,10 @@ class SongFolder(unittest.TestCase):
             self.assertEqual((rec[0x54], rec[0xbd]), (17, 1))
             self.assertEqual(struct.unpack_from('<H', rec, 0x108)[0], 4)            # 3 notes + 1 hold tail
             self.assertEqual(struct.unpack_from('<HH', rec, 0x112 + 2 * 4), (2, 2))  # DPA: P1 2 notes, P2 1 note + its tail
-            self.assertEqual(struct.unpack_from('<I', rec, 0xc4)[0], 0)             # absent chart cleared
+            self.assertEqual(struct.unpack_from('<I', rec, 0xc0)[0], 0)             # absent chart (SPH) cleared
             txt = (out / 'song.txt').read_text().splitlines()
-            self.assertEqual(txt[1:3], ['record record.bin', 'F c0 4 SPN.bin'])
-            self.assertIn('F d4 4 DPA.bin', txt)
+            self.assertEqual(txt[1:3], ['record record.bin', 'F d0 4 SPN.bin'])
+            self.assertIn('F cc 4 DPA.bin', txt)
             self.assertIn('F e8 2 SP.bank', txt)
             s_lines = [l for l in txt if l.startswith('S ')]
             self.assertEqual(len(s_lines), 72)

@@ -12,7 +12,8 @@ Record fields (0x134 bytes; launcher/main.c add_song, song_resources.c, song_win
   0x4a  levels SP N,H,A,B,X then DP N,H,A,B,X                    0x54  version (16 EMPRESS, 17 SIRIUS)
   0x58  file id kept from the template (All My Turn's 37 MB file, probably the BGA movie)
   0x94, 0x9a  title card (data1 index)    0xac..0xbb  title sprite indices     0xbd  large-bank flag
-  0xc0..0xe4  u32 chart file ids: SPN SPH SPA DPN DPH DPA, SPB DPB, SPX DPX
+  0xc0..0xe4  u32 chart file ids, by level index (launcher/coalesce_catalog.h): SPN d0, SPH c0,
+        SPA c8, SPB d8, SPX e0, DPN d4, DPH c4, DPA cc, DPB dc, DPX e4
   0xe8 / 0xec  u16 SP / DP bank file ids (high half 0xffff), more groups up to 0x107 unused
   0x108 u16 SP notes N,H,A,B,X   0x112 u16 pairs DP notes (P1, P2) N,H,A,B,X   0x126 u16 graph targets
   (SP N,H,A, DP N,H,A; All My Turn's are 1.33-1.52 x notes; 1.4 x notes is written)
@@ -34,8 +35,9 @@ import arcade_data as A  # noqa: E402
 import holds_format as H  # noqa: E402
 
 ORDER = ['SPN', 'SPH', 'SPA', 'SPB', 'SPX', 'DPN', 'DPH', 'DPA', 'DPB', 'DPX']   # level / catalog order
-CHART_FIELD = {'SPN': 0xc0, 'SPH': 0xc4, 'SPA': 0xc8, 'DPN': 0xcc, 'DPH': 0xd0, 'DPA': 0xd4,
-               'SPB': 0xd8, 'DPB': 0xdc, 'SPX': 0xe0, 'DPX': 0xe4}
+# chart file id per difficulty: launcher/coalesce_catalog.h `fields` (level index ch -> field)
+CHART_FIELD = {'SPN': 0xd0, 'SPH': 0xc0, 'SPA': 0xc8, 'SPB': 0xd8, 'SPX': 0xe0,
+               'DPN': 0xd4, 'DPH': 0xc4, 'DPA': 0xcc, 'DPB': 0xdc, 'DPX': 0xe4}
 ARCADE = {'SPB': 3, 'SPN': 1, 'SPH': 0, 'SPA': 2, 'SPX': 4, 'DPB': 9, 'DPN': 7, 'DPH': 6, 'DPA': 8, 'DPX': 10}
 LEVELS = 0x3ec           # music_data v32 entry: SP B,N,H,A,L then DP B,N,H,A,L (u8)
 GRAPH = 1.4

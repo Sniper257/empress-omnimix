@@ -146,8 +146,10 @@ record chooses which bank a chart uses (the bank index in the play call).
 writes a custom song folder: `record.bin` from a native record (All My Turn), `song.txt`
 (`record`, `F` lines for the charts and banks), the charts and banks, and `catalog-lines.txt`
 (S/C lines for `catalog/charts.txt`; the launcher rejects an added song with no identity).
-The record field map is in the script's docstring. All My Turn's record confirms the chart field
-order (its SPH chart has 971 notes, stored at 0x10a) and the empty DP Beginner (level 0, field 0xdc 0).
+The record field map is in the script's docstring. The chart fields follow the launcher's own table
+(launcher/coalesce_catalog.h): SPN d0, SPH c0, SPA c8, SPB d8, SPX e0, DPN d4, DPH c4, DPA cc,
+DPB dc, DPX e4. (A first guess from All My Turn's file order put SPN at c0, and SP Normal then
+loaded a DP chart in PCSX2.)
 
 Still taken from the template, so an added song shows All My Turn's title card and wheel sprites
 and keeps its 0x58 file (probably the BGA movie) until those are converted.

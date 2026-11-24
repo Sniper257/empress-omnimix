@@ -10,9 +10,12 @@
  * record field, so the field ends up holding the last one: SP at record +0x38, wide at +0x3c (the
  * tail of the 64-byte title field; titles stop at 0x37). Sprite k = last - 35 + k.
  *
- * Geometry: the body is drawn from the tail cap down to the head cap, or to the judge line once the
- * head has been hit; while the tail is still above the screen, from the head up to the lane top.
- * The body is one tile stretched with zoomY (pivot at its top). */
+ * Geometry: caps are placed like the game's own notes (songdb.S note_hook): pivot at the bottom,
+ * at y + 3, so a cap sits on top of its timing point and lines up with a normal note of the same
+ * time. The body runs from the tail's timing point down to the top of the start cap, or of the cap
+ * on the judge line once the head has been hit; while the tail is still above the screen, from
+ * the lane top. The body is one tile stretched with zoomY (pivot at its top). */
+#define HD_BASE(y) ((y) + 3)    /* a note's bottom edge (note_hook: pivot at the bottom, y + 3) */
 
 #define HD_SPRITES 36
 #define HD_JUDGE_Y 0x140      /* a note's y on the judge line (FUN_001e6f50 clamps below 0x13f + h/2) */
@@ -137,8 +140,8 @@ int holds_note_hook(hu8 *note, hu32 handle, hs32 x, hs32 y, hu32 side, hu32 clip
         hd_head_y[lane] = y;
         hd_head_at[lane] = hd_now;
         if (hd_tail_at[lane] < hd_now - 1)                     /* tail still above the screen */
-            hd_body(body, kind, x, HD_TOP_Y, y, clip);
-        HD_DRAW(base, x, y, 100, hd_w[kind] / 2, hd_cap_h[kind] / 2, clip);      /* start cap */
+            hd_body(body, kind, x, HD_TOP_Y, HD_BASE(y) - hd_cap_h[kind], clip);
+        HD_DRAW(base, x, HD_BASE(y), 100, hd_w[kind] / 2, hd_cap_h[kind], clip);   /* start cap */
     } else {
         int head_seen;
         /* the tail note is never judged, so the game keeps it (at or below the line) for up to 60
@@ -148,10 +151,10 @@ int holds_note_hook(hu8 *note, hu32 handle, hs32 x, hs32 y, hu32 side, hu32 clip
         hs32 bottom = head_seen ? hd_head_y[lane] : judge;
         hd_tail_at[lane] = hd_now;
         if (bottom > judge) bottom = judge;
-        hd_body(body, kind, x, y, bottom, clip);
+        hd_body(body, kind, x, HD_BASE(y), HD_BASE(bottom) - hd_cap_h[kind], clip);
         if (!head_seen && holds.state[i] != HS_PENDING && y < judge)
-            HD_DRAW(base, x, judge, 100, hd_w[kind] / 2, hd_cap_h[kind] / 2, clip);   /* head hit: start cap on the line */
-        HD_DRAW(base + 1, x, y, 100, hd_w[kind] / 2, hd_cap_h[kind] / 2, clip);       /* end cap */
+            HD_DRAW(base, x, HD_BASE(judge), 100, hd_w[kind] / 2, hd_cap_h[kind], clip);   /* head hit: start cap on the line */
+        HD_DRAW(base + 1, x, HD_BASE(y), 100, hd_w[kind] / 2, hd_cap_h[kind], clip);       /* end cap */
     }
     return 1;
 }
@@ -173,7 +176,7 @@ static void hd_frame(void)
         group = hd_group(&chart_defs[i], lane, &kind);
         judge = HD_JUDGE_Y - HD_LIFT(side);
         hd_body(last - (HD_SPRITES - 1) + group + 2 + hd_state((hu32)i, chart_defs[i].kind == HOLD_HCN || chart_defs[i].kind == HOLD_HBSS),
-                kind, hd_x[lane], HD_TOP_Y, judge, hd_clip[side]);
-        HD_DRAW(last - (HD_SPRITES - 1) + group, hd_x[lane], judge, 100, hd_w[kind] / 2, hd_cap_h[kind] / 2, hd_clip[side]);
+                kind, hd_x[lane], HD_TOP_Y, HD_BASE(judge) - hd_cap_h[kind], hd_clip[side]);
+        HD_DRAW(last - (HD_SPRITES - 1) + group, hd_x[lane], HD_BASE(judge), 100, hd_w[kind] / 2, hd_cap_h[kind], hd_clip[side]);
     }
 }

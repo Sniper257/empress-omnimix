@@ -322,3 +322,6 @@ and note-skin interaction (skins also append to #109).
 - Tail notes stay alive for up to 60 ticks after their time (never judged): the renderer draws
   nothing for a hold once its end has passed or its tail is below the judge line.
 - Launcher with `debug.cfg` loads `vdisc-portable-debug.*`: both variants need HOLDS.
+- Caps are anchored like native notes (note_hook: pivot at the bottom, y + 3), so a start cap
+  sits on top of its timing point and lines up with a normal note of the same time; the body
+  runs from the tail's timing point to the top of the start cap.

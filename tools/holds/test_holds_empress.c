@@ -88,12 +88,12 @@ int main(void)
         /* head on screen, tail still above: body from the lane top to the head, then the start cap */
         make_note(n, 0, 2, 300); ndraw = 0;
         CHECK(holds_note_hook(n, 109u << 16 | 601, 80, 200, 0, 0) == 1);
-        CHECK(ndraw == 2 && draw_h[0] == (109u << 16 | (500 + 10 + 2)) && draw_py[0] == 0 && draw_zy[0] == (200 + 16) * 10);
-        CHECK(draw_h[1] == (109u << 16 | 510) && draw_y[1] == 200);   /* HCN white start cap */
+        CHECK(ndraw == 2 && draw_h[0] == (109u << 16 | (500 + 10 + 2)) && draw_py[0] == 0 && draw_zy[0] == (203 - 10 + 16) * 10);
+        CHECK(draw_h[1] == (109u << 16 | 510) && draw_y[1] == 203 && draw_py[1] == 10);   /* HCN white start cap, bottom at y+3 */
         /* same tick: tail on screen too -> body from the tail to the head, end cap */
         make_note(n, 0, 2, 400); ndraw = 0;
         CHECK(holds_note_hook(n, 109u << 16 | 601, 80, 40, 0, 0) == 1);
-        CHECK(ndraw == 2 && draw_y[0] == 40 && draw_zy[0] == (200 - 40) * 10 && draw_h[1] == (109u << 16 | 511));
+        CHECK(ndraw == 2 && draw_y[0] == 43 && draw_zy[0] == (203 - 10 - 43) * 10 && draw_h[1] == (109u << 16 | 511) && draw_y[1] == 43);
         /* the wide container has no hold sprites in this record: native note */
         make_note(n, 0, 2, 300); ndraw = 0;
         CHECK(holds_note_hook(n, 146u << 16 | 601, 80, 200, 0, 0) == 0);
@@ -104,7 +104,7 @@ int main(void)
         for (tt = 301; tt < 305; tt++) holds_frame_hook(tt);
         ndraw = 0;
         holds_frame_hook(305);
-        CHECK(ndraw == 2 && draw_y[0] == -16 && draw_y[1] == 0x140);
+        CHECK(ndraw == 2 && draw_y[0] == -16 && draw_y[1] == 0x143 && draw_zy[0] == (0x143 - 10 + 16) * 10);
         CHECK(draw_h[0] == (109u << 16 | (512 + 1)) || draw_h[0] == (109u << 16 | (512 + 2)));   /* held: beam1/2 */
         gains = 0;
         for (tt = 306; tt < 340; tt++) holds_frame_hook(tt);
