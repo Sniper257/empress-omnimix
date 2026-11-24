@@ -101,9 +101,31 @@ class Chart(unittest.TestCase):
         self.assertEqual(sorted(e[3] for e in out if e[1] & 15 == 2), [1, 2, 2])
         ply, _ = C.empress_events(ev, [])
         self.assertEqual({e[3] for e in parse(ply)[1] if e[1] & 15 == 2}, {0})
-        self.assertEqual(KB.choose_rate([(44100, 44100)], 16 * 1200)[0], 32000)
-        self.assertEqual(KB.adpcm_size(28), 16)
-        self.assertEqual(KB.adpcm_size(29), 32)
+
+    def test_bank_round_trip(self):
+        import io, wave, math
+        import keysound_bank as KB
+        def wav(rate, n):
+            b = io.BytesIO()
+            with wave.open(b, 'wb') as w:
+                w.setnchannels(2); w.setsampwidth(2); w.setframerate(rate)
+                w.writeframes(b''.join(struct.pack('<hh', int(9000 * math.sin(i / 5)), int(-9000 * math.sin(i / 5))) for i in range(n)))
+            return b.getvalue()
+        keys = [{'wav': wav(44100, 4410)}, {'wav': wav(24000, 100)}, {'wav': wav(22050, 2205)}]
+        data, slots, info = KB.build('SP', [2, 1, 3], keys)
+        self.assertEqual(slots, {2: 1, 1: 2, 3: 3})
+        self.assertEqual(data[:16], b'wp\x03\x00\x10\x00\x00\x00SP' + bytes(6))
+        b = KB.read(data)
+        self.assertEqual(b['name'], 'SP')
+        self.assertEqual([b['slots'][n]['sample'] for n in (1, 2, 3)], [0, 1, 2])
+        self.assertEqual(b['slots'][2]['ms'], 100)                       # 4410 samples at 44.1 kHz
+        self.assertEqual([x['rate'] for x in b['samples']], [24000, 44100, 44100])   # 22050 resampled
+        for x in b['samples']:
+            for ch in x['frames']:
+                self.assertEqual(ch[:16], bytes(16))
+                self.assertEqual(ch[-16:], bytes([0, 7]) + b'\x77' * 14)
+                self.assertEqual(ch[-31], 1)                              # flag 1 on the last audio frame
+        self.assertEqual(b['slots'][1]['tail'], 76)
 
     def test_hcn_flag_event(self):
         # 18102 Kailua (HCN Ver.) = 18021's notes plus (0, 13, 0, 0) in every chart

@@ -18,7 +18,7 @@ lines in `song.txt`, see `tools/offdisc/launcher/main.c`).
 | Arcade song archives (`.ifs`, kbinxml manifest) | done: `ifs.py` |
 | Chart conversion: arcade `.1` → encrypted EMPRESS chart with hold trailer | done: `arcade_convert.py` (tested on 23069: 6 charts) |
 | Backing stream rendered from one chart's keysounds (autoplay mix) | done: `arcade_convert.py --stream CHART` (numpy) |
-| Keysound split: player sounds → bank, BGM events → mixed stream | split, slots, per-chart ADPCM samples and BGM-only stream done (`arcade_convert.py --split`, `keysound_bank.py`); the `wp\x03` container writer waits for one real EMPRESS bank |
+| Keysound split: player sounds → bank, BGM events → mixed stream | done: `arcade_convert.py --split` writes SP.bank / DP.bank in the real `wp\x03` layout and a BGM-only stream (`keysound_bank.py`); not yet heard in PCSX2 |
 | `record.bin` from `music_data.bin` (levels, BPM, genre, file fields) | waiting for probe report (entry layout) |
 | Title/genre/artist sprites, title card | will reuse `text_assets` / `font_folder` |
 | BGA (`movie/`) | later; songs work without it |
@@ -106,32 +106,24 @@ difference is one extra event `(0 ms, type 13, 0, 0)` at the start of every char
 treats a chart with a type-13 event as HCN/HBSS without needing `--hell`, and checks show
 18102 → identical output to 18021 `--hell`.
 
-## Keysound banks: what the game code shows
+## Keysound banks
 
-From the play-keysound function `0x140260` (disassembly dump 2):
+Read from a real bank (All My Turn's "SP" bank: 497 slots, 495 samples, 5.3 MB) and from the
+play-keysound function `0x140260`. The full layout is in the `keysound_bank.py` docstring. In short:
 
-- Argument `slot | (bank & 15) << 16 | flags` (`0x1000000`/`0x2000000` = side). Slot 0 or > 0x800 plays nothing.
-- Slot entry address: `0x757600 + bank * 0x8000 + slot * 16`. A loaded bank therefore starts with a
-  0x8000-byte table of 2048 16-byte slot entries: the part of the bank file before the
-  `(count, data size, 1, …)` header at 0x8000. Slot 0 would sit where the `wp\x03\x00` magic is.
-- Fields of a slot entry that the function reads:
+- One bank per play side, named in the header ("SP", "DP"), holding every player sound of that
+  side's charts. Real banks are 5.3 and 6.1 MB, far more than the 2 MB SPU RAM, so the game
+  uploads sounds as it needs them; there is no need to lower sample rates to fit.
+- `play(slot | bank << 16 | flags)`, slot 1..0x7ff: 16-byte slot entries from the start of the
+  bank (the header fills slot 0): priority, exclusive group (0xff), in use (2), length in ms,
+  volume (0x7f), sample index, and a byte that is 76 for nearly every slot (86 for a few, 0 for slot 1;
+  meaning unknown).
+- `0x8000`: sample count and data size; `0x8010`: 16-byte sample entries (offset, bytes per channel,
+  channels = 2, rate code). Rate codes: `0x3e44` = 44.1 kHz (489 of 495), `0x447d` = 32 kHz,
+  `0x4800` = 24 kHz, checked against the slot lengths.
+- Samples are stereo, channel 0 then channel 1; each channel is a zero frame, the ADPCM frames
+  (last one flag 1) and a `00 07 77…` end frame, all with the bank disguise.
 
-| offset | size | use |
-|---|---|---|
-| +0 | u8 | priority, compared with the 22 playing voices (0x4c-byte voice records at 0x741460 / 0x741af0) |
-| +1 | u8 | exclusive group: a voice with the same group (and side) is stopped first; 0xff = none |
-| +2 | u8 | two nibbles, both copied to the voice |
-| +3 | u8 | 0 = nothing to play |
-| +4 | s32 | length in ms, converted to frames (+1) when > 0 |
-| +8, +9 | u8 | copied to the voice (+0x40, +0x44) |
-| +0xa | u16 | copied to the voice (+0x1e); probably the index into the sample table at 0x8010 |
-| +0xc | u8 | copied to the voice (+0x26) |
-
-Still unknown: the 16-byte sample entries at 0x8010 (SPU offset, size, rate/pitch, loop?), what
-the +2/+8/+9/+0xc bytes mean, and the bank size budget. One real EMPRESS bank, ideally with the
-chart of the same song, settles these.
-
-Kailua (HCN Ver.), for size: 428 player sounds, 120 s in total. Per chart after trimming silence
-and downmixing to mono, SPA needs 2.9 MB of ADPCM at 44.1 kHz, 1.4 MB at 22.05 kHz.
-The SPU has 2 MB in total, so the converter picks the highest rate that fits `--bank-budget`
-(default 1 MiB until the real limit is known) and applies the same gain the BGM stream gets.
+Kailua (HCN Ver.) converts to two 5.9 MB banks (417 sounds each, all 44.1 kHz stereo) plus a
+BGM-only stream. Still to check in PCSX2: that the game loads a converted bank, and how the song
+record chooses which bank a chart uses (the bank index in the play call).

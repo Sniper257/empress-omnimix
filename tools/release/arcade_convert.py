@@ -2,7 +2,7 @@
 """Convert an arcade IIDX song (.1 chart + .2dx keysounds, loose or in an .ifs) to
 EMPRESS files. Work in progress: charts and the backing stream; song folder next.
 
-  python3 arcade_convert.py 23069.ifs OUT [--stream SPA] [--hell]
+  python3 arcade_convert.py 23069.ifs OUT [--stream SPA] [--hell] [--split]
 
 HCN charts are found by themselves: the HCN Ver. song (e.g. 18102 Kailua (HCN Ver.)) has the
 same notes as the normal song plus one type-13 event at time 0 in every chart.
@@ -165,18 +165,6 @@ def render(events, keys, rate=44100, bgm_only=False, peak=None):
     return rate, [mix[0].astype(np.int16).tolist(), mix[1].astype(np.int16).tolist()], {'keysounds_played': len(plays), 'peak': peak}
 
 
-def write_samples(out, name, bank):
-    """<CHART>.samples.bin (plain SPU ADPCM, 16-byte aligned) and <CHART>.samples.json (slot table)."""
-    blob = bytearray()
-    rows = []
-    for row in bank['samples']:
-        rows.append({'slot': row['slot'], 'keysound': row['keysound'], 'rate': row['rate'],
-                     'samples': row['count'], 'offset': len(blob), 'size': len(row['adpcm'])})
-        blob += row['adpcm']
-    (out / (name + '.samples.bin')).write_bytes(bytes(blob))
-    (out / (name + '.samples.json')).write_text(json.dumps({'rate': bank['rate'], 'bytes': len(blob), 'slots': rows}, indent=1) + '\n')
-
-
 HCN_FLAG = 13  # .1 event type: this chart's holds are HCN/HBSS
 
 
@@ -190,34 +178,40 @@ def main(argv=None):
     p.add_argument('output', type=Path)
     p.add_argument('--stream', metavar='CHART', help='render the backing stream from this chart (e.g. SPA)')
     p.add_argument('--hell', action='store_true', help='treat holds as HCN/HBSS even without the type-13 HCN event')
-    p.add_argument('--split', action='store_true', help='player keysounds to per-chart sample sets, BGM-only stream '
-                   '(the EMPRESS bank container is not written yet: see keysound_bank.py)')
-    p.add_argument('--bank-budget', type=int, default=1 << 20, metavar='BYTES',
-                   help='ADPCM bytes allowed per chart (default 1 MiB, a placeholder until a real bank is measured)')
+    p.add_argument('--split', action='store_true',
+                   help='player keysounds to SP.bank / DP.bank (EMPRESS "wp" banks) and a BGM-only stream')
     a = p.parse_args(argv)
     charts, keys, sid = load_song(a.song)
     a.output.mkdir(parents=True, exist_ok=True)
     report = {'song': sid, 'keysounds': len(keys), 'charts': {}}
+    banks = {}
+    if a.split:
+        import keysound_bank as KB
+        gain = 1.0
+        if a.stream:                                  # the bank gets the gain the stream gets
+            peak = render(charts[next(s for s, n in SLOTS.items() if n == a.stream.upper())], keys)[2]['peak']
+            gain = min(1.0, 32767 / peak) if peak else 1.0
+        for side, members in (('SP', [s for s in charts if s < 6]), ('DP', [s for s in charts if s >= 6])):
+            if not members:
+                continue
+            data, slots, info = KB.build(side, KB.player_sounds(*(charts[s] for s in members)), keys, gain)
+            (a.output / (side + '.bank')).write_bytes(data)
+            banks.update({s: slots for s in members})
+            report.setdefault('banks', {})[side] = info
+            print('%s.bank: %d sounds, %d bytes, rates %s%s' % (side, info['sounds'], info['bytes'], info['rates'],
+                                                            ' (' + info['warning'] + ')' if 'warning' in info else ''))
     for slot, events in sorted(charts.items()):
         name = SLOTS.get(slot, 'slot%d' % slot)
         hell = a.hell or is_hell(events)
         holds = H.from_events(events, hell=hell, time=tick, ticks_per_ms=1000 / CLOCK)
-        bank = None
-        if a.split:
-            import keysound_bank as KB
-            peak = render(events, keys)[2]['peak']
-            bank = KB.build(events, keys, a.bank_budget, gain=min(1.0, 32767 / peak) if peak else 1.0)
-            events = KB.remap(events, bank['slots'])
-            write_samples(a.output, name, bank)
-        ply, warnings = empress_events(events, holds, keysounds=bool(bank))
+        if slot in banks:
+            events = KB.remap(events, banks[slot])
+        ply, warnings = empress_events(events, holds, keysounds=slot in banks)
         (a.output / (name + '.bin')).write_bytes(encrypt(ply))
         notes = sum(1 for e in events if e[1] in (0, 1))
         bpms = sorted({round(e[3] / e[2], 2) if e[2] else e[3] for e in events if e[1] == 4})
         report['charts'][name] = {'notes': notes, 'holds': len(holds), 'hcn': hell, 'total': notes + len(holds),
                                   'bpm': [bpms[0], bpms[-1]] if bpms else None, 'warnings': warnings}
-        if bank:
-            report['charts'][name]['keysounds'] = {'sounds': len(bank['samples']), 'rate': bank['rate'], 'bytes': bank['bytes'],
-                                                     'gain': round(bank['gain'], 4)}
         print('%s: %d notes, %d %s%s' % (name, notes, len(holds), 'HCN' if hell else 'holds', (' (' + '; '.join(warnings) + ')') if warnings else ''))
     if a.stream:
         slot = next((s for s, n in SLOTS.items() if n == a.stream.upper()), None)
