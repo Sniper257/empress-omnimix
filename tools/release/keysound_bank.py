@@ -1,9 +1,12 @@
-"""Player keysounds -> EMPRESS keysound bank ("wp\\x03\\x00"), one bank per play side (SP, DP).
+"""Keysounds -> EMPRESS keysound bank ("wp\\x03\\x00"), one bank per play side (SP, DP).
 
 Layout, read from a real EMPRESS bank (All My Turn, "SP": 497 slots, 495 samples, 5.3 MB) and from
 the play function 0x140260 in SLPM_552.21:
 
   0x0000  header (where slot 0 would be): "wp\\x03\\x00", u32 0x10, name (8 bytes, "SP" / "DP")
+  EMPRESS's own songs keysound the BGM from the bank too (All My Turn SPN: 286 BGM sounds,
+  2498 events (tick, 0x87, 0, slot); slot 1 is the 3.4 s intro at tick 0). Banks above ~7 MB need
+  the launcher's large-bank workspace (record byte 0xbd, launcher/main.c add_song).
   0x0010  slot entries 1..2047, 16 bytes each (play(slot | bank << 16) reads bank + slot * 16)
             +0 u8 priority (0)        +1 u8 exclusive group (0xff = none)   +2 u8 0
             +3 u8 2 (0 = empty slot)  +4 s32 length in ms                    +8 u8 1
@@ -52,15 +55,26 @@ def player_sounds(*event_lists):
     return sorted(seen, key=seen.get)
 
 
+def bgm_sounds(*event_lists):
+    """Arcade keysound numbers the BGM (type 7) plays, first use first."""
+    seen = {}
+    for events in event_lists:
+        for t, kind, param, value in sorted(events):
+            if kind == 7 and value and value not in seen:
+                seen[value] = len(seen)
+    return sorted(seen, key=seen.get)
+
+
 def slot_map(sounds):
     if len(sounds) > MAX_SLOT:
         raise ValueError('%d player keysounds; an EMPRESS bank has %d slots' % (len(sounds), MAX_SLOT))
     return {s: i + 1 for i, s in enumerate(sounds)}
 
 
-def remap(events, slots):
-    """Events with type 2/3 values changed from arcade keysound numbers to bank slots."""
-    return [(t, k, p, slots.get(v, 0) if k in (2, 3) else v) for t, k, p, v in events]
+def remap(events, slots, bgm=False):
+    """Events with type 2/3 (and with bgm=True type 7) values changed from arcade keysound numbers to slots."""
+    kinds = (2, 3, 7) if bgm else (2, 3)
+    return [(t, k, p, slots.get(v, 0) if k in kinds else v) for t, k, p, v in events]
 
 
 def stereo(wav):

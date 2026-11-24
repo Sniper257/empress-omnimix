@@ -124,6 +124,18 @@ play-keysound function `0x140260`. The full layout is in the `keysound_bank.py` 
 - Samples are stereo, channel 0 then channel 1; each channel is a zero frame, the ADPCM frames
   (last one flag 1) and a `00 07 77…` end frame, all with the bank disguise.
 
-Kailua (HCN Ver.) converts to two 5.9 MB banks (417 sounds each, all 44.1 kHz stereo) plus a
+EMPRESS's own songs play the BGM from the bank too: All My Turn's SPN chart has 2,498 BGM events
+`(tick, 0x87, 0, slot)` over 286 bank sounds (slot 1 = a 3.4 s intro at tick 0), and its 37 MB file is
+not audio (probably the BGA). `arcade_convert.py --split` now does the same: every sound in the bank,
+no stream. Kailua (HCN Ver.) gives 11.9 MB banks (443 sounds), more than the 6.1 MB largest seen, so
+the record needs the launcher's large-bank workspace (record byte 0xbd; up to 0x1fff800 bytes).
+`--split --stream SPA` keeps the earlier layout: player sounds only in the bank, BGM in a stream.
+
+Song folders for added songs (launcher/main.c `add_song`): `record record.bin` (0x134 bytes),
+`F <field hex> <bytes> <path>` per file id (bank fields 0xe8..0x107: four 8-byte groups, u16 file ids
+at +0 and +2), `card`, `D <n> <path>`, `S <cont> <field> <sprite>`. `tools/release/dump_record.py`
+writes a native record (e.g. All My Turn, id 2) as the template.
+
+Before that change: Kailua (HCN Ver.) converted to two 5.9 MB banks (417 sounds each, all 44.1 kHz stereo) plus a
 BGM-only stream. Still to check in PCSX2: that the game loads a converted bank, and how the song
 record chooses which bank a chart uses (the bank index in the play call).

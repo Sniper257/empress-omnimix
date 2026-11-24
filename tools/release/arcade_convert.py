@@ -47,11 +47,13 @@ def tick(ms):
     return t
 
 
-def empress_events(events, holds=(), keysounds=False):
+def empress_events(events, holds=(), keysounds=False, bgm_slots=False):
     """Arcade events (ms) -> EMPRESS ply bytes (header, events, terminator, optional hold trailer).
 
     keysounds=False: type 2/3 values become 0 (no sound; the stream carries everything).
-    keysounds=True: the events already hold bank slots (keysound_bank.remap) and are kept."""
+    keysounds=True: the events already hold bank slots (keysound_bank.remap) and are kept.
+    bgm_slots=True: BGM is keysounded from the bank as in EMPRESS's own songs: (tick, 0x87, 0, slot)
+    per type-7 event (values already remapped); otherwise one stream start (0, 7, 0, 1)."""
     out = []
     warnings = set()
     end = 0
@@ -75,6 +77,11 @@ def empress_events(events, holds=(), keysounds=False):
             out.append((k, 5 | (param & 15) << 4, value & 0xff, value & 0xffff))
         elif kind == 6:
             end = max(end, k)
+        elif kind == 7 and bgm_slots:
+            if value:
+                if not 0 < value <= 0x7ff:
+                    raise ValueError('BGM slot %d outside the bank' % value)
+                out.append((k, 7 | 8 << 4, 0, value))
         elif kind == 7:
             if not started:                                             # one stream start; the stream has all BGM
                 out.append((0, 7, 0, 1))
@@ -87,7 +94,7 @@ def empress_events(events, holds=(), keysounds=False):
             continue
         else:
             warnings.add('dropped event type %d' % kind)
-    if not started:
+    if not started and not bgm_slots:
         out.append((0, 7, 0, 1))
     end = max([end] + [e[0] for e in out]) + 1
     out.append((end, 6, 0, 0))
@@ -179,7 +186,9 @@ def main(argv=None):
     p.add_argument('--stream', metavar='CHART', help='render the backing stream from this chart (e.g. SPA)')
     p.add_argument('--hell', action='store_true', help='treat holds as HCN/HBSS even without the type-13 HCN event')
     p.add_argument('--split', action='store_true',
-                   help='player keysounds to SP.bank / DP.bank (EMPRESS "wp" banks) and a BGM-only stream')
+                   help='keysounds to SP.bank / DP.bank (EMPRESS "wp" banks). Alone: every sound, BGM included, '
+                        'is in the bank as in EMPRESS\'s own songs (no stream). With --stream: player sounds only, '
+                        'BGM in a BGM-only stream')
     a = p.parse_args(argv)
     charts, keys, sid = load_song(a.song)
     a.output.mkdir(parents=True, exist_ok=True)
@@ -194,7 +203,10 @@ def main(argv=None):
         for side, members in (('SP', [s for s in charts if s < 6]), ('DP', [s for s in charts if s >= 6])):
             if not members:
                 continue
-            data, slots, info = KB.build(side, KB.player_sounds(*(charts[s] for s in members)), keys, gain)
+            sounds = KB.player_sounds(*(charts[s] for s in members))
+            if not a.stream:
+                sounds += [v for v in KB.bgm_sounds(*(charts[s] for s in members)) if v not in set(sounds)]
+            data, slots, info = KB.build(side, sounds, keys, gain)
             (a.output / (side + '.bank')).write_bytes(data)
             banks.update({s: slots for s in members})
             report.setdefault('banks', {})[side] = info
@@ -204,9 +216,10 @@ def main(argv=None):
         name = SLOTS.get(slot, 'slot%d' % slot)
         hell = a.hell or is_hell(events)
         holds = H.from_events(events, hell=hell, time=tick, ticks_per_ms=1000 / CLOCK)
+        bank_bgm = slot in banks and not a.stream
         if slot in banks:
-            events = KB.remap(events, banks[slot])
-        ply, warnings = empress_events(events, holds, keysounds=slot in banks)
+            events = KB.remap(events, banks[slot], bgm=bank_bgm)
+        ply, warnings = empress_events(events, holds, keysounds=slot in banks, bgm_slots=bank_bgm)
         (a.output / (name + '.bin')).write_bytes(encrypt(ply))
         notes = sum(1 for e in events if e[1] in (0, 1))
         bpms = sorted({round(e[3] / e[2], 2) if e[2] else e[3] for e in events if e[1] == 4})

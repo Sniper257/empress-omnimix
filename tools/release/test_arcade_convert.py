@@ -102,6 +102,16 @@ class Chart(unittest.TestCase):
         ply, _ = C.empress_events(ev, [])
         self.assertEqual({e[3] for e in parse(ply)[1] if e[1] & 15 == 2}, {0})
 
+    def test_bgm_from_bank(self):
+        import keysound_bank as KB
+        ev = [(0, 7, 0, 5), (0, 2, 1, 7), (500, 7, 0, 7), (1000, 0, 1, 0)]
+        sounds = KB.player_sounds(ev) + [v for v in KB.bgm_sounds(ev) if v not in KB.player_sounds(ev)]
+        slots = KB.slot_map(sounds)
+        self.assertEqual(slots, {7: 1, 5: 2})
+        ply, _ = C.empress_events(KB.remap(ev, slots, bgm=True), [], keysounds=True, bgm_slots=True)
+        bgm = [e for e in parse(ply)[1] if e[1] & 15 == 7]
+        self.assertEqual([(e[1], e[3]) for e in bgm], [(0x87, 2), (0x87, 1)])
+
     def test_bank_round_trip(self):
         import io, wave, math
         import keysound_bank as KB
