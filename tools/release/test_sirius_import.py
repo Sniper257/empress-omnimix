@@ -93,6 +93,18 @@ class ArcadeReaders(unittest.TestCase):
         self.assertEqual(A.find_id_fields(md['entries'], [17000, 17002])[0], ((128, 4), 2))
 
 
+    def test_music_data_v32_layout(self):
+        # 32: u32 count, u32 index count, s32 index table, UTF-16 title then ASCII title at 0x100
+        entry = lambda t: t.encode('utf-16-le').ljust(0x100, b'\0') + t.encode('ascii').ljust(0x40, b'\0') + bytes(0x7d8 - 0x140)
+        index = [-1] * 23070
+        index[18021], index[23069] = 1, 0
+        raw = b'IIDX' + struct.pack('<III', 32, 2, len(index)) + struct.pack('<%di' % len(index), *index) + entry('Battle Train') + entry('Kailua')
+        md = A.read_music_data(raw)
+        self.assertEqual((md['version'], md['index_width'], md['entry_size']), (32, 4, 0x7d8))
+        self.assertEqual(A.entry_title(md['entries'][md['index'][18021]]), ('Kailua', 'Kailua'))
+        self.assertEqual(A.entry_title(md['entries'][md['index'][23069]])[0], 'Battle Train')
+
+
 class Adpcm(unittest.TestCase):
     def test_encode_decode_quality(self):
         x = [int(9000 * math.sin(i / 5) + 3000 * math.sin(i / 1.7)) for i in range(28 * 60)]

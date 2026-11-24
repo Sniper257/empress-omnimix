@@ -253,17 +253,22 @@ def read_music_data(data):
     """Header, id index and raw fixed-size entries. Field layout is left to the probe."""
     if len(data) < 16 or data[:4] != b'IIDX':
         raise FormatError('Not an IIDX music_data.bin')
-    version, count, index_count, reserved = struct.unpack_from('<IHHI', data, 4)
-    table = 16 + 2 * index_count
-    if count == 0 or table > len(data):
-        raise FormatError('Invalid music_data.bin header')
-    body = len(data) - table
-    if body % count:
+    version = struct.unpack_from('<I', data, 4)[0]
+    # older: u16 count, u16 index count, u32; newer (32): u32 count, u32 index count.
+    # The id -> entry table is s16 in older versions and s32 in newer ones.
+    layouts = [(struct.unpack_from('<HH', data, 8), 2, 'h'), (struct.unpack_from('<II', data, 8), 4, 'i'),
+               (struct.unpack_from('<HH', data, 8), 4, 'i'), (struct.unpack_from('<II', data, 8), 2, 'h')]
+    for (count, index_count), width, code in layouts:
+        table = 16 + width * index_count
+        if count and index_count and table < len(data) and (len(data) - table) % count == 0:
+            break
+    else:
         raise FormatError('music_data.bin entries are not a whole number of records')
-    size = body // count
-    index = struct.unpack_from('<%dh' % index_count, data, 16)
+    reserved = struct.unpack_from('<I', data, 12)[0]
+    size = (len(data) - table) // count
+    index = struct.unpack_from('<%d%s' % (index_count, code), data, 16)
     entries = [data[table + i * size:table + (i + 1) * size] for i in range(count)]
-    return {'version': version, 'count': count, 'index_count': index_count,
+    return {'version': version, 'count': count, 'index_count': index_count, 'index_width': width,
             'reserved': reserved, 'index': index, 'entry_size': size, 'entries': entries}
 
 
@@ -279,6 +284,15 @@ def entry_strings(entry, width=64, limit=8):
             break
         out.append(_text(field))
     return out
+
+
+def entry_title(entry):
+    """(title, ascii title): UTF-16 title + ASCII at 0x100 in newer lists (32), SJIS fields in older ones."""
+    if len(entry) >= 0x140 and entry[1] == 0 and 0x20 <= entry[0] < 0x7f:
+        title = entry[:0x100].decode('utf-16-le', 'replace').split('\0')[0]
+        return title, entry[0x100:0x140].split(b'\0')[0].decode('latin-1')
+    strings = entry_strings(entry)
+    return (strings[0] if strings else ''), (strings[1] if len(strings) > 1 else '')
 
 
 def find_id_fields(entries, song_ids):
