@@ -118,6 +118,21 @@ int holds_head_near(holds_t *h, hu32 lane, hs32 now, hs32 window, hu32 judge)
     return best;
 }
 
+int holds_head_keyed(holds_t *h, hu32 keys, hs32 now, hs32 window, hu32 judge)
+{
+    hu32 i;
+    hs32 best = -1, gap = window + 1;
+    for (i = 0; i < h->n; i++) {
+        hs32 d = h->defs[i].start - now;
+        if (d > window) break;
+        if (d < 0) d = -d;
+        if (h->state[i] == HS_PENDING && !is_spin(h->defs[i].kind) && ((keys >> h->defs[i].lane) & 1u) && d < gap)
+        { gap = d; best = (hs32)i; }
+    }
+    if (best >= 0) start_hold(h, (hu32)best, judge, now);
+    return best;
+}
+
 /* Is the lane held? BSS: spinning the head's way, with a short grace for standing still.
  * *reverse: spun back; *still: turntable not moving this tick. */
 static int held(holds_t *h, hu32 lane, hu32 kind, hs32 now, hu32 keys, const hs8 tt[2], int *reverse, int *still)

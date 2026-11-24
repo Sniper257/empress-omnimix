@@ -100,6 +100,9 @@ int holds_head(holds_t *h, hu32 lane, hs32 start, hu32 judge, hs32 now);
 /* the engine logged a judgement on lane at tick now but cannot name the note: take the pending
  * hold on that lane whose start is nearest now, within window ticks. Returns the index or -1. */
 int holds_head_near(holds_t *h, hu32 lane, hs32 now, hs32 window, hu32 judge);
+/* fallback when a hit names no pending hold on its lane: take the pending key hold (not BSS)
+ * whose key is down now and whose start is nearest now, within window ticks. Returns the index or -1. */
+int holds_head_keyed(holds_t *h, hu32 keys, hs32 now, hs32 window, hu32 judge);
 /* once per tick. keys: bit per lane (turntable bits ignored); tt[side] = -1, 0, +1 */
 void holds_frame(holds_t *h, hs32 now, hu32 keys, const hs8 tt[2]);
 /* copy out up to max events (oldest first); returns the count copied */

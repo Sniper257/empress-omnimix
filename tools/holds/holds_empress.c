@@ -166,16 +166,34 @@ static int judge_of_code(hu32 code)
     return -1;                                                     /* empty POOR and others: not a head */
 }
 
+/* holds_jdbg: every judgement report seen while armed. [1] = count; [2 + 2k], [3 + 2k] for the last
+ * 16 (k = count % 16): tick << 16 | code << 8 | ring lane id low byte, then side << 31 | fallback << 30 |
+ * matched hold index (0xfff = none). */
+volatile hu32 holds_jdbg[34] = {0x47444a48u};
+static void dbg_report(hu32 code, hu32 id, int r)
+{
+    hu32 k = holds_jdbg[1]++ & 15u;
+    holds_jdbg[2 + 2 * k] = ((hu32)last_tick & 0xffffu) << 16 | (code & 0xffu) << 8 | (id & 0xffu);
+    holds_jdbg[3 + 2 * k] = ((id >> 15) & 1u) << 31 | (r >= 0 && (r & 0x100) ? 1u << 30 : 0) | (r < 0 ? 0xfffu : (hu32)r & 0xfffu);
+}
+
 /* Called from fs_ring() for every native judgement, before it is logged. */
 void holds_on_judgement(hu32 code, hu32 id)
 {
-    int judge;
+    int judge, r;
     hu32 lane;
     if (!armed || last_tick < 0) return;
     judge = judge_of_code(code & 0xffffu);
     if (judge < 0) return;
     lane = ((id >> 15) & 1u) * 8u + (id & 7u);
-    holds_head_near(&holds, lane, last_tick, HEAD_WINDOW, (hu32)judge);
+    r = holds_head_near(&holds, lane, last_tick, HEAD_WINDOW, (hu32)judge);
+    /* a hit that names no pending hold on its lane: the hold whose key is down (chords where the
+     * report's lane is not the head's) */
+    if (r < 0 && judge <= J_GOOD) {
+        r = holds_head_keyed(&holds, H_KEYS(0) | H_KEYS(1) << 8, last_tick, HEAD_WINDOW, (hu32)judge);
+        if (r >= 0) r |= 0x100;
+    }
+    dbg_report(code, id, r);
 }
 
 static void apply(const hold_event *e)

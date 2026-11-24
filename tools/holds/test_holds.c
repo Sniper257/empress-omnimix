@@ -44,6 +44,11 @@ int main(void)
     hold_def bss = {10, 40, 7, HOLD_BSS, 0};
     hold_def hbss = {10, 40, 7, HOLD_HBSS, 4 * HOLDS_FP};
 
+    /* keyed fallback: the pending key hold whose key is down; BSS and keys that are up never match */
+    setup(&cn, 0); CHECK(holds_head_keyed(&H, 0, 12, 15, J_GREAT) == -1); CHECK(holds_head_keyed(&H, 2, 12, 15, J_GREAT) == -1);
+    CHECK(holds_head_keyed(&H, 1, 12, 15, J_GREAT) == 0 && holds_lane_held(&H, 0));
+    setup(&bss, 0); CHECK(holds_head_keyed(&H, 0x80, 12, 15, J_GREAT) == -1);
+
     /* release_grace: a short up right after the head is no release; a real release is timed from its first up tick */
     { holds_cfg c = CFG; c.release_grace = 3;
       setup(&hcn, &c); holds_head(&H, 0, 10, J_GREAT, 10); release_at = 40; run(10, 50, lag_then_hold);
