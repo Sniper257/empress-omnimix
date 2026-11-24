@@ -47,8 +47,11 @@ def tick(ms):
     return t
 
 
-def empress_events(events, holds=()):
-    """Arcade events (ms) -> EMPRESS ply bytes (header, events, terminator, optional hold trailer)."""
+def empress_events(events, holds=(), keysounds=False):
+    """Arcade events (ms) -> EMPRESS ply bytes (header, events, terminator, optional hold trailer).
+
+    keysounds=False: type 2/3 values become 0 (no sound; the stream carries everything).
+    keysounds=True: the events already hold bank slots (keysound_bank.remap) and are kept."""
     out = []
     warnings = set()
     end = 0
@@ -58,7 +61,9 @@ def empress_events(events, holds=()):
         if kind in (0, 1):
             out.append((k, kind | (param & 15) << 4, 0, 0))            # hold length lives in the trailer
         elif kind in (2, 3):
-            out.append((k, kind | (param & 15) << 4, 0, 0))            # keysound slot 0 until banks exist
+            if keysounds and not 0 <= value <= 0x800:
+                raise ValueError('keysound slot %d outside the bank' % value)
+            out.append((k, kind | (param & 15) << 4, 0, value if keysounds else 0))
         elif kind == 4:
             bpm = round(value / param) if param else value
             if not 1 <= bpm <= 4095:
@@ -118,15 +123,18 @@ def load_song(path):
     return A.read_charts(one), keys, sid
 
 
-def render(events, keys, rate=44100):
-    """Mix every keysound the chart plays (BGM and note sounds, as in autoplay). Needs numpy."""
+def render(events, keys, rate=44100, bgm_only=False, peak=None):
+    """Mix the keysounds the chart plays: BGM and note sounds as in autoplay, or BGM only. Needs numpy.
+
+    peak: scale as if the mix peaked here (pass the full autoplay peak for a BGM-only stream, so the
+    BGM keeps its level against the bank's note sounds)."""
     import numpy as np
     current = {}
     plays = []
     for t, kind, param, value in sorted(events):
         if kind in (2, 3):
             current[(kind - 2, param)] = value
-        elif kind in (0, 1):
+        elif kind in (0, 1) and not bgm_only:
             s = current.get((kind, param), 0)
             if s:
                 plays.append((t, s))
@@ -150,10 +158,23 @@ def render(events, keys, rate=44100):
         if s in cache:
             at = t * rate // 1000
             mix[:, at:at + cache[s].shape[1]] += cache[s]
-    peak = int(np.abs(mix).max()) if length else 0
+    own = int(np.abs(mix).max()) if length else 0
+    peak = max(own, peak or 0)
     if peak > 32767:                      # keep the mix's own balance; scale down instead of clipping
         mix = mix * 32767 // peak
     return rate, [mix[0].astype(np.int16).tolist(), mix[1].astype(np.int16).tolist()], {'keysounds_played': len(plays), 'peak': peak}
+
+
+def write_samples(out, name, bank):
+    """<CHART>.samples.bin (plain SPU ADPCM, 16-byte aligned) and <CHART>.samples.json (slot table)."""
+    blob = bytearray()
+    rows = []
+    for row in bank['samples']:
+        rows.append({'slot': row['slot'], 'keysound': row['keysound'], 'rate': row['rate'],
+                     'samples': row['count'], 'offset': len(blob), 'size': len(row['adpcm'])})
+        blob += row['adpcm']
+    (out / (name + '.samples.bin')).write_bytes(bytes(blob))
+    (out / (name + '.samples.json')).write_text(json.dumps({'rate': bank['rate'], 'bytes': len(blob), 'slots': rows}, indent=1) + '\n')
 
 
 HCN_FLAG = 13  # .1 event type: this chart's holds are HCN/HBSS
@@ -169,6 +190,10 @@ def main(argv=None):
     p.add_argument('output', type=Path)
     p.add_argument('--stream', metavar='CHART', help='render the backing stream from this chart (e.g. SPA)')
     p.add_argument('--hell', action='store_true', help='treat holds as HCN/HBSS even without the type-13 HCN event')
+    p.add_argument('--split', action='store_true', help='player keysounds to per-chart sample sets, BGM-only stream '
+                   '(the EMPRESS bank container is not written yet: see keysound_bank.py)')
+    p.add_argument('--bank-budget', type=int, default=1 << 20, metavar='BYTES',
+                   help='ADPCM bytes allowed per chart (default 1 MiB, a placeholder until a real bank is measured)')
     a = p.parse_args(argv)
     charts, keys, sid = load_song(a.song)
     a.output.mkdir(parents=True, exist_ok=True)
@@ -177,21 +202,32 @@ def main(argv=None):
         name = SLOTS.get(slot, 'slot%d' % slot)
         hell = a.hell or is_hell(events)
         holds = H.from_events(events, hell=hell, time=tick, ticks_per_ms=1000 / CLOCK)
-        ply, warnings = empress_events(events, holds)
+        bank = None
+        if a.split:
+            import keysound_bank as KB
+            peak = render(events, keys)[2]['peak']
+            bank = KB.build(events, keys, a.bank_budget, gain=min(1.0, 32767 / peak) if peak else 1.0)
+            events = KB.remap(events, bank['slots'])
+            write_samples(a.output, name, bank)
+        ply, warnings = empress_events(events, holds, keysounds=bool(bank))
         (a.output / (name + '.bin')).write_bytes(encrypt(ply))
         notes = sum(1 for e in events if e[1] in (0, 1))
         bpms = sorted({round(e[3] / e[2], 2) if e[2] else e[3] for e in events if e[1] == 4})
         report['charts'][name] = {'notes': notes, 'holds': len(holds), 'hcn': hell, 'total': notes + len(holds),
                                   'bpm': [bpms[0], bpms[-1]] if bpms else None, 'warnings': warnings}
+        if bank:
+            report['charts'][name]['keysounds'] = {'sounds': len(bank['samples']), 'rate': bank['rate'], 'bytes': bank['bytes'],
+                                                     'gain': round(bank['gain'], 4)}
         print('%s: %d notes, %d %s%s' % (name, notes, len(holds), 'HCN' if hell else 'holds', (' (' + '; '.join(warnings) + ')') if warnings else ''))
     if a.stream:
         slot = next((s for s, n in SLOTS.items() if n == a.stream.upper()), None)
         if slot not in charts:
             raise SystemExit('No %s chart in this song' % a.stream)
         import spu_adpcm as S
-        rate, channels, info = render(charts[slot], keys)
+        full = render(charts[slot], keys)[2]['peak'] if a.split else None
+        rate, channels, info = render(charts[slot], keys, bgm_only=a.split, peak=full)
         (a.output / 'stream.bin').write_bytes(S.stream(channels, rate))
-        report['stream'] = dict(info, chart=a.stream.upper(), seconds=round(len(channels[0]) / rate, 2))
+        report['stream'] = dict(info, chart=a.stream.upper(), seconds=round(len(channels[0]) / rate, 2), bgm_only=a.split)
         print('stream: %.1f s from %s, %d keysounds' % (len(channels[0]) / rate, a.stream.upper(), info['keysounds_played']))
     (a.output / 'convert.json').write_text(json.dumps(report, indent=1) + '\n', encoding='utf-8')
 

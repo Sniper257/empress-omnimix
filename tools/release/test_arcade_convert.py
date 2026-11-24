@@ -90,6 +90,21 @@ class Chart(unittest.TestCase):
         self.assertEqual([e for e in ev if e[1] & 15 == 0], [(60, 2 << 4, 0, 0)])   # the head stays a plain note
         self.assertEqual(holds[0][:4], (60, 90, 2, H.HCN))
 
+    def test_keysound_slots_and_bgm_only(self):
+        import keysound_bank as KB
+        ev = [(0, 2, 1, 7), (0, 2, 3, 9), (500, 0, 1, 0), (900, 2, 1, 9), (1000, 0, 1, 0), (0, 7, 0, 5)]
+        self.assertEqual(KB.player_sounds(ev), [7, 9])
+        slots = KB.slot_map(KB.player_sounds(ev))
+        self.assertEqual(slots, {7: 1, 9: 2})
+        ply, _ = C.empress_events(KB.remap(ev, slots), [], keysounds=True)
+        _, out, _ = parse(ply)
+        self.assertEqual(sorted(e[3] for e in out if e[1] & 15 == 2), [1, 2, 2])
+        ply, _ = C.empress_events(ev, [])
+        self.assertEqual({e[3] for e in parse(ply)[1] if e[1] & 15 == 2}, {0})
+        self.assertEqual(KB.choose_rate([(44100, 44100)], 16 * 1200)[0], 32000)
+        self.assertEqual(KB.adpcm_size(28), 16)
+        self.assertEqual(KB.adpcm_size(29), 32)
+
     def test_hcn_flag_event(self):
         # 18102 Kailua (HCN Ver.) = 18021's notes plus (0, 13, 0, 0) in every chart
         plain = [(0, 4, 1, 146), (1000, 0, 2, 500), (2000, 6, 0, 0)]
