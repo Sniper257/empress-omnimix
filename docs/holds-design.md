@@ -265,3 +265,33 @@ argb8888rev). Checked on the user's files:
 - `lnote00.ifs` (176 images): key-press flashes `lnote00_lo_{siro,ao,scr}` (13 frames),
   `_push` held loops (12 frames), `2_push` HCN held loops (25 frames), `notes_break_` (26 frames,
   the broken-HCN shards). Black backgrounds: drawn additively.
+
+## Drawing holds in EMPRESS
+
+### What the game does (FUN_001e6f50, per note per frame; disassembly dump 2)
+
+- Note sprite category `s0` (0..10) comes from the lane (jump table 0x280f30) and the side/style flags.
+- Scroll: the note's s64 position at +0x10 is reduced each frame by the speed entry
+  `0x7ad0f0 + side * 0x408 + 16 * index`; y = f(position) is stored at +0x1c (s16), x is at +0x1a.
+- Draw, at 0x1e757c: `0x12fdd0(a0 handle, a1 x, a2 y, a3 100, t0 100 (zoomY), t1 w / 2, t2 h / 2,
+  t3 100, stack: 0, 0, 0x25f2b0 + side * 8, 0x10)`. Handle, w and h come from the table
+  `0x7ad9f0 + 8 * s0` (u32 handle = container << 16 | sprite, s16 w, s16 h).
+- The runtime already hooks that call (songdb.S `note_hook`) for note skins and note height:
+  note sprites are in containers #109 (SP) and #146 (wide), handle tables 0x25f330 / 0x25f360
+  (white, black, turntable, auto). The launcher appends skin sprites to those containers
+  (`note_skin_build`, `cont_add`) from 8-bit SPR1 files.
+
+### Plan
+
+1. Sprites: `tools/holds/hold_sprites.py` makes 36 SPR1 sprites (CN, HCN, BSS, HBSS caps and
+   body states) at EMPRESS size: 16 / 12 / 28 px wide (white / blue / turntable; measured on a
+   capture), 6-row caps, one body tile each. The launcher appends them to #109 and #146 the same way
+   as note skins and records their handles for the runtime.
+2. Tail position: the tail is put in the chart as a note that is never judged (+0xb = 0), so the
+   game scrolls and positions it exactly like any other note; the hold module keeps the pairing.
+   To find: which chart event value makes the spawner leave +0xb at 0 (spawner 0x1e7720).
+3. Drawing: in `note_hook`, for a hold head or tail note, record its y per lane; after the notes are
+   drawn, draw each active hold's body with `0x12fdd0` (body handle, lane x, y from the tail down
+   to the head, or to the judge line once the head is hit; zoomY = length / tile height * 100),
+   then the caps. The body state comes from holds.c: beam0 not held, beam1/2 held (alternating),
+   beam3/4 HCN released or broken.
