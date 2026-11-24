@@ -151,6 +151,24 @@ int main(void)
         for (tt = 380; tt < 400; tt++) holds_frame_hook(tt);
         CHECK(logged(8, 3) == 1 && logged(0xa, 3) == 0 && logged(0xf, 3) == 0);
     }
+    /* a finished hold's tail is retired per tick even when the drawer no longer sees it */
+    {
+        static hu8 tn[0x20] __attribute__((aligned(4)));
+        static const hold_def one[1] = {{300, 360, 4, HOLD_CN, 0}};
+        long long tt;
+        holds_set_chart(one, 1);
+        keys[0] = keys[1] = 0;
+        for (tt = 0; tt < 250; tt++) holds_frame_hook(tt);
+        make_note(tn, 0, 4, 360); holds_spawn_hook(tn);
+        CHECK(tn[0xb] == 0 && tn[9] == 4);
+        holds_on_judgement(0xa, 4);
+        keys[0] = 1u << 4;
+        for (tt = 250; tt < 360; tt++) holds_frame_hook(tt);
+        CHECK(tn[9] == 4);                                              /* held: still live */
+        keys[0] = 0;
+        for (tt = 360; tt < 366; tt++) holds_frame_hook(tt);
+        CHECK(tn[9] == (0x40 | 4));                                     /* released on time: retired */
+    }
     /* a hit the game never reports: the head note stops being drawn while its key is down */
     {
         static hu8 n[0x20] __attribute__((aligned(4)));
