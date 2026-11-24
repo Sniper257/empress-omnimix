@@ -38,8 +38,8 @@ int main(void)
     long long t;
     holds_set_chart(chart, 2);
     for (t = 0; t < 100; t++) holds_frame_hook(t);
-    /* the game judges the P2 head 1 tick late (GREAT, code 5); key held until the end */
-    holds_on_judgement(5, 1u << 15 | 2);
+    /* the game judges the P2 head 1 tick late; key held until the end */
+    holds_on_judgement(7, 1u << 15 | 2);   /* slow GOOD: still a hit */
     keys[1] = 1u << 2;
     for (t = 100; t < 161; t++) holds_frame_hook(t);
     keys[1] = 0;

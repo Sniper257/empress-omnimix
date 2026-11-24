@@ -67,7 +67,7 @@ extern unsigned long long fs_ring_body(FS_ARGS);
 #endif
 
 #define CODE_PGREAT 4u
-#define CODE_BAD 7u
+#define CODE_BAD 8u
 #define CODE_POOR_USED 9u
 #define CODE_EMPTY_POOR 0xbu
 #define CODE_MISS 0xfu
@@ -161,7 +161,11 @@ static hu32 lane_id(hu32 lane) { return (lane >> 3) << 15 | (lane & 7); }
 
 static int judge_of_code(hu32 code)
 {
-    if (code >= 4 && code <= 8) return (int)(code - 4);          /* PGREAT..POOR */
+    /* ring codes (fast_slow.c fs_band): 4 PGREAT, 5 GOOD (fast), 6 GREAT, 7 GOOD (slow), 8 BAD */
+    if (code == 4) return J_PGREAT;
+    if (code == 6) return J_GREAT;
+    if (code == 5 || code == 7) return J_GOOD;
+    if (code == 8) return J_BAD;
     if (code == CODE_POOR_USED || code == 0xe || code == CODE_MISS) return J_POOR;
     return -1;                                                     /* empty POOR and others: not a head */
 }
