@@ -287,9 +287,11 @@ argb8888rev). Checked on the user's files:
    body states) at EMPRESS size: 16 / 12 / 28 px wide (white / blue / turntable; measured on a
    capture), caps at the arcade aspect (about 2x a normal note: 16x10, 12x9, 28x10 rows), one body tile each. The launcher appends them to #109 and #146 the same way
    as note skins and records their handles for the runtime.
-2. Tail position: the tail is put in the chart as a note that is never judged (+0xb = 0), so the
-   game scrolls and positions it exactly like any other note; the hold module keeps the pairing.
-   To find: which chart event value makes the spawner leave +0xb at 0 (spawner 0x1e7720).
+2. Tail position (done): `arcade_convert.py` writes a note at each hold's end tick, and
+   `holds_spawn_hook` (HOLDS runtime, replaces the spawner's `jal 0x1ebf90` at 0x1e7d14) clears its
+   +0xb, so the game scrolls and draws it like any note but never judges it. No chart value does
+   this: the spawner sets +0xb = 1 except for turntable notes under assisted auto-scratch (gp-0x77b4).
+   The frame hook now notices a restart before the native tick, which spawns the play's first notes.
 3. Drawing: in `note_hook`, for a hold head or tail note, record its y per lane; after the notes are
    drawn, draw each active hold's body with `0x12fdd0` (body handle, lane x, y from the tail down
    to the head, or to the judge line once the head is hit; zoomY = length / tile height * 100),

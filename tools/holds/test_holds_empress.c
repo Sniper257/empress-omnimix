@@ -6,6 +6,7 @@
 void holds_set_chart(const hold_def *defs, hu32 n);
 void holds_on_judgement(hu32 code, hu32 id);
 void holds_frame_hook(long long tick);
+void holds_spawn_hook(hu8 *note);
 
 static int failures;
 #define CHECK(c) do { if (!(c)) { printf("FAIL %s:%d %s\n", __FILE__, __LINE__, #c); failures++; } } while (0)
@@ -15,6 +16,9 @@ static hu32 keys[2];
 unsigned long long test_ring_body(hu32 code, hu32 lane) { if (nring < 64) { ring_code[nring] = code; ring_lane[nring++] = lane; } return 0; }
 hu32 test_keys(hu32 side) { return keys[side]; }
 hu32 test_turntable(hu32 side) { (void)side; return 0; }
+static int spawned;
+void test_native_spawn(hu8 *note) { (void)note; spawned++; }
+static void make_note(hu8 *n, hu32 side, hu32 lane, short t) { hu32 i; for (i = 0; i < 0x20; i++) n[i] = 0; n[9] = (hu8)lane; n[0xa] = (hu8)side; n[0xb] = 1; *(short *)(n + 0x18) = t; }
 hu32 test_chart_cursor(void) { return 0; }   /* no chart in host memory: holds_set_chart provides the records */
 static int logged(hu32 code, hu32 lane) { hu32 i; int n = 0; for (i = 0; i < nring; i++) n += ring_code[i] == code && ring_lane[i] == lane; return n; }
 
@@ -54,6 +58,15 @@ int main(void)
     keys[1] = 0;
     for (t = 150; t < 170; t++) holds_frame_hook(t);
     CHECK(logged(0xf, 1u << 15 | 2) == 1);       /* released 10 ticks early: missed POOR */
+    /* spawn hook: the note at a hold's end tick on its lane is never judged; others are untouched */
+    {
+        static hu8 n[0x20] __attribute__((aligned(4)));
+        make_note(n, 1, 2, 160);  holds_spawn_hook(n); CHECK(n[0xb] == 0);   /* P2 lane 3 CN tail */
+        make_note(n, 1, 2, 100);  holds_spawn_hook(n); CHECK(n[0xb] == 1);   /* its head */
+        make_note(n, 0, 2, 160);  holds_spawn_hook(n); CHECK(n[0xb] == 1);   /* same tick, other side */
+        make_note(n, 0, 0, 230);  holds_spawn_hook(n); CHECK(n[0xb] == 0);   /* P1 lane 1 HCN tail */
+        CHECK(spawned == 4);                                                 /* the game's spawn always runs */
+    }
     if (failures) { printf("%d failures\n", failures); return 1; }
     printf("holds_empress: all tests passed\n");
     return 0;

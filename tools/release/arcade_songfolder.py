@@ -45,14 +45,17 @@ def ply_counts(raw):
     if not c:
         raise ValueError('not an EMPRESS chart')
     side = [0, 0]
+    notes = set()
     for t, cmd, c2, v in c['events']:
         if cmd & 15 in (0, 1):
             side[cmd & 15] += 1
+            notes.add((t, (cmd & 15) * 8 + (cmd >> 4)))
     ply = decode_lz(crypt(raw, 'empress', True))
     end = 8 + 8 * len(c['events']) + 8
     if ply[end:end + 4] == H.MAGIC:
         for s, e, lane, kind, tick in H.unpack(ply[end:]):
-            side[lane >> 3] += 1
+            if (e, lane) not in notes:              # charts from before tail notes: count the tail here
+                side[lane >> 3] += 1
     return side
 
 

@@ -87,8 +87,12 @@ class Chart(unittest.TestCase):
         ply, _ = C.empress_events(events, holds)
         _, ev, rest = parse(ply)
         self.assertEqual(H.unpack(rest), holds)
-        self.assertEqual([e for e in ev if e[1] & 15 == 0], [(60, 2 << 4, 0, 0)])   # the head stays a plain note
+        self.assertEqual([e for e in ev if e[1] & 15 == 0], [(60, 2 << 4, 0, 0), (90, 2 << 4, 0, 0)])   # head + tail note
         self.assertEqual(holds[0][:4], (60, 90, 2, H.HCN))
+        _, out, _ = parse(ply)
+        self.assertIn((90, 0x20, 0, 0), out)                    # the tail note, P1 lane 2
+        ply, _ = C.empress_events(events, holds, tail_notes=False)
+        self.assertNotIn((90, 0x20, 0, 0), parse(ply)[1])
 
     def test_keysound_slots_and_bgm_only(self):
         import keysound_bank as KB

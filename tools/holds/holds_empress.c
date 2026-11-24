@@ -35,6 +35,8 @@ extern hu32 test_turntable(hu32 side);
 #define H_KEYS(side) test_keys(side)
 #define H_TT(side) test_turntable(side)
 #define H_NATIVE_TICK(tick) ((void)(tick))
+extern void test_native_spawn(hu8 *note);
+#define H_NATIVE_SPAWN(note) test_native_spawn(note)
 #else
 static hu32 h_gp(void) { hu32 g; __asm__ volatile("move %0, $28" : "=r"(g)); return g; }
 /* chart event cursor of the spawner (0x1e9790 reads gp-0x77dc): an address inside the decoded chart */
@@ -47,6 +49,7 @@ extern unsigned long long fs_ring_body(FS_ARGS);
 #define H_KEYS(side) (*(volatile hu32 *)(unsigned long)(0x724cf0 + (side) * 0x1c0) & 0x7fu)
 #define H_TT(side) (((hu32 (*)(hu32))0x13acd0)(side) & 0xffu)
 #define H_NATIVE_TICK(tick) (((void (*)(long long))0x1e6bb0)(tick))
+#define H_NATIVE_SPAWN(note) (((void (*)(hu8 *))0x1ebf90)(note))
 #endif
 
 #define CODE_PGREAT 4u
@@ -90,6 +93,34 @@ void holds_set_chart(const hold_def *defs, hu32 n)
     chart_defs = defs;
     chart_n = n;
     armed = 0;
+}
+
+static void arm(void)
+{
+    hu32 n = 0;
+    const hold_def *found = holds_in_chart(H_CHART_CURSOR(), &n);
+    if (found) { chart_defs = found; chart_n = n; }
+    armed = chart_n && holds_reset(&holds, chart_defs, chart_n, &default_cfg) == 0;
+}
+
+/* Replaces the spawner's jal 0x1ebf90(note) at 0x1e7d14. The note's time (+0x18, ticks), lane (+9)
+ * and side (+0xa) are set and +0xb (must judge) has just been decided. A note at a hold's end tick
+ * on its lane is the hold's tail (arcade_convert.py writes one per hold): never judged by the game,
+ * only scrolled and drawn, so the renderer knows where the tail is. */
+void holds_spawn_hook(hu8 *note)
+{
+    hu32 i, lane;
+    hs32 t;
+    if (!armed) arm();
+    if (armed && note[9] < 8 && note[0xa] < 2) {
+        t = *(const short *)(note + 0x18);
+        lane = note[0xa] * 8u + note[9];
+        for (i = 0; i < chart_n; i++) {
+            if (chart_defs[i].end == t && chart_defs[i].lane == lane) { note[0xb] = 0; break; }
+            LOOP_PAD();
+        }
+    }
+    H_NATIVE_SPAWN(note);
 }
 
 static hu32 lane_id(hu32 lane) { return (lane >> 3) << 15 | (lane & 7); }
@@ -144,14 +175,10 @@ void holds_frame_hook(long long tick)
     hold_event ev[16];
     hu32 n, i, keys;
     hs8 tt[2];
+    if ((hs32)tick < last_tick) armed = 0;        /* a new play started (tick counter restarted); before the
+                                                     native tick, which spawns this play's first notes */
     H_NATIVE_TICK(tick);
-    if ((hs32)tick < last_tick) armed = 0;        /* a new play started (tick counter restarted) */
-    if (!armed && tick < 600) {                   /* the cursor is set once the chart is loaded */
-        hu32 n = 0;
-        const hold_def *found = holds_in_chart(H_CHART_CURSOR(), &n);
-        if (found) { chart_defs = found; chart_n = n; }
-        armed = chart_n && holds_reset(&holds, chart_defs, chart_n, &default_cfg) == 0;
-    }
+    if (!armed && tick < 600) arm();              /* the cursor is set once the chart is loaded */
     last_tick = (hs32)tick;
     if (!armed) return;
     keys = H_KEYS(0) | H_KEYS(1) << 8;

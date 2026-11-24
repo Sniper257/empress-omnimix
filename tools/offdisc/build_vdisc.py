@@ -650,6 +650,9 @@ def main():
         # per-tick hold rules after the native note update; delay slot (ld a0 tick) unchanged
         assert word(0x1e5cb8)==JAL(0x1e6bb0),(hex(word(0x1e5cb8)),)
         lines.append('W %x %08x %08x' % (0x1e5cb8,word(0x1e5cb8),JAL(syms['holds_frame_entry'])))
+        # spawner: hold tail notes never judged (holds_spawn_hook); delay slot (move a0, s2) unchanged
+        assert word(0x1e7d14)==JAL(0x1ebf90),(hex(word(0x1e7d14)),)
+        lines.append('W %x %08x %08x' % (0x1e7d14,word(0x1e7d14),JAL(syms['holds_spawn_entry'])))
     for va,sym in [(0x1fbd24,'fs_ghost_hook'),(0x1f6900,'fs_counts_single_hook'),(0x1f6c34,'fs_counts_battle_hook')]:
         assert word(va)==JAL(0x1e1730)
         lines.append('W %x %08x %08x' % (va,word(va),JAL(syms[sym])))

@@ -47,8 +47,12 @@ def tick(ms):
     return t
 
 
-def empress_events(events, holds=(), keysounds=False, bgm_slots=False):
+def empress_events(events, holds=(), keysounds=False, bgm_slots=False, tail_notes=True):
     """Arcade events (ms) -> EMPRESS ply bytes (header, events, terminator, optional hold trailer).
+
+    tail_notes=True: every hold also gets a note at its end tick, same lane. The game scrolls and
+    draws it like any note; the HOLDS runtime (holds_spawn_hook) makes it never judged, so the hold
+    renderer knows where the tail is on screen. Without a HOLDS runtime it would be a normal note.
 
     keysounds=False: type 2/3 values become 0 (no sound; the stream carries everything).
     keysounds=True: the events already hold bank slots (keysound_bank.remap) and are kept.
@@ -96,6 +100,9 @@ def empress_events(events, holds=(), keysounds=False, bgm_slots=False):
             warnings.add('dropped event type %d' % kind)
     if not started and not bgm_slots:
         out.append((0, 7, 0, 1))
+    if tail_notes:
+        for start, stop, lane, kind, tick64 in holds:
+            out.append((stop, (lane >> 3) | (lane & 7) << 4, 0, 0))
     end = max([end] + [e[0] for e in out]) + 1
     out.append((end, 6, 0, 0))
     out.sort(key=lambda e: (e[0], e[1] & 15 == 6))

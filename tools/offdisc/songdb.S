@@ -1599,6 +1599,7 @@ input_snapshot_hook:
 #ifdef HOLDS
         # replaces jal 0x1e6bb0(tick) at 0x1e5cb8; a0 = tick (the delay slot's ld)
         ASSET_HOOK holds_frame_entry, holds_frame_hook
+        ASSET_HOOK holds_spawn_entry, holds_spawn_hook
 #endif
         ASSET_HOOK fs_play_hook, fs_play
         GSM_BODY fs_ghost_body,0x27bdfe10,0xffbf00a0,0x1fb958
