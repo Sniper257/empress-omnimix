@@ -44,24 +44,24 @@ int main(void)
     for (t = 100; t < 161; t++) holds_frame_hook(t);
     keys[1] = 0;
     for (t = 161; t < 200; t++) holds_frame_hook(t);
-    CHECK(logged(4, 1u << 15 | 2) == 1);          /* tail PGREAT logged on P2 lane 3 */
+    CHECK(logged(0xa, 1u << 15 | 2) == 1);        /* tail PGREAT (code 0xa) logged on P2 lane 3 */
     /* HCN head missed (code 0xf at its tick): an empty POOR at once, then one per 16th */
     nring = 0;
     holds_frame_hook(200);
     holds_on_judgement(0xf, 0);
     for (t = 201; t < 240; t++) holds_frame_hook(t);
     CHECK(logged(0xb, 0) == 5);                   /* empty POORs at 200 (release), 206, 212, 218, 224 */
-    CHECK(logged(0xf, 0) == 0 && logged(4, 0) == 0);  /* the game's own miss is the real POOR; end adds nothing */
+    CHECK(logged(0xf, 0) == 0 && logged(0xa, 0) == 0);  /* the game's own miss is the real POOR; end adds nothing */
     /* empty POORs and judgements far from any hold are ignored */
     nring = 0;
     holds_on_judgement(0xb, 0);
-    holds_on_judgement(4, 3);
+    holds_on_judgement(0xa, 3);
     CHECK(nring == 0);
     /* a restart (tick counter back to 0) re-arms the chart */
     nring = 0;
     holds_frame_hook(0);
     for (t = 1; t < 100; t++) holds_frame_hook(t);
-    holds_on_judgement(4, 1u << 15 | 2);
+    holds_on_judgement(0xa, 1u << 15 | 2);   /* a PGREAT head */
     keys[1] = 1u << 2;
     for (t = 100; t < 150; t++) holds_frame_hook(t);
     keys[1] = 0;
@@ -109,7 +109,7 @@ int main(void)
         CHECK(holds_note_hook(n, 146u << 16 | 601, 80, 200, 0, 0) == 0);
         /* head hit and held, both notes gone: the frame pass draws body + start cap on the judge line */
         for (tt = 250; tt <= 300; tt++) holds_frame_hook(tt);
-        holds_on_judgement(4, 2);
+        holds_on_judgement(0xa, 2);
         keys[0] = 1u << 2;
         for (tt = 301; tt < 305; tt++) holds_frame_hook(tt);
         ndraw = 0;
@@ -171,7 +171,7 @@ int main(void)
         for (tt = 400; tt < 420; tt++) holds_frame_hook(tt);
         for (i = 0; i < nring; i++) if (ring_code[i] == 0xf || ring_code[i] == 0xb) bad++;
         CHECK(bad == 0);
-        CHECK(nring >= 1 && ring_code[nring - 1] == 4);                    /* PGREAT at the end */
+        CHECK(nring >= 1 && ring_code[nring - 1] == 0xa);                    /* PGREAT at the end */
     }
     if (failures) { printf("%d failures\n", failures); return 1; }
     printf("holds_empress: all tests passed\n");
