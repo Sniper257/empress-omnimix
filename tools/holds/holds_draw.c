@@ -158,10 +158,10 @@ int holds_note_hook(hu8 *note, hu32 handle, hs32 x, hs32 y, hu32 side, hu32 clip
         y -= (d->end - t) * hd_ppt[side & 1] / 256;
         /* the tail note is never judged, so the game keeps it (at or below the line) for up to 60
          * ticks after its time: once the hold has ended, nothing more is drawn for it */
+        hd_tail_at[lane] = hd_now;                              /* on screen: the frame pass leaves it alone */
         if (hd_now > d->end || y > judge) return 1;
         head_seen = hd_head_at[lane] >= hd_now - 1;
         hs32 bottom = head_seen ? hd_head_y[lane] : judge;
-        hd_tail_at[lane] = hd_now;
         if (bottom > judge) bottom = judge;
         hd_body(body, kind, x, HD_BASE(y) + hd_cap_h[kind], HD_BASE(bottom) - hd_cap_h[kind], clip);
         if (!head_seen && holds.state[i] != HS_PENDING && y < judge)
@@ -185,6 +185,8 @@ static void hd_frame(void)
         if (i < 0 || hd_x[lane] < 0 || !hd_cont[side]) continue;
         if (holds.state[i] != HS_HOLDING && holds.state[i] != HS_LOOSE) continue;
         if (hd_head_at[lane] >= hd_now || hd_tail_at[lane] >= hd_now) continue;   /* drawn with its notes */
+        if (hd_now >= chart_defs[i].end - HOLDS_TAIL_SHIFT) continue;   /* the end is at the line: nothing above it to
+                                                                          draw while the release is judged */
         if (!(last = hd_last(hd_cont[side]))) continue;
         group = hd_group(&chart_defs[i], lane, &kind);
         judge = HD_JUDGE_Y - HD_LIFT(side);

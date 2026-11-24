@@ -119,8 +119,17 @@ int main(void)
         gains = 0;
         for (tt = 306; tt < 340; tt++) holds_frame_hook(tt);
         CHECK(gains >= 4);                                              /* HCN held: gauge gain every 16th */
+        /* the tail at the line while the release is still being judged: nothing fills the lane */
+        for (tt = 340; tt < 399; tt++) holds_frame_hook(tt);
+        ndraw = 0;
+        make_note(n, 0, 2, 400); holds_note_hook(n, 109u << 16 | 601, 80, 0x142, 0, 0);
+        holds_frame_hook(399);
+        CHECK(ndraw == 0);
+        ndraw = 0;
+        holds_frame_hook(400);                       /* tail note not drawn this frame: still nothing */
+        CHECK(ndraw == 0);
         /* after the end, the leftover tail note draws nothing (and is not drawn natively) */
-        for (tt = 340; tt < 410; tt++) holds_frame_hook(tt);
+        for (tt = 401; tt < 410; tt++) holds_frame_hook(tt);
         make_note(n, 0, 2, 400); ndraw = 0;
         CHECK(holds_note_hook(n, 109u << 16 | 601, 80, 0x140, 0, 0) == 1 && ndraw == 0);
         keys[0] = 0;
