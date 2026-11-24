@@ -206,6 +206,9 @@ def main(argv=None):
     p.add_argument('song', type=Path, help='<id>.ifs, or a folder holding <id>.1 and <id>.2dx')
     p.add_argument('output', type=Path)
     p.add_argument('--stream', metavar='CHART', help='render the backing stream from this chart (e.g. SPA)')
+    p.add_argument('--bank-budget', type=int, default=11859552,
+                   help='largest bank in bytes (default: the 11.9 MB Kailua bank known to load in PCSX2; '
+                        'Elisha at 16 MB crashed); the longest sounds go to 32 or 24 kHz to fit. 0 = no limit')
     p.add_argument('--hell', action='store_true', help='treat holds as HCN/HBSS even without the type-13 HCN event')
     p.add_argument('--split', action='store_true',
                    help='keysounds to SP.bank / DP.bank (EMPRESS "wp" banks). Alone: every sound, BGM included, '
@@ -228,7 +231,7 @@ def main(argv=None):
             sounds = KB.player_sounds(*(charts[s] for s in members))
             if not a.stream:
                 sounds += [v for v in KB.bgm_sounds(*(charts[s] for s in members)) if v not in set(sounds)]
-            data, slots, info = KB.build(side, sounds, keys, gain)
+            data, slots, info = KB.build(side, sounds, keys, gain, a.bank_budget or None)
             (a.output / (side + '.bank')).write_bytes(data)
             banks.update({s: slots for s in members})
             report.setdefault('banks', {})[side] = info

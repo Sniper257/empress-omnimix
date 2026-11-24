@@ -39,6 +39,8 @@ END_FRAME = bytes([0, 7]) + b'\x77' * 14
 SLOT_TAIL = 76
 SILENCE = 64            # |sample| at or below this after the last loud sample is trimmed
 LARGEST_SEEN = 6121248  # the largest real EMPRESS bank listed so far (All My Turn, DP)
+LARGEST_LOADED = 11859552  # the largest converted bank seen to load in PCSX2 (Kailua, with the 0xbd flag);
+                           # Elisha's 16 MB banks crashed on load
 
 
 class FormatError(ValueError):
@@ -93,6 +95,12 @@ def resample(samples, src, dst):
     import numpy as np
     if src == dst or samples.shape[-1] == 0:
         return samples
+    if dst < src:                                  # low-pass below the new Nyquist first (windowed sinc)
+        taps = 63
+        k = np.arange(taps) - (taps - 1) / 2
+        h = np.sinc(k * 0.9 * dst / src) * np.hamming(taps)
+        h /= h.sum()
+        samples = np.vstack([np.convolve(c.astype(np.float64), h, mode='same') for c in samples])
     n = max(1, int(round(samples.shape[-1] * dst / src)))
     x = np.arange(n) * (src / dst)
     idx = np.arange(samples.shape[-1])
@@ -104,18 +112,53 @@ def channel_frames(samples):
     return bytes(16) + bytes(S.encode([int(v) for v in samples], S.FLAG_END)) + END_FRAME
 
 
-def build(name, sounds, keys, gain=1.0):
-    """(bank bytes, {arcade keysound: slot}, info) for the given arcade keysound numbers."""
+def adpcm_bytes(n):
+    """Stored size of one stereo sound of n samples per channel."""
+    return 2 * (16 + -(-max(n, 1) // 28) * 16 + 16)
+
+
+def fit_rates(lengths, budget, fixed=0):
+    """{index: rate} for sounds of the given lengths at 44.1 kHz so the total stays within budget:
+    the longest are lowered to 32 kHz first, then (still over) the longest to 24 kHz. Real EMPRESS
+    banks mix these three rates. Indices left out stay at 44.1 kHz."""
+    out = {}
+    size = lambda i: adpcm_bytes(round(lengths[i] * out.get(i, 44100) / 44100))
+    total = fixed + sum(size(i) for i in range(len(lengths)))
+    order = sorted(range(len(lengths)), key=lambda i: -lengths[i])
+    for rate in (32000, 24000):
+        for i in order:
+            if total <= budget:
+                return out
+            before = size(i)
+            out[i] = rate
+            total += size(i) - before
+    return out
+
+
+def build(name, sounds, keys, gain=1.0, budget=None):
+    """(bank bytes, {arcade keysound: slot}, info) for the given arcade keysound numbers.
+    budget: largest bank size in bytes; the longest sounds are stored at 32 or 24 kHz to fit."""
     import numpy as np
     sounds = [s for s in sounds if 0 < s <= len(keys)]
     slots = slot_map(sounds)
     entries, data, table = [], bytearray(), bytearray(TABLE)
     table[:16] = MAGIC + struct.pack('<I', 0x10) + name.encode('ascii')[:8].ljust(8, b'\0')
     rates = {}
+    pcms = []
     for s in sounds:
         rate, pcm = stereo(keys[s - 1]['wav'])
         if rate not in RATE_CODES:
             pcm, rate = resample(pcm, rate, 44100), 44100
+        pcms.append((rate, pcm))
+    lower = {}
+    if budget:                                     # only 44.1 kHz sounds are lowered; others are fixed cost
+        full = [n for n, (r, _) in enumerate(pcms) if r == 44100]
+        fixed = TABLE + 16 + 16 * len(sounds) + sum(adpcm_bytes(p.shape[1]) for r, p in pcms if r != 44100)
+        lower = {full[k]: r for k, r in fit_rates([pcms[n][1].shape[1] for n in full], budget, fixed).items()}
+    for n, s in enumerate(sounds):
+        rate, pcm = pcms[n]
+        if n in lower:
+            pcm, rate = resample(pcm, 44100, lower[n]), lower[n]
         if gain != 1.0:
             pcm = pcm * gain
         pcm = np.clip(np.round(pcm), -32768, 32767).astype(np.int16)
@@ -129,7 +172,9 @@ def build(name, sounds, keys, gain=1.0):
     head = struct.pack('<4I', len(entries), len(data), 1, 0) + b''.join(entries)
     bank = bytes(table) + head + bytes(S.disguise(bytes(data), S.BANK_DELTA))
     info = {'name': name, 'sounds': len(sounds), 'bytes': len(bank), 'rates': rates, 'gain': gain}
-    if len(bank) > LARGEST_SEEN:
+    if budget and len(bank) > budget:
+        info['warning'] = 'over the %d-byte budget even with every sound at 24 kHz' % budget
+    elif len(bank) > LARGEST_SEEN:
         info['warning'] = 'larger than any real EMPRESS bank seen so far (%d bytes)' % LARGEST_SEEN
     return bank, slots, info
 

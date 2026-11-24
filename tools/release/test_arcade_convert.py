@@ -105,6 +105,18 @@ class Chart(unittest.TestCase):
         self.assertEqual(C.tail_tick(60, 90, {89, 90, 91}), 88)
         self.assertEqual(C.tail_tick(89, 90, {90, 91, 92}), 90)       # nothing free after the head: stays
 
+    def test_bank_budget_lowers_the_longest_first(self):
+        import keysound_bank as KB
+        L = [441000, 44100, 441000, 4410]
+        full = sum(KB.adpcm_bytes(n) for n in L)
+        self.assertEqual(KB.fit_rates(L, full), {})
+        r = KB.fit_rates(L, full - 1)
+        self.assertEqual(r, {0: 32000})                                   # one long sound is enough
+        r = KB.fit_rates(L, full // 2)
+        self.assertEqual(r[0], 24000)
+        self.assertEqual(set(r), {0, 1, 2, 3} if len(r) == 4 else set(r))
+        self.assertNotIn(3, KB.fit_rates(L, int(full * 0.75)))         # short sounds stay at 44.1 kHz
+
     def test_keysound_slots_and_bgm_only(self):
         import keysound_bank as KB
         ev = [(0, 2, 1, 7), (0, 2, 3, 9), (500, 0, 1, 0), (900, 2, 1, 9), (1000, 0, 1, 0), (0, 7, 0, 5)]
