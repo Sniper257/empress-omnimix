@@ -90,6 +90,14 @@ class Chart(unittest.TestCase):
         self.assertEqual([e for e in ev if e[1] & 15 == 0], [(60, 2 << 4, 0, 0)])   # the head stays a plain note
         self.assertEqual(holds[0][:4], (60, 90, 2, H.HCN))
 
+    def test_hcn_flag_event(self):
+        # 18102 Kailua (HCN Ver.) = 18021's notes plus (0, 13, 0, 0) in every chart
+        plain = [(0, 4, 1, 146), (1000, 0, 2, 500), (2000, 6, 0, 0)]
+        self.assertFalse(C.is_hell(plain))
+        self.assertTrue(C.is_hell([(0, 13, 0, 0)] + plain))
+        _, warnings = C.empress_events([(0, 13, 0, 0)] + plain, [])
+        self.assertEqual(warnings, [])
+
     def test_fractional_bpm_warns_and_long_chart_fails(self):
         _, warnings = C.empress_events([(0, 4, 100, 15050)])
         self.assertTrue(warnings)

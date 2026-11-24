@@ -96,3 +96,12 @@ and `OUT/convert.json`. Arcade times are ms (the 23069 end event is at
 126000), and they become 60 Hz ticks. The chart's own timing-window
 events (type 8) are kept. The song folder (`record.bin`, `song.txt`, title
 sprites) is the next step.
+
+## HCN Ver. songs (Sparkle Shower omnimix)
+
+`music_omni.bin` (version 32, 2461 songs) lists the HCN versions as separate songs: 17100 Almagest
+(HCN Ver.) and 18102 Kailua (HCN Ver.). The 18102 entry also stores "18021" (the normal Kailua) at
+entry offset 0x7d4. 18102.ifs has the same notes and hold lengths as 18021.ifs; the only chart
+difference is one extra event `(0 ms, type 13, 0, 0)` at the start of every chart. `arcade_convert.py`
+treats a chart with a type-13 event as HCN/HBSS without needing `--hell`, and checks show
+18102 → identical output to 18021 `--hell`.

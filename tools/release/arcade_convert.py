@@ -4,6 +4,9 @@ EMPRESS files. Work in progress: charts and the backing stream; song folder next
 
   python3 arcade_convert.py 23069.ifs OUT [--stream SPA] [--hell]
 
+HCN charts are found by themselves: the HCN Ver. song (e.g. 18102 Kailua (HCN Ver.)) has the
+same notes as the normal song plus one type-13 event at time 0 in every chart.
+
 Writes, per chart present (SPN/SPH/SPA/SPB/SPL, DPN/DPH/DPA/DPB/DPL):
   OUT/<chart>.bin   EMPRESS chart: encrypted chart-LZ (chart_transform 'empress'),
                     with the hold list after the terminator when the chart has holds
@@ -75,7 +78,7 @@ def empress_events(events, holds=()):
             out.append((k, 8 | (param & 15) << 4, value & 0xff, 0))
         elif kind == 12:
             out.append((k, 12 | (param & 15) << 4, 0, 0))
-        elif kind == 16:
+        elif kind in (13, 16):   # 13 HCN flag (carried by the hold trailer), 16 note count
             continue
         else:
             warnings.add('dropped event type %d' % kind)
@@ -153,26 +156,34 @@ def render(events, keys, rate=44100):
     return rate, [mix[0].astype(np.int16).tolist(), mix[1].astype(np.int16).tolist()], {'keysounds_played': len(plays), 'peak': peak}
 
 
+HCN_FLAG = 13  # .1 event type: this chart's holds are HCN/HBSS
+
+
+def is_hell(events):
+    return any(e[1] == HCN_FLAG for e in events)
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument('song', type=Path, help='<id>.ifs, or a folder holding <id>.1 and <id>.2dx')
     p.add_argument('output', type=Path)
     p.add_argument('--stream', metavar='CHART', help='render the backing stream from this chart (e.g. SPA)')
-    p.add_argument('--hell', action='store_true', help='holds are HCN/HBSS (the arcade marks HCN per chart)')
+    p.add_argument('--hell', action='store_true', help='treat holds as HCN/HBSS even without the type-13 HCN event')
     a = p.parse_args(argv)
     charts, keys, sid = load_song(a.song)
     a.output.mkdir(parents=True, exist_ok=True)
     report = {'song': sid, 'keysounds': len(keys), 'charts': {}}
     for slot, events in sorted(charts.items()):
         name = SLOTS.get(slot, 'slot%d' % slot)
-        holds = H.from_events(events, hell=a.hell, time=tick, ticks_per_ms=1000 / CLOCK)
+        hell = a.hell or is_hell(events)
+        holds = H.from_events(events, hell=hell, time=tick, ticks_per_ms=1000 / CLOCK)
         ply, warnings = empress_events(events, holds)
         (a.output / (name + '.bin')).write_bytes(encrypt(ply))
         notes = sum(1 for e in events if e[1] in (0, 1))
         bpms = sorted({round(e[3] / e[2], 2) if e[2] else e[3] for e in events if e[1] == 4})
-        report['charts'][name] = {'notes': notes, 'holds': len(holds), 'total': notes + len(holds),
+        report['charts'][name] = {'notes': notes, 'holds': len(holds), 'hcn': hell, 'total': notes + len(holds),
                                   'bpm': [bpms[0], bpms[-1]] if bpms else None, 'warnings': warnings}
-        print('%s: %d notes, %d holds%s' % (name, notes, len(holds), (' (' + '; '.join(warnings) + ')') if warnings else ''))
+        print('%s: %d notes, %d %s%s' % (name, notes, len(holds), 'HCN' if hell else 'holds', (' (' + '; '.join(warnings) + ')') if warnings else ''))
     if a.stream:
         slot = next((s for s, n in SLOTS.items() if n == a.stream.upper()), None)
         if slot not in charts:
