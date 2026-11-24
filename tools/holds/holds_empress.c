@@ -220,6 +220,11 @@ void holds_frame_hook(long long tick)
     if (!armed) return;
     keys = H_KEYS(0) | H_KEYS(1) << 8;
     dbg_keys = keys;
+#ifndef HOLDS_TEST
+    holds_dbg[13] = ((hu32 (*)(void))0x130970)();           /* raw masks, to check their bit order */
+    holds_dbg[14] = ((hu32 (*)(void))0x130950)();
+    holds_dbg[15] = *(volatile hu32 *)(unsigned long)0x724cf0;
+#endif
     tt[0] = spin(0);
     tt[1] = spin(1);
     holds_frame(&holds, (hs32)tick, keys, tt);
