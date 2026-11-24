@@ -26,6 +26,15 @@ class Spr1(unittest.TestCase):
         top = max(struct.unpack_from('256B', data[12 + 8 + 3::4][:256]))
         self.assertEqual(top, 0x80)                                    # PS2 alpha: 0x80 = opaque
 
+    def test_shared_palette_is_identical(self):
+        from PIL import Image
+        a = Image.new('RGBA', (3, 1), (200, 10, 10, 255)); b = Image.new('RGBA', (2, 2), (10, 10, 200, 100))
+        pal = S.shared_palette([a, b])
+        da, db = S.spr1(a, pal), S.spr1(b, pal)
+        self.assertEqual(da[-0x400:], db[-0x400:])
+        self.assertEqual(S.decode(da).getpixel((0, 0))[:3], (200, 10, 10))
+        self.assertEqual(S.decode(db).getpixel((1, 1))[:3], (10, 10, 200))
+
     def test_swizzle_is_csm1(self):
         self.assertEqual([S.swizzle(i) for i in (0, 8, 16, 24, 31, 40)], [0, 16, 8, 24, 31, 48])
 

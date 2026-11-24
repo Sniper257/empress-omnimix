@@ -303,7 +303,9 @@ argb8888rev). Checked on the user's files:
 4. Sprites without a launcher change: the song folder's `S 6d 38 holds/<name>.spr` / `S 92 3c ...`
    lines (36 each, catalogue order) make the launcher append the sprites to #109 / #146; each line
    writes its handle to record +0x38 / +0x3c, which therefore ends up holding the last one, and
-   sprite k is last - 35 + k. Titles are cut to 0x37 bytes to keep those fields free. A song
+   sprite k is last - 35 + k. Titles are cut to 0x37 bytes to keep those fields free. The 36 sprites
+   must share one palette: cont_add rejects a batch whose own palettes differ, and then no handle
+   is written (seen in PCSX2 with holds_dbg: record +0x38 / +0x3c stayed 0). A song
    without the lines keeps native notes for its holds.
 
 Open: the judge line y (0x140 is from the drawer's clamp, to be checked on screen), whether

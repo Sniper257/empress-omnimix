@@ -13,6 +13,9 @@ cap is about 2x a normal note's height in the arcade, as on an arcade capture of
 are 16 x 10, 12 x 9 and 28 x 10 frame rows; frame rows = capture px * 448 / 360. Bodies are one tile
 of the arcade beam scaled the same way, drawn stretched (zoomY) between the caps.
 
+All 36 sprites share one palette: cont_add (launcher/cont.c) rejects sprites added to a container
+together unless their own palettes are byte-identical ("sprites use different palettes").
+
 SPR1 (launcher/main.c spr_file / spr_tex): "SPR1", u16 w, u16 h, u16 sheet (0xffff = own palette),
 u8 clear index, u8 0, w*h index bytes, then 256 RGBA palette entries in GS CSM1 order (entry
 i ^ (((i >> 3) ^ (i >> 4)) & 1) * 0x18 holds colour i), alpha 0..0x80.
@@ -46,31 +49,42 @@ def swizzle(i):
     return i ^ ((((i >> 3) ^ (i >> 4)) & 1) * 0x18)
 
 
-def spr1(img):
-    """RGBA PIL image -> SPR1 bytes with its own 256-colour palette (index 0 = transparent)."""
+def shared_palette(images):
+    """One 256-entry RGBA palette (index 0 transparent) for all the sprites: the launcher's cont_add
+    takes the sprites added to a container in one call only if their palettes are identical."""
     from PIL import Image
     import numpy as np
-    a = np.asarray(img.convert('RGBA'))
-    h, w = a.shape[:2]
-    opaque = a[:, :, 3] >= 8
-    rgb = Image.fromarray(a[:, :, :3])
-    q = rgb.quantize(colors=255, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE)
-    idx = np.asarray(q).astype(np.int32) + 1
-    pal = np.array(q.getpalette()[:255 * 3], dtype=np.int32).reshape(-1, 3)
-    alpha = np.zeros(256, np.int64)
-    count = np.zeros(256, np.int64)
-    np.add.at(alpha, idx[opaque], a[:, :, 3][opaque])
-    np.add.at(count, idx[opaque], 1)
-    idx[~opaque] = 0
+    px = np.concatenate([np.asarray(i.convert('RGBA')).reshape(-1, 4) for i in images])
+    px = px[px[:, 3] >= 8]
+    strip = Image.fromarray(px.reshape(1, -1, 4), 'RGBA')
+    q = strip.quantize(colors=255, method=Image.Quantize.FASTOCTREE, dither=Image.Dither.NONE)
+    pal = np.array(q.getpalette(rawmode='RGBA')[:255 * 4], dtype=np.uint8).reshape(-1, 4)
     colours = np.zeros((256, 4), np.uint8)
-    colours[1:len(pal) + 1, :3] = pal
-    with np.errstate(invalid='ignore', divide='ignore'):
-        mean = np.where(count > 0, alpha / np.maximum(count, 1), 0)
-    colours[:, 3] = np.clip(np.round(mean * 0x80 / 255), 0, 0x80).astype(np.uint8)
-    colours[0] = 0
+    colours[1:len(pal) + 1] = pal
+    return colours
+
+
+def spr1(img, colours=None):
+    """RGBA PIL image -> SPR1 bytes with its own palette (index 0 = transparent). `colours`: a shared
+    256 x RGBA palette (alpha 0..255) from shared_palette; by default one is made for this image."""
+    import numpy as np
+    a = np.asarray(img.convert('RGBA')).astype(np.int32)
+    h, w = a.shape[:2]
+    if colours is None:
+        colours = shared_palette([img])
+    c = colours.astype(np.int32)
+    flat = a.reshape(-1, 4)
+    opaque = flat[:, 3] >= 8
+    idx = np.zeros(len(flat), np.int32)
+    if opaque.any():
+        d = ((flat[opaque][:, None, :] - c[None, 1:, :]) ** 2).sum(2)
+        idx[opaque] = d.argmin(1) + 1
     table = np.zeros((256, 4), np.uint8)
+    ps2 = colours.copy()
+    ps2[:, 3] = np.clip(np.round(colours[:, 3].astype(np.int32) * 0x80 / 255), 0, 0x80).astype(np.uint8)
+    ps2[0] = 0
     for i in range(256):
-        table[swizzle(i)] = colours[i]
+        table[swizzle(i)] = ps2[i]
     return b'SPR1' + struct.pack('<HHHBB', w, h, 0xffff, 0, 0) + idx.astype(np.uint8).tobytes() + table.tobytes()
 
 
@@ -103,12 +117,15 @@ def main(argv=None):
     out.mkdir(parents=True, exist_ok=True)
     manifest = {}
     previews = []
+    rows = []
     for name, arcade, kind, part in catalogue():
         src = short / (arcade + '.png')
         if not src.is_file():
             src = full / (arcade + '.png')
-        img = scaled(Image.open(src).convert('RGBA'), kind, part)
-        data = spr1(img)
+        rows.append((name, arcade, kind, part, scaled(Image.open(src).convert('RGBA'), kind, part)))
+    colours = shared_palette([r[4] for r in rows])
+    for name, arcade, kind, part, img in rows:
+        data = spr1(img, colours)
         (out / (name + '.spr')).write_bytes(data)
         manifest[name] = {'from': arcade, 'lane': kind, 'part': part, 'w': img.width, 'h': img.height,
                           'pivot': [img.width // 2, img.height if part == 'cap' else 0]}
