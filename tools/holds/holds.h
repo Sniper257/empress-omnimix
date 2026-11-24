@@ -90,6 +90,9 @@ typedef struct {
 int holds_reset(holds_t *h, const hold_def *defs, hu32 n, const holds_cfg *cfg);
 /* the engine judged a head note on lane at chart time start: returns the hold index or -1 (not a hold) */
 int holds_head(holds_t *h, hu32 lane, hs32 start, hu32 judge, hs32 now);
+/* the engine logged a judgement on lane at tick now but cannot name the note: take the pending
+ * hold on that lane whose start is nearest now, within window ticks. Returns the index or -1. */
+int holds_head_near(holds_t *h, hu32 lane, hs32 now, hs32 window, hu32 judge);
 /* once per tick. keys: bit per lane (turntable bits ignored); tt[side] = -1, 0, +1 */
 void holds_frame(holds_t *h, hs32 now, hu32 keys, const hs8 tt[2]);
 /* copy out up to max events (oldest first); returns the count copied */

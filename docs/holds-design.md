@@ -10,7 +10,7 @@ module built in three layers.
 | --- | --- | --- |
 | Rules: when a hold is held, released, judged, ticked | `tools/holds/holds.c`, `holds.h`, `test_holds.c` | done; host tested, builds freestanding for the EE (n32, no libc, ~2.5 KB) |
 | Data: which notes are holds | `tools/release/holds_format.py` (`holds.bin` per chart) | done |
-| Engine: hooks into SLPM_552.21 | `tools/holds/holds_empress.c` + build | next; written from `disasm_sites.py` output |
+| Engine: hooks into SLPM_552.21 | `tools/holds/holds_empress.c`, `test_holds_empress.c` | written and host tested against a faked engine; not in the runtime build yet |
 
 ## Rules (holds.c)
 
@@ -179,3 +179,45 @@ copula (23) and later, so its values have to come from a newer DLL.
   in a recognisable table either. They have to be traced from the gameplay
   code, which has no symbols. A possible lead is the HCN chart flag: the
   `icon_hell` song-select code (`0x18080b790`) tests it.
+
+## Engine layer (holds_empress.c)
+
+Round 3 showed the ring reader (`0x1ec860`) handing each code to the
+game's judgement-counter, score, gauge, combo and display routines. So the
+hold module reads heads from the ring and writes its results back as ring
+codes, and the game applies them like any other judgement:
+
+| Hold result | Ring code |
+| --- | --- |
+| tail PGREAT | 4 |
+| tail BAD (`overhold_judge`) | 7 |
+| tail POOR, HCN let go (`HE_BREAK`) | `0xf` (missed POOR) |
+| HCN empty POOR (`HE_TICK_LOSS`) | `0xb` |
+| `J_NONE` | nothing |
+
+- **Heads**: `holds_on_judgement` is called from `fast_slow.c`'s
+  `fs_ring()` for every native code. It matches the nearest pending hold on
+  that lane within the BAD window (`holds_head_near`).
+- **Per tick**: `holds_frame_hook` replaces `jal 0x1e6bb0` at `0x1e5cb8`.
+  That site is unused by the current runtime. Held keys come from
+  `0x724cf0 + side*0x1c0` (as `fs_keys`). A falling tick counter means a new
+  play and re-arms the chart given to `holds_set_chart`.
+- **Totals**: tails are not native notes, so the converter writes the chart's
+  note-count events with `holds_format.note_total` (each hold counts twice).
+
+To do before enabling:
+1. Wire into `build_vdisc.py` behind a `HOLDS` define:
+   - compile `holds.c` and `holds_empress.c`
+   - patch `0x1e5cb8` to `holds_frame_hook`
+   - call `holds_on_judgement` at the top of `fs_ring()`
+2. Load `holds.bin` per chart in the song loader (a new `song.txt` field)
+   and call `holds_set_chart`.
+3. Check in PCSX2:
+   - whether `0x13acd0(side)` reports continuous turntable motion (BSS)
+   - the CN release window (default: PGREAT within 7 ticks)
+4. HCN gain ticks: find a gauge-only routine (a candidate is
+   `0x204d30(side, kind)`, called from the ring reader) for `HOLDS_GAIN_GAUGE`.
+   Until then held HCN ticks add no gauge.
+5. Hold bodies are not drawn yet: the head shows as a normal note and the
+   tail is invisible. Drawing needs the note renderer, one of the active-list
+   walkers in round 3.

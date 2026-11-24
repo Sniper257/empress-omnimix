@@ -65,6 +65,16 @@ class RulesCore(unittest.TestCase):
             run = subprocess.run([str(exe)], capture_output=True, text=True)
             self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
 
+    def test_c_engine_glue(self):
+        cc = shutil.which('cc') or shutil.which('gcc') or shutil.which('clang')
+        with tempfile.TemporaryDirectory() as tmp:
+            exe = Path(tmp) / 'test_holds_empress'
+            subprocess.run([cc, '-std=c99', '-DHOLDS_TEST', '-Wall', '-Wextra', '-Werror', '-o', str(exe),
+                            str(ROOT / 'test_holds_empress.c'), str(ROOT / 'holds_empress.c'), str(ROOT / 'holds.c')],
+                           check=True, capture_output=True)
+            run = subprocess.run([str(exe)], capture_output=True, text=True)
+            self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+
 
 if __name__ == '__main__':
     unittest.main()

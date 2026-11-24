@@ -82,6 +82,12 @@ int main(void)
     setup(&hbss, 0); holds_head(&H, 7, 10, J_PGREAT, 10); run(10, 50, spin_back_and_again);
     CHECK(count(HE_BREAK) == 1 && count(HE_TICK_LOSS) >= 1 && count(HE_TICK_GAIN) >= 4 && tail_is(J_NONE, 0));
 
+    /* a head judged 2 ticks late is matched to the nearest pending hold on its lane only */
+    { hold_def two[2] = {{10, 40, 0, HOLD_CN, 0}, {50, 60, 0, HOLD_CN, 0}};
+      nev = 0; CHECK(holds_reset(&H, two, 2, &CFG) == 0);
+      CHECK(holds_head_near(&H, 1, 12, 15, J_GREAT) == -1);
+      CHECK(holds_head_near(&H, 0, 12, 15, J_GREAT) == 0 && holds_head_near(&H, 0, 13, 15, J_GREAT) == -1); }
+
     /* records, validation, helpers */
     CHECK(sizeof(hold_def) == 12);          /* holds.bin records (tools/release/holds_format.py) */
     { hold_def bad_bss = {10, 40, 0, HOLD_BSS, 0}; CHECK(holds_reset(&H, &bad_bss, 1, &CFG) == -1); }
