@@ -58,7 +58,7 @@ int holds_reset(holds_t *h, const hold_def *defs, hu32 n, const holds_cfg *cfg)
     h->defs = defs; h->n = n; h->next = 0; h->nev = 0; h->dropped = 0;
     copy(&h->cfg, cfg, sizeof h->cfg);
     if (h->cfg.overhold_judge != J_BAD) h->cfg.overhold_judge = J_POOR;
-    for (i = 0; i < HOLDS_LANES; i++) { h->active[i] = -1; h->spin[i] = 0; h->stood[i] = -1; h->next_tick[i] = 0; }
+    for (i = 0; i < HOLDS_LANES; i++) { h->active[i] = -1; h->spin[i] = 0; h->stood[i] = -1; h->next_tick[i] = 0; h->up_at[i] = -1; }
     return 0;
 }
 
@@ -80,6 +80,7 @@ static void start_hold(holds_t *h, hu32 i, hu32 judge, hs32 now)
     h->active[d->lane] = (hs32)i;
     h->spin[d->lane] = 0;
     h->stood[d->lane] = -1;
+    h->up_at[d->lane] = -1;
     if (judge <= J_GOOD) {
         h->state[i] = HS_HOLDING;
         h->next_tick[d->lane] = d->start * HOLDS_FP + tick_of(h, i);
@@ -141,7 +142,7 @@ static void step(holds_t *h, hu32 lane, hs32 now, hu32 keys, const hs8 tt[2])
     hs32 i = h->active[lane];
     const hold_def *d;
     hs32 offset, win, now64;
-    int down, reverse, still, hell;
+    int down, reverse, still, hell, pending = 0;
     if (i < 0) return;
     d = &h->defs[i];
     offset = now - d->end;
@@ -151,6 +152,14 @@ static void step(holds_t *h, hu32 lane, hs32 now, hu32 keys, const hs8 tt[2])
     down = held(h, lane, d->kind, now, keys, tt, &reverse, &still);
     /* BSS: inside the tail window, stopping the turntable releases it like a backspin */
     if (is_spin(d->kind) && still && offset >= -win && h->state[i] == HS_HOLDING && h->spin[lane]) down = 0;
+    /* keys: a release only counts once the key has stayed up for release_grace ticks; it is timed
+     * from the first up tick */
+    if (down || h->state[i] != HS_HOLDING) h->up_at[lane] = -1;
+    else if (!is_spin(d->kind) && h->cfg.release_grace) {
+        if (h->up_at[lane] < 0) h->up_at[lane] = now;
+        if (now - h->up_at[lane] < h->cfg.release_grace) { down = 1; pending = 1; }
+        else { now = h->up_at[lane]; offset = now - d->end; now64 = now * HOLDS_FP; }
+    }
 
     if (h->state[i] == HS_MISSED) {                 /* CN/BSS whose head was missed: tail is POOR too */
         if (offset >= 0) finish(h, (hu32)i, J_POOR, offset);
@@ -168,8 +177,8 @@ static void step(holds_t *h, hu32 lane, hs32 now, hu32 keys, const hs8 tt[2])
         if (!hell) { finish(h, (hu32)i, J_POOR, offset); return; }
         let_go(h, (hu32)i, now, 1);
     } else if (h->cfg.overhold == OVERHOLD_AUTO) {  /* HS_HOLDING, still held */
-        if (offset >= 0) { finish(h, (hu32)i, h->broken[i] ? J_NONE : J_PGREAT, 0); return; }
-    } else if (offset > win) {
+        if (!pending && offset >= 0) { finish(h, (hu32)i, h->broken[i] ? J_NONE : J_PGREAT, 0); return; }
+    } else if (!pending && offset > win) {
         finish(h, (hu32)i, h->broken[i] ? J_NONE : h->cfg.overhold_judge, offset);
         return;
     }

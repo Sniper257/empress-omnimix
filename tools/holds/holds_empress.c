@@ -59,7 +59,7 @@ extern unsigned long long fs_ring_body(FS_ARGS);
 #endif
 /* a key pressed this tick counts as held: the held mask can lag the press (and the head judgement) by
  * one tick, which broke HCNs right after a good head in PCSX2 (POOR flash after GREAT) */
-#define H_HELD_MASK() (((hu32 (*)(void))0x130970)() | ((hu32 (*)(void))0x130950)())
+#define H_HELD_MASK() (((hu32 (*)(void))0x130970)() | ((hu32 (*)(void))0x130950)())   /* 0x130950 held (PCSX2: key1 1, key3 4, key5 0x10); 0x130970 kept for the press frame */
 #define H_KEYS(side) ((H_HELD_MASK() >> ((side) * 7u)) & 0x7fu)
 #define H_TT(side) (((hu32 (*)(hu32))0x13acd0)(side) & 0xffu)
 #define H_NATIVE_TICK(tick) (((void (*)(long long))0x1e6bb0)(tick))
@@ -97,7 +97,7 @@ static hs32 last_tick = -1;
 
 /* Settings until arcade values are measured: CN/BSS release PGREAT inside the
  * GOOD window (7 ticks), POOR after it; HCN 16ths come from holds.bin. */
-static const holds_cfg default_cfg = { {1, 2, 4, 7}, 16, 6 * HOLDS_FP, 4, OVERHOLD_RELEASE, J_POOR, 0, 0 };
+static const holds_cfg default_cfg = { {1, 2, 4, 7}, 16, 6 * HOLDS_FP, 4, OVERHOLD_RELEASE, J_POOR, 0, 3 };
 
 /* Converted charts carry their holds after the 0x7fff terminator: an 8-byte
  * terminator event, then holds.bin ('MMHL', u16 1, u16 count, 12-byte records).

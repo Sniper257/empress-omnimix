@@ -33,6 +33,8 @@ static void hold_gap(hs32 t, hu32 *k, hs8 *tt) { (void)tt; if (t < 20 || (t >= 2
 static void spin_then_back(hs32 t, hu32 *k, hs8 *tt) { (void)k; tt[0] = t < release_at ? 1 : -1; }
 static void spin_then_stop(hs32 t, hu32 *k, hs8 *tt) { (void)k; tt[0] = t < release_at ? 1 : 0; }
 static void spin_back_and_again(hs32 t, hu32 *k, hs8 *tt) { (void)k; tt[0] = t < 20 ? 1 : t < 24 ? -1 : t < 40 ? 1 : -1; }
+/* the held mask lags the press: up for two ticks right after the head */
+static void lag_then_hold(hs32 t, hu32 *k, hs8 *tt) { (void)tt; if ((t < 11 || t >= 13) && t < release_at) *k = 1; }
 static void nothing(hs32 t, hu32 *k, hs8 *tt) { (void)t; (void)k; (void)tt; }
 
 int main(void)
@@ -41,6 +43,16 @@ int main(void)
     hold_def hcn = {10, 40, 0, HOLD_HCN, 4 * HOLDS_FP};
     hold_def bss = {10, 40, 7, HOLD_BSS, 0};
     hold_def hbss = {10, 40, 7, HOLD_HBSS, 4 * HOLDS_FP};
+
+    /* release_grace: a short up right after the head is no release; a real release is timed from its first up tick */
+    { holds_cfg c = CFG; c.release_grace = 3;
+      setup(&hcn, &c); holds_head(&H, 0, 10, J_GREAT, 10); release_at = 40; run(10, 50, lag_then_hold);
+      CHECK(count(HE_BREAK) == 0 && count(HE_TICK_LOSS) == 0 && tail_is(J_PGREAT, 0));
+      setup(&cn, &c); holds_head(&H, 0, 10, J_GREAT, 10); release_at = 40; run(10, 50, lag_then_hold); CHECK(tail_is(J_PGREAT, 0));
+      setup(&cn, &c); holds_head(&H, 0, 10, J_GREAT, 10); release_at = 30; run(10, 50, hold_key0); CHECK(tail_is(J_POOR, -10));
+      setup(&hcn, &c); holds_head(&H, 0, 10, J_GREAT, 10); release_at = 20; run(10, 50, hold_key0);
+      { hu32 j = 0; while (j < nev && ev[j].kind != HE_BREAK) j++; CHECK(count(HE_BREAK) == 1 && j < nev && ev[j].offset == -20); }
+      setup(&cn, &c); holds_head(&H, 0, 10, J_PGREAT, 10); release_at = 99; run(10, 60, hold_key0); CHECK(tail_is(J_POOR, 7)); }
 
     /* CN: a release anywhere in the wide window is PGREAT; early is POOR; held too long is POOR */
     setup(&cn, 0); CHECK(holds_head(&H, 0, 10, J_PGREAT, 10) == 0);

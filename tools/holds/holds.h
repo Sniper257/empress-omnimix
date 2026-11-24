@@ -71,7 +71,9 @@ typedef struct {
     hu8 overhold;         /* OVERHOLD_RELEASE: held past the window = overhold_judge; OVERHOLD_AUTO: held at end = PGREAT */
     hu8 overhold_judge;   /* J_POOR (default) or J_BAD (later arcade versions) */
     hu8 tail_graded;      /* 0: one PGREAT window (arcade); 1: grade releases PGREAT..BAD by offset */
-    hu8 pad;
+    hu8 release_grace;    /* keys: a held key must read up this many ticks in a row before it counts as
+                             released (the release is timed at the first up tick); 0 = at once. Covers
+                             a held mask that lags the press by a frame or two right after the head. */
 } holds_cfg;
 
 enum hold_state { HS_PENDING = 0, HS_HOLDING = 1, HS_LOOSE = 2, HS_MISSED = 3, HS_DONE = 4 };
@@ -85,6 +87,7 @@ typedef struct {
     hs8 spin[HOLDS_LANES];      /* BSS: direction of the head spin, 0 = not yet seen */
     hs32 stood[HOLDS_LANES];    /* BSS: time the turntable stopped, or -1 */
     hs32 next_tick[HOLDS_LANES];/* HCN/HBSS: next tick, 1/64 ticks */
+    hs32 up_at[HOLDS_LANES];    /* key holds: first tick the key read up while holding, or -1 */
     holds_cfg cfg;
     hold_event ev[HOLDS_EVENTS];
     hu32 nev, dropped;
