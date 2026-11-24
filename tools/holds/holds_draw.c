@@ -96,6 +96,8 @@ static hu32 hd_last(hu32 cont)
     hu8 *rec = HD_RECORD();
     hu32 last;
     if (!rec || (cont != 109 && cont != 146)) return 0;
+    holds_dbg[6] = *(const hu32 *)(rec + HD_REC_SP);
+    holds_dbg[7] = *(const hu32 *)(rec + HD_REC_WIDE);
     last = *(const hu32 *)(rec + (cont == 109 ? HD_REC_SP : HD_REC_WIDE));
     return last >> 16 == cont && (last & 0xffffu) >= HD_SPRITES - 1 ? last : 0;
 }
@@ -104,6 +106,7 @@ static void hd_body(hu32 base, hu32 kind, hs32 x, hs32 top, hs32 bottom, hu32 cl
 {
     hs32 len = bottom - top, h = hd_body_h[kind];
     if (len <= 0) return;
+    holds_dbg[10]++;
     HD_DRAW(base, x, top, len * 100 / h, hd_w[kind] / 2, 0, clip);
 }
 
@@ -114,11 +117,14 @@ int holds_note_hook(hu8 *note, hu32 handle, hs32 x, hs32 y, hu32 side, hu32 clip
     hu32 last, base, group, kind, lane, cont = handle >> 16, body;
     hs32 i, t, judge;
     int tail = 0;
+    holds_dbg[3]++;
+    holds_dbg[11] = cont;
     if (!armed || note[9] > 7 || side > 1) return 0;
     lane = side * 8u + note[9];
     t = *(const short *)(note + 0x18);
     if ((i = hd_find(lane, t, &tail)) < 0) return 0;
-    if (!(last = hd_last(cont))) return 0;                 /* no hold sprites: native notes */
+    holds_dbg[4]++;
+    if (!(last = hd_last(cont))) { holds_dbg[5]++; return 0; }   /* no hold sprites: native notes */
     d = &chart_defs[i];
     group = hd_group(d, lane, &kind);
     base = last - (HD_SPRITES - 1) + group;

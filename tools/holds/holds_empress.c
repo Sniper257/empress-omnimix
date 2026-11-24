@@ -60,7 +60,11 @@ extern unsigned long long fs_ring_body(FS_ARGS);
 #define HEAD_WINDOW 15   /* the BAD window in ticks: a head judgement further away is not a hold head */
 
 static holds_t holds;
-static hs32 hd_now;                 /* tick being processed (holds_draw.c stamps note draws with it) */
+static hs32 hd_now;
+/* diagnostics, readable in the PCSX2 debugger (symbol holds_dbg): 'HDBG', armed, holds in chart,
+ * note_hook calls, hold notes seen, hold notes with no sprites, record +0x38, record +0x3c,
+ * tails made unjudged, ticks, bodies drawn, last note container */
+volatile hu32 holds_dbg[12] = {0x47424448u};                 /* tick being processed (holds_draw.c stamps note draws with it) */
 static void hd_reset(void);
 static void hd_frame(void);
 static const hold_def *chart_defs;
@@ -105,6 +109,8 @@ static void arm(void)
     if (found) { chart_defs = found; chart_n = n; }
     armed = chart_n && holds_reset(&holds, chart_defs, chart_n, &default_cfg) == 0;
     hd_reset();
+    holds_dbg[1] = (hu32)armed;
+    holds_dbg[2] = chart_n;
 }
 
 /* Replaces the spawner's jal 0x1ebf90(note) at 0x1e7d14. The note's time (+0x18, ticks), lane (+9)
@@ -120,7 +126,7 @@ void holds_spawn_hook(hu8 *note)
         t = *(const short *)(note + 0x18);
         lane = note[0xa] * 8u + note[9];
         for (i = 0; i < chart_n; i++) {
-            if (chart_defs[i].end == t && chart_defs[i].lane == lane) { note[0xb] = 0; break; }
+            if (chart_defs[i].end == t && chart_defs[i].lane == lane) { note[0xb] = 0; holds_dbg[8]++; break; }
             LOOP_PAD();
         }
     }
@@ -182,6 +188,7 @@ void holds_frame_hook(long long tick)
     if ((hs32)tick < last_tick) armed = 0;        /* a new play started (tick counter restarted); before the
                                                      native tick, which spawns this play's first notes */
     hd_now = (hs32)tick;
+    holds_dbg[9]++;
     H_NATIVE_TICK(tick);
     if (!armed && tick < 600) arm();              /* the cursor is set once the chart is loaded */
     last_tick = (hs32)tick;
