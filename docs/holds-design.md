@@ -229,3 +229,25 @@ To do before enabling by default:
 3. Hold bodies are not drawn yet: the head shows as a normal note and the
    tail is invisible. Drawing needs the note renderer, one of the active-list
    walkers in round 3.
+
+## Charge-note graphics (Sparkle Shower bm2dx.dll)
+
+The DLL names two graphic files without a folder: `notes_cn00.ifs` (string at file offset 0xcf3318)
+and `lnote00.ifs` (0xcf3258). Static initialisers store them as globals (code at RVA 0xa0034 and
+0x9faff). The other graphic files are `/data/graphic/` + `/0/<name>.ifs`. "00" is probably the
+note-skin number (DEFAULT, 6DOT, … list at 0xcf5310).
+
+A 64-bit pointer table at file 0x1071bf0 (RVA 0x1073df0) lists the note textures in the order the
+renderer uses them:
+
+- normal: `notes00`–`notes09`, `notes_white`, `notes_black`, `notes_turn`, `notes_auto_turn`
+- set 1: `notes_bss_start/end`, `notes_cn_white_start/end`, `notes_cn_black_start/end`, with
+  bodies `notes_bss_beam0-2`, `notes_cn_white_beam0-2`, `notes_cn_black_beam0-2`
+- set 2: `notes_bss2_*`, `notes_cn2_white_*`, `notes_cn2_black_*` with beam0-2 plus beam3-4
+  (two extra body states). This is probably HCN/HBSS but is not confirmed.
+- assist: `notes_bss_auto_start/end/beam0/joint`
+- MSS (multi-spin): `notes_mss_start/middle/end`
+
+A second table at file 0x1070470 lists lane lights `lnote00_lo_{siro,ao,scr}` plus `_push` and
+`2_push` (white key, blue key, scratch), indexed per lane (siro/ao alternating, scr last). These are
+probably the beams shown while a hold is pressed (2 = set 2).
