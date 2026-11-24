@@ -78,7 +78,17 @@ static hs32 hd_now;
 /* diagnostics, readable in the PCSX2 debugger (symbol holds_dbg): 'HDBG', armed, holds in chart,
  * note_hook calls, hold notes seen, hold notes with no sprites, record +0x38, record +0x3c,
  * tails made unjudged, ticks, bodies drawn, last note container */
-volatile hu32 holds_dbg[12] = {0x47424448u};                 /* tick being processed (holds_draw.c stamps note draws with it) */
+volatile hu32 holds_dbg[32] = {0x47424448u};
+/* holds_dbg[12] = events logged so far; [16 + 2k], [17 + 2k] for the last 8 (k = count % 8):
+ * tick << 8 | event kind (1 tail, 2 break, 3 loss tick, 4 gain), and
+ * judge << 28 | hold index << 16 | lane (side*8 + key) << 8 | P1 keys seen this tick */
+static hu32 dbg_keys;
+static void dbg_event(const hold_event *e)
+{
+    hu32 k = holds_dbg[12]++ & 7u;
+    holds_dbg[16 + 2 * k] = (hu32)hd_now << 8 | e->kind;
+    holds_dbg[17 + 2 * k] = (hu32)e->judge << 28 | (e->index & 0xfffu) << 16 | (hu32)e->lane << 8 | (dbg_keys & 0xffu);
+}                 /* tick being processed (holds_draw.c stamps note draws with it) */
 static void hd_reset(void);
 static void hd_frame(void);
 static const hold_def *chart_defs;
@@ -171,6 +181,7 @@ void holds_on_judgement(hu32 code, hu32 id)
 static void apply(const hold_event *e)
 {
     hu32 id = lane_id(e->lane);
+    if (e->kind != HE_TICK_GAIN) dbg_event(e);
     switch (e->kind) {
     case HE_TAIL:
         if (e->judge == J_PGREAT) H_RING(CODE_PGREAT, id);
@@ -208,6 +219,7 @@ void holds_frame_hook(long long tick)
     last_tick = (hs32)tick;
     if (!armed) return;
     keys = H_KEYS(0) | H_KEYS(1) << 8;
+    dbg_keys = keys;
     tt[0] = spin(0);
     tt[1] = spin(1);
     holds_frame(&holds, (hs32)tick, keys, tt);

@@ -1436,7 +1436,7 @@
   "tools/holds/holds.c": "c6c2bddf8fd518d4eb11c2d4469e36f3b28ea984bc7831413a6ccc08bd8fe603",
   "tools/holds/holds.h": "8a073d419662794c33890bad2dabcaaeb5d0751cd3d6c1f60552842b9a6789c5",
   "tools/holds/holds_draw.c": "8aafa02116ef68eaff464d33eacd4e978fe60c1b692af768a2d646f7bcf63d75",
-  "tools/holds/holds_empress.c": "96a55d847a7c371bc4a5272f46d40b4d40cab026970f7fc0687abc4630d1bf7c",
+  "tools/holds/holds_empress.c": "6fc2a8e50c3a2d273fd6b89e405da4052364695b4eb044ec497069eae3c447d2",
   "tools/holds/test_hold_sprites.py": "f5bf89f96087bb4c2f803c4d8ed4511e7bb785150ee1992d738fb2c43ba57129",
   "tools/holds/test_holds.c": "c7de042881a6739e1cfc337cb4ebc6779eca074315b23e0a46d29ca2bd6c990e",
   "tools/holds/test_holds_empress.c": "500ada40546eecf5890aa1dc4fac8a830f999e389198172a8392d5c7ab0f153c",
