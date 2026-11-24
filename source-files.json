@@ -1681,7 +1681,7 @@
   "tools/release/holds_format.py": "6cfac9482c8ad13db511bbb2e930443a2886e5d89e2e94128162c4867ee44d5b",
   "tools/release/ifs.py": "8f335a257017ee4e02239b218ec3b95b8fbf5804832f451ee76215de5ce0f180",
   "tools/release/iso_launcher.py": "eabd613816a073fec6c9ba8c063c1551ebfa3d0ef507bb32b5625c3ad079805b",
-  "tools/release/keysound_bank.py": "6220f8a6632a9d3d39e8af7440c6d079892370be4227bbf85109364b86345d2a",
+  "tools/release/keysound_bank.py": "5b461fd65ddc4f751daf24cc027bc97b5c150bb1a54d8fa408a39cfd10eab9f1",
   "tools/release/konami_tex.py": "79e21f72d1a1648413c93609729fa6d0def8e3663f40ed031c28659a49ca91cc",
   "tools/release/licenses/MEGAMIX-MIT.txt": "2f5aa1f27e40cfb107a4ceeab0bd9ac2f3734d0715d44820d9c766bb81aa96dd",
   "tools/release/licenses/MEGAMIX-NOTICES.txt": "1605523faf584f53ab3695006c6106722db240a2387ee575ef8e3a70cde268f4",

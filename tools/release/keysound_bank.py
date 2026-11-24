@@ -39,6 +39,9 @@ END_FRAME = bytes([0, 7]) + b'\x77' * 14
 SLOT_TAIL = 76
 SILENCE = 64            # |sample| at or below this after the last loud sample is trimmed
 LARGEST_SEEN = 6121248  # the largest real EMPRESS bank listed so far (All My Turn, DP)
+LONG_SAMPLES = 6 * 44100   # sounds longer than this stay at 44.1 kHz: the longest real EMPRESS sample is 6 s
+                           # (All My Turn), real 32 / 24 kHz samples are all short, and Elisha's 122 s
+                           # backing track at 32 kHz crashed the game in its sound code (__divdi3 by 0)
 LARGEST_LOADED = 11859552  # the largest converted bank seen to load in PCSX2 (Kailua, with the 0xbd flag);
                            # Elisha's 16 MB banks crashed on load
 
@@ -137,7 +140,8 @@ def fit_rates(lengths, budget, fixed=0):
 
 def build(name, sounds, keys, gain=1.0, budget=None):
     """(bank bytes, {arcade keysound: slot}, info) for the given arcade keysound numbers.
-    budget: largest bank size in bytes; the longest sounds are stored at 32 or 24 kHz to fit."""
+    budget: largest bank size in bytes; the longest sounds up to LONG_SAMPLES are stored at 32 or
+    24 kHz to fit (longer ones always stay at 44.1 kHz)."""
     import numpy as np
     sounds = [s for s in sounds if 0 < s <= len(keys)]
     slots = slot_map(sounds)
@@ -152,8 +156,8 @@ def build(name, sounds, keys, gain=1.0, budget=None):
         pcms.append((rate, pcm))
     lower = {}
     if budget:                                     # only 44.1 kHz sounds are lowered; others are fixed cost
-        full = [n for n, (r, _) in enumerate(pcms) if r == 44100]
-        fixed = TABLE + 16 + 16 * len(sounds) + sum(adpcm_bytes(p.shape[1]) for r, p in pcms if r != 44100)
+        full = [n for n, (r, p) in enumerate(pcms) if r == 44100 and p.shape[1] <= LONG_SAMPLES]
+        fixed = TABLE + 16 + 16 * len(sounds) + sum(adpcm_bytes(pcms[n][1].shape[1]) for n in range(len(pcms)) if n not in set(full))
         lower = {full[k]: r for k, r in fit_rates([pcms[n][1].shape[1] for n in full], budget, fixed).items()}
     for n, s in enumerate(sounds):
         rate, pcm = pcms[n]
