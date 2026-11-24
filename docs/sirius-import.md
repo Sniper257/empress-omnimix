@@ -139,3 +139,15 @@ writes a native record (e.g. All My Turn, id 2) as the template.
 Before that change: Kailua (HCN Ver.) converted to two 5.9 MB banks (417 sounds each, all 44.1 kHz stereo) plus a
 BGM-only stream. Still to check in PCSX2: that the game loads a converted bank, and how the song
 record chooses which bank a chart uses (the bank index in the play call).
+
+## Song folders (arcade_songfolder.py)
+
+`arcade_songfolder.py CONVERTED record_2.bin OUT/<folder> --music music_omni.bin --id <arcade id>`
+writes a custom song folder: `record.bin` from a native record (All My Turn), `song.txt`
+(`record`, `F` lines for the charts and banks), the charts and banks, and `catalog-lines.txt`
+(S/C lines for `catalog/charts.txt`; the launcher rejects an added song with no identity).
+The record field map is in the script's docstring. All My Turn's record confirms the chart field
+order (its SPH chart has 971 notes, stored at 0x10a) and the empty DP Beginner (level 0, field 0xdc 0).
+
+Still taken from the template, so an added song shows All My Turn's title card and wheel sprites
+and keeps its 0x58 file (probably the BGA movie) until those are converted.
