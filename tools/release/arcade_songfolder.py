@@ -16,7 +16,11 @@ Record fields (0x134 bytes; launcher/main.c add_song, song_resources.c, song_win
   0xe8 / 0xec  u16 SP / DP bank file ids (high half 0xffff), more groups up to 0x107 unused
   0x108 u16 SP notes N,H,A,B,X   0x112 u16 pairs DP notes (P1, P2) N,H,A,B,X   0x126 u16 graph targets
   (SP N,H,A, DP N,H,A; All My Turn's are 1.33-1.52 x notes; 1.4 x notes is written)
+  0x38 / 0x3c (the end of the title field)  hold sprites: the handle of the last of the 36 hold sprites
+  appended to note container #109 / #146 (S lines; tools/holds/holds_draw.c); titles stop at 0x37.
 Until title cards and sprites are converted, the card and sprites are the template's.
+
+--hold-sprites DIR (tools/holds/hold_sprites.py output): charts with holds get the CN/HCN graphics.
 """
 import argparse
 import json
@@ -59,6 +63,16 @@ def ply_counts(raw):
     return side
 
 
+def has_holds(path):
+    from chart_transform import crypt, decode_lz
+    from sirius_probe import empress_chart
+    raw = path.read_bytes()
+    c = empress_chart(raw)
+    ply = decode_lz(crypt(raw, 'empress', True))
+    end = 8 + 8 * len(c['events']) + 8
+    return ply[end:end + 4] == H.MAGIC
+
+
 def levels(entry):
     sp, dp = entry[LEVELS:LEVELS + 5], entry[LEVELS + 5:LEVELS + 10]
     b, n, h, a, l = sp
@@ -68,12 +82,21 @@ def levels(entry):
     return out
 
 
-def build(converted, template, out, title, lv, version=17):
+HOLD_FIELDS = ((0x6d, 0x38), (0x92, 0x3c))        # (note container #109 / #146, record field)
+
+
+def hold_sprite_names():
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'holds'))
+    import hold_sprites
+    return [row[0] for row in hold_sprites.catalogue()]
+
+
+def build(converted, template, out, title, lv, version=17, sprites=None):
     report = json.loads((converted / 'convert.json').read_text())
     rec = bytearray(template)
     if len(rec) != 0x134:
         raise ValueError('template record is %d bytes, not 0x134' % len(rec))
-    rec[0:0x40] = title.upper().encode('ascii', 'replace')[:0x3f].ljust(0x40, b'\0')
+    rec[0:0x40] = title.upper().encode('ascii', 'replace')[:0x37].ljust(0x40, b'\0')
     bpms = [b for c in report['charts'].values() if c.get('bpm') for b in c['bpm']]
     lo, hi = int(round(min(bpms))), int(round(max(bpms)))
     struct.pack_into('<hh', rec, 0x42, lo, -1 if lo == hi else hi)
@@ -108,6 +131,13 @@ def build(converted, template, out, title, lv, version=17):
         if (converted / bank).is_file():
             shutil.copyfile(converted / bank, out / bank)
             lines.append('F %x 2 %s' % (field, bank))
+    if sprites and any(has_holds(converted / (n + '.bin')) for n in charts):
+        names = hold_sprite_names()
+        (out / 'holds').mkdir(exist_ok=True)
+        for n in names:
+            shutil.copyfile(sprites / (n + '.spr'), out / 'holds' / (n + '.spr'))
+        for cont, field in HOLD_FIELDS:
+            lines += ['S %x %x holds/%s.spr' % (cont, field, n) for n in names]
     (out / 'record.bin').write_bytes(bytes(rec))
     (out / 'song.txt').write_text('\n'.join(lines) + '\n')
     (out / 'catalog-lines.txt').write_text(catalog_lines(out.name, charts))
@@ -132,6 +162,7 @@ def main(argv=None):
     p.add_argument('--music', type=Path, required=True, help='music_data.bin / music_omni.bin (title, levels)')
     p.add_argument('--id', type=int, required=True, help='arcade song id')
     p.add_argument('--version', type=int, default=17, help='record version byte (default 17, SIRIUS)')
+    p.add_argument('--hold-sprites', type=Path, help='tools/holds/hold_sprites.py output (CN/HCN graphics)')
     a = p.parse_args(argv)
     md = A.read_music_data(a.music.read_bytes())
     at = md['index'][a.id] if a.id < len(md['index']) else -1
@@ -139,7 +170,7 @@ def main(argv=None):
         sys.exit('song %d is not in %s' % (a.id, a.music))
     entry = md['entries'][at]
     title = A.entry_title(entry)[1] or A.entry_title(entry)[0]
-    info = build(a.converted, a.template.read_bytes(), a.output, title, levels(entry), a.version)
+    info = build(a.converted, a.template.read_bytes(), a.output, title, levels(entry), a.version, a.hold_sprites)
     print('%s: %s, BPM %s, charts %s' % (a.output, info['title'], info['bpm'], ' '.join(info['charts'])))
 
 

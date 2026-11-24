@@ -663,6 +663,44 @@ note_hook:
         lw $12,0($1)
         subu $6,$6,$12
 #endif
+#ifdef HOLDS
+        # hold heads / tails: holds_note_hook draws caps and body itself and returns 1 (skip the native
+        # draw, back to 0x1e7584). Here $sp is FUN_001e6f50's: its stack args are at 0($sp)..0x18($sp),
+        # clip pointer at 0x10. s3 = the note, s1 = its side; v0 (sprite height) and a0..t3 are kept.
+        addiu $sp,$sp,-0x60
+        sd $2,0x00($sp)
+        sd $4,0x08($sp)
+        sd $5,0x10($sp)
+        sd $6,0x18($sp)
+        sd $7,0x20($sp)
+        sd $8,0x28($sp)
+        sd $9,0x30($sp)
+        sd $10,0x38($sp)
+        sd $11,0x40($sp)
+        sd $31,0x48($sp)
+        lw $9,0x70($sp)                 # caller's clip pointer (its 0x10($sp))
+        move $7,$6                      # y
+        move $6,$5                      # x
+        move $5,$4                      # handle
+        move $4,$19                     # note
+        jal holds_note_hook
+        move $8,$17                     # side
+        ld $31,0x48($sp)
+        beq $2,$zero,4f
+        nop
+        jr $31
+        addiu $sp,$sp,0x60
+4:      ld $2,0x00($sp)
+        ld $4,0x08($sp)
+        ld $5,0x10($sp)
+        ld $6,0x18($sp)
+        ld $7,0x20($sp)
+        ld $8,0x28($sp)
+        ld $9,0x30($sp)
+        ld $10,0x38($sp)
+        ld $11,0x40($sp)
+        addiu $sp,$sp,0x60
+#endif
         srl $12, $4, 16                 # container ($12-$15 are free here, $4-$11 are the arguments)
         andi $3, $4, 0xffff             # sprite
         lui $1, %hi(skin)

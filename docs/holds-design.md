@@ -292,8 +292,20 @@ argb8888rev). Checked on the user's files:
    +0xb, so the game scrolls and draws it like any note but never judges it. No chart value does
    this: the spawner sets +0xb = 1 except for turntable notes under assisted auto-scratch (gp-0x77b4).
    The frame hook now notices a restart before the native tick, which spawns the play's first notes.
-3. Drawing: in `note_hook`, for a hold head or tail note, record its y per lane; after the notes are
-   drawn, draw each active hold's body with `0x12fdd0` (body handle, lane x, y from the tail down
-   to the head, or to the judge line once the head is hit; zoomY = length / tile height * 100),
-   then the caps. The body state comes from holds.c: beam0 not held, beam1/2 held (alternating),
-   beam3/4 HCN released or broken.
+3. Drawing (done, `tools/holds/holds_draw.c`; not yet seen in PCSX2): `note_hook` (songdb.S) first
+   calls `holds_note_hook(note, handle, x, y, side, clip)`. For a hold's head or tail note it draws
+   the cap and the body with `0x12fdd0` and skips the native draw: body from the tail down to the
+   head, or to the judge line (y 0x140, minus the lift) once the head is hit, or from the lane top
+   while the tail is still above the screen; one tile stretched with zoomY, pivot at its top. After
+   each tick, `hd_frame` draws held holds with no note on screen (head hit, tail still above).
+   Body state from holds.c: beam0 not held, beam1/2 held, beam3/4 HCN let go (alternating every
+   2 ticks).
+4. Sprites without a launcher change: the song folder's `S 6d 38 holds/<name>.spr` / `S 92 3c ...`
+   lines (36 each, catalogue order) make the launcher append the sprites to #109 / #146; each line
+   writes its handle to record +0x38 / +0x3c, which therefore ends up holding the last one, and
+   sprite k is last - 35 + k. Titles are cut to 0x37 bytes to keep those fields free. A song
+   without the lines keeps native notes for its holds.
+
+Open: the judge line y (0x140 is from the drawer's clamp, to be checked on screen), whether
+drawing from the post-tick pass is safe while the play loop catches up several ticks in one frame,
+and note-skin interaction (skins also append to #109).

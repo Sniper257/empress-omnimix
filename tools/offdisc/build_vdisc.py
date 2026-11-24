@@ -487,7 +487,7 @@ def main():
             h.update(name.encode()+b'\0'+open(os.path.join(HERE,name),'rb').read())
         h.update(('FILE_IO_LOG='+os.environ.get('FILE_IO_LOG','0')+' USB_BENCH='+os.environ.get('USB_BENCH','0')+' MMCE_BENCH='+os.environ.get('MMCE_BENCH','0')+' PORTABLE_LAUNCHER='+os.environ.get('PORTABLE_LAUNCHER','0')).encode())
         if holds:
-            for name in ('holds.h','holds.c','holds_empress.c'):h.update(b'HOLDS/'+name.encode()+b'\0'+open(os.path.join(HERE,'..','holds',name),'rb').read())
+            for name in ('holds.h','holds.c','holds_empress.c','holds_draw.c'):h.update(b'HOLDS/'+name.encode()+b'\0'+open(os.path.join(HERE,'..','holds',name),'rb').read())
         if frame_order:h.update(b'ASSET_FRAME_ORDER=1')
         if split_texture:h.update(b'ASSET_SPLIT_TEXTURE=1')
         if host_bench:h.update(b'HOST_BENCH=1')
