@@ -49,10 +49,15 @@ extern hu32 lift_y[2];
 #endif
 #endif
 
-static hs32 hd_head_y[HOLDS_LANES], hd_head_at[HOLDS_LANES], hd_tail_at[HOLDS_LANES], hd_x[HOLDS_LANES];
-/* the pending hold whose head note was last drawn on each lane, and the frame it was drawn in */
-static hs32 hd_head_i[HOLDS_LANES];
-static hu32 hd_head_frame[HOLDS_LANES], hd_frames;
+static hs32 hd_x[HOLDS_LANES];
+/* per hold: tick its head / tail note was last drawn, the head's y, and the frame the head was drawn
+ * in (0 = not yet). Per hold, not per lane: CNs on one key follow each other closely, and an ended
+ * hold's tail note stays on screen below the line for a while. */
+static hs32 hd_head_at[HOLDS_MAX], hd_tail_at[HOLDS_MAX], hd_head_y[HOLDS_MAX];
+static hu32 hd_head_frame[HOLDS_MAX], hd_frames;
+/* holds_ddbg: [1] head draws, [2] tail draws, [3] frame-pass bodies, [4] heads found gone,
+ * [5] / [6] / [7] last tail drawn: tick, hold index, y; [8] bodies clamped */
+volatile hu32 holds_ddbg[12] = {0x52444448u};
 /* scroll speed per side in 1/256 pixel per tick, measured on tail notes above the line: the tail
  * note may sit a tick or two off the hold's end, and is drawn where the end is */
 static hs32 hd_ppt[2];
@@ -62,7 +67,8 @@ static hu32 hd_clip[2], hd_cont[2];
 static void hd_reset(void)
 {
     hu32 i;
-    for (i = 0; i < HOLDS_LANES; i++) { hd_head_at[i] = hd_tail_at[i] = -100; hd_x[i] = -1; hd_head_i[i] = -1; LOOP_PAD(); }
+    for (i = 0; i < HOLDS_LANES; i++) { hd_x[i] = -1; LOOP_PAD(); }
+    for (i = 0; i < HOLDS_MAX; i++) { hd_head_at[i] = hd_tail_at[i] = -100; hd_head_frame[i] = 0; LOOP_PAD(); }
     hd_cont[0] = hd_cont[1] = 0;
 }
 
@@ -116,7 +122,10 @@ static hu32 hd_last(hu32 cont)
 
 static void hd_body(hu32 base, hu32 kind, hs32 x, hs32 top, hs32 bottom, hu32 clip)
 {
-    hs32 len = bottom - top, h = hd_body_h[kind];
+    hs32 len, h = hd_body_h[kind];
+    if (top < HD_TOP_Y) { top = HD_TOP_Y; holds_ddbg[8]++; }                 /* never past the screen */
+    if (bottom > HD_JUDGE_Y + 16) { bottom = HD_JUDGE_Y + 16; holds_ddbg[8]++; }
+    len = bottom - top;
     if (len <= 0) return;
     holds_dbg[10]++;
     HD_DRAW(base, x, top, len * 100 / h, hd_w[kind] / 2, 0, clip);
@@ -146,22 +155,25 @@ int holds_note_hook(hu8 *note, hu32 handle, hs32 x, hs32 y, hu32 side, hu32 clip
     hd_clip[side] = clip;
     hd_cont[side] = cont;
     if (!tail) {
-        hd_head_y[lane] = y;
-        hd_head_at[lane] = hd_now;
-        if (holds.state[i] == HS_PENDING) { hd_head_i[lane] = i; hd_head_frame[lane] = hd_frames; }
-        if (hd_tail_at[lane] < hd_now - 1)                     /* tail still above the screen */
+        holds_ddbg[1]++;
+        hd_head_y[i] = y;
+        hd_head_at[i] = hd_now;
+        hd_head_frame[i] = hd_frames;
+        if (hd_tail_at[i] < hd_now - 1)                        /* tail still above the screen */
             hd_body(body, kind, x, HD_TOP_Y, HD_BASE(y) - hd_cap_h[kind], clip);
         HD_DRAW(base, x, HD_BASE(y), 100, hd_w[kind] / 2, hd_cap_h[kind], clip);   /* start cap */
     } else {
         int head_seen;
-        if (t > hd_now && y < judge) hd_ppt[side & 1] = (judge - y) * 256 / (t - hd_now);
+        if (t > hd_now + 4 && y < judge) hd_ppt[side & 1] = (judge - y) * 256 / (t - hd_now);
+        if (hd_ppt[side & 1] > 16 * 256) hd_ppt[side & 1] = 16 * 256;           /* at most 16 px a tick */
         y -= (d->end - t) * hd_ppt[side & 1] / 256;
+        holds_ddbg[2]++; holds_ddbg[5] = (hu32)t; holds_ddbg[6] = (hu32)i; holds_ddbg[7] = (hu32)y;
         /* the tail note is never judged, so the game keeps it (at or below the line) for up to 60
          * ticks after its time: once the hold has ended, nothing more is drawn for it */
-        hd_tail_at[lane] = hd_now;                              /* on screen: the frame pass leaves it alone */
+        hd_tail_at[i] = hd_now;                                 /* on screen: the frame pass leaves it alone */
         if (hd_now > d->end || y > judge) return 1;
-        head_seen = hd_head_at[lane] >= hd_now - 1;
-        hs32 bottom = head_seen ? hd_head_y[lane] : judge;
+        head_seen = hd_head_at[i] >= hd_now - 1;
+        hs32 bottom = head_seen ? hd_head_y[i] : judge;
         if (bottom > judge) bottom = judge;
         hd_body(body, kind, x, HD_BASE(y) + hd_cap_h[kind], HD_BASE(bottom) - hd_cap_h[kind], clip);
         if (!head_seen && holds.state[i] != HS_PENDING && y < judge)
@@ -184,7 +196,8 @@ static void hd_frame(void)
         side = lane >> 3;
         if (i < 0 || hd_x[lane] < 0 || !hd_cont[side]) continue;
         if (holds.state[i] != HS_HOLDING && holds.state[i] != HS_LOOSE) continue;
-        if (hd_head_at[lane] >= hd_now || hd_tail_at[lane] >= hd_now) continue;   /* drawn with its notes */
+        if (hd_head_at[i] >= hd_now || hd_tail_at[i] >= hd_now) continue;   /* drawn with its notes */
+        holds_ddbg[3]++;
         if (hd_now >= chart_defs[i].end - HOLDS_TAIL_SHIFT) continue;   /* the end is at the line: nothing above it to
                                                                           draw while the release is judged */
         if (!(last = hd_last(hd_cont[side]))) continue;
@@ -203,18 +216,17 @@ static void hd_frame(void)
  * scores the head itself. */
 static void hd_heads_gone(hu32 keys)
 {
-    hu32 lane;
-    hs32 i;
+    hu32 i;
     hd_frames++;
-    for (lane = 0; lane < HOLDS_LANES; lane++) {
+    for (i = holds.next; i < chart_n; i++) {          /* pending heads not yet past the late rule */
+        const hold_def *d = &chart_defs[i];
         LOOP_PAD();
-        i = hd_head_i[lane];
-        if (i < 0) continue;
-        if (holds.state[i] != HS_PENDING) { hd_head_i[lane] = -1; continue; }
-        if (hd_frames - hd_head_frame[lane] < 2u) continue;                 /* drawn last frame */
-        hd_head_i[lane] = -1;
-        if (hd_now > chart_defs[i].start + default_cfg.head_late) continue;   /* the late rule decides */
-        if (!((keys >> lane) & 1u)) continue;
-        if (holds_head(&holds, lane, chart_defs[i].start, J_GREAT, hd_now) >= 0) dbg_report(0xfe, lane_id(lane), i);
+        if (d->start > hd_now + 16) break;
+        if (holds.state[i] != HS_PENDING || !hd_head_frame[i]) continue;
+        if (hd_frames - hd_head_frame[i] < 2u) continue;                     /* drawn last frame */
+        hd_head_frame[i] = 0;
+        if (hd_now > d->start + default_cfg.head_late) continue;             /* the late rule decides */
+        if (!((keys >> d->lane) & 1u)) continue;
+        if (holds_head(&holds, d->lane, d->start, J_GREAT, hd_now) >= 0) { holds_ddbg[4]++; dbg_report(0xfe, lane_id(d->lane), (int)i); }
     }
 }
