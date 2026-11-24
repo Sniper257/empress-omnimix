@@ -27,7 +27,8 @@ class SongFolder(unittest.TestCase):
             ply, _ = C.empress_events(ev, holds)
             for name in ('SPN', 'DPA'):
                 (conv / (name + '.bin')).write_bytes(C.encrypt(ply))
-            (conv / 'SP.bank').write_bytes(b'wp\x03\x00')
+            (conv / 'keys.bank').write_bytes(b'wp\x03\x00')
+            (conv / 'stream.bin').write_bytes(C.silent_stream(28))
             (conv / 'convert.json').write_text(json.dumps({'charts': {'SPN': {'bpm': [150, 150]}, 'DPA': {'bpm': [150, 150]}}}))
             template = bytearray(b'\xee' * 0x134)
             spr = Path(tmp) / 'spr'
@@ -47,7 +48,9 @@ class SongFolder(unittest.TestCase):
             txt = (out / 'song.txt').read_text().splitlines()
             self.assertEqual(txt[1:3], ['record record.bin', 'F d0 4 SPN.bin'])
             self.assertIn('F cc 4 DPA.bin', txt)
-            self.assertIn('F e8 2 SP.bank', txt)
+            self.assertIn('F e8 2 keys.bank', txt)                              # one bank for SP and DP
+            self.assertIn('F ec 2 stream.bin', txt)                             # 0xec is the stream, never a bank
+            self.assertFalse(any('DP.bank' in l for l in txt))
             s_lines = [l for l in txt if l.startswith('S ')]
             self.assertEqual(len(s_lines), 72)
             self.assertEqual(s_lines[0], 'S 6d 38 holds/cn_white_start.spr')

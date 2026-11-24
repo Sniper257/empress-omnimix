@@ -197,6 +197,16 @@ def render(events, keys, rate=44100, bgm_only=False, peak=None):
 HCN_FLAG = 13  # .1 event type: this chart's holds are HCN/HBSS
 
 
+def silent_stream(samples, rate=44100):
+    """An EMPRESS backing stream of stereo silence (zero ADPCM frames), without encoding sample by sample."""
+    import spu_adpcm as S
+    frames = -(-samples // 28)
+    head = bytearray(0x800)
+    body = bytes(16 * frames * 2)
+    struct.pack_into('<12I', head, 0, S.STREAM_MAGIC, 0, 0x800, len(body), 0, 0, rate, 2, 1, 16, 0x7f, 1)
+    return bytes(head) + S.disguise(body, S.STREAM_DELTA)
+
+
 def is_hell(events):
     return any(e[1] == HCN_FLAG for e in events)
 
@@ -206,14 +216,15 @@ def main(argv=None):
     p.add_argument('song', type=Path, help='<id>.ifs, or a folder holding <id>.1 and <id>.2dx')
     p.add_argument('output', type=Path)
     p.add_argument('--stream', metavar='CHART', help='render the backing stream from this chart (e.g. SPA)')
-    p.add_argument('--bank-budget', type=int, default=11859552,
-                   help='largest bank in bytes (default: the 11.9 MB Kailua bank known to load in PCSX2; '
-                        'Elisha at 16 MB crashed); the longest sounds go to 32 or 24 kHz to fit. 0 = no limit')
+    p.add_argument('--bank-budget', type=int, default=16000000,
+                   help='largest bank in bytes (default 16 MB: Elisha\'s 16 MB bank loads in PCSX2 with All My Turn\'s '
+                        'record); sounds up to 6 s go to 32 or 24 kHz to fit. 0 = no limit')
     p.add_argument('--hell', action='store_true', help='treat holds as HCN/HBSS even without the type-13 HCN event')
     p.add_argument('--split', action='store_true',
-                   help='keysounds to SP.bank / DP.bank (EMPRESS "wp" banks). Alone: every sound, BGM included, '
-                        'is in the bank as in EMPRESS\'s own songs (no stream). With --stream: player sounds only, '
-                        'BGM in a BGM-only stream')
+                   help='keysounds to one keys.bank for every chart (an EMPRESS "wp" bank; native songs have one '
+                        'bank for SP and DP). Alone: every sound, BGM included, is in the bank, and stream.bin is '
+                        'silence the length of the song (the record\'s stream field must name a real stream). With '
+                        '--stream: player sounds only in the bank, BGM in stream.bin')
     a = p.parse_args(argv)
     charts, keys, sid = load_song(a.song)
     a.output.mkdir(parents=True, exist_ok=True)
@@ -225,18 +236,16 @@ def main(argv=None):
         if a.stream:                                  # the bank gets the gain the stream gets
             peak = render(charts[next(s for s, n in SLOTS.items() if n == a.stream.upper())], keys)[2]['peak']
             gain = min(1.0, 32767 / peak) if peak else 1.0
-        for side, members in (('SP', [s for s in charts if s < 6]), ('DP', [s for s in charts if s >= 6])):
-            if not members:
-                continue
-            sounds = KB.player_sounds(*(charts[s] for s in members))
-            if not a.stream:
-                sounds += [v for v in KB.bgm_sounds(*(charts[s] for s in members)) if v not in set(sounds)]
-            data, slots, info = KB.build(side, sounds, keys, gain, a.bank_budget or None)
-            (a.output / (side + '.bank')).write_bytes(data)
-            banks.update({s: slots for s in members})
-            report.setdefault('banks', {})[side] = info
-            print('%s.bank: %d sounds, %d bytes, rates %s%s' % (side, info['sounds'], info['bytes'], info['rates'],
-                                                            ' (' + info['warning'] + ')' if 'warning' in info else ''))
+        members = sorted(charts)
+        sounds = KB.player_sounds(*(charts[s] for s in members))
+        if not a.stream:
+            sounds += [v for v in KB.bgm_sounds(*(charts[s] for s in members)) if v not in set(sounds)]
+        data, slots, info = KB.build('SP', sounds, keys, gain, a.bank_budget or None)
+        (a.output / 'keys.bank').write_bytes(data)
+        banks.update({s: slots for s in members})
+        report.setdefault('banks', {})['keys'] = info
+        print('keys.bank: %d sounds, %d bytes, rates %s%s' % (info['sounds'], info['bytes'], info['rates'],
+                                                        ' (' + info['warning'] + ')' if 'warning' in info else ''))
     for slot, events in sorted(charts.items()):
         name = SLOTS.get(slot, 'slot%d' % slot)
         hell = a.hell or is_hell(events)
@@ -261,6 +270,16 @@ def main(argv=None):
         (a.output / 'stream.bin').write_bytes(S.stream(channels, rate))
         report['stream'] = dict(info, chart=a.stream.upper(), seconds=round(len(channels[0]) / rate, 2), bgm_only=a.split)
         print('stream: %.1f s from %s, %d keysounds' % (len(channels[0]) / rate, a.stream.upper(), info['keysounds_played']))
+    elif a.split:
+        # The record's stream field (0xec) always names a stream: the game reads its header (rate at
+        # 0x18, channels at 0x1c) and divides by the channel count on the first refill. With the BGM in
+        # the bank, a stream of silence the length of the longest chart.
+        import spu_adpcm as S
+        end = max(max(tick(e[0]) for e in ev) for ev in charts.values()) + 120
+        n = (end * CLOCK // 1000000 + 1) * 44100
+        (a.output / 'stream.bin').write_bytes(silent_stream(n))
+        report['stream'] = {'seconds': round(n / 44100, 2), 'silent': True}
+        print('stream: %.1f s of silence' % (n / 44100))
     (a.output / 'convert.json').write_text(json.dumps(report, indent=1) + '\n', encoding='utf-8')
 
 

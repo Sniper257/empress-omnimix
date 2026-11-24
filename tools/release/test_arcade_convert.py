@@ -117,6 +117,16 @@ class Chart(unittest.TestCase):
         self.assertEqual(set(r), {0, 1, 2, 3} if len(r) == 4 else set(r))
         self.assertNotIn(3, KB.fit_rates(L, int(full * 0.75)))         # short sounds stay at 44.1 kHz
 
+    def test_silent_stream_header(self):
+        import spu_adpcm as S
+        st = C.silent_stream(44100)
+        head = struct.unpack_from('<12I', st, 0)
+        self.assertEqual(head[0], S.STREAM_MAGIC)
+        self.assertEqual((head[2], head[6], head[7]), (0x800, 44100, 2))      # header size, rate (0x18), channels (0x1c)
+        self.assertEqual(head[3], len(st) - 0x800)
+        self.assertEqual(len(st) - 0x800, 16 * 2 * -(-44100 // 28))
+        self.assertEqual(S.disguise(st[0x800:0x810], S.STREAM_DELTA, reverse=True), bytes(16))
+
     def test_keysound_slots_and_bgm_only(self):
         import keysound_bank as KB
         ev = [(0, 2, 1, 7), (0, 2, 3, 9), (500, 0, 1, 0), (900, 2, 1, 9), (1000, 0, 1, 0), (0, 7, 0, 5)]

@@ -14,7 +14,7 @@ Record fields (0x134 bytes; launcher/main.c add_song, song_resources.c, song_win
   0x94, 0x9a  title card (data1 index)    0xac..0xbb  title sprite indices     0xbd  large-bank flag
   0xc0..0xe4  u32 chart file ids, by level index (launcher/coalesce_catalog.h): SPN d0, SPH c0,
         SPA c8, SPB d8, SPX e0, DPN d4, DPH c4, DPA cc, DPB dc, DPX e4
-  0xe8 / 0xec  u16 SP / DP bank file ids (high half 0xffff), more groups up to 0x107 unused
+  0xe8 / 0xec  u16 bank / stream file ids (0xea / 0xee 0xffff, as in every native record), more groups up to 0x107 unused
   0x108 u16 SP notes N,H,A,B,X   0x112 u16 pairs DP notes (P1, P2) N,H,A,B,X   0x126 u16 graph targets
   (SP N,H,A, DP N,H,A; All My Turn's are 1.33-1.52 x notes; 1.4 x notes is written)
   0x38 / 0x3c (the end of the title field)  hold sprites: the handle of the last of the 36 hold sprites
@@ -129,10 +129,19 @@ def build(converted, template, out, title, lv, version=17, sprites=None):
             total = p1 + p2
         if d < 3:
             struct.pack_into('<H', rec, 0x126 + ((i >= 5) * 3 + d) * 2, round(total * GRAPH))
-    for field, bank in ((0xe8, 'SP.bank'), (0xec, 'DP.bank')):
-        if (converted / bank).is_file():
-            shutil.copyfile(converted / bank, out / bank)
-            lines.append('F %x 2 %s' % (field, bank))
+    # 0xe8 bank, 0xec stream (FUN_001e4050 / FUN_001e3f30 read +0 / +4 of the group): every native
+    # song has one bank for SP and DP and a stream. Earlier conversions wrote DP.bank to 0xec, so the
+    # game played the bank as a stream (noise in Kailua, a divide by zero in Elisha).
+    if (converted / 'keys.bank').is_file():
+        files = (('keys.bank', 0xe8), ('stream.bin', 0xec))
+    else:
+        files = (('SP.bank', 0xe8), ('stream.bin', 0xec))
+    for name, field in files:
+        if (converted / name).is_file():
+            shutil.copyfile(converted / name, out / name)
+            lines.append('F %x 2 %s' % (field, name))
+    if not (converted / 'stream.bin').is_file():
+        print('%s: warning: no stream.bin; the record keeps the template\'s stream at 0xec' % out, file=sys.stderr)
     if sprites and any(has_holds(converted / (n + '.bin')) for n in charts):
         names = hold_sprite_names()
         (out / 'holds').mkdir(exist_ok=True)
