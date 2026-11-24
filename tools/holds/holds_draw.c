@@ -53,6 +53,9 @@ static hs32 hd_head_y[HOLDS_LANES], hd_head_at[HOLDS_LANES], hd_tail_at[HOLDS_LA
 /* the pending hold whose head note was last drawn on each lane, and the frame it was drawn in */
 static hs32 hd_head_i[HOLDS_LANES];
 static hu32 hd_head_frame[HOLDS_LANES], hd_frames;
+/* scroll speed per side in 1/256 pixel per tick, measured on tail notes above the line: the tail
+ * note may sit a tick or two off the hold's end, and is drawn where the end is */
+static hs32 hd_ppt[2];
 static hu32 hd_clip[2], hd_cont[2];
 
 /* a new chart: forget where notes were */
@@ -68,10 +71,11 @@ static hs32 hd_find(hu32 lane, hs32 t, int *tail)
 {
     hu32 i;
     for (i = 0; i < chart_n; i++) {
-        if (chart_defs[i].lane == lane) {
-            if (chart_defs[i].start == t) { *tail = 0; return (hs32)i; }
-            if (chart_defs[i].end == t) { *tail = 1; return (hs32)i; }
-        }
+        if (chart_defs[i].lane == lane && chart_defs[i].start == t) { *tail = 0; return (hs32)i; }
+        LOOP_PAD();
+    }
+    for (i = 0; i < chart_n; i++) {
+        if (chart_defs[i].lane == lane && holds_tail_tick(&chart_defs[i], t)) { *tail = 1; return (hs32)i; }
         LOOP_PAD();
     }
     return -1;
@@ -150,6 +154,8 @@ int holds_note_hook(hu8 *note, hu32 handle, hs32 x, hs32 y, hu32 side, hu32 clip
         HD_DRAW(base, x, HD_BASE(y), 100, hd_w[kind] / 2, hd_cap_h[kind], clip);   /* start cap */
     } else {
         int head_seen;
+        if (t > hd_now && y < judge) hd_ppt[side & 1] = (judge - y) * 256 / (t - hd_now);
+        y -= (d->end - t) * hd_ppt[side & 1] / 256;
         /* the tail note is never judged, so the game keeps it (at or below the line) for up to 60
          * ticks after its time: once the hold has ended, nothing more is drawn for it */
         if (hd_now > d->end || y > judge) return 1;

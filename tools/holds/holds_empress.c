@@ -140,7 +140,7 @@ static void arm(void)
 
 /* Replaces the spawner's jal 0x1ebf90(note) at 0x1e7d14. The note's time (+0x18, ticks), lane (+9)
  * and side (+0xa) are set and +0xb (must judge) has just been decided. A note at a hold's end tick
- * on its lane is the hold's tail (arcade_convert.py writes one per hold): never judged by the game,
+ * on its lane (within HOLDS_TAIL_SHIFT) is the hold's tail (arcade_convert.py writes one per hold): never judged by the game,
  * only scrolled and drawn, so the renderer knows where the tail is. */
 void holds_spawn_hook(hu8 *note)
 {
@@ -151,7 +151,8 @@ void holds_spawn_hook(hu8 *note)
         t = *(const short *)(note + 0x18);
         lane = note[0xa] * 8u + note[9];
         for (i = 0; i < chart_n; i++) {
-            if (chart_defs[i].end == t && chart_defs[i].lane == lane) { note[0xb] = 0; holds_dbg[8]++; break; }
+            if (chart_defs[i].lane == lane && chart_defs[i].start == t) break;            /* a head */
+            if (chart_defs[i].lane == lane && holds_tail_tick(&chart_defs[i], t)) { note[0xb] = 0; holds_dbg[8]++; break; }
             LOOP_PAD();
         }
     }

@@ -47,6 +47,20 @@ def tick(ms):
     return t
 
 
+TAIL_SHIFT = 2   # holds.h HOLDS_TAIL_SHIFT
+
+
+def tail_tick(start, stop, taken):
+    """Tick for a hold's tail note: its end, or the nearest tick within TAIL_SHIFT (earlier first)
+    that has no other note. The game judges all notes at one tick as a row, and a never-judged tail
+    in another hold's head row left that head unjudged until its window ran out."""
+    for off in (0, -1, 1, -2, 2):
+        t = stop + off
+        if t > start and t not in taken:
+            return t
+    return stop
+
+
 def empress_events(events, holds=(), keysounds=False, bgm_slots=False, tail_notes=True):
     """Arcade events (ms) -> EMPRESS ply bytes (header, events, terminator, optional hold trailer).
 
@@ -102,7 +116,8 @@ def empress_events(events, holds=(), keysounds=False, bgm_slots=False, tail_note
         out.append((0, 7, 0, 1))
     if tail_notes:
         for start, stop, lane, kind, tick64 in holds:
-            out.append((stop, (lane >> 3) | (lane & 7) << 4, 0, 0))
+            out.append((tail_tick(start, stop, {e[0] for e in out if e[1] & 15 in (0, 1)}),
+                        (lane >> 3) | (lane & 7) << 4, 0, 0))
     end = max([end] + [e[0] for e in out]) + 1
     out.append((end, 6, 0, 0))
     out.sort(key=lambda e: (e[0], e[1] & 15 == 6))

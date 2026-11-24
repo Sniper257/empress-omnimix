@@ -60,7 +60,7 @@ def ply_counts(raw):
     end = 8 + 8 * len(c['events']) + 8
     if ply[end:end + 4] == H.MAGIC:
         for s, e, lane, kind, tick in H.unpack(ply[end:]):
-            if (e, lane) not in notes:              # charts from before tail notes: count the tail here
+            if not any((e + o, lane) in notes for o in range(-2, 3)):   # charts from before tail notes: count the tail here
                 side[lane >> 3] += 1
     return side
 

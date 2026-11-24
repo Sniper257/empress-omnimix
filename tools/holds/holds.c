@@ -235,6 +235,6 @@ int holds_is_tail(const holds_t *h, hu32 lane, hs32 time)
 {
     hu32 i;
     for (i = 0; i < h->n; i++)
-    { if (h->defs[i].lane == lane && h->defs[i].end == time) return 1; LOOP_PAD(); }
+    { if (h->defs[i].lane == lane && holds_tail_tick(&h->defs[i], time)) return 1; LOOP_PAD(); }
     return 0;
 }

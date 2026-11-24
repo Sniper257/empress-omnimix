@@ -94,6 +94,17 @@ class Chart(unittest.TestCase):
         ply, _ = C.empress_events(events, holds, tail_notes=False)
         self.assertNotIn((90, 0x20, 0, 0), parse(ply)[1])
 
+    def test_tail_note_leaves_a_shared_row(self):
+        # hold on column 2 ends on the tick a hold on column 4 starts: the tail goes one tick earlier
+        events = [(0, 4, 1, 120), (1000, 0, 2, 500), (1500, 0, 4, 500), (3000, 6, 0, 0)]
+        holds = H.from_events(events, hell=True, time=C.tick, ticks_per_ms=1000 / C.CLOCK)
+        self.assertEqual([h[:3] for h in holds], [(60, 90, 2), (90, 120, 4)])
+        _, ev, _ = parse(C.empress_events(events, holds)[0])
+        notes = sorted(e[:2] for e in ev if e[1] & 15 == 0)
+        self.assertEqual(notes, [(60, 0x20), (89, 0x20), (90, 0x40), (120, 0x40)])
+        self.assertEqual(C.tail_tick(60, 90, {89, 90, 91}), 88)
+        self.assertEqual(C.tail_tick(89, 90, {90, 91, 92}), 90)       # nothing free after the head: stays
+
     def test_keysound_slots_and_bgm_only(self):
         import keysound_bank as KB
         ev = [(0, 2, 1, 7), (0, 2, 3, 9), (500, 0, 1, 0), (900, 2, 1, 9), (1000, 0, 1, 0), (0, 7, 0, 5)]

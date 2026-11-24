@@ -93,6 +93,14 @@ typedef struct {
     hu32 nev, dropped;
 } holds_t;
 
+/* The tail note arcade_convert.py writes for each hold sits up to HOLDS_TAIL_SHIFT ticks off the
+ * hold's end, on a tick with no other note: the game judges a row of notes at one tick together,
+ * and a never-judged tail in the same row as another hold's head left that head unjudged until its
+ * window ran out (PCSX2: BAD or miss 15 ticks late). */
+#define HOLDS_TAIL_SHIFT 2
+static inline int holds_tail_tick(const hold_def *d, hs32 t)
+{ return t > d->start && t - d->end <= HOLDS_TAIL_SHIFT && d->end - t <= HOLDS_TAIL_SHIFT; }
+
 /* defs must stay valid and be sorted by start; returns -1 if n > HOLDS_MAX or a record is invalid */
 int holds_reset(holds_t *h, const hold_def *defs, hu32 n, const holds_cfg *cfg);
 /* the engine judged a head note on lane at chart time start: returns the hold index or -1 (not a hold) */

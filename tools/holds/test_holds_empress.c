@@ -96,6 +96,14 @@ int main(void)
         make_note(n, 0, 2, 400); ndraw = 0;
         CHECK(holds_note_hook(n, 109u << 16 | 601, 80, 40, 0, 0) == 1);
         CHECK(ndraw == 2 && draw_y[0] == 53 && draw_zy[0] == (203 - 10 - 53) * 10 && draw_h[1] == (109u << 16 | 511) && draw_y[1] == 43 && draw_py[1] == 0);
+        /* a tail note a tick before the end (shifted off a shared row) is drawn where the end is:
+         * 280 px over 151 ticks is ~1.85 px per tick, so one tick higher */
+        make_note(n, 0, 2, 399); ndraw = 0;
+        CHECK(holds_note_hook(n, 109u << 16 | 601, 80, 40, 0, 0) == 1);
+        CHECK(ndraw == 2 && draw_y[1] == 42 && draw_h[1] == (109u << 16 | 511));
+        /* the spawner never lets the game judge it */
+        make_note(n, 0, 2, 399); holds_spawn_hook(n); CHECK(n[0xb] == 0);
+        make_note(n, 0, 2, 300); holds_spawn_hook(n); CHECK(n[0xb] == 1);   /* the head stays judged */
         /* the wide container has no hold sprites in this record: native note */
         make_note(n, 0, 2, 300); ndraw = 0;
         CHECK(holds_note_hook(n, 146u << 16 | 601, 80, 200, 0, 0) == 0);
