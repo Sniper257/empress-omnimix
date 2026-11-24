@@ -316,7 +316,9 @@ and note-skin interaction (skins also append to #109).
 
 ## PCSX2 fixes (round 1)
 
-- Held keys: `0x130970()` (gp-0x7bec, P1 bits 0..6, P2 bits 7..13). The `0x724cf0` guess acted like a
+- Held keys: `0x130970()` (gp-0x7bec, P1 bits 0..6, P2 bits 7..13), OR the pressed mask
+  `0x130950()`: the held mask can lag the press by a tick, which broke HCNs right after a good head
+  (a POOR flash after the GREAT). The `0x724cf0` guess acted like a
   press flag, so every held HCN took damage.
 - Sprites: one shared palette (`cont_add` rejects mixed own palettes).
 - Tail notes stay alive for up to 60 ticks after their time (never judged): the renderer draws

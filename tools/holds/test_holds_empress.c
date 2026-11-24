@@ -15,6 +15,8 @@ static hu32 ring_code[64], ring_lane[64], nring;
 static hu32 keys[2];
 unsigned long long test_ring_body(hu32 code, hu32 lane) { if (nring < 64) { ring_code[nring] = code; ring_lane[nring++] = lane; } return 0; }
 hu32 test_keys(hu32 side) { return keys[side]; }
+static hu32 pressed[2];
+hu32 test_pressed(hu32 side) { return pressed[side]; }
 hu32 test_turntable(hu32 side) { (void)side; return 0; }
 int holds_note_hook(hu8 *note, hu32 handle, hs32 x, hs32 y, hu32 side, hu32 clip);
 static hu32 draw_h[64], ndraw; static hs32 draw_y[64], draw_zy[64], draw_py[64];
@@ -114,6 +116,28 @@ int main(void)
         make_note(n, 0, 2, 400); ndraw = 0;
         CHECK(holds_note_hook(n, 109u << 16 | 601, 80, 0x140, 0, 0) == 1 && ndraw == 0);
         keys[0] = 0;
+    }
+    /* the held mask lags the press by a tick: the press-tick mask keeps the HCN from breaking */
+    {
+        static const hold_def one[1] = {{300, 400, 2, HOLD_HCN, 6 * HOLDS_FP}};
+        long long tt;
+        hu32 i;
+        int bad = 0;
+        holds_set_chart(one, 1);
+        keys[0] = keys[1] = 0;
+        for (tt = 0; tt < 299; tt++) holds_frame_hook(tt);
+        nring = 0;
+        holds_on_judgement(5, 2);
+        pressed[0] = 1u << 2;                      /* pressed this tick, not yet in the held mask */
+        holds_frame_hook(299);
+        pressed[0] = 0;
+        keys[0] = 1u << 2;
+        for (tt = 300; tt < 400; tt++) holds_frame_hook(tt);
+        keys[0] = 0;
+        for (tt = 400; tt < 420; tt++) holds_frame_hook(tt);
+        for (i = 0; i < nring; i++) if (ring_code[i] == 0xf || ring_code[i] == 0xb) bad++;
+        CHECK(bad == 0);
+        CHECK(nring >= 1 && ring_code[nring - 1] == 4);                    /* PGREAT at the end */
     }
     if (failures) { printf("%d failures\n", failures); return 1; }
     printf("holds_empress: all tests passed\n");
