@@ -251,3 +251,17 @@ renderer uses them:
 A second table at file 0x1070470 lists lane lights `lnote00_lo_{siro,ao,scr}` plus `_push` and
 `2_push` (white key, blue key, scratch), indexed per lane (siro/ao alternating, scr last). These are
 probably the beams shown while a hold is pressed (2 = set 2).
+
+### The graphics files
+
+`tools/release/konami_tex.py` turns a graphic .ifs into PNGs (texturelist.xml + per-image LZ77 data,
+argb8888rev). Checked on the user's files:
+
+- `notes_cn00.ifs` (53 images): set 1 = CN/BSS, set 2 (`cn2`, `bss2`) = HCN/HBSS. Set 2 caps
+  have red markers, and beam3/beam4 are red bodies (released/damage). beam0 = idle body,
+  beam1/2 = held (lit). `notes_bss_start_1..3`, `notes_bss_middle_1..3`, `notes_mss*` are multi-spin.
+  White-key caps are 54 px wide, black 42, scratch 92; caps 26 px tall; bodies are 26-px tiles.
+- `notes_cn00_long/short/veryshort.ifs` (43 images): the note-height options, caps 29/23/20 px.
+- `lnote00.ifs` (176 images): key-press flashes `lnote00_lo_{siro,ao,scr}` (13 frames),
+  `_push` held loops (12 frames), `2_push` HCN held loops (25 frames), `notes_break_` (26 frames,
+  the broken-HCN shards). Black backgrounds: drawn additively.
