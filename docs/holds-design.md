@@ -26,10 +26,14 @@ module built in three layers.
 - **HCN / HBSS** (from copula; there were none in SIRIUS charts, but omnimix
   and BMS charts can have them):
   - While held: `HE_TICK_GAIN` every 16th note, the same recovery as a hit
-    note, with no combo.
-  - Letting go, or missing the head: a real POOR and an empty POOR at once
-    (`HE_BREAK` + `HE_TICK_LOSS`; -8% on NORMAL), then an empty POOR
-    (`HE_TICK_LOSS`, -2% on NORMAL) every 16th counted from that moment.
+    note, with no combo, plus one more at the end if still held there (the
+    blog measured a recovery judgement on the end point).
+  - Letting go: a real POOR and an empty POOR at once (`HE_BREAK` +
+    `HE_TICK_LOSS`; -8% on NORMAL), then an empty POOR (`HE_TICK_LOSS`, -2%
+    on NORMAL) every 16th counted from that moment.
+  - Missing the head: the game's own POOR plus an empty POOR at once; the two
+    16ths after the head have no judgement, then an empty POOR on every 16th
+    of the head's grid from the third on.
   - The lane can be grabbed again until the end.
   - The end never adds a POOR or a gauge loss. Once broken, the tail scores
     nothing (`J_NONE`), even after re-grabbing.

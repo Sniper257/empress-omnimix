@@ -69,7 +69,9 @@ static void let_go(holds_t *h, hu32 i, hs32 now, hu32 real_poor)
     h->broken[i] = 1;
     if (real_poor) emit(h, HE_BREAK, i, J_POOR, now - h->defs[i].end);
     emit(h, HE_TICK_LOSS, i, J_POOR, now - h->defs[i].end);   /* the empty POOR at the moment of release */
-    h->next_tick[lane] = now * HOLDS_FP + tick_of(h, i);
+    if (real_poor) h->next_tick[lane] = now * HOLDS_FP + tick_of(h, i);   /* let go: every 16th from now */
+    else h->next_tick[lane] = h->defs[i].start * HOLDS_FP + 3 * tick_of(h, i);   /* head missed: the two 16ths
+                                                                     after the head have no judgement */
 }
 
 static void start_hold(holds_t *h, hu32 i, hu32 judge, hs32 now)
@@ -152,6 +154,12 @@ static int held(holds_t *h, hu32 lane, hu32 kind, hs32 now, hu32 keys, const hs8
     return 1;
 }
 
+/* HCN/HBSS held at the end: the end point is a gain tick too */
+static void end_gain(holds_t *h, hu32 i, hs32 offset)
+{
+    if (is_hell(h->defs[i].kind)) emit(h, HE_TICK_GAIN, i, J_POOR, offset);
+}
+
 static void step(holds_t *h, hu32 lane, hs32 now, hu32 keys, const hs8 tt[2])
 {
     hs32 i = h->active[lane];
@@ -188,12 +196,13 @@ static void step(holds_t *h, hu32 lane, hs32 now, hu32 keys, const hs8 tt[2])
             h->next_tick[lane] = now64 + tick_of(h, (hu32)i);
         }
     } else if (!down) {                             /* HS_HOLDING, released */
-        if (offset >= -win) { finish(h, (hu32)i, h->broken[i] ? J_NONE : tail_judge(h, offset), offset); return; }
+        if (offset >= -win) { end_gain(h, (hu32)i, offset); finish(h, (hu32)i, h->broken[i] ? J_NONE : tail_judge(h, offset), offset); return; }
         if (!hell) { finish(h, (hu32)i, J_POOR, offset); return; }
         let_go(h, (hu32)i, now, 1);
     } else if (h->cfg.overhold == OVERHOLD_AUTO) {  /* HS_HOLDING, still held */
-        if (!pending && offset >= 0) { finish(h, (hu32)i, h->broken[i] ? J_NONE : J_PGREAT, 0); return; }
+        if (!pending && offset >= 0) { end_gain(h, (hu32)i, 0); finish(h, (hu32)i, h->broken[i] ? J_NONE : J_PGREAT, 0); return; }
     } else if (!pending && offset > win) {
+        end_gain(h, (hu32)i, offset);
         finish(h, (hu32)i, h->broken[i] ? J_NONE : h->cfg.overhold_judge, offset);
         return;
     }

@@ -50,7 +50,7 @@ int main(void)
     holds_frame_hook(200);
     holds_on_judgement(0xf, 0);
     for (t = 201; t < 240; t++) holds_frame_hook(t);
-    CHECK(logged(0xb, 0) == 5);                   /* empty POORs at 200 (release), 206, 212, 218, 224 */
+    CHECK(logged(0xb, 0) == 3);                   /* empty POORs at 200 (the miss), then 218, 224 (none at 206, 212) */
     CHECK(logged(0xf, 0) == 0 && logged(0xa, 0) == 0);  /* the game's own miss is the real POOR; end adds nothing */
     /* empty POORs and judgements far from any hold are ignored */
     nring = 0;

@@ -15,11 +15,15 @@
  *           Still held after the window: overhold_judge (POOR by default).
  *           BSS: spinning back, or stopping, inside the window releases it.
  *   HCN/HBSS while held, every 16th note (the hold's tick64): HE_TICK_GAIN
- *           (gauge as for a hit, no combo). Letting go or missing the head:
- *           HE_BREAK (real POOR, combo break) plus HE_TICK_LOSS (empty POOR)
- *           at once, then HE_TICK_LOSS every 16th from that moment until the
- *           lane is held again. The end never adds a POOR or gauge loss. Once
- *           broken, the tail is J_NONE (no score), even after re-grabbing.
+ *           (gauge as for a hit, no combo), and one more at the end if still
+ *           held there. Letting go: HE_BREAK (real POOR, combo break) plus
+ *           HE_TICK_LOSS (empty POOR) at once, then HE_TICK_LOSS every 16th
+ *           from that moment until the lane is held again. Missing the head
+ *           (the game counts its POOR): HE_TICK_LOSS at once, none on the two
+ *           16ths after the head, then one on every 16th of the head's grid.
+ *           The end never adds a POOR or gauge loss. Once broken, the tail is
+ *           J_NONE (no score), even after re-grabbing.
+ *           (Measured on Kailua (HCN Ver.) SPH, leisurely1.blog.jp 10099011.)
  *
  * Lanes: 0..6 = P1 keys 1..7, 7 = P1 turntable, 8..14 = P2 keys, 15 = P2 turntable.
  */

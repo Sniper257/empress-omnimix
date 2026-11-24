@@ -78,17 +78,18 @@ int main(void)
     setup(&cn, 0); run(0, 45, nothing); CHECK(tail() && tail()->judge == J_POOR);
     CHECK(holds_head(&H, 0, 10, J_PGREAT, 20) == -1);
 
-    /* HCN held throughout: a gain every 16th (14, 18 .. 38), tail judged like a CN */
+    /* HCN held throughout: a gain every 16th (14, 18 .. 38) and one at the end, tail judged like a CN */
     setup(&hcn, 0); holds_head(&H, 0, 10, J_PGREAT, 10); release_at = 40; run(10, 50, hold_key0);
-    CHECK(count(HE_TICK_GAIN) == 7 && count(HE_TICK_LOSS) == 0 && count(HE_BREAK) == 0 && tail_is(J_PGREAT, 0));
-    /* let go at 20: real POOR + empty POOR at once, empty POOR at 24; re-grab at 28: gains at 32, 36;
+    CHECK(count(HE_TICK_GAIN) == 8 && count(HE_TICK_LOSS) == 0 && count(HE_BREAK) == 0 && tail_is(J_PGREAT, 0));
+    /* let go at 20: real POOR + empty POOR at once, empty POOR at 24; re-grab at 28: gains at 32, 36, the end;
        broken, so the tail is J_NONE */
     setup(&hcn, 0); holds_head(&H, 0, 10, J_PGREAT, 10); run(10, 50, hold_gap);
-    CHECK(count(HE_BREAK) == 1 && count(HE_TICK_LOSS) == 2 && count(HE_TICK_GAIN) == 4);
+    CHECK(count(HE_BREAK) == 1 && count(HE_TICK_LOSS) == 2 && count(HE_TICK_GAIN) == 5);
     CHECK(tail_is(J_NONE, 0));
-    /* HCN head missed: the game's POOR, an empty POOR at once, then every 16th; the end adds nothing */
+    /* HCN head missed: the game's POOR, an empty POOR at once, none on the two 16ths after the head (14, 18),
+       then every 16th of the head's grid (22 .. 38); the end adds nothing */
     setup(&hcn, 0); holds_head(&H, 0, 10, J_POOR, 10); release_at = 0; run(10, 50, hold_key0);
-    CHECK(count(HE_BREAK) == 0 && count(HE_TICK_LOSS) == 8 && count(HE_TICK_GAIN) == 0 && tail_is(J_NONE, 0));
+    CHECK(count(HE_BREAK) == 0 && count(HE_TICK_LOSS) == 6 && count(HE_TICK_GAIN) == 0 && tail_is(J_NONE, 0));
 
     /* BSS: spinning back at the end is PGREAT; stopping inside the window too; stopping early is POOR */
     setup(&bss, 0); holds_head(&H, 7, 10, J_PGREAT, 10); release_at = 41; run(10, 50, spin_then_back);
