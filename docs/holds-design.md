@@ -223,8 +223,10 @@ To do before enabling by default:
 1. Check in PCSX2:
    - whether `0x13acd0(side)` reports continuous turntable motion (BSS)
    - the CN release window (default: PGREAT within 7 ticks)
-2. HCN gain ticks: find a gauge-only routine (a candidate is
-   `0x204d30(side, kind)`, called from the ring reader) for `HOLDS_GAIN_GAUGE`.
+2. HCN gain ticks (done): the ring reader's code blocks show `0x204d30(gauge side, kind)` is the
+   gauge step per judgement (1 PGREAT, 2 GREAT, 3 GOOD, 0 BAD, 8 POOR, 9 missed, 0xa empty POOR),
+   apart from score `0x204310(side, 2/1/0)`, `0x204fa0` and combo. A held HCN tick calls
+   `0x204d30(0x205d50() ? 0 : side, 1)`: a PGREAT's gain, no score or combo.
    Until then held HCN ticks add no gauge.
 3. Hold bodies are not drawn yet: the head shows as a normal note and the
    tail is invisible. Drawing needs the note renderer, one of the active-list
@@ -311,3 +313,12 @@ argb8888rev). Checked on the user's files:
 Open: the judge line y (0x140 is from the drawer's clamp, to be checked on screen), whether
 drawing from the post-tick pass is safe while the play loop catches up several ticks in one frame,
 and note-skin interaction (skins also append to #109).
+
+## PCSX2 fixes (round 1)
+
+- Held keys: `0x130970()` (gp-0x7bec, P1 bits 0..6, P2 bits 7..13). The `0x724cf0` guess acted like a
+  press flag, so every held HCN took damage.
+- Sprites: one shared palette (`cont_add` rejects mixed own palettes).
+- Tail notes stay alive for up to 60 ticks after their time (never judged): the renderer draws
+  nothing for a hold once its end has passed or its tail is below the judge line.
+- Launcher with `debug.cfg` loads `vdisc-portable-debug.*`: both variants need HOLDS.

@@ -21,6 +21,8 @@ static hu32 draw_h[64], ndraw; static hs32 draw_y[64], draw_zy[64], draw_py[64];
 void test_draw(hu32 handle, hs32 x, hs32 y, hs32 zy, hs32 py) { (void)x; if (ndraw < 64) { draw_h[ndraw] = handle; draw_y[ndraw] = y; draw_zy[ndraw] = zy; draw_py[ndraw++] = py; } }
 static hu8 record[0x134] __attribute__((aligned(4)));
 hu8 *test_record(void) { return record; }
+static int gains;
+void test_gain(hu32 side) { (void)side; gains++; }
 static int spawned;
 void test_native_spawn(hu8 *note) { (void)note; spawned++; }
 static void make_note(hu8 *n, hu32 side, hu32 lane, short t) { hu32 i; for (i = 0; i < 0x20; i++) n[i] = 0; n[9] = (hu8)lane; n[0xa] = (hu8)side; n[0xb] = 1; *(short *)(n + 0x18) = t; }
@@ -104,6 +106,13 @@ int main(void)
         holds_frame_hook(305);
         CHECK(ndraw == 2 && draw_y[0] == -16 && draw_y[1] == 0x140);
         CHECK(draw_h[0] == (109u << 16 | (512 + 1)) || draw_h[0] == (109u << 16 | (512 + 2)));   /* held: beam1/2 */
+        gains = 0;
+        for (tt = 306; tt < 340; tt++) holds_frame_hook(tt);
+        CHECK(gains >= 4);                                              /* HCN held: gauge gain every 16th */
+        /* after the end, the leftover tail note draws nothing (and is not drawn natively) */
+        for (tt = 340; tt < 410; tt++) holds_frame_hook(tt);
+        make_note(n, 0, 2, 400); ndraw = 0;
+        CHECK(holds_note_hook(n, 109u << 16 | 601, 80, 0x140, 0, 0) == 1 && ndraw == 0);
         keys[0] = 0;
     }
     if (failures) { printf("%d failures\n", failures); return 1; }

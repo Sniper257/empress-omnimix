@@ -11,8 +11,10 @@
  *   NOT confirmed yet (check in PCSX2 before enabling)
  *     0x13acd0(side): turntable; nonzero = moving, bit 0x80 = direction. It is
  *               what the scratch judge reads, but it may report spin edges only.
- *     HCN gain ticks: no ring code adds gauge without combo/score, so
- *               HE_TICK_GAIN calls HOLDS_GAIN_GAUGE (off by default).
+ *     HCN gain ticks: 0x204d30(gauge side, kind) is the ring reader's gauge step per judgement
+ *               (kind 1 PGREAT, 2 GREAT, 3 GOOD, 0 BAD, 8 POOR, 9 missed, 0xa empty POOR), separate
+ *               from score (0x204310) and combo; gauge side = 0x205d50() ? 0 : side, as the reader
+ *               does. HE_TICK_GAIN applies a PGREAT's gain, nothing else.
  *
  * Results go back through the ring, so the game itself updates the judgement
  * counters, score, combo, gauge and judgement display:
@@ -32,6 +34,8 @@ extern unsigned long long test_ring_body(hu32 code, hu32 lane);
 extern hu32 test_keys(hu32 side);
 extern hu32 test_turntable(hu32 side);
 #define H_RING(code, lane) test_ring_body((code), (lane))
+extern void test_gain(hu32 side);
+#define HOLDS_GAIN_GAUGE(side) test_gain(side)
 #define H_KEYS(side) test_keys(side)
 #define H_TT(side) test_turntable(side)
 #define H_NATIVE_TICK(tick) ((void)(tick))
@@ -49,6 +53,9 @@ extern unsigned long long fs_ring_body(FS_ARGS);
 /* held keys: the game's 14-bit mask (P1 bits 0..6, P2 bits 7..13) at gp-0x7bec, read by 0x130970
  * (0x130950 / gp-0x7be8 is the pressed-this-frame mask the key judge uses; the replay recorder at
  * 0x1cc9a8 saves both every frame). The earlier 0x724cf0 guess behaved like a press flag. */
+#ifndef HOLDS_GAIN_GAUGE
+#define HOLDS_GAIN_GAUGE(side) (((void (*)(hs32, hs32))0x204d30)(((hs32 (*)(void))0x205d50)() ? 0 : (hs32)(side), 1))
+#endif
 #define H_HELD_MASK() (((hu32 (*)(void))0x130970)())
 #define H_KEYS(side) ((H_HELD_MASK() >> ((side) * 7u)) & 0x7fu)
 #define H_TT(side) (((hu32 (*)(hu32))0x13acd0)(side) & 0xffu)

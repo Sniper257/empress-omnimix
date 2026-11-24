@@ -140,7 +140,11 @@ int holds_note_hook(hu8 *note, hu32 handle, hs32 x, hs32 y, hu32 side, hu32 clip
             hd_body(body, kind, x, HD_TOP_Y, y, clip);
         HD_DRAW(base, x, y, 100, hd_w[kind] / 2, hd_cap_h[kind] / 2, clip);      /* start cap */
     } else {
-        int head_seen = hd_head_at[lane] >= hd_now - 1;
+        int head_seen;
+        /* the tail note is never judged, so the game keeps it (at or below the line) for up to 60
+         * ticks after its time: once the hold has ended, nothing more is drawn for it */
+        if (hd_now > d->end || y > judge) return 1;
+        head_seen = hd_head_at[lane] >= hd_now - 1;
         hs32 bottom = head_seen ? hd_head_y[lane] : judge;
         hd_tail_at[lane] = hd_now;
         if (bottom > judge) bottom = judge;
