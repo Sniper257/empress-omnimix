@@ -7,7 +7,7 @@
  *               fs_ring() wraps it, fs_ring_body() is the original  -> holds_on_judgement
  *     ring codes (key/turntable judge): 4..8 PGREAT..POOR, 9 POOR (note used up),
  *               0xb empty POOR, 0xe/0xf missed POOR
- *     0x724cf0 + side*0x1c0, bits 0..6: keys held (fast_slow.c fs_keys)
+ *     0x130970() (gp-0x7bec): keys held, P1 bits 0..6, P2 bits 7..13
  *   NOT confirmed yet (check in PCSX2 before enabling)
  *     0x13acd0(side): turntable; nonzero = moving, bit 0x80 = direction. It is
  *               what the scratch judge reads, but it may report spin edges only.
@@ -46,7 +46,11 @@ static hu32 h_gp(void) { hu32 g; __asm__ volatile("move %0, $28" : "=r"(g)); ret
 #endif
 extern unsigned long long fs_ring_body(FS_ARGS);
 #define H_RING(code, lane) fs_ring_body((code), (lane), 0, 0, 0, 0, 0, 0)
-#define H_KEYS(side) (*(volatile hu32 *)(unsigned long)(0x724cf0 + (side) * 0x1c0) & 0x7fu)
+/* held keys: the game's 14-bit mask (P1 bits 0..6, P2 bits 7..13) at gp-0x7bec, read by 0x130970
+ * (0x130950 / gp-0x7be8 is the pressed-this-frame mask the key judge uses; the replay recorder at
+ * 0x1cc9a8 saves both every frame). The earlier 0x724cf0 guess behaved like a press flag. */
+#define H_HELD_MASK() (((hu32 (*)(void))0x130970)())
+#define H_KEYS(side) ((H_HELD_MASK() >> ((side) * 7u)) & 0x7fu)
 #define H_TT(side) (((hu32 (*)(hu32))0x13acd0)(side) & 0xffu)
 #define H_NATIVE_TICK(tick) (((void (*)(long long))0x1e6bb0)(tick))
 #define H_NATIVE_SPAWN(note) (((void (*)(hu8 *))0x1ebf90)(note))
