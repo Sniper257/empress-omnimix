@@ -1,15 +1,17 @@
 """Arcade charge-note textures (konami_tex.py PNGs) -> EMPRESS-size SPR1 sprites for the hold renderer.
 
-  python3 tools/release/konami_tex.py notes_cn00_veryshort.ifs GFX/short
   python3 tools/release/konami_tex.py notes_cn00.ifs GFX/full
-  python3 tools/holds/hold_sprites.py GFX/short GFX/full OUT/
+  python3 tools/holds/hold_sprites.py GFX/full GFX/full OUT/
+  (the first folder may be a note-height variant, e.g. notes_cn00_short.ifs; missing names come from the second)
 
 Writes OUT/<name>.spr (SPR1, 8-bit, own palette), OUT/sprites.json (sizes, pivots) and OUT/preview.png.
 
 Sizes, measured on an EMPRESS capture (PCSX2, 640x360 of the 640x448 frame): white-key lanes
 18 px, blue-key lanes 14 px, turntable 30 px; notes 16 px wide, 6 frame rows tall (the game's note
-sprites are 6 rows: launcher/main.c note_hook). So caps are 16 / 12 / 28 x 6; bodies are one tile
-of the arcade beam scaled to that width, drawn stretched (zoomY) between the caps.
+sprites are 6 rows: launcher/main.c note_hook). Caps keep the arcade texture's aspect (a 54 x 26
+cap is about 2x a normal note's height in the arcade, as on an arcade capture of a held HCN), so they
+are 16 x 10, 12 x 9 and 28 x 10 frame rows; frame rows = capture px * 448 / 360. Bodies are one tile
+of the arcade beam scaled the same way, drawn stretched (zoomY) between the caps.
 
 SPR1 (launcher/main.c spr_file / spr_tex): "SPR1", u16 w, u16 h, u16 sheet (0xffff = own palette),
 u8 clear index, u8 0, w*h index bytes, then 256 RGBA palette entries in GS CSM1 order (entry
@@ -21,7 +23,7 @@ import sys
 from pathlib import Path
 
 WIDTH = {'white': 16, 'black': 12, 'scr': 28}
-CAP_ROWS = 6
+ROWS_PER_PX = 448 / 360            # EMPRESS frame rows per capture pixel (640 x 448 shown at 640 x 360)
 
 # (output name, arcade name, lane kind, part)
 def catalogue():
@@ -89,9 +91,7 @@ def decode(spr):
 def scaled(src, kind, part):
     from PIL import Image
     w = WIDTH[kind]
-    if part == 'cap':
-        return src.resize((w, CAP_ROWS), Image.LANCZOS)
-    return src.resize((w, max(2, round(src.height * w / src.width))), Image.LANCZOS)
+    return src.resize((w, max(2, round(src.height * w / src.width * ROWS_PER_PX))), Image.LANCZOS)
 
 
 def main(argv=None):

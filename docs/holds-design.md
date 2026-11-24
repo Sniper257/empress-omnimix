@@ -285,7 +285,7 @@ argb8888rev). Checked on the user's files:
 
 1. Sprites: `tools/holds/hold_sprites.py` makes 36 SPR1 sprites (CN, HCN, BSS, HBSS caps and
    body states) at EMPRESS size: 16 / 12 / 28 px wide (white / blue / turntable; measured on a
-   capture), 6-row caps, one body tile each. The launcher appends them to #109 and #146 the same way
+   capture), caps at the arcade aspect (about 2x a normal note: 16x10, 12x9, 28x10 rows), one body tile each. The launcher appends them to #109 and #146 the same way
    as note skins and records their handles for the runtime.
 2. Tail position: the tail is put in the chart as a note that is never judged (+0xb = 0), so the
    game scrolls and positions it exactly like any other note; the hold module keeps the pairing.
