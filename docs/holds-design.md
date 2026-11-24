@@ -161,3 +161,21 @@ disassembly of the code that uses it.
 
 SIRIUS's DLL is the era-correct source for CN and BSS. HCN exists only in
 copula (23) and later, so its values have to come from a newer DLL.
+
+### Findings: Sparkle Shower bm2dx.dll (64-bit, built 2025-08-18)
+
+- The DLL isn't packed: the code section is readable (`.text` 12.6 MB) and
+  disassembles cleanly.
+- The standard windows are 60 Hz frames. The only symmetric window table,
+  at RVA `0xcf29e0`, is -15, -7, -2, -1, 0, 1, 2, 7, 15 (BAD, GOOD, GREAT,
+  PGREAT each side): ±16.67/33.33/116.67/250 ms. The function at
+  `0x18082e280` uses it to place the timing display.
+- Judging doesn't read windows from a fixed table. Arcade `.1` charts carry
+  them as event type 8 (about six per SIRIUS chart), so the converter can
+  read each chart's own windows. Mapping them onto EMPRESS's tables
+  (`0x79d940` keys, `0x79d960` turntable) is part of chart conversion.
+- Gauge damage isn't stored as floats or as nearby integer constants at 1/10
+  or 1/100 % scale. The CN release window and the HCN tick spacing aren't
+  in a recognisable table either. They have to be traced from the gameplay
+  code, which has no symbols. A possible lead is the HCN chart flag: the
+  `icon_hell` song-select code (`0x18080b790`) tests it.
