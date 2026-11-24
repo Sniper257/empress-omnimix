@@ -12,7 +12,9 @@
  *
  * Geometry: caps are placed like the game's own notes (songdb.S note_hook): pivot at the bottom,
  * at y + 3, so a cap sits on top of its timing point and lines up with a normal note of the same
- * time. The body runs from the tail's timing point down to the top of the start cap, or of the cap
+ * time. The end cap hangs below the tail's timing point instead (pivot at its top), as in the
+ * arcade, where a hold starting on the tick another ends sits on top of that end cap's line.
+ * The body runs from the bottom of the end cap down to the top of the start cap, or of the cap
  * on the judge line once the head has been hit; while the tail is still above the screen, from
  * the lane top. The body is one tile stretched with zoomY (pivot at its top). */
 #define HD_BASE(y) ((y) + 3)    /* a note's bottom edge (note_hook: pivot at the bottom, y + 3) */
@@ -151,10 +153,11 @@ int holds_note_hook(hu8 *note, hu32 handle, hs32 x, hs32 y, hu32 side, hu32 clip
         hs32 bottom = head_seen ? hd_head_y[lane] : judge;
         hd_tail_at[lane] = hd_now;
         if (bottom > judge) bottom = judge;
-        hd_body(body, kind, x, HD_BASE(y), HD_BASE(bottom) - hd_cap_h[kind], clip);
+        hd_body(body, kind, x, HD_BASE(y) + hd_cap_h[kind], HD_BASE(bottom) - hd_cap_h[kind], clip);
         if (!head_seen && holds.state[i] != HS_PENDING && y < judge)
             HD_DRAW(base, x, HD_BASE(judge), 100, hd_w[kind] / 2, hd_cap_h[kind], clip);   /* head hit: start cap on the line */
-        HD_DRAW(base + 1, x, HD_BASE(y), 100, hd_w[kind] / 2, hd_cap_h[kind], clip);       /* end cap */
+        HD_DRAW(base + 1, x, HD_BASE(y), 100, hd_w[kind] / 2, 0, clip);   /* end cap: hangs below the tail's line (arcade:
+                                                                             a head on the same tick sits on that line) */
     }
     return 1;
 }

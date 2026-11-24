@@ -95,7 +95,7 @@ int main(void)
         /* same tick: tail on screen too -> body from the tail to the head, end cap */
         make_note(n, 0, 2, 400); ndraw = 0;
         CHECK(holds_note_hook(n, 109u << 16 | 601, 80, 40, 0, 0) == 1);
-        CHECK(ndraw == 2 && draw_y[0] == 43 && draw_zy[0] == (203 - 10 - 43) * 10 && draw_h[1] == (109u << 16 | 511) && draw_y[1] == 43);
+        CHECK(ndraw == 2 && draw_y[0] == 53 && draw_zy[0] == (203 - 10 - 53) * 10 && draw_h[1] == (109u << 16 | 511) && draw_y[1] == 43 && draw_py[1] == 0);
         /* the wide container has no hold sprites in this record: native note */
         make_note(n, 0, 2, 300); ndraw = 0;
         CHECK(holds_note_hook(n, 146u << 16 | 601, 80, 200, 0, 0) == 0);
