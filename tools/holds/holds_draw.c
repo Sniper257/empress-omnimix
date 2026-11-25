@@ -34,14 +34,14 @@
 
 /* catalogue order (hold_sprites.catalogue): first sprite of each group, states per body */
 enum { HD_CN_WHITE = 0, HD_CN_BLACK = 5, HD_HCN_WHITE = 10, HD_HCN_BLACK = 17, HD_BSS = 24, HD_HBSS = 29, HD_MSS_MIDDLE = 36 };
-#define HD_MID_H 22           /* mss_middle rows (sprites.json) */
+#define HD_MID_H 19           /* mss_middle rows (sprites.json) */
 /* sprite sizes in frame rows (hold_sprites.py): white, black, turntable; caps and body tiles */
 /* x pivots (hold_sprites.py PIVOT_X: widths 13 / 10 / 25, drawn about 1 px left of the note's x, which
  * sits right of the lane's centre) */
 /* caps and bodies reach the lane lines (hold_sprites WIDTH 16 / 12 / 28, as in the arcade); x pivots half
  * a pixel left of the note's x */
-static const hs8 hd_px[3] = {8, 6, 14}, hd_body_h[3] = {10, 9, 10};   /* bodies (sprites.json) */
-static const hs8 hd_cpx[3] = {8, 6, 14}, hd_cap_h[3] = {14, 14, 15};   /* caps (1.5x the texture's aspect) */
+static const hs8 hd_px[3] = {8, 5, 14}, hd_body_h[3] = {10, 9, 10};   /* bodies (sprites.json) */
+static const hs8 hd_cpx[3] = {8, 5, 14}, hd_cap_h[3] = {12, 12, 12};   /* caps: the coloured band 6 rows, a note's height */
 /* the beam meets each cap with a row of overlap, so no lane shows between them. It used to run half a cap
  * into each, drawn under the cap; in PCSX2 it covered the cap's inner half instead (the silver ring and
  * the dark middle), whatever the layers: so the caps no longer rely on draw order. */

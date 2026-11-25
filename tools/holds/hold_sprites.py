@@ -10,7 +10,7 @@ Sizes, measured on an EMPRESS capture (PCSX2, 640x360 of the 640x448 frame): whi
 18 px, blue-key lanes 14 px, turntable 30 px; notes 16 px wide, 6 frame rows tall (the game's note
 sprites are 6 rows: launcher/main.c note_hook). Caps keep the arcade texture's aspect (a 54 x 26
 cap is about 2x a normal note's height in the arcade, as on an arcade capture of a held HCN), so they
-are about 16 x 14, 12 x 14 and 28 x 14 frame px (widths: see WIDTH; 1.5x taller than the texture: CAP_TALL); frame rows = capture px * 448 / 360. Bodies are one tile
+are 16 x 12, 12 x 12 and 28 x 12 frame px (widths: see WIDTH; heights: CAP_ROWS); frame rows = capture px * 448 / 360. Bodies are one tile
 of the arcade beam scaled the same way, drawn stretched (zoomY) between the caps.
 
 All 36 sprites share one palette: cont_add (launcher/cont.c) rejects sprites added to a container
@@ -33,13 +33,14 @@ from pathlib import Path
 WIDTH = {'white': 16, 'black': 12, 'scr': 28}
 # x pivots: the note x the game hands over is right of the lane's centre (its own notes sit half a pixel
 # right too): half a pixel left of the sprite's middle
-PIVOT_X = {'white': 8, 'black': 6, 'scr': 14}
+PIVOT_X = {'white': 8, 'black': 5, 'scr': 14}   # black: a PCSX2 capture showed 12 px / pivot 6 a pixel left of its lane
 CAP_WIDTH = WIDTH
 CAP_PIVOT_X = PIVOT_X
-# caps 1.5x taller than the texture's own aspect: at that aspect they came out 9 rows, and the arcade
-# cap's bands (silver ring, dark middle, bright line, gold) blurred together (the dark band, 8 of 26
-# texture rows, was 2 rows); on an arcade capture the cap reads clearly taller than a normal note
-CAP_TALL = 1.5
+# cap heights: the coloured band of every cap texture is about half of its 26 rows (12-13) and that of
+# the MSS middle note 12 of its 38: scaled to 12 / 19 rows, the band is 6 rows, a normal note's height,
+# as in the arcade (the rest of the cap, silver ring and dark middle, scales with it)
+NOTE_ROWS = 6
+CAP_ROWS = {'cap': 12, 'middle': 19}
 ROWS_PER_PX = 448 / 360            # EMPRESS frame rows per capture pixel (640 x 448 shown at 640 x 360)
 
 # (output name, arcade name, lane kind, part)
@@ -122,8 +123,11 @@ def decode(spr):
 def scaled(src, kind, part):
     from PIL import Image
     w = (CAP_WIDTH if part == 'cap' else WIDTH)[kind]
-    tall = CAP_TALL if part == 'cap' else 1.0
-    return src.resize((w, max(2, round(src.height * w / src.width * ROWS_PER_PX * tall))), Image.LANCZOS)
+    if part == 'cap':
+        h = CAP_ROWS['middle' if src.height > 30 else 'cap']
+    else:
+        h = max(2, round(src.height * w / src.width * ROWS_PER_PX))
+    return src.resize((w, h), Image.LANCZOS)
 
 
 def main(argv=None):
