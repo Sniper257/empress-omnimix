@@ -29,10 +29,13 @@
 /* catalogue order (hold_sprites.catalogue): first sprite of each group, states per body */
 enum { HD_CN_WHITE = 0, HD_CN_BLACK = 5, HD_HCN_WHITE = 10, HD_HCN_BLACK = 17, HD_BSS = 24, HD_HBSS = 29 };
 /* sprite sizes in frame rows (hold_sprites.py): white, black, turntable; caps and body tiles */
-static const hs8 hd_w[3] = {15, 11, 28}, hd_cap_h[3] = {10, 9, 10}, hd_body_h[3] = {10, 9, 10};
+static const hs8 hd_w[3] = {15, 11, 28}, hd_cap_h[3] = {9, 8, 10}, hd_body_h[3] = {9, 8, 10};   /* sprites.json */
 /* the beam runs half a cap into each cap (drawn over it): the caps' art has dark rows at their inner
  * edge, which showed as a gap between beam and cap in PCSX2 */
 #define HD_INTO(kind) (hd_cap_h[kind] / 2)
+/* a start cap with its bottom edge at `bottom`, placed from its top like the end cap (pivot 0): the
+ * turntable's start cap drawn with its pivot at its own bottom never showed in PCSX2 */
+#define HD_CAP(h, kind, x, bottom, clip) HD_DRAW((h), (x), (bottom) - hd_cap_h[kind], 100, hd_w[kind] / 2, 0, (clip))
 
 #ifdef HOLDS_TEST
 extern void test_draw(hu32 handle, hs32 x, hs32 y, hs32 zy, hs32 py);
@@ -58,6 +61,10 @@ static hs32 hd_x[HOLDS_LANES];
  * hold's tail note stays on screen below the line for a while. */
 static hs32 hd_head_at[HOLDS_MAX], hd_tail_at[HOLDS_MAX], hd_head_y[HOLDS_MAX];
 static hu32 hd_head_frame[HOLDS_MAX], hd_frames;
+/* per hold: its tail was judged POOR (let go early, or a missed head): the frame pass keeps its unlit
+ * body until the tail is on screen */
+static hu8 hd_poor[HOLDS_MAX];
+static hu32 hd_from;                /* frame pass: first hold not yet over */
 /* holds_ddbg: [1] head draws, [2] tail draws, [3] frame-pass bodies, [4] heads found gone,
  * [5] / [6] / [7] last tail drawn: tick, hold index, y; [8] bodies clamped */
 volatile hu32 holds_ddbg[12] = {0x52444448u};
@@ -71,8 +78,9 @@ static void hd_reset(void)
 {
     hu32 i;
     for (i = 0; i < HOLDS_LANES; i++) { hd_x[i] = -1; LOOP_PAD(); }
-    for (i = 0; i < HOLDS_MAX; i++) { hd_head_at[i] = hd_tail_at[i] = -100; hd_head_frame[i] = 0; LOOP_PAD(); }
+    for (i = 0; i < HOLDS_MAX; i++) { hd_head_at[i] = hd_tail_at[i] = -100; hd_head_frame[i] = 0; hd_poor[i] = 0; LOOP_PAD(); }
     hd_cont[0] = hd_cont[1] = 0;
+    hd_from = 0;
 }
 
 /* hold index whose head (tail = 0) or tail (tail = 1) is this note, or -1 */
@@ -165,9 +173,9 @@ int holds_note_hook(hu8 *note, hu32 handle, hs32 x, hs32 y, hu32 side, hu32 clip
         hd_head_frame[i] = hd_frames;
         if (hd_tail_at[i] < hd_now - 1)                        /* tail still above the screen */
             hd_body(body, kind, x, HD_TOP_Y, HD_BASE(y) - hd_cap_h[kind] + HD_INTO(kind), clip);
-        HD_DRAW(base, x, HD_BASE(y), 100, hd_w[kind] / 2, hd_cap_h[kind], clip);   /* start cap */
+        HD_CAP(base, kind, x, HD_BASE(y), clip);                /* start cap */
     } else {
-        int head_seen;
+        int head_seen, lit;
         if (t > hd_now + 4 && y < judge) hd_ppt[side & 1] = (judge - y) * 256 / (t - hd_now);
         if (hd_ppt[side & 1] > 16 * 256) hd_ppt[side & 1] = 16 * 256;           /* at most 16 px a tick */
         y -= (d->end - t) * hd_ppt[side & 1] / 256;
@@ -179,41 +187,48 @@ int holds_note_hook(hu8 *note, hu32 handle, hs32 x, hs32 y, hu32 side, hu32 clip
         head_seen = hd_head_at[i] >= hd_now - 1;
         hs32 bottom = head_seen ? hd_head_y[i] : judge;
         if (bottom > judge) bottom = judge;
+        lit = holds.state[i] == HS_HOLDING || holds.state[i] == HS_LOOSE;   /* head hit and not let go for good */
         hd_body(body, kind, x, HD_BASE(y) + hd_cap_h[kind] - HD_INTO(kind),
-                HD_BASE(bottom) - (!head_seen && holds.state[i] == HS_MISSED ? 0 : hd_cap_h[kind] - HD_INTO(kind)), clip);
-        if (!head_seen && holds.state[i] != HS_PENDING && holds.state[i] != HS_MISSED && y < judge)
-            HD_DRAW(base, x, HD_BASE(judge), 100, hd_w[kind] / 2, hd_cap_h[kind], clip);   /* head hit: start cap on the line */
+                HD_BASE(bottom) - (!head_seen && !lit ? 0 : hd_cap_h[kind] - HD_INTO(kind)), clip);
+        if (!head_seen && lit && y < judge)
+            HD_CAP(base, kind, x, HD_BASE(judge), clip);        /* head hit: start cap on the line */
         HD_DRAW(base + 1, x, HD_BASE(y), 100, hd_w[kind] / 2, 0, clip);   /* end cap: hangs below the tail's line (arcade:
                                                                              a head on the same tick sits on that line) */
     }
     return 1;
 }
 
-/* after the native tick: holds whose head has been hit and whose tail is still above the screen
- * have no note on screen, so their body (lane top to judge line) and start cap are drawn here */
+/* after the native tick: holds whose head time has passed and whose tail is still above the screen
+ * have no note on screen, so their body (lane top to judge line) is drawn here, with the start cap
+ * on the line while held. Unlit and capless: a missed head (also while the rules still wait for the
+ * late rule: the game removes a missed head before that), and a CN let go too early (finished, no
+ * longer the lane's active hold). Those vanished until the tail came on screen. */
 static void hd_frame(void)
 {
-    hu32 lane, last, kind, group, side;
-    hs32 i, judge;
-    for (lane = 0; lane < HOLDS_LANES; lane++) {
+    hu32 i, lane, last, kind, group, side, lit;
+    hs32 judge, top_cap;
+    while (hd_from < chart_n && chart_defs[hd_from].end + 2 < hd_now) { hd_from++; LOOP_PAD(); }
+    for (i = hd_from; i < chart_n; i++) {
+        const hold_def *d = &chart_defs[i];
         LOOP_PAD();
-        i = holds.active[lane];
+        if (d->start > hd_now) break;
+        lane = d->lane;
         side = lane >> 3;
-        if (i < 0 || hd_x[lane] < 0 || !hd_cont[side]) continue;
-        /* held, let go (HCN) or missed (CN/BSS): a missed hold keeps its unlit beam down to the line until its
-         * tail comes on screen (it vanished between the missed head and the tail in PCSX2) */
-        if (holds.state[i] != HS_HOLDING && holds.state[i] != HS_LOOSE && holds.state[i] != HS_MISSED) continue;
+        if (hd_x[lane] < 0 || !hd_cont[side]) continue;
         if (hd_head_at[i] >= hd_now || hd_tail_at[i] >= hd_now) continue;   /* drawn with its notes */
+        if (hd_now >= d->end - HOLDS_TAIL_SHIFT) continue;   /* the end is at the line: nothing above it to
+                                                               draw while the release is judged */
+        if (holds.state[i] == HS_DONE && !hd_poor[i]) continue;              /* ended in its window */
+        lit = holds.state[i] == HS_HOLDING || holds.state[i] == HS_LOOSE;
         holds_ddbg[3]++;
-        if (hd_now >= chart_defs[i].end - HOLDS_TAIL_SHIFT) continue;   /* the end is at the line: nothing above it to
-                                                                          draw while the release is judged */
         if (!(last = hd_last(hd_cont[side]))) continue;
-        group = hd_group(&chart_defs[i], lane, &kind);
+        group = hd_group(d, lane, &kind);
         judge = HD_JUDGE_Y - HD_LIFT(side);
-        hd_body(last - (HD_SPRITES - 1) + group + 2 + hd_state((hu32)i, chart_defs[i].kind == HOLD_HCN || chart_defs[i].kind == HOLD_HBSS),
-                kind, hd_x[lane], HD_TOP_Y, HD_BASE(judge) - (holds.state[i] == HS_MISSED ? 0 : hd_cap_h[kind] - HD_INTO(kind)), hd_clip[side]);
-        if (holds.state[i] != HS_MISSED)                 /* the start cap rides the line only once the head was hit */
-            HD_DRAW(last - (HD_SPRITES - 1) + group, hd_x[lane], HD_BASE(judge), 100, hd_w[kind] / 2, hd_cap_h[kind], hd_clip[side]);
+        top_cap = lit ? hd_cap_h[kind] - HD_INTO(kind) : 0;
+        hd_body(last - (HD_SPRITES - 1) + group + 2 + (lit ? hd_state(i, d->kind == HOLD_HCN || d->kind == HOLD_HBSS) : 0),
+                kind, hd_x[lane], HD_TOP_Y, HD_BASE(judge) - top_cap, hd_clip[side]);
+        if (lit)                                          /* the start cap rides the line only while held */
+            HD_CAP(last - (HD_SPRITES - 1) + group, kind, hd_x[lane], HD_BASE(judge), hd_clip[side]);
     }
 }
 
@@ -222,7 +237,7 @@ static void hd_frame(void)
  * drawn last frame, is gone now and has its key down was hit, even if no judgement reached
  * holds_on_judgement (seen in PCSX2: some hits are never reported). It counts as GREAT; the game
  * scores the head itself. */
-static void hd_heads_gone(hu32 keys)
+static void hd_heads_gone(hu32 keys, const hs8 tt[2])
 {
     hu32 i;
     hd_frames++;
@@ -234,7 +249,10 @@ static void hd_heads_gone(hu32 keys)
         if (hd_frames - hd_head_frame[i] < 2u) continue;                     /* drawn last frame */
         hd_head_frame[i] = 0;
         if (hd_now > d->start + default_cfg.head_late) continue;             /* the late rule decides */
-        if (!((keys >> d->lane) & 1u)) continue;
+        if ((d->lane & 7u) == 7u) {                                          /* BSS: the turntable moved lately */
+            (void)tt;
+            if (hd_now - spun_at[d->lane >> 3] > 8) continue;
+        } else if (!((keys >> d->lane) & 1u)) continue;
         if (holds_head(&holds, d->lane, d->start, J_GREAT, hd_now) >= 0) { holds_ddbg[4]++; dbg_report(0xfe, lane_id(d->lane), (int)i); }
     }
 }

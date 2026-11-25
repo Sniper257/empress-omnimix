@@ -104,7 +104,10 @@ static void dbg_event(const hold_event *e)
     holds_dbg[17 + 2 * k] = (hu32)e->judge << 28 | (e->index & 0xfffu) << 16 | (hu32)e->lane << 8 | (dbg_keys & 0xffu);
 }                 /* tick being processed (holds_draw.c stamps note draws with it) */
 static void hd_reset(void);
-static void hd_heads_gone(hu32 keys);
+static hu8 hd_poor[HOLDS_MAX];                 /* holds_draw.c */
+/* last tick each turntable was moving (BSS heads the ring never reported) */
+static hs32 spun_at[2] = {-100, -100};
+static void hd_heads_gone(hu32 keys, const hs8 tt[2]);
 static void hd_frame(void);
 static const hold_def *chart_defs;
 static hu32 chart_n, armed;
@@ -152,6 +155,7 @@ static void arm(void)
     if (found) { chart_defs = found; chart_n = n; }
     armed = chart_n && holds_reset(&holds, chart_defs, chart_n, &default_cfg) == 0;
     hd_reset();
+    spun_at[0] = spun_at[1] = -100;
     for (n = 0; n < HOLDS_MAX; n++) { tail_note[n] = 0; LOOP_PAD(); }
     holds_dbg[1] = (hu32)armed;
     holds_dbg[2] = chart_n;
@@ -208,12 +212,14 @@ static void dbg_report(hu32 code, hu32 id, int r)
  * frame, GREAT ~2, GOOD ~7, BAD ~15, plus a tick of slack), cut to one side by FAST/SLOW where the
  * code or the timed delta says. Short CNs sit a few ticks from other notes on the same key; one
  * window for every judgement took a CN head from a neighbouring note's hit (then POOR on release). */
-static void head_range(hu32 code, int judge, int dir, hs32 *lo, hs32 *hi)
+static void head_range(hu32 code, int judge, int dir, int scratch, hs32 *lo, hs32 *hi)
 {
     static const hs8 w[5] = {3, 4, 9, HEAD_WINDOW, HEAD_WINDOW};
     hs32 a = w[judge];
     *lo = -a; *hi = a;
     if (judge == J_POOR) { *lo = -(HEAD_WINDOW + 3); *hi = 1; return; }   /* misses come after the window */
+    if (scratch) { *lo = -HEAD_WINDOW; *hi = HEAD_WINDOW; return; }        /* the turntable's reports came outside
+                                                                     the key windows (BSS heads went missed) */
     if (code == 5 || code == 4 || (code == 6 && dir < 0)) *lo = -1;       /* FAST: the note is still ahead */
     if (code == 7 || code == 8 || (code == 6 && dir > 0)) *hi = 1;        /* SLOW: the note has passed */
 }
@@ -230,7 +236,7 @@ void holds_on_judgement(hu32 code, hu32 id, int dir)
     judge = judge_of_code(code);
     if (judge < 0) return;
     lane = ((id >> 15) & 1u) * 8u + (id & 7u);
-    head_range(code, judge, dir, &lo, &hi);
+    head_range(code, judge, dir, (lane & 7u) == 7u, &lo, &hi);
     r = holds_head_in(&holds, lane, last_tick, lo, hi, (hu32)judge);
     /* a hit that names no pending hold on its lane: the hold whose key is down (chords where the
      * report's lane is not the head's) */
@@ -255,6 +261,7 @@ static void apply(const hold_event *e)
     if (e->kind != HE_TICK_GAIN) dbg_event(e);
     switch (e->kind) {
     case HE_TAIL:
+        if (e->judge == J_POOR && e->index < HOLDS_MAX) hd_poor[e->index] = 1;   /* holds_draw.c: unlit to its tail */
         /* BSS / HBSS: the backspin at the end plays the turntable's keysound at that point of the chart,
          * the sound the tail note carries (the game never judges the tail, so it never plays it) */
         if ((e->judge == J_PGREAT || e->judge == J_BAD) && (e->lane & 7) == 7 && tail_live(e->index))
@@ -302,7 +309,9 @@ void holds_frame_hook(long long tick)
 #endif
     tt[0] = spin(0);
     tt[1] = spin(1);
-    hd_heads_gone(keys);
+    if (tt[0]) spun_at[0] = (hs32)tick;
+    if (tt[1]) spun_at[1] = (hs32)tick;
+    hd_heads_gone(keys, tt);
     holds_frame(&holds, (hs32)tick, keys, tt);
     while ((n = holds_pop(&holds, ev, 16)) != 0)
         for (i = 0; i < n; i++) apply(&ev[i]);
