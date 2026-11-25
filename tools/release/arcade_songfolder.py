@@ -19,7 +19,8 @@ Record fields (0x134 bytes; launcher/main.c add_song, song_resources.c, song_win
   (SP N,H,A, DP N,H,A; All My Turn's are 1.33-1.52 x notes; 1.4 x notes is written)
   0x38 / 0x3c (the end of the title field)  hold sprites: the handle of the last of the 36 hold sprites
   appended to note container #109 / #146 (S lines; tools/holds/holds_draw.c); titles stop at 0x37.
-Until title cards and sprites are converted, the card and sprites are the template's.
+The title card is rendered from the music data's title, genre and artist (arcade_text.py); the wheel / title /
+genre / artist sprites too with --text-base (they need the native containers' palettes).
 
 --hold-sprites DIR (tools/holds/hold_sprites.py output): charts with holds get the CN/HCN graphics.
 """
@@ -93,7 +94,7 @@ def hold_sprite_names():
     return [row[0] for row in hold_sprites.catalogue()]
 
 
-def build(converted, template, out, title, lv, version=17, sprites=None):
+def build(converted, template, out, title, lv, version=17, sprites=None, text_files=None):
     report = json.loads((converted / 'convert.json').read_text())
     rec = bytearray(template)
     if len(rec) != 0x134:
@@ -156,6 +157,11 @@ def build(converted, template, out, title, lv, version=17, sprites=None):
             shutil.copyfile(sprites / (n + '.spr'), out / 'holds' / (n + '.spr'))
         for cont, field in HOLD_FIELDS:
             lines += ['S %x %x holds/%s.spr' % (cont, field, n) for n in names]
+    if text_files:                                   # arcade_text: title card and title sprites
+        import arcade_text as X
+        for name, data in text_files.items():
+            (out / name).write_bytes(data)
+        lines += X.song_lines(text_files)
     (out / 'record.bin').write_bytes(bytes(rec))
     (out / 'song.txt').write_text('\n'.join(lines) + '\n')
     (out / 'catalog-lines.txt').write_text(catalog_lines(out.name, charts))
@@ -181,6 +187,10 @@ def main(argv=None):
     p.add_argument('--id', type=int, required=True, help='arcade song id')
     p.add_argument('--version', type=int, default=17, help='record version byte (default 17, SIRIUS)')
     p.add_argument('--hold-sprites', type=Path, help='tools/holds/hold_sprites.py output (CN/HCN graphics)')
+    p.add_argument('--text-base', type=Path,
+                   help='MEGAMIX base folder: its four native text containers (a/40/29, a/21/41, a/37/27, a/57/34) give '
+                        'the palettes for the wheel / title / genre / artist sprites. The title card is always made')
+    p.add_argument('--no-text', action='store_true', help='keep the template\'s title card and sprites')
     a = p.parse_args(argv)
     md = A.read_music_data(a.music.read_bytes())
     at = md['index'][a.id] if a.id < len(md['index']) else -1
@@ -188,7 +198,14 @@ def main(argv=None):
         sys.exit('song %d is not in %s' % (a.id, a.music))
     entry = md['entries'][at]
     title = A.entry_title(entry)[1] or A.entry_title(entry)[0]
-    info = build(a.converted, a.template.read_bytes(), a.output, title, levels(entry), a.version, a.hold_sprites)
+    text_files = None
+    if not a.no_text:
+        import arcade_text as X
+        containers = X.base_containers(a.text_base) if a.text_base else {}
+        if a.text_base and len(containers) < 4:
+            sys.exit('%s: found %d of the 4 native text containers (a/40/29, a/21/41, a/37/27, a/57/34)' % (a.text_base, len(containers)))
+        text_files = X.render(X.song_texts(a.music.read_bytes(), a.id), containers)
+    info = build(a.converted, a.template.read_bytes(), a.output, title, levels(entry), a.version, a.hold_sprites, text_files)
     print('%s: %s, BPM %s, charts %s' % (a.output, info['title'], info['bpm'], ' '.join(info['charts'])))
 
 
