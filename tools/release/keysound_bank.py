@@ -70,8 +70,9 @@ def bgm_sounds(*event_lists):
     return sorted(seen, key=seen.get)
 
 
-def split_long_bgm(charts, keys, tick, clock, chunk_ticks=60):
-    """(charts, keys) with every BGM-only sound longer than LONG_SAMPLES cut into chunk_ticks pieces
+def split_long_bgm(charts, keys, tick, clock, chunk_ticks=60, longest=None):
+    """(charts, keys) with every BGM-only sound longer than `longest` samples at 44.1 kHz (default
+    LONG_SAMPLES) cut into chunk_ticks pieces
     (60 ticks = 1.0 s; 5 s pieces left the BGM silent now and then in PCSX2, and native BGM sounds are
     mostly 89-266 ms), each a new keysound started by its own type-7 event on the tick the previous
     piece ends. The PS2 sound chip has 2 MB: a 122 s backing track (Elisha, 3.1 MB a channel) played
@@ -87,7 +88,7 @@ def split_long_bgm(charts, keys, tick, clock, chunk_ticks=60):
         rate, pcm = keys[v - 1]['pcm'] if 'pcm' in keys[v - 1] else stereo(keys[v - 1]['wav'])
         if rate not in RATE_CODES:
             pcm, rate = resample(pcm, rate, 44100), 44100
-        if pcm.shape[1] <= LONG_SAMPLES * rate // 44100:
+        if pcm.shape[1] <= (LONG_SAMPLES if longest is None else longest) * rate // 44100:
             continue
         ids, k = [], 0
         while True:

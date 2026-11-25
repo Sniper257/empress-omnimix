@@ -267,6 +267,12 @@ def main(argv=None):
     p.add_argument('--bank-budget', type=int, default=16000000,
                    help='largest bank in bytes (default 16 MB: Elisha\'s 16 MB bank loads in PCSX2 with All My Turn\'s '
                         'record); sounds up to 6 s go to 32 or 24 kHz to fit. 0 = no limit')
+    p.add_argument('--piece-ticks', type=int, default=15,
+                   help='length of the pieces long BGM is cut into, in ticks (default 15 = 0.25 s, the size of '
+                        'EMPRESS\'s own BGM sounds; the game cuts long sounds when it runs short of voices)')
+    p.add_argument('--premix', action='store_true',
+                   help='with --split: mix each chart\'s whole BGM and cut it into pieces, in one bank per '
+                        'difficulty (0xe8 H, 0xf0 A, 0xf8 N, 0x100 B). Plays best in PCSX2 but takes ~4x the space')
     p.add_argument('--hell', action='store_true', help='treat holds as HCN/HBSS even without the type-13 HCN event')
     p.add_argument('--split', action='store_true',
                    help='keysounds to one keys.bank for every chart (an EMPRESS "wp" bank; native songs have one '
@@ -293,8 +299,19 @@ def main(argv=None):
             report.setdefault('banks', {})['keys'] = info
             print('keys.bank: %d sounds, %d bytes, rates %s%s' % (info['sounds'], info['bytes'], info['rates'],
                                                             ' (' + info['warning'] + ')' if 'warning' in info else ''))
+        elif not a.premix:
+            charts, keys = KB.split_long_bgm(charts, keys, tick, CLOCK, chunk_ticks=a.piece_ticks, longest=44100)   # over 1 s
+            members = sorted(charts)
+            sounds = KB.player_sounds(*(charts[s] for s in members))
+            sounds += [v for v in KB.bgm_sounds(*(charts[s] for s in members)) if v not in set(sounds)]
+            data, slots, info = KB.build('SP', sounds, keys, gain, a.bank_budget or None)
+            (a.output / 'keys.bank').write_bytes(data)
+            banks.update({s: slots for s in members})
+            report.setdefault('banks', {})['keys'] = info
+            print('keys.bank: %d sounds, %d bytes, rates %s%s' % (info['sounds'], info['bytes'], info['rates'],
+                                                            ' (' + info['warning'] + ')' if 'warning' in info else ''))
         else:
-            charts, keys = premix_bgm(charts, keys)
+            charts, keys = premix_bgm(charts, keys, a.piece_ticks)
             for group, members in DIFFICULTY_GROUPS.items():
                 members = [m for m in members if m in charts]
                 if not members:
