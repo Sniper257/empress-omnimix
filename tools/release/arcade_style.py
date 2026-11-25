@@ -59,12 +59,12 @@ def caption(containers, text, atlas=None):
     return FT.generate(atlas, {'layout': 'pb_caption', 'text': text, 'size': [width, CAPTION_H]}, containers[CAPTION_BYTES])
 
 
-def write_style(out, style, name, label_text, caption_text, songs, containers):
+def write_style(out, style, name, label_text, caption_text, songs, containers, custom=False):
     d = Path(out) / 'songs' / style
     d.mkdir(parents=True, exist_ok=True)
     (d / 'label.spr').write_bytes(label(containers, label_text))
     (d / 'caption.spr').write_bytes(caption(containers, caption_text))
-    (d / 'style.txt').write_text('name %s\nfolder label.spr\ncaption caption.spr\n' % name)
+    (d / 'style.txt').write_text('name %s\nfolder label.spr\ncaption caption.spr\n%s' % (name, 'custom\n' if custom else ''))
     (d / 'index.txt').write_text(''.join(s + '\n' for s in songs))
     return d
 
@@ -78,11 +78,15 @@ def main(argv=None):
     p.add_argument('caption', help='folder caption text, e.g. copula')
     p.add_argument('songs', nargs='*', help='song folder names for index.txt')
     p.add_argument('--name', help='style name (default: the caption)')
+    p.add_argument('--custom', action='store_true',
+                   help='take the CUSTOM folder\'s slot (folder 59, slot 0) with this style\'s own label and caption. The '
+                        'launcher has NFOLD = 19 slots: CUSTOM + 16 PB styles + beatmania USA + one spare; slot 0 is unused '
+                        'unless a style says "custom", so a second added style fits only this way')
     a = p.parse_args(argv)
     containers = base_containers(a.base)
     if set(containers) != {LABEL_BYTES, CAPTION_BYTES}:
         sys.exit('%s: the native folder containers a/33/07 and a/84/41 were not found (or differ)' % a.base)
-    d = write_style(a.output, a.style, a.name or a.caption, a.label, a.caption, a.songs, containers)
+    d = write_style(a.output, a.style, a.name or a.caption, a.label, a.caption, a.songs, containers, a.custom)
     print('%s: folder %s, %d songs; add "%s" to songs/styles.txt' % (d, a.label, len(a.songs), a.style))
 
 

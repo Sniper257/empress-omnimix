@@ -1637,7 +1637,7 @@
   "tools/release/arcade_convert.py": "c8beb97d8e83e6958db5dc45c84cbee287603c1a783c55d80a093e024603548b",
   "tools/release/arcade_data.py": "572b2b2898145959986aed39d2bdcd21bdb0ce37598968c9ef52f5d8eb36487a",
   "tools/release/arcade_songfolder.py": "453fa2e53d13de6bd578139ffe1f5d670c21b774eb20ecd2eff4d6c2b28d9710",
-  "tools/release/arcade_style.py": "6fc7925d208bae8bf62f7b038d6420a3d2fcbb7473aec3c322c1b93209a0c9f9",
+  "tools/release/arcade_style.py": "f4b20192c4d0468bfde5ce6229c91e1df624981928d891b436bf0c3a9354b8d4",
   "tools/release/arcade_text.py": "004630af5078681bc51fc630a73a7c76556d3bc38de734f0fcfd56e634549051",
   "tools/release/asset_registry.json": "00a037fa8282afa3a62906bd79b371252dabf4e68b39839b4d508de06b3c4b75",
   "tools/release/audio_transform.py": "02ddcbd0ceb5c426435b6d8068a3fa878ff0447f05d2751268693307655fa83e",
