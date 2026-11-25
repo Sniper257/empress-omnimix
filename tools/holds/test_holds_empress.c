@@ -93,13 +93,13 @@ int main(void)
         /* head on screen, tail still above: body from the lane top to the head, then the start cap */
         make_note(n, 0, 2, 300); ndraw = 0;
         CHECK(holds_note_hook(n, 109u << 16 | 601, 80, 200, 0, 0) == 1);
-        CHECK(ndraw == 2 && draw_h[0] == (109u << 16 | (500 + 10 + 2)) && draw_py[0] == 0 && draw_zy[0] == (203 - 9 + 4 + 16) * 100 / 9);
-        CHECK(draw_h[1] == (109u << 16 | 510) && draw_y[1] == 203 - 9 && draw_py[1] == 0);   /* HCN white start cap, bottom at y+3 */
+        CHECK(ndraw == 2 && draw_h[0] == (109u << 16 | (500 + 10 + 2)) && draw_py[0] == 0 && draw_zy[0] == (203 - 13 + 6 + 16) * 100 / 9);
+        CHECK(draw_h[1] == (109u << 16 | 510) && draw_y[1] == 203 - 13 && draw_py[1] == 0);   /* HCN white start cap, bottom at y+3 */
         CHECK(draw_px[0] == 8 && draw_px[1] == 8);   /* body and cap 15 px wide, a pixel left of the note's x (hold_sprites PIVOT_X) */
         /* same tick: tail on screen too -> body from the tail to the head, end cap */
         make_note(n, 0, 2, 400); ndraw = 0;
         CHECK(holds_note_hook(n, 109u << 16 | 601, 80, 40, 0, 0) == 1);
-        CHECK(ndraw == 2 && draw_y[0] == 48 && draw_zy[0] == (203 - 9 + 4 - 48) * 100 / 9 && draw_h[1] == (109u << 16 | 511) && draw_y[1] == 43 && draw_py[1] == 0);
+        CHECK(ndraw == 2 && draw_y[0] == 50 && draw_zy[0] == (203 - 13 + 6 - 50) * 100 / 9 && draw_h[1] == (109u << 16 | 511) && draw_y[1] == 43 && draw_py[1] == 0);
         /* a tail note a tick before the end (shifted off a shared row) is drawn where the end is:
          * 280 px over 151 ticks is ~1.85 px per tick, so one tick higher */
         make_note(n, 0, 2, 399); ndraw = 0;
@@ -118,7 +118,7 @@ int main(void)
         for (tt = 301; tt < 305; tt++) holds_frame_hook(tt);
         ndraw = 0;
         holds_frame_hook(305);
-        CHECK(ndraw == 2 && draw_y[0] == -16 && draw_y[1] == 0x143 - 9 && draw_zy[0] == (0x143 - 9 + 4 + 16) * 100 / 9);
+        CHECK(ndraw == 2 && draw_y[0] == -16 && draw_y[1] == 0x143 - 13 && draw_zy[0] == (0x143 - 13 + 6 + 16) * 100 / 9);
         CHECK(draw_h[0] == (109u << 16 | (512 + 2)));   /* held past the ramp: the brightest beam */
         { hu32 k, steady = 1;                           /* and it stays lit: no flashing */
           for (k = 0; k < 6; k++) { ndraw = 0; holds_frame_hook(306 + k); steady &= ndraw >= 1 && draw_h[0] == (109u << 16 | (512 + 2)); }
@@ -205,7 +205,7 @@ int main(void)
         ndraw = 0;
         holds_frame_hook(310);
         CHECK(ndraw == 2 && (draw_h[0] & 0xffff) >= 500 + 24 + 3 && (draw_h[0] & 0xffff) <= 500 + 24 + 4);   /* lit BSS beam */
-        CHECK(draw_h[1] == (109u << 16 | (500 + 24)) && draw_y[1] == 0x143 - 9 && draw_py[1] == 0);        /* BSS start cap */
+        CHECK(draw_h[1] == (109u << 16 | (500 + 24)) && draw_y[1] == 0x143 - 14 && draw_py[1] == 0);        /* BSS start cap */
         CHECK(draw_px[0] == 14 && draw_px[1] == 14);
         tt_in[0] = 0;
     }
@@ -239,11 +239,11 @@ int main(void)
         for (tt = 0; tt < 250; tt++) holds_frame_hook(tt);
         make_note(n, 0, 7, 340); ndraw = 0;
         CHECK(holds_note_hook(n, 109u << 16 | 601, 30, 100, 0, 0) == 1);
-        CHECK(ndraw == 2 && draw_h[1] == (109u << 16 | (500 + 36)) && draw_y[1] == 103 - 14 / 2 && draw_py[1] == 0);
+        CHECK(ndraw == 2 && draw_h[1] == (109u << 16 | (500 + 36)) && draw_y[1] == 103 - 21 / 2 && draw_py[1] == 0);
         make_note(n, 0, 7, 341); ndraw = 0;                              /* first section's tail note (after the joint) */
         CHECK(holds_note_hook(n, 109u << 16 | 601, 30, 110, 0, 0) == 1);
         CHECK(ndraw == 2 && (draw_h[0] & 0xffff) >= 500 + 24 + 2 && (draw_h[0] & 0xffff) <= 500 + 24 + 4);   /* body, */
-        CHECK(draw_h[1] == (109u << 16 | (500 + 36)) && draw_y[1] == draw_y[0] - 14 / 2);   /* then the middle note on top, centred on the joint where the body starts */
+        CHECK(draw_h[1] == (109u << 16 | (500 + 36)) && draw_y[1] == draw_y[0] - 21 / 2);   /* then the middle note on top, centred on the joint where the body starts */
     }
     /* the tail drawn before the head in a frame: the body runs to where the head is now (last frame's y
      * plus one tick of scroll), not where it was, which left a gap above the start cap */
@@ -261,7 +261,7 @@ int main(void)
         make_note(n, 0, 2, 400); ndraw = 0;
         CHECK(holds_note_hook(n, 109u << 16 | 601, 80, 0x140 - 149 * 2, 0, 0) == 1);       /* tail first: 2 px a tick */
         ppt = 2;
-        bottom = 100 + ppt + 3 - 9 + 4;                                                   /* head y now, into the cap */
+        bottom = 100 + ppt + 3 - 13 + 6;                                                   /* head y now, into the cap */
         CHECK(ndraw == 2 && draw_y[0] + draw_zy[0] * 9 / 100 >= bottom - 1 && draw_y[0] + draw_zy[0] * 9 / 100 <= bottom);
     }
     /* the empty POOR the game gives for a turntable reversal at a BSS end (it finds the never-judged tail

@@ -10,7 +10,7 @@ Sizes, measured on an EMPRESS capture (PCSX2, 640x360 of the 640x448 frame): whi
 18 px, blue-key lanes 14 px, turntable 30 px; notes 16 px wide, 6 frame rows tall (the game's note
 sprites are 6 rows: launcher/main.c note_hook). Caps keep the arcade texture's aspect (a 54 x 26
 cap is about 2x a normal note's height in the arcade, as on an arcade capture of a held HCN), so they
-are about 15 x 9, 11 x 8 and 27 x 9 frame px (widths: see WIDTH); frame rows = capture px * 448 / 360. Bodies are one tile
+are about 15 x 14, 11 x 12 and 27 x 14 frame px (widths: see WIDTH; 1.5x taller than the texture: CAP_TALL); frame rows = capture px * 448 / 360. Bodies are one tile
 of the arcade beam scaled the same way, drawn stretched (zoomY) between the caps.
 
 All 36 sprites share one palette: cont_add (launcher/cont.c) rejects sprites added to a container
@@ -36,6 +36,10 @@ WIDTH = {'white': 15, 'black': 11, 'scr': 27}
 PIVOT_X = {'white': 8, 'black': 6, 'scr': 14}
 CAP_WIDTH = WIDTH
 CAP_PIVOT_X = PIVOT_X
+# caps 1.5x taller than the texture's own aspect: at that aspect they came out 9 rows, and the arcade
+# cap's bands (silver ring, dark middle, bright line, gold) blurred together (the dark band, 8 of 26
+# texture rows, was 2 rows); on an arcade capture the cap reads clearly taller than a normal note
+CAP_TALL = 1.5
 ROWS_PER_PX = 448 / 360            # EMPRESS frame rows per capture pixel (640 x 448 shown at 640 x 360)
 
 # (output name, arcade name, lane kind, part)
@@ -118,7 +122,8 @@ def decode(spr):
 def scaled(src, kind, part):
     from PIL import Image
     w = (CAP_WIDTH if part == 'cap' else WIDTH)[kind]
-    return src.resize((w, max(2, round(src.height * w / src.width * ROWS_PER_PX))), Image.LANCZOS)
+    tall = CAP_TALL if part == 'cap' else 1.0
+    return src.resize((w, max(2, round(src.height * w / src.width * ROWS_PER_PX * tall))), Image.LANCZOS)
 
 
 def main(argv=None):

@@ -28,14 +28,14 @@
 
 /* catalogue order (hold_sprites.catalogue): first sprite of each group, states per body */
 enum { HD_CN_WHITE = 0, HD_CN_BLACK = 5, HD_HCN_WHITE = 10, HD_HCN_BLACK = 17, HD_BSS = 24, HD_HBSS = 29, HD_MSS_MIDDLE = 36 };
-#define HD_MID_H 14           /* mss_middle rows (sprites.json) */
+#define HD_MID_H 21           /* mss_middle rows (sprites.json) */
 /* sprite sizes in frame rows (hold_sprites.py): white, black, turntable; caps and body tiles */
 /* x pivots (hold_sprites.py PIVOT_X: widths 13 / 10 / 25, drawn about 1 px left of the note's x, which
  * sits right of the lane's centre) */
 /* caps and bodies fill the lane inside (hold_sprites WIDTH 15 / 11 / 27, as in the arcade); x pivots a
  * pixel left of the note's x */
 static const hs8 hd_px[3] = {8, 6, 14}, hd_body_h[3] = {9, 8, 9};   /* bodies (sprites.json) */
-static const hs8 hd_cpx[3] = {8, 6, 14}, hd_cap_h[3] = {9, 8, 9};   /* caps */
+static const hs8 hd_cpx[3] = {8, 6, 14}, hd_cap_h[3] = {13, 13, 14};   /* caps (1.5x the texture's aspect) */
 /* the beam runs half a cap into each cap (drawn over it): the caps' art has dark rows at their inner
  * edge, which showed as a gap between beam and cap in PCSX2 */
 #define HD_INTO(kind) (hd_cap_h[kind] / 2)
