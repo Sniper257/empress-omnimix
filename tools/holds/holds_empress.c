@@ -141,7 +141,7 @@ void holds_set_chart(const hold_def *defs, hu32 n)
     armed = 0;
 }
 
-/* each hold's tail note object, from its spawn until the hold is over (then retired, see retire_tails) */
+/* each hold's tail note object, from its spawn (for the BSS end sound; tail_live checks it is still that note) */
 static hu8 *tail_note[HOLDS_MAX];
 extern volatile hu32 holds_ddbg[12];
 
@@ -260,24 +260,6 @@ static hs8 spin(hu32 side)
     return v == 0 ? 0 : (v & 0x80u) ? -1 : 1;
 }
 
-/* A finished hold's tail note gets the game's consumed mark (+9 bit 0x40, as on a judged note) once
- * its end has passed. Never judged, it would otherwise stay live on its key for 60 ticks; PCSX2
- * crashed when the next CN on that key reached the line (Elisha SPN). The game stops drawing notes
- * below the line, so this runs per tick, not from the drawer. */
-static void retire_tails(hs32 now)
-{
-    hu32 i;
-    hu8 *n;
-    for (i = 0; i < chart_n; i++) {
-        LOOP_PAD();
-        if (!(n = tail_note[i]) || holds.state[i] != HS_DONE || now < chart_defs[i].end) continue;
-        if (!tail_live(i)) { tail_note[i] = 0; continue; }
-        tail_note[i] = 0;
-        n[9] |= 0x40;
-        holds_ddbg[9]++;
-    }
-}
-
 /* Replaces the play loop's jal 0x1e6bb0(tick) at 0x1e5cb8. */
 void holds_frame_hook(long long tick)
 {
@@ -305,7 +287,6 @@ void holds_frame_hook(long long tick)
     holds_frame(&holds, (hs32)tick, keys, tt);
     while ((n = holds_pop(&holds, ev, 16)) != 0)
         for (i = 0; i < n; i++) apply(&ev[i]);
-    retire_tails((hs32)tick);
     hd_frame();
 }
 

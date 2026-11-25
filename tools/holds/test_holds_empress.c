@@ -135,8 +135,7 @@ int main(void)
         for (tt = 401; tt < 410; tt++) holds_frame_hook(tt);
         make_note(n, 0, 2, 400); ndraw = 0;
         CHECK(holds_note_hook(n, 109u << 16 | 601, 80, 0x140, 0, 0) == 1 && ndraw == 0);
-        CHECK(n[9] == (0x40 | 2));                                      /* retired: consumed, like a judged note */
-        CHECK(holds_note_hook(n, 109u << 16 | 601, 80, 0x148, 0, 0) == 1 && ndraw == 0);   /* and stays hidden */
+        CHECK(n[9] == 2);                                               /* left to the game (not marked consumed) */
         keys[0] = 0;
     }
     /* CN held past the tail window: BAD (code 8) on that lane, like the arcade */
@@ -153,24 +152,6 @@ int main(void)
         keys[0] = 0;
         for (tt = 380; tt < 400; tt++) holds_frame_hook(tt);
         CHECK(logged(8, 3) == 1 && logged(0xa, 3) == 0 && logged(0xf, 3) == 0);
-    }
-    /* a finished hold's tail is retired per tick even when the drawer no longer sees it */
-    {
-        static hu8 tn[0x20] __attribute__((aligned(4)));
-        static const hold_def one[1] = {{300, 360, 4, HOLD_CN, 0}};
-        long long tt;
-        holds_set_chart(one, 1);
-        keys[0] = keys[1] = 0;
-        for (tt = 0; tt < 250; tt++) holds_frame_hook(tt);
-        make_note(tn, 0, 4, 360); holds_spawn_hook(tn);
-        CHECK(tn[0xb] == 0 && tn[9] == 4);
-        holds_on_judgement(0xa, 4);
-        keys[0] = 1u << 4;
-        for (tt = 250; tt < 360; tt++) holds_frame_hook(tt);
-        CHECK(tn[9] == 4);                                              /* held: still live */
-        keys[0] = 0;
-        for (tt = 360; tt < 366; tt++) holds_frame_hook(tt);
-        CHECK(tn[9] == (0x40 | 4));                                     /* released on time: retired */
     }
     /* BSS: the backspin at the end plays the tail note's keysound; a CN end plays nothing */
     {
