@@ -104,6 +104,7 @@ class Chart(unittest.TestCase):
         self.assertEqual(notes, [(60, 0x20), (89, 0x20), (90, 0x40), (120, 0x40)])
         self.assertEqual(C.tail_tick(60, 90, {89, 90, 91}), 88)
         self.assertEqual(C.tail_tick(89, 90, {90, 91, 92}), 90)       # nothing free after the head: stays
+        self.assertEqual(C.tail_tick(60, 90, {90}, after=True), 91)    # MSS joint: after the next section's head
 
     def test_bank_budget_lowers_the_longest_first(self):
         import keysound_bank as KB

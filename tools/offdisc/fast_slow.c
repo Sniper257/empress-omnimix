@@ -4,7 +4,7 @@
  * new textures, allocations, file reads or additional input polling. */
 #define FS_ARGS unsigned long long a,unsigned long long b,unsigned long long c,unsigned long long d,unsigned long long e,unsigned long long f,unsigned long long g,unsigned long long h
 #ifdef HOLDS
-void holds_on_judgement(unsigned code,unsigned id,int dir); /* holds_empress.c */
+int holds_on_judgement(unsigned code,unsigned id,int dir); /* holds_empress.c: 1 = drop it */
 #endif
 #define FS_PASS a,b,c,d,e,f,g,h
 #ifndef FAST_SLOW_TEST
@@ -159,7 +159,7 @@ static void fs_record(u32 event,u32 lane,u32 side,s32 delta,u32 timed)
 unsigned long long fs_timed(FS_ARGS)
 {
 #ifdef HOLDS
-    holds_on_judgement((u32)a&65535,(u32)b&65535,(s32)d<0?-1:(s32)d>0?1:0);
+    if(holds_on_judgement((u32)a&65535,(u32)b&65535,(s32)d<0?-1:(s32)d>0?1:0))return 0; /* a tail note's empty POOR */
 #endif
     fs_record((u32)a&65535,(u32)b&65535,(u32)c,(s32)d,1);
     return fs_ring_body(a,b,0,0,0,0,0,0);
@@ -167,7 +167,7 @@ unsigned long long fs_timed(FS_ARGS)
 unsigned long long fs_ring(FS_ARGS)
 {
 #ifdef HOLDS
-    holds_on_judgement((u32)a&65535,(u32)b&65535,0);
+    if(holds_on_judgement((u32)a&65535,(u32)b&65535,0))return 0;
 #endif
     fs_record((u32)a&65535,(u32)b&65535,((u32)b>>15)&1,0,0);
     return fs_ring_body(FS_PASS);

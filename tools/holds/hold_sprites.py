@@ -10,7 +10,7 @@ Sizes, measured on an EMPRESS capture (PCSX2, 640x360 of the 640x448 frame): whi
 18 px, blue-key lanes 14 px, turntable 30 px; notes 16 px wide, 6 frame rows tall (the game's note
 sprites are 6 rows: launcher/main.c note_hook). Caps keep the arcade texture's aspect (a 54 x 26
 cap is about 2x a normal note's height in the arcade, as on an arcade capture of a held HCN), so they
-are about 13 x 8, 10 x 7 and 25 x 9 frame px (widths: see WIDTH); frame rows = capture px * 448 / 360. Bodies are one tile
+are about 15 x 9, 11 x 8 and 27 x 9 frame px (widths: see WIDTH); frame rows = capture px * 448 / 360. Bodies are one tile
 of the arcade beam scaled the same way, drawn stretched (zoomY) between the caps.
 
 All 36 sprites share one palette: cont_add (launcher/cont.c) rejects sprites added to a container
@@ -25,18 +25,17 @@ import struct
 import sys
 from pathlib import Path
 
-# Sizes in frame pixels. The game's frame is narrower than a PCSX2 capture: a 15 px sprite showed 17 px
-# wide on a 640x480 capture (about 1.11 capture px per frame px). Lane insides on that capture: white 17,
-# blue 13, turntable 30 px; less 2 for 1 px of lane on either side, in frame px: 13 / 10 / 25.
-WIDTH = {'white': 13, 'black': 10, 'scr': 25}
+# Sizes in frame pixels. The game's frame is narrower than a PCSX2 capture: about 1.11 capture px per
+# frame px (a 15 px sprite showed 17 px wide). Lane insides on a 640x480 capture: white 17, blue 13,
+# turntable 30 px = 15 / 11 / 27 frame px. Caps and bodies both fill the lane inside, as in the arcade,
+# where both textures have the lane's width; the beam art's dark edge columns make the body read
+# slimmer than the cap. (Bodies 2 px narrower than the caps left dark strips beside them in PCSX2.)
+WIDTH = {'white': 15, 'black': 11, 'scr': 27}
 # x pivots: the note x the game hands over is about 1 frame px right of the lane's centre (its own notes
 # sit half a pixel right too); a sprite centred on x showed 1 px right of the lane
-PIVOT_X = {'white': 7, 'black': 5, 'scr': 13}
-# caps fill the lane inside, line to line, as on an arcade capture (the cap reads wider than the body:
-# the beam art has dark edge columns, and here it also keeps its 1 px of lane): 15 / 11 / 27 frame px,
-# pivots again a pixel left of the note x
-CAP_WIDTH = {'white': 15, 'black': 11, 'scr': 27}
-CAP_PIVOT_X = {'white': 8, 'black': 6, 'scr': 14}
+PIVOT_X = {'white': 8, 'black': 6, 'scr': 14}
+CAP_WIDTH = WIDTH
+CAP_PIVOT_X = PIVOT_X
 ROWS_PER_PX = 448 / 360            # EMPRESS frame rows per capture pixel (640 x 448 shown at 640 x 360)
 
 # (output name, arcade name, lane kind, part)

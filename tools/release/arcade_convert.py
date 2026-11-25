@@ -50,11 +50,15 @@ def tick(ms):
 TAIL_SHIFT = 2   # holds.h HOLDS_TAIL_SHIFT
 
 
-def tail_tick(start, stop, taken):
+def tail_tick(start, stop, taken, after=False):
     """Tick for a hold's tail note: its end, or the nearest tick within TAIL_SHIFT (earlier first)
     that has no other note. The game judges all notes at one tick as a row, and a never-judged tail
-    in another hold's head row left that head unjudged until its window ran out."""
-    for off in (0, -1, 1, -2, 2):
+    in another hold's head row left that head unjudged until its window ran out.
+
+    after=True (a multi-spin scratch joint: the next section starts on the same turntable where this one
+    ends): later ticks first, so the next section's head comes before the tail in the lane. With the
+    tail first, the reversal at the joint found the never-judged tail and the game showed an empty POOR."""
+    for off in ((1, 2, -1, -2) if after else (0, -1, 1, -2, 2)):
         t = stop + off
         if t > start and t not in taken:
             return t
@@ -115,8 +119,9 @@ def empress_events(events, holds=(), keysounds=False, bgm_slots=False, tail_note
     if not started and not bgm_slots:
         out.append((0, 7, 0, 1))
     if tail_notes:
+        starts = {(h[0], h[2]) for h in holds}
         for start, stop, lane, kind, tick64 in holds:
-            out.append((tail_tick(start, stop, {e[0] for e in out if e[1] & 15 in (0, 1)}),
+            out.append((tail_tick(start, stop, {e[0] for e in out if e[1] & 15 in (0, 1)}, after=(stop, lane) in starts),
                         (lane >> 3) | (lane & 7) << 4, 0, 0))
     end = max([end] + [e[0] for e in out]) + 1
     out.append((end, 6, 0, 0))

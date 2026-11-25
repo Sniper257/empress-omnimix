@@ -247,17 +247,38 @@ static void head_range(hu32 code, int judge, int dir, int scratch, hs32 *lo, hs3
     if (code == 7 || code == 8 || (code == 6 && dir > 0)) *hi = 1;        /* SLOW: the note has passed */
 }
 
+/* An empty POOR the game gave because of a tail note: the tail is a real note to the game, never
+ * judgeable, so a turntable reversal at a BSS end (or a press near a CN end) found it and the game
+ * showed an empty POOR the arcade does not have. True if a hold on the lane ends within the window. */
+static int tail_empty_poor(hu32 lane)
+{
+    hu32 i;
+    for (i = 0; i < chart_n; i++) {
+        const hold_def *d = &chart_defs[i];
+        LOOP_PAD();
+        if (d->start > last_tick + HEAD_WINDOW) break;
+        if (d->lane == lane && d->end - last_tick <= HEAD_WINDOW && last_tick - d->end <= HEAD_WINDOW) return 1;
+    }
+    return 0;
+}
+
 /* Called from fs_timed() / fs_ring() for every native judgement, before it is logged.
- * dir: sign of the timed hit delta (-1 early, +1 late), 0 if the ring gave none. */
-void holds_on_judgement(hu32 code, hu32 id, int dir)
+ * dir: sign of the timed hit delta (-1 early, +1 late), 0 if the ring gave none.
+ * Returns 1 to drop the judgement (an empty POOR caused by a tail note, see tail_empty_poor). */
+int holds_on_judgement(hu32 code, hu32 id, int dir)
 {
     int judge, r;
     hu32 lane;
     hs32 lo, hi;
-    if (!armed || last_tick < 0) return;
+    if (!armed || last_tick < 0) return 0;
     code &= 0xffffu;
+    if (code == CODE_EMPTY_POOR) {
+        lane = ((id >> 15) & 1u) * 8u + (id & 7u);
+        if (tail_empty_poor(lane)) { holds_ddbg[9]++; dbg_report(code, id, -1); return 1; }
+        return 0;
+    }
     judge = judge_of_code(code);
-    if (judge < 0) return;
+    if (judge < 0) return 0;
     lane = ((id >> 15) & 1u) * 8u + (id & 7u);
     head_range(code, judge, dir, (lane & 7u) == 7u, &lo, &hi);
     r = holds_head_in(&holds, lane, last_tick, lo, hi, (hu32)judge);
@@ -268,6 +289,7 @@ void holds_on_judgement(hu32 code, hu32 id, int dir)
         if (r >= 0) r |= 0x100;
     }
     dbg_report(code, id, r);
+    return 0;
 }
 
 /* the tail note object of hold i, if it is still that note (not freed and reused) */

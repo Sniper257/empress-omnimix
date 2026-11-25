@@ -32,9 +32,10 @@ enum { HD_CN_WHITE = 0, HD_CN_BLACK = 5, HD_HCN_WHITE = 10, HD_HCN_BLACK = 17, H
 /* sprite sizes in frame rows (hold_sprites.py): white, black, turntable; caps and body tiles */
 /* x pivots (hold_sprites.py PIVOT_X: widths 13 / 10 / 25, drawn about 1 px left of the note's x, which
  * sits right of the lane's centre) */
-static const hs8 hd_px[3] = {7, 5, 13}, hd_body_h[3] = {8, 8, 9};   /* bodies (sprites.json) */
-/* caps fill the lane (hold_sprites CAP_WIDTH 15 / 11 / 27), so they read wider than the body as in the arcade */
-static const hs8 hd_cpx[3] = {8, 6, 14}, hd_cap_h[3] = {9, 8, 9};
+/* caps and bodies fill the lane inside (hold_sprites WIDTH 15 / 11 / 27, as in the arcade); x pivots a
+ * pixel left of the note's x */
+static const hs8 hd_px[3] = {8, 6, 14}, hd_body_h[3] = {9, 8, 9};   /* bodies (sprites.json) */
+static const hs8 hd_cpx[3] = {8, 6, 14}, hd_cap_h[3] = {9, 8, 9};   /* caps */
 /* the beam runs half a cap into each cap (drawn over it): the caps' art has dark rows at their inner
  * edge, which showed as a gap between beam and cap in PCSX2 */
 #define HD_INTO(kind) (hd_cap_h[kind] / 2)
@@ -70,7 +71,8 @@ static hu32 hd_head_frame[HOLDS_MAX], hd_frames;
  * body until the tail is on screen */
 static hu8 hd_poor[HOLDS_MAX];
 static hu32 hd_from;                /* frame pass: first hold not yet over */
-/* holds_ddbg: [1] head draws, [2] tail draws, [3] frame-pass bodies, [4] heads found gone,
+/* holds_ddbg: [1] head draws, [2] tail draws, [3] frame-pass bodies, [4] heads found gone, [9] empty POORs
+ * dropped (tail notes, holds_empress.c tail_empty_poor),
  * [5] / [6] / [7] last tail drawn: tick, hold index, y; [8] bodies clamped */
 volatile hu32 holds_ddbg[12] = {0x52444448u};
 /* scroll speed per side in 1/256 pixel per tick, measured on tail notes above the line: the tail
