@@ -240,9 +240,10 @@ int main(void)
         make_note(n, 0, 7, 340); ndraw = 0;
         CHECK(holds_note_hook(n, 109u << 16 | 601, 30, 100, 0, 0) == 1);
         CHECK(ndraw == 2 && draw_h[1] == (109u << 16 | (500 + 36)) && draw_y[1] == 103 - 14 / 2 && draw_py[1] == 0);
-        make_note(n, 0, 7, 339); ndraw = 0;                              /* first section's tail note */
+        make_note(n, 0, 7, 341); ndraw = 0;                              /* first section's tail note (after the joint) */
         CHECK(holds_note_hook(n, 109u << 16 | 601, 30, 110, 0, 0) == 1);
-        CHECK(ndraw == 1 && (draw_h[0] & 0xffff) >= 500 + 24 + 2 && (draw_h[0] & 0xffff) <= 500 + 24 + 4);   /* body only */
+        CHECK(ndraw == 2 && (draw_h[0] & 0xffff) >= 500 + 24 + 2 && (draw_h[0] & 0xffff) <= 500 + 24 + 4);   /* body, */
+        CHECK(draw_h[1] == (109u << 16 | (500 + 36)) && draw_y[1] == draw_y[0] - 14 / 2);   /* then the middle note on top, centred on the joint where the body starts */
     }
     /* the tail drawn before the head in a frame: the body runs to where the head is now (last frame's y
      * plus one tick of scroll), not where it was, which left a gap above the start cap */

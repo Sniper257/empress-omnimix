@@ -206,7 +206,12 @@ int holds_note_hook(hu8 *note, hu32 handle, hs32 x, hs32 y, hu32 side, hu32 clip
                 HD_BASE(bottom) - (!head_seen && !lit ? 0 : hd_cap_h[kind] - HD_INTO(kind)), clip);
         if (!head_seen && lit && y < judge)
             HD_CAP(base, kind, x, HD_BASE(judge), clip);        /* head hit: start cap on the line */
-        if (!(i < HOLDS_MAX && (mss_chain[i] & MSS_NEXT)))      /* an MSS joint: the next section's middle note */
+        if (i < HOLDS_MAX && (mss_chain[i] & MSS_NEXT))         /* an MSS joint: the middle note, here as well as
+                                                                  from the next section's head, so that it is
+                                                                  drawn over both bodies whichever note the game
+                                                                  draws last (the tail comes after that head) */
+            HD_DRAW(last - (HD_SPRITES - 1) + HD_MSS_MIDDLE, x, HD_BASE(y) - HD_MID_H / 2, 100, hd_cpx[kind], 0, clip);
+        else
         HD_DRAW(base + 1, x, HD_BASE(y), 100, hd_cpx[kind], 0, clip);   /* end cap: hangs below the tail's line (arcade:
                                                                              a head on the same tick sits on that line) */
     }
