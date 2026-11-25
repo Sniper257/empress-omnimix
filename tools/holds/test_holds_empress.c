@@ -17,7 +17,10 @@ unsigned long long test_ring_body(hu32 code, hu32 lane) { if (nring < 64) { ring
 hu32 test_keys(hu32 side) { return keys[side]; }
 static hu32 pressed[2];
 hu32 test_pressed(hu32 side) { return pressed[side]; }
-hu32 test_turntable(hu32 side) { (void)side; return 0; }
+static hu32 tt_in[2];
+hu32 test_turntable(hu32 side) { return tt_in[side]; }
+static hu32 played_index[8], played_side[8], nplayed;
+void test_play(hu32 index, hu32 side) { if (nplayed < 8) { played_index[nplayed] = index; played_side[nplayed++] = side; } }
 int holds_note_hook(hu8 *note, hu32 handle, hs32 x, hs32 y, hu32 side, hu32 clip);
 static hu32 draw_h[64], ndraw; static hs32 draw_y[64], draw_zy[64], draw_py[64];
 void test_draw(hu32 handle, hs32 x, hs32 y, hs32 zy, hs32 py) { (void)x; if (ndraw < 64) { draw_h[ndraw] = handle; draw_y[ndraw] = y; draw_zy[ndraw] = zy; draw_py[ndraw++] = py; } }
@@ -168,6 +171,29 @@ int main(void)
         keys[0] = 0;
         for (tt = 360; tt < 366; tt++) holds_frame_hook(tt);
         CHECK(tn[9] == (0x40 | 4));                                     /* released on time: retired */
+    }
+    /* BSS: the backspin at the end plays the tail note's keysound; a CN end plays nothing */
+    {
+        static hu8 tn[0x20] __attribute__((aligned(4))), cn[0x20] __attribute__((aligned(4)));
+        static const hold_def two[2] = {{300, 360, 7, HOLD_BSS, 0}, {320, 380, 2, HOLD_CN, 0}};
+        long long tt;
+        holds_set_chart(two, 2);
+        keys[0] = keys[1] = 0; tt_in[0] = 0; nplayed = 0;
+        for (tt = 0; tt < 250; tt++) holds_frame_hook(tt);
+        make_note(tn, 0, 7, 360); tn[8] = 0x33; holds_spawn_hook(tn);
+        make_note(cn, 0, 2, 380); cn[8] = 0x21; holds_spawn_hook(cn);
+        for (tt = 250; tt < 300; tt++) holds_frame_hook(tt);
+        holds_on_judgement(0xa, 7);
+        tt_in[0] = 0x01;                                   /* spinning one way */
+        for (tt = 300; tt < 320; tt++) holds_frame_hook(tt);
+        holds_on_judgement(0xa, 2); keys[0] = 1u << 2;
+        for (tt = 320; tt < 360; tt++) holds_frame_hook(tt);
+        tt_in[0] = 0x81;                                   /* backspin at the end */
+        for (tt = 360; tt < 380; tt++) holds_frame_hook(tt);
+        keys[0] = 0; tt_in[0] = 0;
+        for (tt = 380; tt < 400; tt++) holds_frame_hook(tt);
+        CHECK(nplayed == 1 && played_index[0] == 0x33 && played_side[0] == 0);
+        CHECK(logged(0xa, 7) == 1 && logged(0xa, 2) == 1);   /* both ends PGREAT */
     }
     /* a hit the game never reports: the head note stops being drawn while its key is down */
     {

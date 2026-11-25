@@ -42,6 +42,8 @@ extern hu32 test_pressed(hu32 side);
 #define H_NATIVE_TICK(tick) ((void)(tick))
 extern void test_native_spawn(hu8 *note);
 #define H_NATIVE_SPAWN(note) test_native_spawn(note)
+extern void test_play(hu32 index, hu32 side);
+#define H_PLAY_NOTE(note, side) test_play((note)[8], (side))
 #else
 static hu32 h_gp(void) { hu32 g; __asm__ volatile("move %0, $28" : "=r"(g)); return g; }
 /* chart event cursor of the spawner (0x1e9790 reads gp-0x77dc): an address inside the decoded chart */
@@ -64,6 +66,18 @@ extern unsigned long long fs_ring_body(FS_ARGS);
 #define H_TT(side) (((hu32 (*)(hu32))0x13acd0)(side) & 0xffu)
 #define H_NATIVE_TICK(tick) (((void (*)(long long))0x1e6bb0)(tick))
 #define H_NATIVE_SPAWN(note) (((void (*)(hu8 *))0x1ebf90)(note))
+/* the key handler's keysound request (0x1e8834..0x1e8948): the word at 0x79da50 + note[8] * 4, with
+ * the side flag when 0x1ebdc0() == 2 and not 0x205e20(), 0x20000000 when 0x205d40(), skipped while
+ * gp-0x776c is set; then 0x140260(request) */
+static void h_play_note(const hu8 *note, hu32 side)
+{
+    hu32 req = *(volatile hu32 *)(unsigned long)(0x79da50u + note[8] * 4u);
+    if (!req || *(volatile hu32 *)(unsigned long)(h_gp() - 0x776c)) return;
+    if (((hu32 (*)(void))0x1ebdc0)() == 2 && !((hu32 (*)(void))0x205e20)()) req |= side ? 0x2000000u : 0x1000000u;
+    if (((hu32 (*)(void))0x205d40)()) req |= 0x20000000u;
+    ((void (*)(hu32))0x140260)(req);
+}
+#define H_PLAY_NOTE(note, side) h_play_note((note), (side))
 #endif
 
 #define CODE_PGREAT 0xau
@@ -208,12 +222,24 @@ void holds_on_judgement(hu32 code, hu32 id)
     dbg_report(code, id, r);
 }
 
+/* the tail note object of hold i, if it is still that note (not freed and reused) */
+static int tail_live(hu32 i)
+{
+    const hu8 *n = tail_note[i];
+    return n && holds_tail_tick(&chart_defs[i], *(const short *)(n + 0x18)) && (n[9] & 0x3fu) == (chart_defs[i].lane & 7u)
+        && n[0xa] == (chart_defs[i].lane >> 3);
+}
+
 static void apply(const hold_event *e)
 {
     hu32 id = lane_id(e->lane);
     if (e->kind != HE_TICK_GAIN) dbg_event(e);
     switch (e->kind) {
     case HE_TAIL:
+        /* BSS / HBSS: the backspin at the end plays the turntable's keysound at that point of the chart,
+         * the sound the tail note carries (the game never judges the tail, so it never plays it) */
+        if ((e->judge == J_PGREAT || e->judge == J_BAD) && (e->lane & 7) == 7 && tail_live(e->index))
+            H_PLAY_NOTE(tail_note[e->index], e->lane >> 3);
         if (e->judge == J_PGREAT) H_RING(CODE_PGREAT, id);
         else if (e->judge == J_BAD) H_RING(CODE_BAD, id);
         else if (e->judge == J_POOR) H_RING(CODE_MISS, id);
@@ -245,10 +271,8 @@ static void retire_tails(hs32 now)
     for (i = 0; i < chart_n; i++) {
         LOOP_PAD();
         if (!(n = tail_note[i]) || holds.state[i] != HS_DONE || now < chart_defs[i].end) continue;
+        if (!tail_live(i)) { tail_note[i] = 0; continue; }
         tail_note[i] = 0;
-        /* still the same note (not freed and reused): its time, lane and side */
-        if (!holds_tail_tick(&chart_defs[i], *(const short *)(n + 0x18)) || (n[9] & 0x3fu) != (chart_defs[i].lane & 7u)
-            || n[0xa] != (chart_defs[i].lane >> 3)) continue;
         n[9] |= 0x40;
         holds_ddbg[9]++;
     }
