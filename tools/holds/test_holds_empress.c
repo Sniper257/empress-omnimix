@@ -22,8 +22,8 @@ hu32 test_turntable(hu32 side) { return tt_in[side]; }
 static hu32 played_index[8], played_side[8], nplayed;
 void test_play(hu32 index, hu32 side) { if (nplayed < 8) { played_index[nplayed] = index; played_side[nplayed++] = side; } }
 int holds_note_hook(hu8 *note, hu32 handle, hs32 x, hs32 y, hu32 side, hu32 clip);
-static hu32 draw_h[64], ndraw; static hs32 draw_y[64], draw_zy[64], draw_py[64];
-void test_draw(hu32 handle, hs32 x, hs32 y, hs32 zy, hs32 py) { (void)x; if (ndraw < 64) { draw_h[ndraw] = handle; draw_y[ndraw] = y; draw_zy[ndraw] = zy; draw_py[ndraw++] = py; } }
+static hu32 draw_h[64], ndraw; static hs32 draw_y[64], draw_zy[64], draw_px[64], draw_py[64];
+void test_draw(hu32 handle, hs32 x, hs32 y, hs32 zy, hs32 px, hs32 py) { (void)x; if (ndraw < 64) { draw_h[ndraw] = handle; draw_y[ndraw] = y; draw_zy[ndraw] = zy; draw_px[ndraw] = px; draw_py[ndraw++] = py; } }
 static hu8 record[0x134] __attribute__((aligned(4)));
 hu8 *test_record(void) { return record; }
 static int gains;
@@ -93,12 +93,13 @@ int main(void)
         /* head on screen, tail still above: body from the lane top to the head, then the start cap */
         make_note(n, 0, 2, 300); ndraw = 0;
         CHECK(holds_note_hook(n, 109u << 16 | 601, 80, 200, 0, 0) == 1);
-        CHECK(ndraw == 2 && draw_h[0] == (109u << 16 | (500 + 10 + 2)) && draw_py[0] == 0 && draw_zy[0] == (203 - 9 + 4 + 16) * 100 / 9);
-        CHECK(draw_h[1] == (109u << 16 | 510) && draw_y[1] == 203 - 9 && draw_py[1] == 0);   /* HCN white start cap, bottom at y+3 */
+        CHECK(ndraw == 2 && draw_h[0] == (109u << 16 | (500 + 10 + 2)) && draw_py[0] == 0 && draw_zy[0] == (203 - 8 + 4 + 16) * 100 / 8);
+        CHECK(draw_h[1] == (109u << 16 | 510) && draw_y[1] == 203 - 8 && draw_py[1] == 0);   /* HCN white start cap, bottom at y+3 */
+        CHECK(draw_px[0] == 7 && draw_px[1] == 7);   /* 13 px wide, a pixel left of the note's x (hold_sprites PIVOT_X) */
         /* same tick: tail on screen too -> body from the tail to the head, end cap */
         make_note(n, 0, 2, 400); ndraw = 0;
         CHECK(holds_note_hook(n, 109u << 16 | 601, 80, 40, 0, 0) == 1);
-        CHECK(ndraw == 2 && draw_y[0] == 48 && draw_zy[0] == (203 - 9 + 4 - 48) * 100 / 9 && draw_h[1] == (109u << 16 | 511) && draw_y[1] == 43 && draw_py[1] == 0);
+        CHECK(ndraw == 2 && draw_y[0] == 47 && draw_zy[0] == (203 - 8 + 4 - 47) * 100 / 8 && draw_h[1] == (109u << 16 | 511) && draw_y[1] == 43 && draw_py[1] == 0);
         /* a tail note a tick before the end (shifted off a shared row) is drawn where the end is:
          * 280 px over 151 ticks is ~1.85 px per tick, so one tick higher */
         make_note(n, 0, 2, 399); ndraw = 0;
@@ -117,7 +118,7 @@ int main(void)
         for (tt = 301; tt < 305; tt++) holds_frame_hook(tt);
         ndraw = 0;
         holds_frame_hook(305);
-        CHECK(ndraw == 2 && draw_y[0] == -16 && draw_y[1] == 0x143 - 9 && draw_zy[0] == (0x143 - 9 + 4 + 16) * 100 / 9);
+        CHECK(ndraw == 2 && draw_y[0] == -16 && draw_y[1] == 0x143 - 8 && draw_zy[0] == (0x143 - 8 + 4 + 16) * 100 / 8);
         CHECK(draw_h[0] == (109u << 16 | (512 + 1)) || draw_h[0] == (109u << 16 | (512 + 2)));   /* held: beam1/2 */
         gains = 0;
         for (tt = 306; tt < 340; tt++) holds_frame_hook(tt);
@@ -152,7 +153,7 @@ int main(void)
         ndraw = 0;
         holds_frame_hook(330);
         CHECK(ndraw == 1 && draw_y[0] == -16 && draw_h[0] == (109u << 16 | (500 + 2)));  /* unlit CN beam, no cap */
-        CHECK(draw_zy[0] == (0x143 + 16) * 100 / 9);                                         /* down to the line */
+        CHECK(draw_zy[0] == (0x143 + 16) * 100 / 8);                                         /* down to the line */
     }
     /* the game removed a missed head before the late rule decided: the unlit beam stays (it vanished) */
     {
@@ -201,7 +202,8 @@ int main(void)
         ndraw = 0;
         holds_frame_hook(310);
         CHECK(ndraw == 2 && (draw_h[0] & 0xffff) >= 500 + 24 + 3 && (draw_h[0] & 0xffff) <= 500 + 24 + 4);   /* lit BSS beam */
-        CHECK(draw_h[1] == (109u << 16 | (500 + 24)) && draw_y[1] == 0x143 - 10 && draw_py[1] == 0);        /* BSS start cap */
+        CHECK(draw_h[1] == (109u << 16 | (500 + 24)) && draw_y[1] == 0x143 - 9 && draw_py[1] == 0);        /* BSS start cap */
+        CHECK(draw_px[0] == 13 && draw_px[1] == 13);
         tt_in[0] = 0;
     }
     /* CN held past the tail window: BAD (code 8) on that lane, like the arcade */

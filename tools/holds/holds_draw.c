@@ -29,18 +29,20 @@
 /* catalogue order (hold_sprites.catalogue): first sprite of each group, states per body */
 enum { HD_CN_WHITE = 0, HD_CN_BLACK = 5, HD_HCN_WHITE = 10, HD_HCN_BLACK = 17, HD_BSS = 24, HD_HBSS = 29 };
 /* sprite sizes in frame rows (hold_sprites.py): white, black, turntable; caps and body tiles */
-static const hs8 hd_w[3] = {15, 11, 28}, hd_cap_h[3] = {9, 8, 10}, hd_body_h[3] = {9, 8, 10};   /* sprites.json */
+/* x pivots (hold_sprites.py PIVOT_X: widths 13 / 10 / 25, drawn about 1 px left of the note's x, which
+ * sits right of the lane's centre) */
+static const hs8 hd_px[3] = {7, 5, 13}, hd_cap_h[3] = {8, 8, 9}, hd_body_h[3] = {8, 8, 9};   /* sprites.json */
 /* the beam runs half a cap into each cap (drawn over it): the caps' art has dark rows at their inner
  * edge, which showed as a gap between beam and cap in PCSX2 */
 #define HD_INTO(kind) (hd_cap_h[kind] / 2)
 /* a start cap with its bottom edge at `bottom`, placed from its top like the end cap (pivot 0): the
  * turntable's start cap drawn with its pivot at its own bottom never showed in PCSX2 */
-#define HD_CAP(h, kind, x, bottom, clip) HD_DRAW((h), (x), (bottom) - hd_cap_h[kind], 100, hd_w[kind] / 2, 0, (clip))
+#define HD_CAP(h, kind, x, bottom, clip) HD_DRAW((h), (x), (bottom) - hd_cap_h[kind], 100, hd_px[kind], 0, (clip))
 
 #ifdef HOLDS_TEST
-extern void test_draw(hu32 handle, hs32 x, hs32 y, hs32 zy, hs32 py);
+extern void test_draw(hu32 handle, hs32 x, hs32 y, hs32 zy, hs32 px, hs32 py);
 extern hu8 *test_record(void);
-#define HD_DRAW(h, x, y, zy, px, py, clip) ((void)(px), (void)(clip), test_draw((h), (x), (y), (zy), (py)))
+#define HD_DRAW(h, x, y, zy, px, py, clip) ((void)(clip), test_draw((h), (x), (y), (zy), (px), (py)))
 #define HD_RECORD() test_record()
 #define HD_LIFT(side) 0
 #else
@@ -139,7 +141,7 @@ static void hd_body(hu32 base, hu32 kind, hs32 x, hs32 top, hs32 bottom, hu32 cl
     len = bottom - top;
     if (len <= 0) return;
     holds_dbg[10]++;
-    HD_DRAW(base, x, top, len * 100 / h, hd_w[kind] / 2, 0, clip);
+    HD_DRAW(base, x, top, len * 100 / h, hd_px[kind], 0, clip);
 }
 
 /* returns 1 if the note was drawn here (skip the native draw) */
@@ -192,7 +194,7 @@ int holds_note_hook(hu8 *note, hu32 handle, hs32 x, hs32 y, hu32 side, hu32 clip
                 HD_BASE(bottom) - (!head_seen && !lit ? 0 : hd_cap_h[kind] - HD_INTO(kind)), clip);
         if (!head_seen && lit && y < judge)
             HD_CAP(base, kind, x, HD_BASE(judge), clip);        /* head hit: start cap on the line */
-        HD_DRAW(base + 1, x, HD_BASE(y), 100, hd_w[kind] / 2, 0, clip);   /* end cap: hangs below the tail's line (arcade:
+        HD_DRAW(base + 1, x, HD_BASE(y), 100, hd_px[kind], 0, clip);   /* end cap: hangs below the tail's line (arcade:
                                                                              a head on the same tick sits on that line) */
     }
     return 1;

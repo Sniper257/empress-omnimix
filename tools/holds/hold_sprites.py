@@ -10,7 +10,7 @@ Sizes, measured on an EMPRESS capture (PCSX2, 640x360 of the 640x448 frame): whi
 18 px, blue-key lanes 14 px, turntable 30 px; notes 16 px wide, 6 frame rows tall (the game's note
 sprites are 6 rows: launcher/main.c note_hook). Caps keep the arcade texture's aspect (a 54 x 26
 cap is about 2x a normal note's height in the arcade, as on an arcade capture of a held HCN), so they
-are 15 x 10, 11 x 9 and 28 x 10 frame rows (widths: the lanes' inside less 2, see WIDTH); frame rows = capture px * 448 / 360. Bodies are one tile
+are about 13 x 8, 10 x 7 and 25 x 9 frame px (widths: see WIDTH); frame rows = capture px * 448 / 360. Bodies are one tile
 of the arcade beam scaled the same way, drawn stretched (zoomY) between the caps.
 
 All 36 sprites share one palette: cont_add (launcher/cont.c) rejects sprites added to a container
@@ -25,9 +25,13 @@ import struct
 import sys
 from pathlib import Path
 
-# the lanes' inside widths less 2, measured on a PCSX2 640x480 capture (white 120..136, blue 74..86,
-# turntable 25..54): drawn from their centre, the sprites leave 1 px of lane on either side
-WIDTH = {'white': 15, 'black': 11, 'scr': 28}
+# Sizes in frame pixels. The game's frame is narrower than a PCSX2 capture: a 15 px sprite showed 17 px
+# wide on a 640x480 capture (about 1.11 capture px per frame px). Lane insides on that capture: white 17,
+# blue 13, turntable 30 px; less 2 for 1 px of lane on either side, in frame px: 13 / 10 / 25.
+WIDTH = {'white': 13, 'black': 10, 'scr': 25}
+# x pivots: the note x the game hands over is about 1 frame px right of the lane's centre (its own notes
+# sit half a pixel right too); a sprite centred on x showed 1 px right of the lane
+PIVOT_X = {'white': 7, 'black': 5, 'scr': 13}
 ROWS_PER_PX = 448 / 360            # EMPRESS frame rows per capture pixel (640 x 448 shown at 640 x 360)
 
 # (output name, arcade name, lane kind, part)
@@ -130,7 +134,7 @@ def main(argv=None):
         data = spr1(img, colours)
         (out / (name + '.spr')).write_bytes(data)
         manifest[name] = {'from': arcade, 'lane': kind, 'part': part, 'w': img.width, 'h': img.height,
-                          'pivot': [img.width // 2, img.height if part == 'cap' else 0]}
+                          'pivot': [PIVOT_X[kind], img.height if part == 'cap' else 0]}
         previews.append((name, decode(data)))
     (out / 'sprites.json').write_text(json.dumps(manifest, indent=1) + '\n')
     cell = 40
