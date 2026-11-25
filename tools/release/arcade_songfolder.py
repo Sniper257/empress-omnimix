@@ -132,7 +132,14 @@ def build(converted, template, out, title, lv, version=17, sprites=None):
     # 0xe8 bank, 0xec stream (FUN_001e4050 / FUN_001e3f30 read +0 / +4 of the group): every native
     # song has one bank for SP and DP and a stream. Earlier conversions wrote DP.bank to 0xec, so the
     # game played the bank as a stream (noise in Kailua, a divide by zero in Elisha).
-    if (converted / 'keys.bank').is_file():
+    # Per-difficulty banks (arcade_convert DIFFICULTY_FIELDS): FUN_001e4050 picks the group by
+    # difficulty (0xe8 H/X, 0xf0 A, 0xf8 N, 0x100 B) and falls back to 0xe8 when a field is 0xffff.
+    if any(converted.glob('keys_*.bank')):
+        files = [('keys_%s.bank' % g, f) for g, f in (('H', 0xe8), ('A', 0xf0), ('N', 0xf8), ('B', 0x100))]
+        if not (converted / 'keys_H.bank').is_file():          # 0xe8 is every group's fallback: never the template's
+            files[0] = (next(n for n, f in files if (converted / n).is_file()), 0xe8)
+        files = tuple(files) + (('stream.bin', 0xec),)
+    elif (converted / 'keys.bank').is_file():
         files = (('keys.bank', 0xe8), ('stream.bin', 0xec))
     else:
         files = (('SP.bank', 0xe8), ('stream.bin', 0xec))

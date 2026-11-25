@@ -152,7 +152,7 @@ def load_song(path):
     return A.read_charts(one), keys, sid
 
 
-def render(events, keys, rate=44100, bgm_only=False, peak=None):
+def render(events, keys, rate=44100, bgm_only=False, peak=None, raw=False):
     """Mix the keysounds the chart plays: BGM and note sounds as in autoplay, or BGM only. Needs numpy.
 
     peak: scale as if the mix peaked here (pass the full autoplay peak for a BGM-only stream, so the
@@ -188,6 +188,8 @@ def render(events, keys, rate=44100, bgm_only=False, peak=None):
             at = t * rate // 1000
             mix[:, at:at + cache[s].shape[1]] += cache[s]
     own = int(np.abs(mix).max()) if length else 0
+    if raw:                               # the unscaled int64 mix
+        return rate, mix, {'keysounds_played': len(plays), 'peak': own}
     peak = max(own, peak or 0)
     if peak > 32767:                      # keep the mix's own balance; scale down instead of clipping
         mix = mix * 32767 // peak
@@ -195,6 +197,52 @@ def render(events, keys, rate=44100, bgm_only=False, peak=None):
 
 
 HCN_FLAG = 13  # .1 event type: this chart's holds are HCN/HBSS
+
+
+# Banks per difficulty, as the record's bank groups are chosen (FUN_001e4050; difficulty = 0x205de0(),
+# 0 N 1 H 2 A 3 B 4 X): 0xe8 H (and X, the fallback), 0xf0 A, 0xf8 N, 0x100 B. SP and DP of one
+# difficulty share a group, so its bank holds both charts' sounds.
+DIFFICULTY_GROUPS = {'H': (0, 6, 4, 10), 'A': (2, 8), 'N': (1, 7), 'B': (3, 9)}
+DIFFICULTY_FIELDS = {'H': 0xe8, 'A': 0xf0, 'N': 0xf8, 'B': 0x100}
+PIECE_TICKS = 30
+report_gain = {}
+
+
+def premix_bgm(charts, keys, piece_ticks=PIECE_TICKS):
+    """Each chart's BGM (type-7 events) mixed into one track and cut into piece_ticks pieces (0.5 s),
+    each a new keysound started on its tick. EMPRESS's own BGM is short sounds at a modest rate; the
+    arcade's long backing tracks and ~2,500 layered BGM events a chart lost voices on the PS2 (long
+    sounds cut, BGM silent now and then). Records the gain each chart needs in report_gain (the mix
+    and the chart's note sounds scaled alike, so a mix that would clip keeps its balance)."""
+    import numpy as np
+    keys = list(keys)
+    out = {}
+    for slot, events in charts.items():
+        full_peak = render(events, keys)[2]['peak']
+        gain = min(1.0, 32767 / full_peak) if full_peak else 1.0
+        report_gain[slot] = gain
+        bgm = [e for e in events if e[1] == 7 and e[3]]
+        rest = [e for e in events if not (e[1] == 7)]
+        if not bgm:
+            out[slot] = rest
+            continue
+        rate, mix, _ = render(bgm, keys, bgm_only=True, raw=True)
+        pieces = []
+        k = 0
+        while True:
+            a = round(k * piece_ticks * CLOCK * rate / 1e6)
+            if a >= mix.shape[1]:
+                break
+            b = round((k + 1) * piece_ticks * CLOCK * rate / 1e6)
+            part = mix[:, a:b]
+            if np.abs(part).max() > 0:                                       # silent pieces need no sound
+                keys.append({'pcm': (rate, part)})
+                ms = round(k * piece_ticks * CLOCK / 1000)
+                assert tick(ms) == k * piece_ticks
+                pieces.append((ms, 7, 0, len(keys)))
+            k += 1
+        out[slot] = sorted(rest + pieces, key=lambda e: e[0])
+    return out, keys
 
 
 def silent_stream(samples, rate=44100):
@@ -236,18 +284,31 @@ def main(argv=None):
         if a.stream:                                  # the bank gets the gain the stream gets
             peak = render(charts[next(s for s, n in SLOTS.items() if n == a.stream.upper())], keys)[2]['peak']
             gain = min(1.0, 32767 / peak) if peak else 1.0
-        if not a.stream:
-            charts, keys = KB.split_long_bgm(charts, keys, tick, CLOCK)
-        members = sorted(charts)
-        sounds = KB.player_sounds(*(charts[s] for s in members))
-        if not a.stream:
-            sounds += [v for v in KB.bgm_sounds(*(charts[s] for s in members)) if v not in set(sounds)]
-        data, slots, info = KB.build('SP', sounds, keys, gain, a.bank_budget or None)
-        (a.output / 'keys.bank').write_bytes(data)
-        banks.update({s: slots for s in members})
-        report.setdefault('banks', {})['keys'] = info
-        print('keys.bank: %d sounds, %d bytes, rates %s%s' % (info['sounds'], info['bytes'], info['rates'],
-                                                        ' (' + info['warning'] + ')' if 'warning' in info else ''))
+        if a.stream:
+            members = sorted(charts)
+            sounds = KB.player_sounds(*(charts[s] for s in members))
+            data, slots, info = KB.build('SP', sounds, keys, gain, a.bank_budget or None)
+            (a.output / 'keys.bank').write_bytes(data)
+            banks.update({s: slots for s in members})
+            report.setdefault('banks', {})['keys'] = info
+            print('keys.bank: %d sounds, %d bytes, rates %s%s' % (info['sounds'], info['bytes'], info['rates'],
+                                                            ' (' + info['warning'] + ')' if 'warning' in info else ''))
+        else:
+            charts, keys = premix_bgm(charts, keys)
+            for group, members in DIFFICULTY_GROUPS.items():
+                members = [m for m in members if m in charts]
+                if not members:
+                    continue
+                g = min(report_gain.pop(m) for m in members)
+                sounds = KB.player_sounds(*(charts[m] for m in members))
+                sounds += [v for v in KB.bgm_sounds(*(charts[m] for m in members)) if v not in set(sounds)]
+                data, slots, info = KB.build('SP', sounds, keys, g, a.bank_budget or None)
+                (a.output / ('keys_%s.bank' % group)).write_bytes(data)
+                banks.update({m: slots for m in members})
+                report.setdefault('banks', {})[group] = info
+                print('keys_%s.bank (%s): %d sounds, %d bytes, rates %s%s' % (
+                    group, ' '.join(SLOTS[m] for m in members), info['sounds'], info['bytes'], info['rates'],
+                    ' (' + info['warning'] + ')' if 'warning' in info else ''))
     for slot, events in sorted(charts.items()):
         name = SLOTS.get(slot, 'slot%d' % slot)
         hell = a.hell or is_hell(events)
