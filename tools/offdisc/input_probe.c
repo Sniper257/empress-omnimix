@@ -32,6 +32,19 @@ extern int vd_probe_export(const char *,unsigned *,const void *,unsigned,const v
 #define ip_crc(p,n) cp_crc_full(p,n)
 #define ip_write32(p,v) cp_write32(p,v)
 #endif
+/* Free native heap after the chart's assets are loaded: total KB << 16 |
+ * largest block KB, both saturated; ~0 when the free list cannot be walked. */
+#ifndef INPUT_PROBE_TEST
+#include "asset_heap.h"
+#define ip_heap(t,l) asset_heap_sample(t,l)
+#endif
+static unsigned ip_kb(unsigned bytes){bytes>>=10;return bytes>0xffff?0xffff:bytes;}
+static unsigned ip_heap_word(void)
+{
+    u32 total,largest;
+    if(ip_heap(&total,&largest))return ~0u;
+    return ip_kb(total)<<16|ip_kb(largest);
+}
 #ifdef FILE_IO_LOG
 void vd_io_start(void),vd_io_stop(void);
 const void *vd_io_snapshot(unsigned *);
@@ -75,6 +88,7 @@ void input_probe_start(void)
     input_probe.metadata[0]=ip_mode();input_probe.metadata[1]=ip_diff();
     input_probe.metadata[2]=ip_delay(0);input_probe.metadata[3]=ip_delay(1);
     input_probe.metadata[4]=ip_clock();input_probe.metadata[5]=ip_storage();
+    input_probe.heap=ip_heap_word();
     const u8 *id=ip_source();for(unsigned i=0;i<16;i++){input_probe.chart_id[i]=id?id[i]:0;LOOP_PAD();}
     __asm__ volatile("":::"memory");input_probe.running=1;
 #ifdef AUDIO_PROBE
@@ -149,6 +163,7 @@ void input_probe_flush(void)
     ip_write32(header+84,input_probe.blocked);
     for(unsigned i=0;i<16;i++){header[88+i]=input_probe_build_id[i];LOOP_PAD();}
     ip_write32(header+104,input_probe.autoplay);
+    ip_write32(header+108,input_probe.heap);
 #ifdef FILE_IO_LOG
     unsigned io_bytes;const void *io=vd_io_snapshot(&io_bytes);
     header[7]='2';ip_write32(header+8,2);

@@ -18,5 +18,6 @@ typedef struct {
  unsigned metadata[8];
  unsigned char chart_id[16];
  unsigned autoplay; /* latched native autoplay side mask; no pad records */
+ unsigned heap; /* header+108: free KB<<16 | largest free KB at chart start */
 } input_probe_config;
 #endif

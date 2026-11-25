@@ -59,7 +59,8 @@ So a 20-byte summary per song is enough until a song is bound.
 
 Estimated per song after 3-5: about 130 bytes of block (2,600 songs: about 340 KB) and about 320 bytes of heap
 (about 840 KB). The heap headroom during play of a 16 MB-bank song has not been measured yet; the debug runtime
-should report it before step 6 is sized finally.
+should report it before step 6 is sized finally. Debug runtimes (INPUT_LOG=1) now write it into each input log:
+header word +108 is free KB << 16 | largest free block KB, sampled when the chart starts (after its assets are loaded).
 
 ## Testing
 
