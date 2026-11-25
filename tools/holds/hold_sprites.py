@@ -33,7 +33,7 @@ from pathlib import Path
 WIDTH = {'white': 16, 'black': 12, 'scr': 28}
 # x pivots: the note x the game hands over is right of the lane's centre (its own notes sit half a pixel
 # right too): half a pixel left of the sprite's middle
-PIVOT_X = {'white': 7, 'black': 5, 'scr': 14}   # keys: PCSX2 captures showed pivots 8 / 6 a pixel left of the lanes
+PIVOT_X = {'white': 8, 'black': 5, 'scr': 14}   # black: 6 sat a pixel left of its lane; white: 7 sat a pixel right of its lane
 CAP_WIDTH = WIDTH
 CAP_PIVOT_X = PIVOT_X
 # cap heights: the coloured band of every cap texture is about half of its 26 rows (12-13) and that of
