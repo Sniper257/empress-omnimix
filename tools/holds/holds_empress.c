@@ -204,19 +204,38 @@ static void dbg_report(hu32 code, hu32 id, int r)
 }
 
 /* Called from fs_ring() for every native judgement, before it is logged. */
-void holds_on_judgement(hu32 code, hu32 id)
+/* where a judged note can be, as start - now in ticks: the judgement's own window (IIDX: PGREAT ~1
+ * frame, GREAT ~2, GOOD ~7, BAD ~15, plus a tick of slack), cut to one side by FAST/SLOW where the
+ * code or the timed delta says. Short CNs sit a few ticks from other notes on the same key; one
+ * window for every judgement took a CN head from a neighbouring note's hit (then POOR on release). */
+static void head_range(hu32 code, int judge, int dir, hs32 *lo, hs32 *hi)
+{
+    static const hs8 w[5] = {3, 4, 9, HEAD_WINDOW, HEAD_WINDOW};
+    hs32 a = w[judge];
+    *lo = -a; *hi = a;
+    if (judge == J_POOR) { *lo = -(HEAD_WINDOW + 3); *hi = 1; return; }   /* misses come after the window */
+    if (code == 5 || code == 4 || (code == 6 && dir < 0)) *lo = -1;       /* FAST: the note is still ahead */
+    if (code == 7 || code == 8 || (code == 6 && dir > 0)) *hi = 1;        /* SLOW: the note has passed */
+}
+
+/* Called from fs_timed() / fs_ring() for every native judgement, before it is logged.
+ * dir: sign of the timed hit delta (-1 early, +1 late), 0 if the ring gave none. */
+void holds_on_judgement(hu32 code, hu32 id, int dir)
 {
     int judge, r;
     hu32 lane;
+    hs32 lo, hi;
     if (!armed || last_tick < 0) return;
-    judge = judge_of_code(code & 0xffffu);
+    code &= 0xffffu;
+    judge = judge_of_code(code);
     if (judge < 0) return;
     lane = ((id >> 15) & 1u) * 8u + (id & 7u);
-    r = holds_head_near(&holds, lane, last_tick, HEAD_WINDOW, (hu32)judge);
+    head_range(code, judge, dir, &lo, &hi);
+    r = holds_head_in(&holds, lane, last_tick, lo, hi, (hu32)judge);
     /* a hit that names no pending hold on its lane: the hold whose key is down (chords where the
      * report's lane is not the head's) */
     if (r < 0 && judge <= J_GOOD) {
-        r = holds_head_keyed(&holds, H_KEYS(0) | H_KEYS(1) << 8, last_tick, HEAD_WINDOW, (hu32)judge);
+        r = holds_head_keyed(&holds, H_KEYS(0) | H_KEYS(1) << 8, last_tick, lo, hi, (hu32)judge);
         if (r >= 0) r |= 0x100;
     }
     dbg_report(code, id, r);

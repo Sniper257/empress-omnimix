@@ -58,7 +58,7 @@ int holds_reset(holds_t *h, const hold_def *defs, hu32 n, const holds_cfg *cfg)
     h->defs = defs; h->n = n; h->next = 0; h->nev = 0; h->dropped = 0;
     copy(&h->cfg, cfg, sizeof h->cfg);
     if (h->cfg.overhold_judge != J_BAD) h->cfg.overhold_judge = J_POOR;
-    for (i = 0; i < HOLDS_LANES; i++) { h->active[i] = -1; h->spin[i] = 0; h->stood[i] = -1; h->next_tick[i] = 0; h->up_at[i] = -1; h->rel_at[i] = -1; }
+    for (i = 0; i < HOLDS_LANES; i++) { h->active[i] = -1; h->spin[i] = 0; h->stood[i] = -1; h->next_tick[i] = 0; h->up_at[i] = -1; h->rel_at[i] = -1; h->hit_at[i] = 0; h->seen_down[i] = 0; }
     return 0;
 }
 
@@ -80,10 +80,19 @@ static void end_gain(holds_t *h, hu32 i, hs32 offset);
  * head a few ticks later) the player lets go and presses again quickly: the release can still be
  * inside release_grace, or a fast re-press already cleared it. Judge the old hold by when its key
  * last went up, as if the release had been seen; only a release before the tail window is POOR. */
+/* The tick a release is timed against: the end, or the tick the head was taken if that is later.
+ * A CN can be as short as a 16th (or less) while a GOOD head is up to ~8 ticks late: timed from the
+ * end alone, a late head on a short CN left no release that was not POOR or an overhold. */
+static hs32 end_ref(const holds_t *h, hu32 i)
+{
+    const hold_def *d = &h->defs[i];
+    return h->hit_at[d->lane] > d->end ? h->hit_at[d->lane] : d->end;
+}
+
 static void close_for_next(holds_t *h, hu32 old, hs32 now)
 {
     const hold_def *o = &h->defs[old];
-    hs32 at = h->rel_at[o->lane] >= 0 ? h->rel_at[o->lane] : now, offset = at - o->end;
+    hs32 at = h->rel_at[o->lane] >= 0 ? h->rel_at[o->lane] : now, offset = at - end_ref(h, old);
     hs32 win = h->cfg.tail_window[J_BAD];
     if (h->state[old] == HS_LOOSE) { finish(h, old, J_NONE, offset); return; }
     if (h->state[old] != HS_HOLDING) { finish(h, old, J_POOR, offset); return; }
@@ -100,6 +109,8 @@ static void start_hold(holds_t *h, hu32 i, hu32 judge, hs32 now)
     hs32 old = h->active[d->lane];
     if (old >= 0 && old != (hs32)i) close_for_next(h, (hu32)old, now);   /* overlapping holds: close the old one */
     h->rel_at[d->lane] = -1;
+    h->hit_at[d->lane] = now;
+    h->seen_down[d->lane] = 0;
     h->active[d->lane] = (hs32)i;
     h->spin[d->lane] = 0;
     h->stood[d->lane] = -1;
@@ -127,33 +138,32 @@ int holds_head(holds_t *h, hu32 lane, hs32 start, hu32 judge, hs32 now)
     return -1;
 }
 
-int holds_head_near(holds_t *h, hu32 lane, hs32 now, hs32 window, hu32 judge)
+int holds_head_in(holds_t *h, hu32 lane, hs32 now, hs32 lo, hs32 hi, hu32 judge)
 {
     hu32 i;
-    hs32 best = -1, gap = window + 1;
-    for (i = 0; i < h->n; i++) {
+    for (i = h->next; i < h->n; i++) {
         hs32 d = h->defs[i].start - now;
-        if (d > window) break;
-        if (d < 0) d = -d;
-        if (h->defs[i].lane == lane && h->state[i] == HS_PENDING && d < gap) { gap = d; best = (hs32)i; }
+        if (d > hi) break;
+        if (d >= lo && h->defs[i].lane == lane && h->state[i] == HS_PENDING) { start_hold(h, i, judge, now); return (int)i; }
     }
-    if (best >= 0) start_hold(h, (hu32)best, judge, now);
-    return best;
+    return -1;
 }
 
-int holds_head_keyed(holds_t *h, hu32 keys, hs32 now, hs32 window, hu32 judge)
+int holds_head_near(holds_t *h, hu32 lane, hs32 now, hs32 window, hu32 judge)
+{
+    return holds_head_in(h, lane, now, -window, window, judge);
+}
+
+int holds_head_keyed(holds_t *h, hu32 keys, hs32 now, hs32 lo, hs32 hi, hu32 judge)
 {
     hu32 i;
-    hs32 best = -1, gap = window + 1;
-    for (i = 0; i < h->n; i++) {
+    for (i = h->next; i < h->n; i++) {
         hs32 d = h->defs[i].start - now;
-        if (d > window) break;
-        if (d < 0) d = -d;
-        if (h->state[i] == HS_PENDING && !is_spin(h->defs[i].kind) && ((keys >> h->defs[i].lane) & 1u) && d < gap)
-        { gap = d; best = (hs32)i; }
+        if (d > hi) break;
+        if (d >= lo && h->state[i] == HS_PENDING && !is_spin(h->defs[i].kind) && ((keys >> h->defs[i].lane) & 1u))
+        { start_hold(h, i, judge, now); return (int)i; }
     }
-    if (best >= 0) start_hold(h, (hu32)best, judge, now);
-    return best;
+    return -1;
 }
 
 /* Is the lane held? BSS: spinning the head's way, with a short grace for standing still.
@@ -189,24 +199,27 @@ static void step(holds_t *h, hu32 lane, hs32 now, hu32 keys, const hs8 tt[2])
     int down, reverse, still, hell, pending = 0;
     if (i < 0) return;
     d = &h->defs[i];
-    offset = now - d->end;
+    hs32 endr = end_ref(h, (hu32)i);
+    offset = now - endr;
     win = h->cfg.tail_window[J_BAD];
     now64 = now * HOLDS_FP;
     hell = is_hell(d->kind);
     down = held(h, lane, d->kind, now, keys, tt, &reverse, &still);
+    if (down) h->seen_down[lane] = 1;
     /* BSS: inside the tail window, stopping the turntable releases it like a backspin */
     if (is_spin(d->kind) && still && offset >= -win && h->state[i] == HS_HOLDING && h->spin[lane]) down = 0;
-    /* keys: a release only counts once the key has stayed up for release_grace ticks; it is timed
-     * from the first up tick */
-    /* keys: up inside the tail window, then pressed again within release_grace (the next note on the
-     * key right after a CN): that was the release, timed from its first up tick */
-    if (down && h->state[i] == HS_HOLDING && !is_spin(d->kind) && h->up_at[lane] >= 0 && h->up_at[lane] - d->end >= -win) {
-        down = 0; now = h->up_at[lane]; offset = now - d->end; now64 = now * HOLDS_FP;
+    /* keys: up inside the tail window after the key had read down, then pressed again within
+     * release_grace (the next note on the key right after a CN): that was the release, timed from
+     * its first up tick. Otherwise a release only counts once the key has stayed up for
+     * release_grace ticks (the held mask lags a press by a tick or two), also timed from the first up tick. */
+    if (down && h->state[i] == HS_HOLDING && !is_spin(d->kind) && h->up_at[lane] >= 0 && h->rel_seen[lane]
+        && h->up_at[lane] - endr >= -win) {
+        down = 0; now = h->up_at[lane]; offset = now - endr; now64 = now * HOLDS_FP;
     } else if (down || h->state[i] != HS_HOLDING) h->up_at[lane] = -1;
     else if (!is_spin(d->kind) && h->cfg.release_grace) {
-        if (h->up_at[lane] < 0) h->up_at[lane] = h->rel_at[lane] = now;
+        if (h->up_at[lane] < 0) { h->up_at[lane] = h->rel_at[lane] = now; h->rel_seen[lane] = h->seen_down[lane]; }
         if (now - h->up_at[lane] < h->cfg.release_grace) { down = 1; pending = 1; }
-        else { now = h->up_at[lane]; offset = now - d->end; now64 = now * HOLDS_FP; }
+        else { now = h->up_at[lane]; offset = now - endr; now64 = now * HOLDS_FP; }
     }
 
     if (h->state[i] == HS_MISSED) {                 /* CN/BSS whose head was missed: tail is POOR too */

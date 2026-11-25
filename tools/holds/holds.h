@@ -92,6 +92,9 @@ typedef struct {
     hs32 stood[HOLDS_LANES];    /* BSS: time the turntable stopped, or -1 */
     hs32 next_tick[HOLDS_LANES];/* HCN/HBSS: next tick, 1/64 ticks */
     hs32 up_at[HOLDS_LANES];    /* key holds: first tick the key read up while holding, or -1 */
+    hs32 hit_at[HOLDS_LANES];   /* tick the head was taken */
+    hu8 seen_down[HOLDS_LANES]; /* key holds: the key has read down since the head (the held mask can lag the press) */
+    hu8 rel_seen[HOLDS_LANES];  /* seen_down when the current up spell began: a real release, not mask lag */
     hs32 rel_at[HOLDS_LANES];   /* key holds: start of the latest up spell while holding (kept through a
                                    re-press), or -1: the release time when the next head on the lane comes */
     holds_cfg cfg;
@@ -114,9 +117,12 @@ int holds_head(holds_t *h, hu32 lane, hs32 start, hu32 judge, hs32 now);
 /* the engine logged a judgement on lane at tick now but cannot name the note: take the pending
  * hold on that lane whose start is nearest now, within window ticks. Returns the index or -1. */
 int holds_head_near(holds_t *h, hu32 lane, hs32 now, hs32 window, hu32 judge);
-/* fallback when a hit names no pending hold on its lane: take the pending key hold (not BSS)
- * whose key is down now and whose start is nearest now, within window ticks. Returns the index or -1. */
-int holds_head_keyed(holds_t *h, hu32 keys, hs32 now, hs32 window, hu32 judge);
+/* as holds_head_near, but the earliest pending hold on lane with lo <= start - now <= hi (the engine
+ * judges a lane's notes in order; the range comes from the judgement's window and FAST/SLOW) */
+int holds_head_in(holds_t *h, hu32 lane, hs32 now, hs32 lo, hs32 hi, hu32 judge);
+/* fallback when a hit names no pending hold on its lane: take the earliest pending key hold (not BSS)
+ * whose key is down now, with lo <= start - now <= hi. Returns the index or -1. */
+int holds_head_keyed(holds_t *h, hu32 keys, hs32 now, hs32 lo, hs32 hi, hu32 judge);
 /* once per tick. keys: bit per lane (turntable bits ignored); tt[side] = -1, 0, +1 */
 void holds_frame(holds_t *h, hs32 now, hu32 keys, const hs8 tt[2]);
 /* copy out up to max events (oldest first); returns the count copied */

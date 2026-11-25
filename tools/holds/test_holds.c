@@ -37,6 +37,8 @@ static void spin_back_and_again(hs32 t, hu32 *k, hs8 *tt) { (void)k; tt[0] = t <
 static void lag_then_hold(hs32 t, hu32 *k, hs8 *tt) { (void)tt; if ((t < 11 || t >= 13) && t < release_at) *k = 1; }
 /* CN chain on one key: up at release_at, down again at release_at + 2 for the next head */
 static void chain(hs32 t, hu32 *k, hs8 *tt) { (void)tt; if (t < release_at || t >= release_at + 2) *k = 1; }
+static hs32 press_at;
+static void press_release(hs32 t, hu32 *k, hs8 *tt) { (void)tt; if (t >= press_at && t < release_at) *k = 1; }
 static void nothing(hs32 t, hu32 *k, hs8 *tt) { (void)t; (void)k; (void)tt; }
 
 int main(void)
@@ -47,9 +49,9 @@ int main(void)
     hold_def hbss = {10, 40, 7, HOLD_HBSS, 4 * HOLDS_FP};
 
     /* keyed fallback: the pending key hold whose key is down; BSS and keys that are up never match */
-    setup(&cn, 0); CHECK(holds_head_keyed(&H, 0, 12, 15, J_GREAT) == -1); CHECK(holds_head_keyed(&H, 2, 12, 15, J_GREAT) == -1);
-    CHECK(holds_head_keyed(&H, 1, 12, 15, J_GREAT) == 0 && holds_lane_held(&H, 0));
-    setup(&bss, 0); CHECK(holds_head_keyed(&H, 0x80, 12, 15, J_GREAT) == -1);
+    setup(&cn, 0); CHECK(holds_head_keyed(&H, 0, 12, -15, 15, J_GREAT) == -1); CHECK(holds_head_keyed(&H, 2, 12, -15, 15, J_GREAT) == -1);
+    CHECK(holds_head_keyed(&H, 1, 12, -15, 15, J_GREAT) == 0 && holds_lane_held(&H, 0));
+    setup(&bss, 0); CHECK(holds_head_keyed(&H, 0x80, 12, -15, 15, J_GREAT) == -1);
 
     /* release_grace: a short up right after the head is no release; a real release is timed from its first up tick */
     { holds_cfg c = CFG; c.release_grace = 3;
@@ -78,6 +80,34 @@ int main(void)
     /* CN then a plain note on the same key: up at 39, down again at 41 for the note (inside release_grace) */
     { holds_cfg c = CFG; c.release_grace = 3;
       setup(&cn, &c); holds_head(&H, 0, 10, J_PGREAT, 10); release_at = 39; run(10, 60, chain); CHECK(tail_is(J_PGREAT, -1)); }
+
+    /* CNs as short as a 16th or less (4 ticks here; the PGREAT release window is 6) */
+    { holds_cfg c = CFG; c.release_grace = 3;
+      hold_def sh = {10, 14, 0, HOLD_CN, 0};
+      hold_def shh = {10, 14, 0, HOLD_HCN, 4 * HOLDS_FP};
+      static const hold_def pair[2] = {{10, 14, 0, HOLD_CN, 0}, {18, 22, 0, HOLD_CN, 0}};
+      /* on time, held to the end and let go */
+      setup(&sh, &c); holds_head(&H, 0, 10, J_PGREAT, 10); press_at = 10; release_at = 14; run(10, 40, press_release);
+      CHECK(tail_is(J_PGREAT, 0));
+      /* held mask lags the press by two ticks: no release from that, even with the end this close */
+      setup(&sh, &c); holds_head(&H, 0, 10, J_PGREAT, 10); press_at = 12; release_at = 14; run(10, 40, press_release);
+      CHECK(tail_is(J_PGREAT, 0));
+      /* head 8 ticks late (a slow GOOD), past the end: released a tick later is a release, not POOR */
+      setup(&sh, &c); holds_head(&H, 0, 10, J_GOOD, 22); press_at = 22; release_at = 23; run(22, 50, press_release);
+      CHECK(tail_is(J_PGREAT, 1));
+      /* the same head, held on: an overhold counted from the head, not from the end */
+      setup(&sh, &c); holds_head(&H, 0, 10, J_GOOD, 22); press_at = 22; release_at = 99; run(22, 50, press_release);
+      CHECK(tail_is(J_POOR, 7));
+      /* short HCN: no 16th ticks inside, the gain tick at the end */
+      setup(&shh, &c); holds_head(&H, 0, 10, J_PGREAT, 10); press_at = 10; release_at = 15; run(10, 40, press_release);
+      CHECK(count(HE_TICK_LOSS) == 0 && count(HE_BREAK) == 0 && count(HE_TICK_GAIN) == 1 && tail_is(J_PGREAT, 1));
+      /* head ranges: a PGREAT 6 ticks before the head is a different note; FAST/SLOW pick the side */
+      setup(&sh, &c); CHECK(holds_head_in(&H, 0, 4, -3, 3, J_PGREAT) == -1);
+      CHECK(holds_head_in(&H, 0, 13, -1, 9, J_GOOD) == -1);                    /* FAST, but the head has passed */
+      CHECK(holds_head_in(&H, 0, 13, -9, 1, J_GOOD) == 0);                     /* SLOW */
+      /* two short CNs 8 ticks apart: a late hit on the first is the first, though the second is nearer */
+      nev = 0; CHECK(holds_reset(&H, pair, 2, &c) == 0);
+      CHECK(holds_head_in(&H, 0, 15, -9, 1, J_GOOD) == 0); }
 
     /* CN: a release anywhere in the wide window is PGREAT; early is POOR; held too long is POOR */
     setup(&cn, 0); CHECK(holds_head(&H, 0, 10, J_PGREAT, 10) == 0);

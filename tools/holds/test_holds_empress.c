@@ -4,7 +4,7 @@
 #include "holds.h"
 
 void holds_set_chart(const hold_def *defs, hu32 n);
-void holds_on_judgement(hu32 code, hu32 id);
+void holds_on_judgement(hu32 code, hu32 id, int dir);
 void holds_frame_hook(long long tick);
 void holds_spawn_hook(hu8 *note);
 
@@ -42,7 +42,7 @@ int main(void)
     holds_set_chart(chart, 2);
     for (t = 0; t < 100; t++) holds_frame_hook(t);
     /* the game judges the P2 head 1 tick late; key held until the end */
-    holds_on_judgement(7, 1u << 15 | 2);   /* slow GOOD: still a hit */
+    holds_on_judgement(7, 1u << 15 | 2, 0);   /* slow GOOD: still a hit */
     keys[1] = 1u << 2;
     for (t = 100; t < 161; t++) holds_frame_hook(t);
     keys[1] = 0;
@@ -51,20 +51,20 @@ int main(void)
     /* HCN head missed (code 0xf at its tick): an empty POOR at once, then one per 16th */
     nring = 0;
     holds_frame_hook(200);
-    holds_on_judgement(0xf, 0);
+    holds_on_judgement(0xf, 0, 0);
     for (t = 201; t < 240; t++) holds_frame_hook(t);
     CHECK(logged(0xb, 0) == 3);                   /* empty POORs at 200 (the miss), then 218, 224 (none at 206, 212) */
     CHECK(logged(0xf, 0) == 0 && logged(0xa, 0) == 0);  /* the game's own miss is the real POOR; end adds nothing */
     /* empty POORs and judgements far from any hold are ignored */
     nring = 0;
-    holds_on_judgement(0xb, 0);
-    holds_on_judgement(0xa, 3);
+    holds_on_judgement(0xb, 0, 0);
+    holds_on_judgement(0xa, 3, 0);
     CHECK(nring == 0);
     /* a restart (tick counter back to 0) re-arms the chart */
     nring = 0;
     holds_frame_hook(0);
     for (t = 1; t < 100; t++) holds_frame_hook(t);
-    holds_on_judgement(0xa, 1u << 15 | 2);   /* a PGREAT head */
+    holds_on_judgement(0xa, 1u << 15 | 2, 0);   /* a PGREAT head */
     keys[1] = 1u << 2;
     for (t = 100; t < 150; t++) holds_frame_hook(t);
     keys[1] = 0;
@@ -112,7 +112,7 @@ int main(void)
         CHECK(holds_note_hook(n, 146u << 16 | 601, 80, 200, 0, 0) == 0);
         /* head hit and held, both notes gone: the frame pass draws body + start cap on the judge line */
         for (tt = 250; tt <= 300; tt++) holds_frame_hook(tt);
-        holds_on_judgement(0xa, 2);
+        holds_on_judgement(0xa, 2, 0);
         keys[0] = 1u << 2;
         for (tt = 301; tt < 305; tt++) holds_frame_hook(tt);
         ndraw = 0;
@@ -162,7 +162,7 @@ int main(void)
         keys[0] = keys[1] = 0;
         for (tt = 0; tt < 300; tt++) holds_frame_hook(tt);
         nring = 0;
-        holds_on_judgement(0xa, 3);
+        holds_on_judgement(0xa, 3, 0);
         keys[0] = 1u << 3;
         for (tt = 300; tt < 380; tt++) holds_frame_hook(tt);
         keys[0] = 0;
@@ -180,10 +180,10 @@ int main(void)
         make_note(tn, 0, 7, 360); tn[8] = 0x33; holds_spawn_hook(tn);
         make_note(cn, 0, 2, 380); cn[8] = 0x21; holds_spawn_hook(cn);
         for (tt = 250; tt < 300; tt++) holds_frame_hook(tt);
-        holds_on_judgement(0xa, 7);
+        holds_on_judgement(0xa, 7, 0);
         tt_in[0] = 0x01;                                   /* spinning one way */
         for (tt = 300; tt < 320; tt++) holds_frame_hook(tt);
-        holds_on_judgement(0xa, 2); keys[0] = 1u << 2;
+        holds_on_judgement(0xa, 2, 0); keys[0] = 1u << 2;
         for (tt = 320; tt < 360; tt++) holds_frame_hook(tt);
         tt_in[0] = 0x81;                                   /* backspin at the end */
         for (tt = 360; tt < 380; tt++) holds_frame_hook(tt);
@@ -228,7 +228,7 @@ int main(void)
         keys[0] = keys[1] = 0;
         for (tt = 0; tt < 299; tt++) holds_frame_hook(tt);
         nring = 0;
-        holds_on_judgement(5, 2);
+        holds_on_judgement(5, 2, 0);
         pressed[0] = 1u << 2;                      /* pressed this tick, not yet in the held mask */
         holds_frame_hook(299);
         pressed[0] = 0;
