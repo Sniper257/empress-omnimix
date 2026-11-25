@@ -34,17 +34,18 @@
 
 /* catalogue order (hold_sprites.catalogue): first sprite of each group, states per body */
 enum { HD_CN_WHITE = 0, HD_CN_BLACK = 5, HD_HCN_WHITE = 10, HD_HCN_BLACK = 17, HD_BSS = 24, HD_HBSS = 29, HD_MSS_MIDDLE = 36 };
-#define HD_MID_H 21           /* mss_middle rows (sprites.json) */
+#define HD_MID_H 22           /* mss_middle rows (sprites.json) */
 /* sprite sizes in frame rows (hold_sprites.py): white, black, turntable; caps and body tiles */
 /* x pivots (hold_sprites.py PIVOT_X: widths 13 / 10 / 25, drawn about 1 px left of the note's x, which
  * sits right of the lane's centre) */
-/* caps and bodies fill the lane inside (hold_sprites WIDTH 15 / 11 / 27, as in the arcade); x pivots a
- * pixel left of the note's x */
-static const hs8 hd_px[3] = {8, 6, 14}, hd_body_h[3] = {9, 8, 9};   /* bodies (sprites.json) */
-static const hs8 hd_cpx[3] = {8, 6, 14}, hd_cap_h[3] = {13, 13, 14};   /* caps (1.5x the texture's aspect) */
-/* the beam runs half a cap into each cap (drawn over it): the caps' art has dark rows at their inner
- * edge, which showed as a gap between beam and cap in PCSX2 */
-#define HD_INTO(kind) (hd_cap_h[kind] / 2)
+/* caps and bodies reach the lane lines (hold_sprites WIDTH 16 / 12 / 28, as in the arcade); x pivots half
+ * a pixel left of the note's x */
+static const hs8 hd_px[3] = {8, 6, 14}, hd_body_h[3] = {10, 9, 10};   /* bodies (sprites.json) */
+static const hs8 hd_cpx[3] = {8, 6, 14}, hd_cap_h[3] = {14, 14, 15};   /* caps (1.5x the texture's aspect) */
+/* the beam meets each cap with a row of overlap, so no lane shows between them. It used to run half a cap
+ * into each, drawn under the cap; in PCSX2 it covered the cap's inner half instead (the silver ring and
+ * the dark middle), whatever the layers: so the caps no longer rely on draw order. */
+#define HD_INTO(kind) ((void)(kind), 1)
 /* a start cap with its bottom edge at `bottom`, placed from its top like the end cap (pivot 0): the
  * turntable's start cap drawn with its pivot at its own bottom never showed in PCSX2 */
 #define HD_CAP(h, kind, x, bottom, clip) HD_DRAW((h), (x), (bottom) - hd_cap_h[kind], 100, hd_cpx[kind], 0, (clip))
@@ -159,6 +160,13 @@ static void hd_body(hu32 base, hu32 kind, hs32 x, hs32 top, hs32 bottom, hu32 cl
     HD_DRAW_BODY(base, x, top, len * 100 / h, hd_px[kind], 0, clip);
 }
 
+/* rows from a hold's head line up to where its body starts (the start cap, or an MSS middle note centred
+ * on the line), and from its tail line down to where its body starts (the end cap, or a middle note) */
+static hs32 hd_head_edge(hs32 i, hu32 kind)
+{ return i < HOLDS_MAX && (mss_chain[i] & MSS_PREV) ? HD_MID_H / 2 - 1 : hd_cap_h[kind] - HD_INTO(kind); }
+static hs32 hd_tail_edge(hs32 i, hu32 kind)
+{ return i < HOLDS_MAX && (mss_chain[i] & MSS_NEXT) ? HD_MID_H / 2 - 1 : hd_cap_h[kind] - HD_INTO(kind); }
+
 /* returns 1 if the note was drawn here (skip the native draw) */
 int holds_note_hook(hu8 *note, hu32 handle, hs32 x, hs32 y, hu32 side, hu32 clip)
 {
@@ -189,7 +197,7 @@ int holds_note_hook(hu8 *note, hu32 handle, hs32 x, hs32 y, hu32 side, hu32 clip
         hd_head_at[i] = hd_now;
         hd_head_frame[i] = hd_frames;
         if (hd_tail_at[i] < hd_now - 1)                        /* tail still above the screen */
-            hd_body(body, kind, x, HD_TOP_Y, HD_BASE(y) - hd_cap_h[kind] + HD_INTO(kind), clip);
+            hd_body(body, kind, x, HD_TOP_Y, HD_BASE(y) - hd_head_edge(i, kind), clip);
         if (i < HOLDS_MAX && (mss_chain[i] & MSS_PREV))        /* MSS middle note: centred on the joint */
             HD_DRAW(last - (HD_SPRITES - 1) + HD_MSS_MIDDLE, x, HD_BASE(y) - HD_MID_H / 2, 100, hd_cpx[kind], 0, clip);
         else
@@ -210,8 +218,8 @@ int holds_note_hook(hu8 *note, hu32 handle, hs32 x, hs32 y, hu32 side, hu32 clip
         hs32 bottom = !head_seen ? judge : hd_head_at[i] == hd_now ? hd_head_y[i] : hd_head_y[i] + hd_ppt[side & 1] / 256;
         if (bottom > judge) bottom = judge;
         lit = holds.state[i] == HS_HOLDING || holds.state[i] == HS_LOOSE;   /* head hit and not let go for good */
-        hd_body(body, kind, x, HD_BASE(y) + (i < HOLDS_MAX && (mss_chain[i] & MSS_NEXT) ? 0 : hd_cap_h[kind] - HD_INTO(kind)),
-                HD_BASE(bottom) - (!head_seen && !lit ? 0 : hd_cap_h[kind] - HD_INTO(kind)), clip);
+        hd_body(body, kind, x, HD_BASE(y) + hd_tail_edge(i, kind),
+                HD_BASE(bottom) - (!head_seen && !lit ? 0 : head_seen ? hd_head_edge(i, kind) : hd_cap_h[kind] - HD_INTO(kind)), clip);
         if (!head_seen && lit && y < judge)
             HD_CAP(base, kind, x, HD_BASE(judge), clip);        /* head hit: start cap on the line */
         if (i < HOLDS_MAX && (mss_chain[i] & MSS_NEXT))         /* an MSS joint: the middle note, here as well as

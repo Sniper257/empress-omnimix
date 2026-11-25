@@ -10,7 +10,7 @@ Sizes, measured on an EMPRESS capture (PCSX2, 640x360 of the 640x448 frame): whi
 18 px, blue-key lanes 14 px, turntable 30 px; notes 16 px wide, 6 frame rows tall (the game's note
 sprites are 6 rows: launcher/main.c note_hook). Caps keep the arcade texture's aspect (a 54 x 26
 cap is about 2x a normal note's height in the arcade, as on an arcade capture of a held HCN), so they
-are about 15 x 14, 11 x 12 and 27 x 14 frame px (widths: see WIDTH; 1.5x taller than the texture: CAP_TALL); frame rows = capture px * 448 / 360. Bodies are one tile
+are about 16 x 14, 12 x 14 and 28 x 14 frame px (widths: see WIDTH; 1.5x taller than the texture: CAP_TALL); frame rows = capture px * 448 / 360. Bodies are one tile
 of the arcade beam scaled the same way, drawn stretched (zoomY) between the caps.
 
 All 36 sprites share one palette: cont_add (launcher/cont.c) rejects sprites added to a container
@@ -27,12 +27,12 @@ from pathlib import Path
 
 # Sizes in frame pixels. The game's frame is narrower than a PCSX2 capture: about 1.11 capture px per
 # frame px (a 15 px sprite showed 17 px wide). Lane insides on a 640x480 capture: white 17, blue 13,
-# turntable 30 px = 15 / 11 / 27 frame px. Caps and bodies both fill the lane inside, as in the arcade,
-# where both textures have the lane's width; the beam art's dark edge columns make the body read
-# slimmer than the cap. (Bodies 2 px narrower than the caps left dark strips beside them in PCSX2.)
-WIDTH = {'white': 15, 'black': 11, 'scr': 27}
-# x pivots: the note x the game hands over is about 1 frame px right of the lane's centre (its own notes
-# sit half a pixel right too); a sprite centred on x showed 1 px right of the lane
+# turntable 30 px = 15 / 11 / 27 frame px. Caps and bodies are one frame px wider (16 / 12 / 28), so they
+# reach the lane lines as on an arcade capture (at the inside width a capture showed a pixel or two of
+# lane beside them); the beam art's dark edge columns make the body read slimmer than the cap.
+WIDTH = {'white': 16, 'black': 12, 'scr': 28}
+# x pivots: the note x the game hands over is right of the lane's centre (its own notes sit half a pixel
+# right too): half a pixel left of the sprite's middle
 PIVOT_X = {'white': 8, 'black': 6, 'scr': 14}
 CAP_WIDTH = WIDTH
 CAP_PIVOT_X = PIVOT_X
