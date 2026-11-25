@@ -94,7 +94,7 @@ def hold_sprite_names():
     return [row[0] for row in hold_sprites.catalogue()]
 
 
-def build(converted, template, out, title, lv, version=17, sprites=None, text_files=None):
+def build(converted, template, out, title, lv, version=17, sprites=None, text_files=None, song_id=None):
     report = json.loads((converted / 'convert.json').read_text())
     rec = bytearray(template)
     if len(rec) != 0x134:
@@ -108,7 +108,7 @@ def build(converted, template, out, title, lv, version=17, sprites=None, text_fi
     for f in CHART_FIELD.values():
         struct.pack_into('<I', rec, f, 0)
     rec[0x108:0x134] = bytes(0x134 - 0x108)
-    lines = ['name ' + title, 'record record.bin']
+    lines = ['name ' + title, 'record record.bin'] + (['arcade %d' % song_id] if song_id is not None else [])
     charts = []
     out.mkdir(parents=True, exist_ok=True)
     for i, name in enumerate(ORDER):
@@ -164,17 +164,20 @@ def build(converted, template, out, title, lv, version=17, sprites=None, text_fi
         lines += X.song_lines(text_files)
     (out / 'record.bin').write_bytes(bytes(rec))
     (out / 'song.txt').write_text('\n'.join(lines) + '\n')
-    (out / 'catalog-lines.txt').write_text(catalog_lines(out.name, charts))
+    (out / 'catalog-lines.txt').write_text(catalog_lines(out.name, charts, song_id))
     return {'title': title, 'charts': charts, 'bpm': [lo, hi]}
 
 
-def catalog_lines(folder, charts):
+def catalog_lines(folder, charts, song_id=None):
     from importlib import util
     spec = util.spec_from_file_location('chart_catalog', Path(__file__).resolve().parents[1] / 'offdisc' / 'chart_catalog.py')
     cc = util.module_from_spec(spec)
     spec.loader.exec_module(cc)
+    # identity "arcade <id>" (song.txt names it in a "<source> <sid>" line, catalog.h catalog_from_line), so the
+    # folder can sit in any style; without an id, the launcher's fallback source custom/<folder>
+    source, sid = ('arcade', song_id) if song_id is not None else ('custom/' + folder, 0)
     data = {'chart_order': ORDER, 'aliases': {}, 'sources': [
-        {'source': 'custom/' + folder, 'sid': 0, 'rank': 2000, 'family': 'custom/' + folder, 'charts': charts}]}
+        {'source': source, 'sid': sid, 'rank': 2000, 'family': source + ('/%d' % sid if song_id is not None else ''), 'charts': charts}]}
     return ''.join(l + '\n' for l in cc.emit(data).splitlines()[1:])
 
 
@@ -205,7 +208,7 @@ def main(argv=None):
         if a.text_base and len(containers) < 4:
             sys.exit('%s: found %d of the 4 native text containers (a/40/29, a/21/41, a/37/27, a/57/34)' % (a.text_base, len(containers)))
         text_files = X.render(X.song_texts(a.music.read_bytes(), a.id), containers)
-    info = build(a.converted, a.template.read_bytes(), a.output, title, levels(entry), a.version, a.hold_sprites, text_files)
+    info = build(a.converted, a.template.read_bytes(), a.output, title, levels(entry), a.version, a.hold_sprites, text_files, a.id)
     print('%s: %s, BPM %s, charts %s' % (a.output, info['title'], info['bpm'], ' '.join(info['charts'])))
 
 
