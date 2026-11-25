@@ -127,6 +127,24 @@ class Chart(unittest.TestCase):
         self.assertEqual(len(st) - 0x800, 16 * 2 * -(-44100 // 28))
         self.assertEqual(S.disguise(st[0x800:0x810], S.STREAM_DELTA, reverse=True), bytes(16))
 
+    def test_long_bgm_is_cut_into_tick_aligned_pieces(self):
+        import numpy as np
+        import keysound_bank as KB
+        n = 44100 * 12 + 1000                                            # 12 s: three 300-tick pieces
+        long = np.vstack([np.arange(n) % 1000, np.arange(n) % 1000]).astype(np.int32)
+        keys = [{'pcm': (44100, long)}, {'pcm': (44100, long[:, :100])}]
+        charts = {1: [(700, 7, 0, 1), (900, 2, 1, 2), (1000, 0, 1, 0)]}
+        out, k2 = KB.split_long_bgm(charts, keys, C.tick, C.CLOCK)
+        pieces = [e for e in out[1] if e[1] == 7]
+        self.assertEqual([C.tick(e[0]) for e in pieces], [C.tick(700) + 300 * i for i in range(3)])
+        self.assertEqual([e[3] for e in pieces], [3, 4, 5])
+        joined = np.hstack([k2[i - 1]['pcm'][1] for i in (3, 4, 5)])
+        self.assertTrue(np.array_equal(joined, long))                   # contiguous, nothing lost or doubled
+        self.assertEqual(k2[2]['pcm'][1].shape[1], round(300 * C.CLOCK * 44100 / 1e6))
+        self.assertIn((900, 2, 1, 2), out[1])                           # player sounds untouched
+        same, _ = KB.split_long_bgm({1: [(0, 7, 0, 2)]}, keys, C.tick, C.CLOCK)
+        self.assertEqual(same, {1: [(0, 7, 0, 2)]})                      # short BGM stays one sound
+
     def test_keysound_slots_and_bgm_only(self):
         import keysound_bank as KB
         ev = [(0, 2, 1, 7), (0, 2, 3, 9), (500, 0, 1, 0), (900, 2, 1, 9), (1000, 0, 1, 0), (0, 7, 0, 5)]

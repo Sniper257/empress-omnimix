@@ -70,6 +70,52 @@ def bgm_sounds(*event_lists):
     return sorted(seen, key=seen.get)
 
 
+def split_long_bgm(charts, keys, tick, clock, chunk_ticks=300):
+    """(charts, keys) with every BGM-only sound longer than LONG_SAMPLES cut into chunk_ticks pieces
+    (300 ticks = 5.0 s), each a new keysound started by its own type-7 event on the tick the previous
+    piece ends. The PS2 sound chip has 2 MB: a 122 s backing track (Elisha, 3.1 MB a channel) played
+    from the wrong place, and native EMPRESS songs cut their BGM into short sounds (All My Turn: 2,498
+    BGM events, longest sound 6 s). tick(ms) is the chart's ms -> tick rounding, clock its us per tick."""
+    lists = list(charts.values())
+    player = set(player_sounds(*lists))
+    keys = list(keys)
+    pieces = {}
+    for v in bgm_sounds(*lists):
+        if v in player or not 0 < v <= len(keys):
+            continue
+        rate, pcm = keys[v - 1]['pcm'] if 'pcm' in keys[v - 1] else stereo(keys[v - 1]['wav'])
+        if rate not in RATE_CODES:
+            pcm, rate = resample(pcm, rate, 44100), 44100
+        if pcm.shape[1] <= LONG_SAMPLES * rate // 44100:
+            continue
+        ids, k = [], 0
+        while True:
+            a = round(k * chunk_ticks * clock * rate / 1e6)
+            if a >= pcm.shape[1]:
+                break
+            b = round((k + 1) * chunk_ticks * clock * rate / 1e6)
+            keys.append({'pcm': (rate, pcm[:, a:b])})
+            ids.append(len(keys))
+            k += 1
+        pieces[v] = ids
+    if not pieces:
+        return charts, keys
+    out = {}
+    for slot, events in charts.items():
+        new = []
+        for t, kind, param, value in events:
+            if kind == 7 and value in pieces:
+                t0 = tick(t)
+                for k, piece in enumerate(pieces[value]):
+                    ms = round((t0 + k * chunk_ticks) * clock / 1000)
+                    assert tick(ms) == t0 + k * chunk_ticks
+                    new.append((ms, 7, param, piece))
+            else:
+                new.append((t, kind, param, value))
+        out[slot] = new
+    return out, keys
+
+
 def slot_map(sounds):
     if len(sounds) > MAX_SLOT:
         raise ValueError('%d player keysounds; an EMPRESS bank has %d slots' % (len(sounds), MAX_SLOT))
@@ -150,7 +196,7 @@ def build(name, sounds, keys, gain=1.0, budget=None):
     rates = {}
     pcms = []
     for s in sounds:
-        rate, pcm = stereo(keys[s - 1]['wav'])
+        rate, pcm = keys[s - 1]['pcm'] if 'pcm' in keys[s - 1] else stereo(keys[s - 1]['wav'])
         if rate not in RATE_CODES:
             pcm, rate = resample(pcm, rate, 44100), 44100
         pcms.append((rate, pcm))

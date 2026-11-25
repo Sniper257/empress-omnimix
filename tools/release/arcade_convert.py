@@ -236,6 +236,8 @@ def main(argv=None):
         if a.stream:                                  # the bank gets the gain the stream gets
             peak = render(charts[next(s for s, n in SLOTS.items() if n == a.stream.upper())], keys)[2]['peak']
             gain = min(1.0, 32767 / peak) if peak else 1.0
+        if not a.stream:
+            charts, keys = KB.split_long_bgm(charts, keys, tick, CLOCK)
         members = sorted(charts)
         sounds = KB.player_sounds(*(charts[s] for s in members))
         if not a.stream:
