@@ -29,7 +29,10 @@
 /* catalogue order (hold_sprites.catalogue): first sprite of each group, states per body */
 enum { HD_CN_WHITE = 0, HD_CN_BLACK = 5, HD_HCN_WHITE = 10, HD_HCN_BLACK = 17, HD_BSS = 24, HD_HBSS = 29 };
 /* sprite sizes in frame rows (hold_sprites.py): white, black, turntable; caps and body tiles */
-static const hs8 hd_w[3] = {16, 12, 28}, hd_cap_h[3] = {10, 9, 10}, hd_body_h[3] = {10, 9, 10};
+static const hs8 hd_w[3] = {17, 13, 30}, hd_cap_h[3] = {10, 9, 10}, hd_body_h[3] = {10, 9, 10};
+/* the beam runs half a cap into each cap (drawn over it): the caps' art has dark rows at their inner
+ * edge, which showed as a gap between beam and cap in PCSX2 */
+#define HD_INTO(kind) (hd_cap_h[kind] / 2)
 
 #ifdef HOLDS_TEST
 extern void test_draw(hu32 handle, hs32 x, hs32 y, hs32 zy, hs32 py);
@@ -161,7 +164,7 @@ int holds_note_hook(hu8 *note, hu32 handle, hs32 x, hs32 y, hu32 side, hu32 clip
         hd_head_at[i] = hd_now;
         hd_head_frame[i] = hd_frames;
         if (hd_tail_at[i] < hd_now - 1)                        /* tail still above the screen */
-            hd_body(body, kind, x, HD_TOP_Y, HD_BASE(y) - hd_cap_h[kind], clip);
+            hd_body(body, kind, x, HD_TOP_Y, HD_BASE(y) - hd_cap_h[kind] + HD_INTO(kind), clip);
         HD_DRAW(base, x, HD_BASE(y), 100, hd_w[kind] / 2, hd_cap_h[kind], clip);   /* start cap */
     } else {
         int head_seen;
@@ -176,7 +179,7 @@ int holds_note_hook(hu8 *note, hu32 handle, hs32 x, hs32 y, hu32 side, hu32 clip
         head_seen = hd_head_at[i] >= hd_now - 1;
         hs32 bottom = head_seen ? hd_head_y[i] : judge;
         if (bottom > judge) bottom = judge;
-        hd_body(body, kind, x, HD_BASE(y) + hd_cap_h[kind], HD_BASE(bottom) - hd_cap_h[kind], clip);
+        hd_body(body, kind, x, HD_BASE(y) + hd_cap_h[kind] - HD_INTO(kind), HD_BASE(bottom) - hd_cap_h[kind] + HD_INTO(kind), clip);
         if (!head_seen && holds.state[i] != HS_PENDING && y < judge)
             HD_DRAW(base, x, HD_BASE(judge), 100, hd_w[kind] / 2, hd_cap_h[kind], clip);   /* head hit: start cap on the line */
         HD_DRAW(base + 1, x, HD_BASE(y), 100, hd_w[kind] / 2, 0, clip);   /* end cap: hangs below the tail's line (arcade:
@@ -205,7 +208,7 @@ static void hd_frame(void)
         group = hd_group(&chart_defs[i], lane, &kind);
         judge = HD_JUDGE_Y - HD_LIFT(side);
         hd_body(last - (HD_SPRITES - 1) + group + 2 + hd_state((hu32)i, chart_defs[i].kind == HOLD_HCN || chart_defs[i].kind == HOLD_HBSS),
-                kind, hd_x[lane], HD_TOP_Y, HD_BASE(judge) - hd_cap_h[kind], hd_clip[side]);
+                kind, hd_x[lane], HD_TOP_Y, HD_BASE(judge) - hd_cap_h[kind] + HD_INTO(kind), hd_clip[side]);
         HD_DRAW(last - (HD_SPRITES - 1) + group, hd_x[lane], HD_BASE(judge), 100, hd_w[kind] / 2, hd_cap_h[kind], hd_clip[side]);
     }
 }

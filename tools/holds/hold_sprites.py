@@ -10,7 +10,7 @@ Sizes, measured on an EMPRESS capture (PCSX2, 640x360 of the 640x448 frame): whi
 18 px, blue-key lanes 14 px, turntable 30 px; notes 16 px wide, 6 frame rows tall (the game's note
 sprites are 6 rows: launcher/main.c note_hook). Caps keep the arcade texture's aspect (a 54 x 26
 cap is about 2x a normal note's height in the arcade, as on an arcade capture of a held HCN), so they
-are 16 x 10, 12 x 9 and 28 x 10 frame rows; frame rows = capture px * 448 / 360. Bodies are one tile
+are 17 x 10, 13 x 9 and 30 x 10 frame rows (widths: the lanes' inside, see WIDTH); frame rows = capture px * 448 / 360. Bodies are one tile
 of the arcade beam scaled the same way, drawn stretched (zoomY) between the caps.
 
 All 36 sprites share one palette: cont_add (launcher/cont.c) rejects sprites added to a container
@@ -25,7 +25,9 @@ import struct
 import sys
 from pathlib import Path
 
-WIDTH = {'white': 16, 'black': 12, 'scr': 28}
+# the lanes' inside widths, measured on a PCSX2 640x480 capture (white 120..136, blue 74..86, turntable
+# 25..54): sprites drawn from their centre then fill the lane edge to edge (16 / 12 / 28 left a 1-2 px gap)
+WIDTH = {'white': 17, 'black': 13, 'scr': 30}
 ROWS_PER_PX = 448 / 360            # EMPRESS frame rows per capture pixel (640 x 448 shown at 640 x 360)
 
 # (output name, arcade name, lane kind, part)
