@@ -1718,6 +1718,7 @@
   "tools/release/test_alphabet_catalog.py": "8d2935c80ca330705dbebdf2701849fd98e0c777039807effc4a6aa97b750b4b",
   "tools/release/test_arcade_convert.py": "69a1a97920e7152fc48cb69988beced69cc526b82e279fc806e1a1a556acb52b",
   "tools/release/test_arcade_songfolder.py": "ebf2cfb3a7ff44e2f0f1d28f2473bd436b758fc8c88ee3c4d2f8c56dfd2e89b1",
+  "tools/release/test_arcade_style.py": "d7fdd26d4d9ab94e48d9ebf5a12e6b61c2ddb2674d77f359affcb21da883fae3",
   "tools/release/test_arcade_text.py": "ce310e8e0d565b652f9213c325c0ccf15d2aff082ebb9c2541ee1f17285f5d78",
   "tools/release/test_audio_transform.py": "abd342aaec509f920235f27c003e85303098f8db0ebe200cc3be36eec565095f",
   "tools/release/test_bga_catalog.py": "3a0495645c21c65357db3555b7f407dc73c61813d5eb47e69f1426b38c5d2bc3",
