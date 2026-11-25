@@ -216,7 +216,7 @@ static int catalog_finish(void)
         int fold=row<FIRST?sdb->emp_fold[row]:sdb->slot_fold[row-FIRST];
         if (row<FIRST && !sdb->present[row])continue;
         if ((unsigned)fold>=NFOLD)continue;
-        for (ch=0;ch<10;ch++)if(catalog_record(row)[0x4a+ch]) {sdb->fold_n[fold]++;break;}
+        for (ch=0;ch<10;ch++)if(catalog_record(row)[0x4a+ch]) {if(sdb->fold_n[fold]<255)sdb->fold_n[fold]++;break;}
     }
     if(alphabet_finish(1)){errors++;goto done;}
     sdb->identity_version=1;sdb->identity_count=count;

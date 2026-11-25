@@ -28,10 +28,10 @@
         .equ O_CUSTN, 20
         .equ O_PRESENT, 24
         .equ O_NEXT, 232
-        .equ O_SLOT, 508
+        .equ O_SLOT, 536
         .equ O_FOLDN, 488
         .equ FOLD0, 59
-        .equ NFOLD, 19
+        .equ NFOLD, 45
 
         .macro SQ r, off
         .word 0x7fa00000 | (\r << 16) | \off

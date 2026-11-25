@@ -62,7 +62,7 @@ static struct mm_options shared_options=MM_OPTIONS_INITIALIZER;
 #define RES_HI 0x944700u
 #define TAB_HI (RES_LO + 0xd3000u)                /* 844 KB tables, 692 KB strings; heap/reserve unchanged */
 #define MAXI 32
-#define MAXSTYLE 24
+#define MAXSTYLE 48
 #define MAXSONG 4096
 #define FID0 1062                                 /* first added file id */
 #define C_LBA 1219665u                            /* BM2DX16C.DAT: added file offsets are relative to it */
@@ -73,7 +73,7 @@ static struct mm_options shared_options=MM_OPTIONS_INITIALIZER;
 #define VBASE 0x400000u                           /* virtual sectors for added files */
 #define VGAP 512                                  /* zero sectors after each (movie streamer read-ahead) */
 #define CUSTOM FOLD0                              /* music-select folder id of the CUSTOM folder */
-#define NFTAB 80                                  /* relocated per-folder tables (bar, label, caption, voice) */
+#define NFTAB 104                                 /* relocated per-folder tables (bar, label, caption, voice), by folder id 0..103 */
 
 #ifndef HOST_TEST
 #include "gfx.h"
@@ -1241,7 +1241,8 @@ static int n_fid, n_card, n_sq, cap_fid, cap_card, cap_sq;
 static u32 *fids;                                 /* {offset from BM2DX16C.DAT, sectors, size} per added file */
 static u32 *cards;                                /* {offset from DATA1, sectors} per added data1 container */
 
-typedef struct { int cont; u32 *dst; char path[160]; u8 *buf; spr_t s; } sq_t;  /* queued sprite */
+/* queued sprite; set: 1 + the song slot that queued it (0 = not shareable, e.g. folder labels) */
+typedef struct { int cont; u32 *dst; char path[160]; u8 *buf; spr_t s; int set, len, from; u32 hash; } sq_t;
 static sq_t *sq;
 
 /* room for one more entry in a growing launcher-heap array */
@@ -1569,6 +1570,7 @@ static int add_song(const song_t *sg, int fold)
                 if (!s) return -1;
                 s->cont = cont;
                 s->dst = (u32 *)(rec + field);
+                s->set = k + 1;                   /* one song's sprites for one container: shared as a whole run */
                 snprintf(s->path, sizeof s->path, "%s", path);
             }
         }
@@ -1603,23 +1605,74 @@ static int add_song(const song_t *sg, int fold)
     }
     snprintf(slot_dir[k], sizeof slot_dir[0], "%s/%s", styles[sg->style].dir, sg->dir);
     sdb->slot_fold[k] = fold;
-    if (fold != NOFOLD) sdb->fold_n[fold]++;
+    if (fold != NOFOLD && sdb->fold_n[fold] < 255) sdb->fold_n[fold]++;
     sdb->n_new++;
     return errs ? -1 : 0;
 }
 
-/* sprites queued per container -> one grown container each, at virtual sectors */
+/* sprites queued per container -> one grown container each, at virtual sectors.
+ *
+ * Shared runs: a song's sprites for one container (its S lines, in order) form a run. A run whose
+ * sprite files are byte for byte those of an earlier run in the same container takes that run's
+ * handles instead of adding copies: every converted arcade song carries the same 37 hold sprites, and
+ * the holds runtime finds them as a consecutive run ending at the handle in the song's record (so a
+ * run is shared only whole, never sprite by sprite). Without this the note containers grew by 37
+ * sprites per song, which a full omnimix could not hold. */
+static u32 sq_hash(const u8 *p, int n)
+{
+    u32 h = 2166136261u;
+    while (n--) h = (h ^ *p++) * 16777619u;
+    return h;
+}
+
+static int sq_same_run(int a, int b, int n)
+{
+    int k;
+    for (k = 0; k < n; k++) {
+        const sq_t *x = &sq[a + k], *y = &sq[b + k];
+        if (x->cont != y->cont) return 0;
+        if (x->len != y->len || x->hash != y->hash || memcmp(x->buf, y->buf, x->len)) return 0;
+    }
+    return 1;
+}
+
+/* marks each queued sprite of a run identical to an earlier kept run with .from = the matching sprite;
+ * returns how many were marked (or -1). .buf, .len and .hash must be set. */
+static int sq_share_runs(void)
+{
+    int i, j, shared = 0;
+    int *kept = malloc(n_sq * sizeof(int) * 2 + sizeof(int)), nk = 0, r;
+    if (!kept) { logf_("out of memory (sprites)\n"); return -1; }
+    for (i = 0; i < n_sq; i++) sq[i].from = -1;
+    for (i = 0; i < n_sq; ) {
+        int n = 1;
+        while (i + n < n_sq && sq[i].set && sq[i + n].set == sq[i].set && sq[i + n].cont == sq[i].cont) n++;
+        if (sq[i].set) {                          /* compared with the kept runs only: a handful */
+            for (r = 0; r < nk; r++)
+                if (kept[2 * r + 1] == n && sq_same_run(kept[2 * r], i, n)) break;
+            if (r < nk) {
+                for (j = 0; j < n; j++) sq[i + j].from = kept[2 * r] + j;
+                shared += n;
+            } else { kept[2 * nk] = i; kept[2 * nk + 1] = n; nk++; }
+        }
+        i += n;
+    }
+    free(kept);
+    return shared;
+}
+
 static int build_containers(void)
 {
-    int *done = calloc(n_sq, sizeof(int)), *idx = malloc(n_sq * sizeof(int)), i, j, errs = 0;
+    int *done = calloc(n_sq, sizeof(int)), *idx = malloc(n_sq * sizeof(int)), i, j, errs = 0, shared = 0;
     spr_t *s = malloc(n_sq * sizeof(spr_t));
     if (!done || !idx || !s) { logf_("out of memory (sprites)\n"); return -1; }
     for (i = 0; i < n_sq; i++) {
-        int len;
-        if (!(sq[i].buf = spr_file(sq[i].path, &sq[i].s, &len))) {
+        if (!(sq[i].buf = spr_file(sq[i].path, &sq[i].s, &sq[i].len))) {
             logf_("bad sprite %s\n", sq[i].path); return -1;
         }
+        sq[i].hash = sq_hash(sq[i].buf, sq[i].len);
     }
+    if ((shared = sq_share_runs()) < 0) { free(done); free(idx); free(s); return -1; }
     for (i = 0; i < n_sq; i++) {
         int n = 0, len, outlen;
         u32 *ent, lba, sec, size, at;
@@ -1629,7 +1682,11 @@ static int build_containers(void)
         FILE *f;
         if (done[i]) continue;
         for (j = i; j < n_sq; j++)
-            if (sq[j].cont == sq[i].cont) { s[n] = sq[j].s; idx[n++] = j; done[j] = 1; }
+            if (sq[j].cont == sq[i].cont) {
+                done[j] = 1;
+                if (sq[j].from < 0) { s[n] = sq[j].s; idx[n++] = j; }
+            }
+        if (!n) continue;
         ent = (u32 *)(DATA1_TAB + sq[i].cont * 16);
         lba = DATA1_LBA + ent[1];
         if (!(e = ext_at(lba)) || e->lba != lba) { logf_("container #%d: no file at %d\n", sq[i].cont, lba); errs++; continue; }
@@ -1648,9 +1705,13 @@ static int build_containers(void)
         free(out);
         if (!(at = vfile(rel, &sec, &size, rel))) { errs++; continue; }
         ent[1] = at - DATA1_LBA; ent[2] = sec;
-        for (j = 0; j < n; j++) *sq[idx[j]].dst = s[j].handle;
+        for (j = 0; j < n; j++) { sq[idx[j]].s.handle = s[j].handle; *sq[idx[j]].dst = s[j].handle; }
         logf_("container #%d: +%d sprites, %d KB\n", sq[i].cont, n, outlen >> 10);
+        (void)f;
     }
+    for (i = 0; i < n_sq; i++)                       /* shared runs: the first run's handles, in order */
+        if (sq[i].from >= 0) *sq[i].dst = sq[sq[i].from].s.handle;
+    if (shared) logf_("containers: %d sprites shared with identical earlier runs\n", shared);
     for (i = 0; i < n_sq; i++) free(sq[i].buf);
     free(done); free(idx); free(s);
     return errs ? -1 : 0;
@@ -1991,7 +2052,7 @@ static int build_inner(u32 *entry)
                 catalog_rows[sg->id]=catalog_find("id",sg->id);
                 if (catalog_rows[sg->id]<0) {logf_("EMPRESS%d: missing identity\n",sg->id);errs++;}
                 sdb->emp_fold[sg->id] = styles[sg->style].fold;
-                if (styles[sg->style].fold != NOFOLD) sdb->fold_n[styles[sg->style].fold]++;
+                if (styles[sg->style].fold != NOFOLD && sdb->fold_n[styles[sg->style].fold] < 255) sdb->fold_n[styles[sg->style].fold]++;
                 n_emp++;
             } else {
                 if (add_song(sg, styles[sg->style].fold)) errs++;

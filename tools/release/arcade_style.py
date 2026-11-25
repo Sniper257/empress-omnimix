@@ -79,9 +79,9 @@ def main(argv=None):
     p.add_argument('songs', nargs='*', help='song folder names for index.txt')
     p.add_argument('--name', help='style name (default: the caption)')
     p.add_argument('--custom', action='store_true',
-                   help='take the CUSTOM folder\'s slot (folder 59, slot 0) with this style\'s own label and caption. The '
-                        'launcher has NFOLD = 19 slots: CUSTOM + 16 PB styles + beatmania USA + one spare; slot 0 is unused '
-                        'unless a style says "custom", so a second added style fits only this way')
+                   help='take the CUSTOM folder\'s slot (folder 59, slot 0) with this style\'s own label and caption. '
+                        'Launchers before NFOLD 45 had 19 slots (CUSTOM + 16 PB styles + beatmania USA + one spare), so a '
+                        'second added style fitted only this way; with 45 there are 44 style slots besides CUSTOM')
     a = p.parse_args(argv)
     containers = base_containers(a.base)
     if set(containers) != {LABEL_BYTES, CAPTION_BYTES}:

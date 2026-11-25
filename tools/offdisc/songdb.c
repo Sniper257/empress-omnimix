@@ -24,7 +24,7 @@ typedef int s32;
 #define LIST 1000                      /* the game's song list: +4 count, +8 lamp mask, +9 diff[495], +0x1f8 song[495] */
 #define LIST_MAX 495
 #define OFF(f) __builtin_offsetof(sdb_t, f)
-_Static_assert(OFF(present) == 24 && OFF(next) == 232 && OFF(fold_n) == 488 && OFF(slot_of) == 508,
+_Static_assert(OFF(present) == 24 && OFF(next) == 232 && OFF(fold_n) == 488 && OFF(slot_of) == 536,
                "songdb.S O_* offsets");
 
 sdb_t sdb = { 0x44474e53 };

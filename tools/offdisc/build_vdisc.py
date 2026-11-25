@@ -334,17 +334,18 @@ DATA = {0x25f050 + 59 * 4: (0, 0x1c),
         # which the game's own `== 125` path to x also leaves in v0
         0x19152c: (0x046000a8, 0x24610001), 0x191530: (0x00000000, 0x102000a7),
         # folder menu widget (3 x 0x1a8 bytes, gp-0x78c0/-0x78bc/-0x78b8; FUN_0021a330 (intro draw)..FUN_0021bf60): its id
-        # array (+0, 44) and lamp array (+0x2c, 44) move to +0x1a8 / +0x1e8 (64 each), its per-entry int array
-        # (+0x8c, 44: bar x positions; past it the scroll state +0x13c..) to +0x228 (64), object 0x328 bytes
-        0x191d28: (0x240401a8, 0x24040328), 0x191d34: (0x240401a8, 0x24040328), 0x191d40: (0x240401a8, 0x24040328),
-        0x21ba24: (0x240600b0, 0x24060100),                                          # clear the int array
-        **{va: (w, w & 0xffff0000 | 0x228) for va, w in ((0x21aeec, 0xac89008c), (0x21aef4, 0x248a008c), (0x21b1dc, 0x8c53008c), (0x21b38c, 0xacaa008c), (0x21b394, 0x24ab008c), (0x21b4b4, 0x8c72008c), (0x21b4c0, 0x2477008c), (0x21b614, 0x8c72008c), (0x21b620, 0x2477008c), (0x21b87c, 0x8c74008c), (0x21ba18, 0x2644008c))},
-        0x21b9f4: (0x0240202d, 0x264401a8), 0x21ba04: (0x2406002c, 0x24060080),      # clear ids + lamps
-        0x21bf54: (0x2484002c, 0x248401e8),                                          # lamp memcpy dest
+        # array (+0, 44) and lamp array (+0x2c, 44) move to +0x1a8 / +0x208 (96 each), its per-entry int array
+        # (+0x8c, 44: bar x positions; past it the scroll state +0x13c..) to +0x268 (96), object 0x3e8 bytes. 96 >= the
+        # 88 folders the scene's id list (obj+0x6bc..0x713, above) can hold: ids 0, 1, 3..0x2b and songdb.h NFOLD (45)
+        0x191d28: (0x240401a8, 0x240403e8), 0x191d34: (0x240401a8, 0x240403e8), 0x191d40: (0x240401a8, 0x240403e8),
+        0x21ba24: (0x240600b0, 0x24060180),                                          # clear the int array
+        **{va: (w, w & 0xffff0000 | 0x268) for va, w in ((0x21aeec, 0xac89008c), (0x21aef4, 0x248a008c), (0x21b1dc, 0x8c53008c), (0x21b38c, 0xacaa008c), (0x21b394, 0x24ab008c), (0x21b4b4, 0x8c72008c), (0x21b4c0, 0x2477008c), (0x21b614, 0x8c72008c), (0x21b620, 0x2477008c), (0x21b87c, 0x8c74008c), (0x21ba18, 0x2644008c))},
+        0x21b9f4: (0x0240202d, 0x264401a8), 0x21ba04: (0x2406002c, 0x240600c0),      # clear ids + lamps
+        0x21bf54: (0x2484002c, 0x24840208),                                          # lamp memcpy dest
         **{va: (w, w | 0x1a8) for va, w in ((0x21abd4, 0x817e0000), (0x21b00c, 0x80560000), (0x21b4ec, 0x82be0000),
                                            (0x21b570, 0x82b50000), (0x21b64c, 0x82be0000), (0x21b6d0, 0x82b50000),
                                            (0x21b888, 0x80520000), (0x21a6f8, 0x80570000))},  # lb id, 0(widget + row)
-        **{va: (w, w & 0xffff0000 | 0x1e8) for va, w in ((0x21ac08, 0x8164002c), (0x21b014, 0x8044002c),
+        **{va: (w, w & 0xffff0000 | 0x208) for va, w in ((0x21ac08, 0x8164002c), (0x21b014, 0x8044002c),
                                                         (0x21b4d0, 0x82a4002c), (0x21b630, 0x82a4002c),
                                                         (0x21b88c, 0x8044002c), (0x21b4b8, 0x26a2002c),
                                                         (0x21b618, 0x26a2002c), (0x21a748, 0x8044002c))}}  # lamp loads / ptrs

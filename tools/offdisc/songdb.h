@@ -17,7 +17,8 @@
                                           ids >= 128 are negative in the game's signed byte loads, -1 stays unused) */
 #define NSAVE 152                      /* dummy save records per id 104..255 (index id - FIRST) */
 #define FOLD0 59                       /* music-select folder ids FOLD0.. = our folders: 59 CUSTOM, 60.. versions */
-#define NFOLD 19                       /* CUSTOM + 16 PB version folders + SIRIUS + beatmania USA */
+#define NFOLD 45                       /* CUSTOM + up to 44 style folders (ids 59..103). The folder menu holds 88 entries:
+                                          ids 0, 1 and 3..0x2b (43) + ours; build_vdisc.py sizes its arrays for 96 */
 #define NOFOLD 0xff
 #define NOSLOT 0xffff
 /* asset_workspace1: ordinary words remain positive cuts from708000; flagged
@@ -28,7 +29,7 @@
 #define SONG_KEY 256                   /* canonical key of added slot k = SONG_KEY+k */
 #define SONG_VIEW 95                   /* song rows, plus at most two native special rows */
 
-/* "virtual folders" the runtime adds songs to: ours (59..76), then the game's LEVEL 1-12 (ids 3..14, one list for
+/* "virtual folders" the runtime adds songs to: ours (59..103), then the game's LEVEL 1-12 (ids 3..14, one list for
  * all difficulties), A-Z groups (ids 15..21, per difficulty), NO PLAY (id 30, one list) */
 #define VF_LEVEL NFOLD
 #define VF_ALPHA (VF_LEVEL + 12)
@@ -91,9 +92,9 @@ typedef struct {
     u8 present[FIRST];                 /* +24  EMPRESS ids 0..103: 1 = song folder present */
     u8 emp_fold[FIRST];                /* +128 EMPRESS id -> our folder index (id - FOLD0), NOFOLD = game folders */
     u8 next[256];                      /* +232 folder menu order: id -> next id, 0xff = end */
-    u8 fold_n[NFOLD];                  /* +488 songs per folder (shown if > 0) */
-    u8 pad[1];                         /* retain slot_of at +508 when NFOLD grows */
-    u16 slot_of[256];                  /* +508 alias id -> slot, NOSLOT = unbound */
+    u8 fold_n[NFOLD];                  /* +488 songs per folder (shown if > 0; counts stop at 255) */
+    u8 pad[3];                         /* slot_of at +536 (songdb.S O_SLOT) */
+    u16 slot_of[256];                  /* +536 alias id -> slot, NOSLOT = unbound */
     u8 *slot_fold;                     /* +1020 slot -> our folder index */
     u8 *alias_of;                      /* +1024 slot -> alias id, 0 = unbound */
     u32 clock, stamp[256];             /* alias LRU: stamp = clock of the folder open that last used it */
