@@ -22,7 +22,13 @@
 #define HD_SPRITES 37
 #define HD_JUDGE_Y 0x140      /* a note's y on the judge line (FUN_001e6f50 clamps below 0x13f + h/2) */
 #define HD_TOP_Y (-16)
-#define HD_LAYER 0x10         /* the native note layer */
+/* Draw layers run back to front with LOWER numbers in FRONT (the lane cover is drawn on 0xc, notes and
+ * measure lines on 0x10), and within a layer the newest packet is drawn first, i.e. underneath
+ * (eighth_hud.c). On the note layer the measure lines covered the bodies, and each cap, queued after
+ * its body, went under it: the body hid the cap's inner half (silver ring and dark middle). Caps go
+ * on 0xe, bodies on 0xf: both in front of notes and bars, caps over bodies, both behind the cover. */
+#define HD_LAYER_CAP 0xe
+#define HD_LAYER_BODY 0xf
 #define HD_REC_SP 0x38
 #define HD_REC_WIDE 0x3c
 
@@ -47,11 +53,13 @@ static const hs8 hd_cpx[3] = {8, 6, 14}, hd_cap_h[3] = {13, 13, 14};   /* caps (
 extern void test_draw(hu32 handle, hs32 x, hs32 y, hs32 zy, hs32 px, hs32 py);
 extern hu8 *test_record(void);
 #define HD_DRAW(h, x, y, zy, px, py, clip) ((void)(clip), test_draw((h), (x), (y), (zy), (px), (py)))
+#define HD_DRAW_BODY HD_DRAW
 #define HD_RECORD() test_record()
 #define HD_LIFT(side) 0
 #else
 #define HD_NATIVE_DRAW ((void (*)(hu32, hs32, hs32, hs32, hs32, hs32, hs32, hs32, hs32, hs32, hu32, hs32))0x12fdd0)
-#define HD_DRAW(h, x, y, zy, px, py, clip) HD_NATIVE_DRAW((h), (x), (y), 100, (zy), (px), (py), 100, 0, 0, (clip), HD_LAYER)
+#define HD_DRAW(h, x, y, zy, px, py, clip) HD_NATIVE_DRAW((h), (x), (y), 100, (zy), (px), (py), 100, 0, 0, (clip), HD_LAYER_CAP)
+#define HD_DRAW_BODY(h, x, y, zy, px, py, clip) HD_NATIVE_DRAW((h), (x), (y), 100, (zy), (px), (py), 100, 0, 0, (clip), HD_LAYER_BODY)
 #define HD_RECORD() ((hu8 *(*)(hu8 *, hs32))0x1e19a0)(0, ((hs32 (*)(void))0x205e00)())
 #ifdef PLAY_LIFT
 extern hu32 lift_y[2];
@@ -148,7 +156,7 @@ static void hd_body(hu32 base, hu32 kind, hs32 x, hs32 top, hs32 bottom, hu32 cl
     len = bottom - top;
     if (len <= 0) return;
     holds_dbg[10]++;
-    HD_DRAW(base, x, top, len * 100 / h, hd_px[kind], 0, clip);
+    HD_DRAW_BODY(base, x, top, len * 100 / h, hd_px[kind], 0, clip);
 }
 
 /* returns 1 if the note was drawn here (skip the native draw) */
