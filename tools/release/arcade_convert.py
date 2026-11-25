@@ -148,8 +148,39 @@ def load_song(path):
     one, two = get('.1'), get('.2dx')
     if one is None:
         raise ValueError('No .1 chart in ' + str(path))
-    keys = A.read_2dx(two)[1] if two else []
+    if two:
+        keys = A.read_2dx(two)[1]
+    else:
+        s3p = get('.s3p')
+        keys = s3p_keys(s3p) if s3p else []
     return A.read_charts(one), keys, sid
+
+
+def _wma_to_wav(audio):
+    import subprocess
+    out = subprocess.run(['ffmpeg', '-v', 'error', '-f', 'asf', '-i', 'pipe:0', '-f', 'wav', '-acodec', 'pcm_s16le', 'pipe:1'],
+                         input=audio, stdout=subprocess.PIPE, check=True).stdout
+    # ffmpeg streams a WAV with unknown sizes (0xffffffff) to a pipe: fix the RIFF / data sizes
+    import struct
+    at = out.find(b'data')
+    if at < 0:
+        raise ValueError('ffmpeg wrote no WAV data')
+    out = bytearray(out)
+    struct.pack_into('<I', out, 4, len(out) - 8)
+    struct.pack_into('<I', out, at + 4, len(out) - at - 8)
+    return bytes(out)
+
+
+def s3p_keys(data):
+    """Keysounds of an .s3p (newer arcade games: one WMA per sound), decoded with ffmpeg into the
+    entry shape read_2dx gives ({'index', 'wav'}). The S3V0 header holds no length or volume, so
+    ffmpeg's own WMA trimming decides the length."""
+    from concurrent.futures import ThreadPoolExecutor
+    entries = A.read_s3p(data)
+    with ThreadPoolExecutor(8) as pool:
+        wavs = list(pool.map(lambda e: _wma_to_wav(e['audio']), entries))
+    return [{'index': e['index'], 'track': 0, 'attenuation': 0, 'loop': 0, 'unk': (0, 0), 'wav': w}
+            for e, w in zip(entries, wavs)]
 
 
 def render(events, keys, rate=44100, bgm_only=False, peak=None, raw=False):
@@ -339,7 +370,7 @@ def main(argv=None):
         (a.output / (name + '.bin')).write_bytes(encrypt(ply))
         notes = sum(1 for e in events if e[1] in (0, 1))
         bpms = sorted({round(e[3] / e[2], 2) if e[2] else e[3] for e in events if e[1] == 4})
-        report['charts'][name] = {'notes': notes, 'holds': len(holds), 'hcn': hell, 'total': notes + len(holds),
+        report['charts'][name] = {'notes': notes, 'holds': len(holds), 'mss_joints': len(A.mss_joints(events)), 'hcn': hell, 'total': notes + len(holds),
                                   'bpm': [bpms[0], bpms[-1]] if bpms else None, 'warnings': warnings}
         print('%s: %d notes, %d %s%s' % (name, notes, len(holds), 'HCN' if hell else 'holds', (' (' + '; '.join(warnings) + ')') if warnings else ''))
     if a.stream:

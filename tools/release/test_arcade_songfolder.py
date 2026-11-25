@@ -55,10 +55,11 @@ class SongFolder(unittest.TestCase):
             self.assertIn('F ec 2 stream.bin', txt)                             # 0xec is the stream, never a bank
             self.assertFalse(any('DP.bank' in l for l in txt))
             s_lines = [l for l in txt if l.startswith('S ')]
-            self.assertEqual(len(s_lines), 72)
+            self.assertEqual(len(s_lines), 74)
             self.assertEqual(s_lines[0], 'S 6d 38 holds/cn_white_start.spr')
             self.assertEqual(s_lines[35], 'S 6d 38 holds/hbss_beam4.spr')
-            self.assertEqual(s_lines[36], 'S 92 3c holds/cn_white_start.spr')
+            self.assertEqual(s_lines[36], 'S 6d 38 holds/mss_middle.spr')
+            self.assertEqual(s_lines[37], 'S 92 3c holds/cn_white_start.spr')
             self.assertTrue((out / 'holds' / 'hcn_black_beam3.spr').is_file())
             cat = (out / 'catalog-lines.txt').read_text().splitlines()
             self.assertTrue(cat[0].startswith('S custom/test_song 0 2000 '))

@@ -32,6 +32,11 @@ WIDTH = {'white': 13, 'black': 10, 'scr': 25}
 # x pivots: the note x the game hands over is about 1 frame px right of the lane's centre (its own notes
 # sit half a pixel right too); a sprite centred on x showed 1 px right of the lane
 PIVOT_X = {'white': 7, 'black': 5, 'scr': 13}
+# caps fill the lane inside, line to line, as on an arcade capture (the cap reads wider than the body:
+# the beam art has dark edge columns, and here it also keeps its 1 px of lane): 15 / 11 / 27 frame px,
+# pivots again a pixel left of the note x
+CAP_WIDTH = {'white': 15, 'black': 11, 'scr': 27}
+CAP_PIVOT_X = {'white': 8, 'black': 6, 'scr': 14}
 ROWS_PER_PX = 448 / 360            # EMPRESS frame rows per capture pixel (640 x 448 shown at 640 x 360)
 
 # (output name, arcade name, lane kind, part)
@@ -48,6 +53,9 @@ def catalogue():
             rows.append(('%s_%s' % (kind, part), '%s_%s' % (pre, part), 'scr', 'cap'))
         for b in range(5 if kind == 'hbss' else 3):
             rows.append(('%s_beam%d' % (kind, b), '%s_beam%d' % (pre, b), 'scr', 'body'))
+    # multi-spin scratch middle note (the BSS bar with the light-blue turn mark), last so the others keep
+    # their places: drawn centred on a joint, where one section ends and the next starts
+    rows.append(('mss_middle', 'notes_bss_middle_2', 'scr', 'cap'))
     return rows
 
 
@@ -110,7 +118,7 @@ def decode(spr):
 
 def scaled(src, kind, part):
     from PIL import Image
-    w = WIDTH[kind]
+    w = (CAP_WIDTH if part == 'cap' else WIDTH)[kind]
     return src.resize((w, max(2, round(src.height * w / src.width * ROWS_PER_PX))), Image.LANCZOS)
 
 
@@ -134,7 +142,7 @@ def main(argv=None):
         data = spr1(img, colours)
         (out / (name + '.spr')).write_bytes(data)
         manifest[name] = {'from': arcade, 'lane': kind, 'part': part, 'w': img.width, 'h': img.height,
-                          'pivot': [PIVOT_X[kind], img.height if part == 'cap' else 0]}
+                          'pivot': [(CAP_PIVOT_X if part == 'cap' else PIVOT_X)[kind], img.height if part == 'cap' else 0]}
         previews.append((name, decode(data)))
     (out / 'sprites.json').write_text(json.dumps(manifest, indent=1) + '\n')
     cell = 40

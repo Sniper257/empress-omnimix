@@ -58,7 +58,7 @@ int holds_reset(holds_t *h, const hold_def *defs, hu32 n, const holds_cfg *cfg)
     h->defs = defs; h->n = n; h->next = 0; h->nev = 0; h->dropped = 0;
     copy(&h->cfg, cfg, sizeof h->cfg);
     if (h->cfg.overhold_judge != J_BAD) h->cfg.overhold_judge = J_POOR;
-    for (i = 0; i < HOLDS_LANES; i++) { h->active[i] = -1; h->spin[i] = 0; h->stood[i] = -1; h->next_tick[i] = 0; h->up_at[i] = -1; h->rel_at[i] = -1; h->hit_at[i] = 0; h->seen_down[i] = 0; }
+    for (i = 0; i < HOLDS_LANES; i++) { h->active[i] = -1; h->spin[i] = 0; h->stood[i] = -1; h->next_tick[i] = 0; h->up_at[i] = -1; h->rel_at[i] = -1; h->hit_at[i] = 0; h->loose_at[i] = 0; h->seen_down[i] = 0; }
     return 0;
 }
 
@@ -67,6 +67,7 @@ static void let_go(holds_t *h, hu32 i, hs32 now, hu32 real_poor)
     hu32 lane = h->defs[i].lane;
     h->state[i] = HS_LOOSE;
     h->broken[i] = 1;
+    h->loose_at[lane] = now;
     if (real_poor) emit(h, HE_BREAK, i, J_POOR, now - h->defs[i].end);
     emit(h, HE_TICK_LOSS, i, J_POOR, now - h->defs[i].end);   /* the empty POOR at the moment of release */
     if (real_poor) h->next_tick[lane] = now * HOLDS_FP + tick_of(h, i);   /* let go: every 16th from now */
@@ -231,6 +232,8 @@ static void step(holds_t *h, hu32 lane, hs32 now, hu32 keys, const hs8 tt[2])
         if (offset >= 0) { finish(h, (hu32)i, J_NONE, offset); return; }   /* the end adds no POOR, no gauge loss */
         if (down) {
             h->state[i] = HS_HOLDING;
+            h->hit_at[lane] = now;          /* the beam brightens again from here (holds_draw.c); before the end, so
+                                               the release window (end_ref) is unchanged */
             h->next_tick[lane] = now64 + tick_of(h, (hu32)i);
         }
     } else if (!down) {                             /* HS_HOLDING, released */

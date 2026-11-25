@@ -57,6 +57,21 @@ class ArcadeReaders(unittest.TestCase):
         self.assertEqual(charts[0][2], (250, 1, 7, 40))
         self.assertEqual(A.note_count(charts[0]), (1, 1))
 
+    def test_multi_spin_scratch_sections(self):
+        # Purple Perplex SPH: one MSS of three sections (column 107), a plain BSS, and a P2 MSS of two
+        events = [(36800, 0, 107, 800), (37600, 0, 107, 800), (38400, 0, 107, 1200), (40000, 0, 7, 400),
+                  (50000, 1, 107, 200), (50200, 1, 107, 200), (60000, 0, 3, 0)]
+        got = A.read_charts(one_file({0: events}))[0]
+        self.assertEqual([e for e in got if e[2] == 107], [])
+        self.assertEqual(got[:3], [(36800, 0, 7, 800), (37600, 0, 7, 800), (38400, 0, 7, 1200)])
+        self.assertEqual(A.mss_joints(got), [(37600, 0), (38400, 0), (50200, 1)])
+
+    def test_utf16_title_starting_with_kana(self):
+        entry = bytearray(0x240)
+        entry[:14] = 'メズマライザー'.encode('utf-16-le')
+        entry[0x100:0x10a] = b'Mesmerizer'
+        self.assertEqual(A.entry_title(bytes(entry)), ('メズマライザー', 'Mesmerizer'))
+
     def test_chart_without_terminator_rejected(self):
         raw = bytearray(one_file({0: [(0, 0, 0, 0)]}))
         struct.pack_into('<i', raw, len(raw) - 8, 9)

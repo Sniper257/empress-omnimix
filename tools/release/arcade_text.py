@@ -2,7 +2,7 @@
 
 Arcade IIDX draws song text with fonts, so nothing is converted: the title, genre and artist from
 music_data / music_omni (UTF-16) are rendered with the release's open font atlas
-(text-fonts/open-v1.mga) through the same text_native functions the release uses for its own
+(text-fonts/arcade-v1.mga, see ATLAS) through the same text_native functions the release uses for its own
 text, in the native styles:
 
   card.if      title card (data1 container, 384x384), text_native.title_card   song.txt: card card.if
@@ -29,7 +29,12 @@ import arcade_data as A  # noqa: E402
 import text_native as T  # noqa: E402
 import text_raster as R  # noqa: E402
 
-ATLAS = HERE / 'text-fonts' / 'open-v1.mga'
+# the release's open atlas plus the characters of converted arcade songs (text-fonts/arcade-corpus.json:
+# corpus.json + their titles, genres and artists), built the same way from the same pinned fonts:
+#   python3 fetch_text_fonts.py text-fonts/open-fonts.sources.json SRC
+#   cd SRC && python3 prepare_text_fonts.py open-fonts.json text-fonts/arcade-corpus.json text-fonts/arcade-v1.mga
+# (the release's own glyphs come out identical). Add a song's text to arcade-corpus.json when a glyph is missing.
+ATLAS = HERE / 'text-fonts' / 'arcade-v1.mga'
 # name: (container bytes, role, reference sprite, max width, bold, xscale), from text_sprites.json
 SPRITES = {
     'wheel': (139264, 'wheel', 76, 255, 0, 0.81),
@@ -92,7 +97,7 @@ def render(texts, containers=None, a=None):
     for key, role in (('title', 'large_title'), ('genre', 'card_genre'), ('artist', 'card_artist')):
         gone = missing_glyphs(a, texts[key], role)
         if gone:
-            raise ValueError('%s %r: no glyph for %s in the font atlas (build one with --fonts)' % (key, texts[key], ''.join(gone)))
+            raise ValueError('%s %r: no glyph for %s in the font atlas (add the text to text-fonts/arcade-corpus.json and rebuild, see ATLAS)' % (key, texts[key], ''.join(gone)))
     out = {'card.if': T.title_card(a, {k: texts[k] for k in ('title', 'genre', 'artist')})}
     for name, (size, role, ref, width, bold, xs) in SPRITES.items():
         if containers and size in containers:

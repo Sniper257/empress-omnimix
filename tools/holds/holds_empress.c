@@ -104,6 +104,12 @@ static void dbg_event(const hold_event *e)
     holds_dbg[17 + 2 * k] = (hu32)e->judge << 28 | (e->index & 0xfffu) << 16 | (hu32)e->lane << 8 | (dbg_keys & 0xffu);
 }                 /* tick being processed (holds_draw.c stamps note draws with it) */
 static void hd_reset(void);
+/* multi-spin scratch: per hold, MSS_PREV = a section on the same turntable ends where this one starts
+ * (its head is a middle note), MSS_NEXT = one starts where this one ends (arcade_data.read_charts:
+ * MSS sections are touching BSS holds; plain holds on one lane never touch) */
+enum { MSS_PREV = 1, MSS_NEXT = 2 };
+static hu8 mss_chain[HOLDS_MAX];
+static void mss_link(void);
 static hu8 hd_poor[HOLDS_MAX];                 /* holds_draw.c */
 /* last tick each turntable was moving (BSS heads the ring never reported) */
 static hs32 spun_at[2] = {-100, -100};
@@ -148,6 +154,22 @@ void holds_set_chart(const hold_def *defs, hu32 n)
 static hu8 *tail_note[HOLDS_MAX];
 extern volatile hu32 holds_ddbg[12];
 
+static void mss_link(void)
+{
+    hu32 i, j;
+    for (i = 0; i < HOLDS_MAX; i++) { mss_chain[i] = 0; LOOP_PAD(); }
+    for (i = 0; i < chart_n && i < HOLDS_MAX; i++) {
+        if ((chart_defs[i].lane & 7u) != 7u) continue;
+        for (j = i + 1; j < chart_n && j < HOLDS_MAX && chart_defs[j].start <= chart_defs[i].end; j++) {
+            LOOP_PAD();
+            if (chart_defs[j].lane == chart_defs[i].lane && chart_defs[j].start == chart_defs[i].end) {
+                mss_chain[i] |= MSS_NEXT;
+                mss_chain[j] |= MSS_PREV;
+            }
+        }
+    }
+}
+
 static void arm(void)
 {
     hu32 n = 0;
@@ -155,6 +177,7 @@ static void arm(void)
     if (found) { chart_defs = found; chart_n = n; }
     armed = chart_n && holds_reset(&holds, chart_defs, chart_n, &default_cfg) == 0;
     hd_reset();
+    mss_link();
     spun_at[0] = spun_at[1] = -100;
     for (n = 0; n < HOLDS_MAX; n++) { tail_note[n] = 0; LOOP_PAD(); }
     holds_dbg[1] = (hu32)armed;
@@ -264,7 +287,9 @@ static void apply(const hold_event *e)
         if (e->judge == J_POOR && e->index < HOLDS_MAX) hd_poor[e->index] = 1;   /* holds_draw.c: unlit to its tail */
         /* BSS / HBSS: the backspin at the end plays the turntable's keysound at that point of the chart,
          * the sound the tail note carries (the game never judges the tail, so it never plays it) */
-        if ((e->judge == J_PGREAT || e->judge == J_BAD) && (e->lane & 7) == 7 && tail_live(e->index))
+        /* not at an MSS middle note: there the next section's head (a scratch note) plays its sound */
+        if ((e->judge == J_PGREAT || e->judge == J_BAD) && (e->lane & 7) == 7 && tail_live(e->index)
+            && !(e->index < HOLDS_MAX && (mss_chain[e->index] & MSS_NEXT)))
             H_PLAY_NOTE(tail_note[e->index], e->lane >> 3);
         if (e->judge == J_PGREAT) H_RING(CODE_PGREAT, id);
         else if (e->judge == J_BAD) H_RING(CODE_BAD, id);

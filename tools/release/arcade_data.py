@@ -68,9 +68,26 @@ def chart_events(data, offset, size):
     raise FormatError('Chart has no terminator')
 
 
+MSS_LANE = 107   # note column of a multi-spin scratch section (29 CastHour on): the turntable, 7 + 100
+
+
 def read_charts(data):
-    """{slot: [events]} for every chart present in a .1 file."""
-    return {slot: chart_events(data, off, size) for slot, off, size in chart_directory(data)}
+    """{slot: [events]} for every chart present in a .1 file.
+
+    Multi-spin scratch (MSS) sections are notes in column 107 with their length as value, one per
+    section, the sections of one MSS end to end (Purple Perplex SPH: 36800+800, 37600+800, 38400+1200).
+    They come back as turntable notes (column 7): each section is a backspin scratch, and a section
+    starting where another ends on the same turntable is a middle note."""
+    def mss(e):
+        t, kind, param, value = e
+        return (t, kind, 7, value) if kind in (0, 1) and param == MSS_LANE else e
+    return {slot: [mss(e) for e in chart_events(data, off, size)] for slot, off, size in chart_directory(data)}
+
+
+def mss_joints(events):
+    """Middle notes of multi-spin scratches: (time, kind) where a turntable section starts as another ends."""
+    ends = {(t + v, k) for t, k, p, v in events if k in (0, 1) and p == 7 and v > 0}
+    return sorted((t, k) for t, k, p, v in events if k in (0, 1) and p == 7 and v > 0 and (t, k) in ends)
 
 
 def note_count(events):
@@ -286,11 +303,27 @@ def entry_strings(entry, width=64, limit=8):
     return out
 
 
+def _plausible_text(s):
+    """Every character from blocks song titles use: a Shift-JIS field read as UTF-16 gives code
+    units scattered over unrelated blocks (and usually control characters or surrogates)."""
+    ok = ((0x20, 0x7e), (0xa0, 0x24f), (0x370, 0x4ff), (0x2000, 0x2bff), (0x3000, 0x30ff), (0x3200, 0x33ff),
+          (0x4e00, 0x9fff), (0xf900, 0xfaff), (0xff00, 0xffef))
+    return bool(s) and all(any(a <= ord(c) <= b for a, b in ok) for c in s)
+
+
 def entry_title(entry):
-    """(title, ascii title): UTF-16 title + ASCII at 0x100 in newer lists (32), SJIS fields in older ones."""
-    if len(entry) >= 0x140 and entry[1] == 0 and 0x20 <= entry[0] < 0x7f:
-        title = entry[:0x100].decode('utf-16-le', 'replace').split('\0')[0]
-        return title, entry[0x100:0x140].split(b'\0')[0].decode('latin-1')
+    """(title, ascii title): UTF-16 title + ASCII at 0x100 in newer lists (32), SJIS fields in older ones.
+    A Japanese title starts with a non-ASCII code unit (メズマライザー: e1 30), so the UTF-16 layout is
+    told by the whole title decoding to plausible text, not by an ASCII first byte."""
+    if len(entry) >= 0x140:
+        raw = entry[:0x100]
+        end = next((i for i in range(0, len(raw) - 1, 2) if raw[i] == 0 and raw[i + 1] == 0), len(raw))
+        try:
+            title = raw[:end].decode('utf-16-le')
+        except UnicodeDecodeError:
+            title = None
+        if title is not None and _plausible_text(title):
+            return title, entry[0x100:0x140].split(b'\0')[0].decode('latin-1')
     strings = entry_strings(entry)
     return (strings[0] if strings else ''), (strings[1] if len(strings) > 1 else '')
 

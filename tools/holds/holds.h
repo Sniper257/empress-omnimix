@@ -92,7 +92,8 @@ typedef struct {
     hs32 stood[HOLDS_LANES];    /* BSS: time the turntable stopped, or -1 */
     hs32 next_tick[HOLDS_LANES];/* HCN/HBSS: next tick, 1/64 ticks */
     hs32 up_at[HOLDS_LANES];    /* key holds: first tick the key read up while holding, or -1 */
-    hs32 hit_at[HOLDS_LANES];   /* tick the head was taken */
+    hs32 hit_at[HOLDS_LANES];   /* tick the head was taken (or an HCN / HBSS taken again) */
+    hs32 loose_at[HOLDS_LANES]; /* HCN / HBSS: tick it was let go */
     hu8 seen_down[HOLDS_LANES]; /* key holds: the key has read down since the head (the held mask can lag the press) */
     hu8 rel_seen[HOLDS_LANES];  /* seen_down when the current up spell began: a real release, not mask lag */
     hs32 rel_at[HOLDS_LANES];   /* key holds: start of the latest up spell while holding (kept through a

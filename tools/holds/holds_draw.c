@@ -4,11 +4,11 @@
  * (jal 0x12fdd0 at 0x1e757c). For a hold's head or tail note it draws the cap and the body itself
  * and returns 1 (the native draw is skipped); for any other note it returns 0.
  *
- * Sprites: tools/holds/hold_sprites.py, 36 SPR1 sprites in catalogue order, appended by the launcher
+ * Sprites: tools/holds/hold_sprites.py, 37 SPR1 sprites in catalogue order, appended by the launcher
  * to the note containers #109 (SP) and #146 (wide) through song.txt `S` lines
  * (tools/release/arcade_songfolder.py). All 36 lines of a container write their handle to the same
  * record field, so the field ends up holding the last one: SP at record +0x38, wide at +0x3c (the
- * tail of the 64-byte title field; titles stop at 0x37). Sprite k = last - 35 + k.
+ * tail of the 64-byte title field; titles stop at 0x37). Sprite k = last - 36 + k.
  *
  * Geometry: caps are placed like the game's own notes (songdb.S note_hook): pivot at the bottom,
  * at y + 3, so a cap sits on top of its timing point and lines up with a normal note of the same
@@ -19,7 +19,7 @@
  * the lane top. The body is one tile stretched with zoomY (pivot at its top). */
 #define HD_BASE(y) ((y) + 3)    /* a note's bottom edge (note_hook: pivot at the bottom, y + 3) */
 
-#define HD_SPRITES 36
+#define HD_SPRITES 37
 #define HD_JUDGE_Y 0x140      /* a note's y on the judge line (FUN_001e6f50 clamps below 0x13f + h/2) */
 #define HD_TOP_Y (-16)
 #define HD_LAYER 0x10         /* the native note layer */
@@ -27,17 +27,20 @@
 #define HD_REC_WIDE 0x3c
 
 /* catalogue order (hold_sprites.catalogue): first sprite of each group, states per body */
-enum { HD_CN_WHITE = 0, HD_CN_BLACK = 5, HD_HCN_WHITE = 10, HD_HCN_BLACK = 17, HD_BSS = 24, HD_HBSS = 29 };
+enum { HD_CN_WHITE = 0, HD_CN_BLACK = 5, HD_HCN_WHITE = 10, HD_HCN_BLACK = 17, HD_BSS = 24, HD_HBSS = 29, HD_MSS_MIDDLE = 36 };
+#define HD_MID_H 14           /* mss_middle rows (sprites.json) */
 /* sprite sizes in frame rows (hold_sprites.py): white, black, turntable; caps and body tiles */
 /* x pivots (hold_sprites.py PIVOT_X: widths 13 / 10 / 25, drawn about 1 px left of the note's x, which
  * sits right of the lane's centre) */
-static const hs8 hd_px[3] = {7, 5, 13}, hd_cap_h[3] = {8, 8, 9}, hd_body_h[3] = {8, 8, 9};   /* sprites.json */
+static const hs8 hd_px[3] = {7, 5, 13}, hd_body_h[3] = {8, 8, 9};   /* bodies (sprites.json) */
+/* caps fill the lane (hold_sprites CAP_WIDTH 15 / 11 / 27), so they read wider than the body as in the arcade */
+static const hs8 hd_cpx[3] = {8, 6, 14}, hd_cap_h[3] = {9, 8, 9};
 /* the beam runs half a cap into each cap (drawn over it): the caps' art has dark rows at their inner
  * edge, which showed as a gap between beam and cap in PCSX2 */
 #define HD_INTO(kind) (hd_cap_h[kind] / 2)
 /* a start cap with its bottom edge at `bottom`, placed from its top like the end cap (pivot 0): the
  * turntable's start cap drawn with its pivot at its own bottom never showed in PCSX2 */
-#define HD_CAP(h, kind, x, bottom, clip) HD_DRAW((h), (x), (bottom) - hd_cap_h[kind], 100, hd_px[kind], 0, (clip))
+#define HD_CAP(h, kind, x, bottom, clip) HD_DRAW((h), (x), (bottom) - hd_cap_h[kind], 100, hd_cpx[kind], 0, (clip))
 
 #ifdef HOLDS_TEST
 extern void test_draw(hu32 handle, hs32 x, hs32 y, hs32 zy, hs32 px, hs32 py);
@@ -110,13 +113,15 @@ static hu32 hd_group(const hold_def *d, hu32 lane, hu32 *kind)
     return *kind ? HD_CN_BLACK : HD_CN_WHITE;
 }
 
-/* body sprite: 0 not held, 1/2 held (alternating), 3/4 HCN let go (alternating) */
+/* body sprite: 0 not held; held: 1 for HD_RAMP ticks from the hit (or the HCN re-grab), then 2, the
+ * brightest, for good (the arcade beam brightens once and stays lit, no flashing); HCN let go: 3, then 4 */
+#define HD_RAMP 4
 static hu32 hd_state(hu32 i, hu32 hell)
 {
-    hu32 blink = ((hu32)hd_now >> 1) & 1u;
+    hs32 since = hd_now - holds.hit_at[chart_defs[i].lane];
     switch (holds.state[i]) {
-    case HS_HOLDING: return 1 + blink;
-    case HS_LOOSE: return hell ? 3 + blink : 0;
+    case HS_HOLDING: return since < HD_RAMP ? 1 : 2;
+    case HS_LOOSE: return hell ? (hd_now - holds.loose_at[chart_defs[i].lane] < HD_RAMP ? 3 : 4) : 0;
     default: return 0;
     }
 }
@@ -175,7 +180,10 @@ int holds_note_hook(hu8 *note, hu32 handle, hs32 x, hs32 y, hu32 side, hu32 clip
         hd_head_frame[i] = hd_frames;
         if (hd_tail_at[i] < hd_now - 1)                        /* tail still above the screen */
             hd_body(body, kind, x, HD_TOP_Y, HD_BASE(y) - hd_cap_h[kind] + HD_INTO(kind), clip);
-        HD_CAP(base, kind, x, HD_BASE(y), clip);                /* start cap */
+        if (i < HOLDS_MAX && (mss_chain[i] & MSS_PREV))        /* MSS middle note: centred on the joint */
+            HD_DRAW(last - (HD_SPRITES - 1) + HD_MSS_MIDDLE, x, HD_BASE(y) - HD_MID_H / 2, 100, hd_cpx[kind], 0, clip);
+        else
+            HD_CAP(base, kind, x, HD_BASE(y), clip);            /* start cap */
     } else {
         int head_seen, lit;
         if (t > hd_now + 4 && y < judge) hd_ppt[side & 1] = (judge - y) * 256 / (t - hd_now);
@@ -187,14 +195,17 @@ int holds_note_hook(hu8 *note, hu32 handle, hs32 x, hs32 y, hu32 side, hu32 clip
         hd_tail_at[i] = hd_now;                                 /* on screen: the frame pass leaves it alone */
         if (hd_now > d->end || y > judge) return 1;
         head_seen = hd_head_at[i] >= hd_now - 1;
-        hs32 bottom = head_seen ? hd_head_y[i] : judge;
+        /* the game may draw the tail before the head in a frame: then the head's y is a frame old, and the
+         * body ended one frame's scroll above the start cap (a gap in PCSX2). Carry it on by the scroll speed. */
+        hs32 bottom = !head_seen ? judge : hd_head_at[i] == hd_now ? hd_head_y[i] : hd_head_y[i] + hd_ppt[side & 1] / 256;
         if (bottom > judge) bottom = judge;
         lit = holds.state[i] == HS_HOLDING || holds.state[i] == HS_LOOSE;   /* head hit and not let go for good */
-        hd_body(body, kind, x, HD_BASE(y) + hd_cap_h[kind] - HD_INTO(kind),
+        hd_body(body, kind, x, HD_BASE(y) + (i < HOLDS_MAX && (mss_chain[i] & MSS_NEXT) ? 0 : hd_cap_h[kind] - HD_INTO(kind)),
                 HD_BASE(bottom) - (!head_seen && !lit ? 0 : hd_cap_h[kind] - HD_INTO(kind)), clip);
         if (!head_seen && lit && y < judge)
             HD_CAP(base, kind, x, HD_BASE(judge), clip);        /* head hit: start cap on the line */
-        HD_DRAW(base + 1, x, HD_BASE(y), 100, hd_px[kind], 0, clip);   /* end cap: hangs below the tail's line (arcade:
+        if (!(i < HOLDS_MAX && (mss_chain[i] & MSS_NEXT)))      /* an MSS joint: the next section's middle note */
+        HD_DRAW(base + 1, x, HD_BASE(y), 100, hd_cpx[kind], 0, clip);   /* end cap: hangs below the tail's line (arcade:
                                                                              a head on the same tick sits on that line) */
     }
     return 1;

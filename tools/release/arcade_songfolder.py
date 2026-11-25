@@ -17,7 +17,7 @@ Record fields (0x134 bytes; launcher/main.c add_song, song_resources.c, song_win
   0xe8 / 0xec  u16 bank / stream file ids (0xea / 0xee 0xffff, as in every native record), more groups up to 0x107 unused
   0x108 u16 SP notes N,H,A,B,X   0x112 u16 pairs DP notes (P1, P2) N,H,A,B,X   0x126 u16 graph targets
   (SP N,H,A, DP N,H,A; All My Turn's are 1.33-1.52 x notes; 1.4 x notes is written)
-  0x38 / 0x3c (the end of the title field)  hold sprites: the handle of the last of the 36 hold sprites
+  0x38 / 0x3c (the end of the title field)  hold sprites: the handle of the last of the 37 hold sprites
   appended to note container #109 / #146 (S lines; tools/holds/holds_draw.c); titles stop at 0x37.
 The title card is rendered from the music data's title, genre and artist (arcade_text.py); the wheel / title /
 genre / artist sprites too with --text-base (they need the native containers' palettes).

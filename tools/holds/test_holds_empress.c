@@ -79,12 +79,12 @@ int main(void)
         make_note(n, 0, 0, 230);  holds_spawn_hook(n); CHECK(n[0xb] == 0);   /* P1 lane 1 HCN tail */
         CHECK(spawned == 4);                                                 /* the game's spawn always runs */
     }
-    /* drawing: SP container #109, last hold sprite 109:535 -> first 109:500 */
+    /* drawing: SP container #109, last hold sprite 109:536 -> first 109:500 */
     {
         static hu8 n[0x20] __attribute__((aligned(4)));
         static const hold_def one[1] = {{300, 400, 2, HOLD_HCN, 6 * HOLDS_FP}};
         long long tt;
-        *(hu32 *)(record + 0x38) = 109u << 16 | 535u;
+        *(hu32 *)(record + 0x38) = 109u << 16 | 536u;
         holds_set_chart(one, 1);
         for (tt = 0; tt < 250; tt++) holds_frame_hook(tt);
         /* a normal note is left to the game */
@@ -93,13 +93,13 @@ int main(void)
         /* head on screen, tail still above: body from the lane top to the head, then the start cap */
         make_note(n, 0, 2, 300); ndraw = 0;
         CHECK(holds_note_hook(n, 109u << 16 | 601, 80, 200, 0, 0) == 1);
-        CHECK(ndraw == 2 && draw_h[0] == (109u << 16 | (500 + 10 + 2)) && draw_py[0] == 0 && draw_zy[0] == (203 - 8 + 4 + 16) * 100 / 8);
-        CHECK(draw_h[1] == (109u << 16 | 510) && draw_y[1] == 203 - 8 && draw_py[1] == 0);   /* HCN white start cap, bottom at y+3 */
-        CHECK(draw_px[0] == 7 && draw_px[1] == 7);   /* 13 px wide, a pixel left of the note's x (hold_sprites PIVOT_X) */
+        CHECK(ndraw == 2 && draw_h[0] == (109u << 16 | (500 + 10 + 2)) && draw_py[0] == 0 && draw_zy[0] == (203 - 9 + 4 + 16) * 100 / 8);
+        CHECK(draw_h[1] == (109u << 16 | 510) && draw_y[1] == 203 - 9 && draw_py[1] == 0);   /* HCN white start cap, bottom at y+3 */
+        CHECK(draw_px[0] == 7 && draw_px[1] == 8);   /* body 13 / cap 15 px wide, a pixel left of the note's x (hold_sprites PIVOT_X) */
         /* same tick: tail on screen too -> body from the tail to the head, end cap */
         make_note(n, 0, 2, 400); ndraw = 0;
         CHECK(holds_note_hook(n, 109u << 16 | 601, 80, 40, 0, 0) == 1);
-        CHECK(ndraw == 2 && draw_y[0] == 47 && draw_zy[0] == (203 - 8 + 4 - 47) * 100 / 8 && draw_h[1] == (109u << 16 | 511) && draw_y[1] == 43 && draw_py[1] == 0);
+        CHECK(ndraw == 2 && draw_y[0] == 48 && draw_zy[0] == (203 - 9 + 4 - 48) * 100 / 8 && draw_h[1] == (109u << 16 | 511) && draw_y[1] == 43 && draw_py[1] == 0);
         /* a tail note a tick before the end (shifted off a shared row) is drawn where the end is:
          * 280 px over 151 ticks is ~1.85 px per tick, so one tick higher */
         make_note(n, 0, 2, 399); ndraw = 0;
@@ -118,10 +118,13 @@ int main(void)
         for (tt = 301; tt < 305; tt++) holds_frame_hook(tt);
         ndraw = 0;
         holds_frame_hook(305);
-        CHECK(ndraw == 2 && draw_y[0] == -16 && draw_y[1] == 0x143 - 8 && draw_zy[0] == (0x143 - 8 + 4 + 16) * 100 / 8);
-        CHECK(draw_h[0] == (109u << 16 | (512 + 1)) || draw_h[0] == (109u << 16 | (512 + 2)));   /* held: beam1/2 */
+        CHECK(ndraw == 2 && draw_y[0] == -16 && draw_y[1] == 0x143 - 9 && draw_zy[0] == (0x143 - 9 + 4 + 16) * 100 / 8);
+        CHECK(draw_h[0] == (109u << 16 | (512 + 2)));   /* held past the ramp: the brightest beam */
+        { hu32 k, steady = 1;                           /* and it stays lit: no flashing */
+          for (k = 0; k < 6; k++) { ndraw = 0; holds_frame_hook(306 + k); steady &= ndraw >= 1 && draw_h[0] == (109u << 16 | (512 + 2)); }
+          CHECK(steady); }
         gains = 0;
-        for (tt = 306; tt < 340; tt++) holds_frame_hook(tt);
+        for (tt = 312; tt < 340; tt++) holds_frame_hook(tt);
         CHECK(gains >= 4);                                              /* HCN held: gauge gain every 16th */
         /* the tail at the line while the release is still being judged: nothing fills the lane */
         for (tt = 340; tt < 399; tt++) holds_frame_hook(tt);
@@ -144,7 +147,7 @@ int main(void)
         static hu8 n[0x20] __attribute__((aligned(4)));
         static const hold_def one[1] = {{300, 500, 2, HOLD_CN, 0}};
         long long tt;
-        *(hu32 *)(record + 0x38) = 109u << 16 | 535u;
+        *(hu32 *)(record + 0x38) = 109u << 16 | 536u;
         holds_set_chart(one, 1);
         keys[0] = keys[1] = 0;
         for (tt = 0; tt < 290; tt++) holds_frame_hook(tt);
@@ -160,7 +163,7 @@ int main(void)
         static hu8 n[0x20] __attribute__((aligned(4)));
         static const hold_def one[1] = {{300, 500, 2, HOLD_CN, 0}};
         long long tt;
-        *(hu32 *)(record + 0x38) = 109u << 16 | 535u;
+        *(hu32 *)(record + 0x38) = 109u << 16 | 536u;
         holds_set_chart(one, 1);
         keys[0] = keys[1] = 0;
         for (tt = 0; tt <= 300; tt++) holds_frame_hook(tt);
@@ -175,7 +178,7 @@ int main(void)
         static hu8 n[0x20] __attribute__((aligned(4)));
         static const hold_def one[1] = {{300, 500, 2, HOLD_CN, 0}};
         long long tt;
-        *(hu32 *)(record + 0x38) = 109u << 16 | 535u;
+        *(hu32 *)(record + 0x38) = 109u << 16 | 536u;
         holds_set_chart(one, 1);
         keys[0] = 1u << 2;
         for (tt = 0; tt <= 300; tt++) holds_frame_hook(tt);
@@ -193,7 +196,7 @@ int main(void)
         static hu8 n[0x20] __attribute__((aligned(4)));
         static const hold_def one[1] = {{300, 500, 7, HOLD_BSS, 0}};
         long long tt;
-        *(hu32 *)(record + 0x38) = 109u << 16 | 535u;
+        *(hu32 *)(record + 0x38) = 109u << 16 | 536u;
         holds_set_chart(one, 1);
         keys[0] = 0; tt_in[0] = 1;
         for (tt = 0; tt <= 300; tt++) holds_frame_hook(tt);
@@ -203,8 +206,62 @@ int main(void)
         holds_frame_hook(310);
         CHECK(ndraw == 2 && (draw_h[0] & 0xffff) >= 500 + 24 + 3 && (draw_h[0] & 0xffff) <= 500 + 24 + 4);   /* lit BSS beam */
         CHECK(draw_h[1] == (109u << 16 | (500 + 24)) && draw_y[1] == 0x143 - 9 && draw_py[1] == 0);        /* BSS start cap */
-        CHECK(draw_px[0] == 13 && draw_px[1] == 13);
+        CHECK(draw_px[0] == 13 && draw_px[1] == 14);
         tt_in[0] = 0;
+    }
+    /* multi-spin scratch: two touching BSS sections, reversed at the joint. Both ends PGREAT (one per
+     * section, the second section's head from the scratch note at the joint); the middle note is drawn
+     * centred on the joint, the first section has no end cap there */
+    {
+        static hu8 n[0x20] __attribute__((aligned(4)));
+        static const hold_def mss[2] = {{300, 340, 7, HOLD_BSS, 0}, {340, 400, 7, HOLD_BSS, 0}};
+        long long tt;
+        hu32 before;
+        *(hu32 *)(record + 0x38) = 109u << 16 | 536u;
+        holds_set_chart(mss, 2);
+        keys[0] = 0; tt_in[0] = 0; nring = 0;
+        for (tt = 0; tt < 300; tt++) holds_frame_hook(tt);
+        holds_on_judgement(0xa, 7, 0);                                   /* first head */
+        tt_in[0] = 1;
+        for (tt = 300; tt < 340; tt++) holds_frame_hook(tt);
+        tt_in[0] = 0x81;                                                 /* reversed at the joint */
+        holds_frame_hook(340);
+        holds_on_judgement(0xa, 7, 0);                                   /* the middle note: second head */
+        before = nring;
+        for (tt = 341; tt < 400; tt++) holds_frame_hook(tt);
+        tt_in[0] = 1;                                                    /* reversed again at the end */
+        for (tt = 400; tt < 420; tt++) holds_frame_hook(tt);
+        CHECK(logged(0xa, 7) == 2 && logged(8, 7) == 0 && logged(9, 7) == 0 && logged(0xe, 7) == 0 && logged(0xf, 7) == 0);
+        (void)before;
+        tt_in[0] = 0;
+        /* drawing, a fresh play: the joint's head draws the middle note, the first section's tail no end cap */
+        holds_set_chart(mss, 2);
+        for (tt = 0; tt < 250; tt++) holds_frame_hook(tt);
+        make_note(n, 0, 7, 340); ndraw = 0;
+        CHECK(holds_note_hook(n, 109u << 16 | 601, 30, 100, 0, 0) == 1);
+        CHECK(ndraw == 2 && draw_h[1] == (109u << 16 | (500 + 36)) && draw_y[1] == 103 - 14 / 2 && draw_py[1] == 0);
+        make_note(n, 0, 7, 339); ndraw = 0;                              /* first section's tail note */
+        CHECK(holds_note_hook(n, 109u << 16 | 601, 30, 110, 0, 0) == 1);
+        CHECK(ndraw == 1 && (draw_h[0] & 0xffff) >= 500 + 24 + 2 && (draw_h[0] & 0xffff) <= 500 + 24 + 4);   /* body only */
+    }
+    /* the tail drawn before the head in a frame: the body runs to where the head is now (last frame's y
+     * plus one tick of scroll), not where it was, which left a gap above the start cap */
+    {
+        static hu8 n[0x20] __attribute__((aligned(4)));
+        static const hold_def one[1] = {{300, 400, 2, HOLD_CN, 0}};
+        long long tt;
+        hs32 ppt, bottom;
+        *(hu32 *)(record + 0x38) = 109u << 16 | 536u;
+        holds_set_chart(one, 1);
+        keys[0] = 0;
+        for (tt = 0; tt <= 250; tt++) holds_frame_hook(tt);
+        make_note(n, 0, 2, 300); holds_note_hook(n, 109u << 16 | 601, 80, 100, 0, 0);   /* head at y 100 */
+        holds_frame_hook(251);
+        make_note(n, 0, 2, 400); ndraw = 0;
+        CHECK(holds_note_hook(n, 109u << 16 | 601, 80, 0x140 - 149 * 2, 0, 0) == 1);       /* tail first: 2 px a tick */
+        ppt = 2;
+        bottom = 100 + ppt + 3 - 9 + 4;                                                   /* head y now, into the cap */
+        CHECK(ndraw == 2 && draw_y[0] + draw_zy[0] * 8 / 100 >= bottom - 1 && draw_y[0] + draw_zy[0] * 8 / 100 <= bottom);
     }
     /* CN held past the tail window: BAD (code 8) on that lane, like the arcade */
     {

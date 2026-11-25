@@ -40,9 +40,10 @@ class Spr1(unittest.TestCase):
 
     def test_catalogue(self):
         names = [r[0] for r in S.catalogue()]
-        self.assertEqual(len(names), 36)
+        self.assertEqual(len(names), 37)
         self.assertIn('hcn_white_beam4', names)
         self.assertIn('hbss_end', names)
+        self.assertEqual(names[36], 'mss_middle')         # holds_draw.c HD_MSS_MIDDLE, after the 36 older ones
 
 
 if __name__ == '__main__':
