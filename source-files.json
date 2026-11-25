@@ -15,7 +15,7 @@
   "ci/dependencies.json": "c05baaa738eff79071a37e37f743976d07369a766a5f4ad011314ce0b924e66b",
   "ci/dependencies.py": "ec948cea111721320ea05e0dc4eca3c063f01440398264de3ebe40b1a0d5b919",
   "ci/generate_iop_build.py": "9eb19a41b15c19c8055f48af8ccad01385e6c8a7b6a862684b7fc93490e0bb05",
-  "ci/launcher-resources.json": "979f43ceaefc21599ccef0efa04e69e00b5fedaf18e6000e5a943578e65bb321",
+  "ci/launcher-resources.json": "2c4882ab23a35e9efa33364d32c863026d6fb0bfb3573770330caf6f25533913",
   "ci/module-templates/mmce_modules.c.in": "72cea793dd305b9049cbe6b530cb50dd73215ee0ee9a9a1e70b98752cfa81c86",
   "ci/module-templates/usb_input_modules.c.in": "c2833bc4dc384670af6b180debc7abdafb37a862ed49f8ac81bcaad37a768a0b",
   "ci/module-templates/usb_modules.c.in": "593314891bd807876b25e996e0bbfb6b751f557dcd72817fa999d2c66aae4362",
