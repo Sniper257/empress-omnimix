@@ -134,7 +134,7 @@ class Chart(unittest.TestCase):
         long = np.vstack([np.arange(n) % 1000, np.arange(n) % 1000]).astype(np.int32)
         keys = [{'pcm': (44100, long)}, {'pcm': (44100, long[:, :100])}]
         charts = {1: [(700, 7, 0, 1), (900, 2, 1, 2), (1000, 0, 1, 0)]}
-        out, k2 = KB.split_long_bgm(charts, keys, C.tick, C.CLOCK)
+        out, k2 = KB.split_long_bgm(charts, keys, C.tick, C.CLOCK, chunk_ticks=300)
         pieces = [e for e in out[1] if e[1] == 7]
         self.assertEqual([C.tick(e[0]) for e in pieces], [C.tick(700) + 300 * i for i in range(3)])
         self.assertEqual([e[3] for e in pieces], [3, 4, 5])

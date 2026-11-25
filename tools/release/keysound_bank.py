@@ -70,9 +70,10 @@ def bgm_sounds(*event_lists):
     return sorted(seen, key=seen.get)
 
 
-def split_long_bgm(charts, keys, tick, clock, chunk_ticks=300):
+def split_long_bgm(charts, keys, tick, clock, chunk_ticks=60):
     """(charts, keys) with every BGM-only sound longer than LONG_SAMPLES cut into chunk_ticks pieces
-    (300 ticks = 5.0 s), each a new keysound started by its own type-7 event on the tick the previous
+    (60 ticks = 1.0 s; 5 s pieces left the BGM silent now and then in PCSX2, and native BGM sounds are
+    mostly 89-266 ms), each a new keysound started by its own type-7 event on the tick the previous
     piece ends. The PS2 sound chip has 2 MB: a 122 s backing track (Elisha, 3.1 MB a channel) played
     from the wrong place, and native EMPRESS songs cut their BGM into short sounds (All My Turn: 2,498
     BGM events, longest sound 6 s). tick(ms) is the chart's ms -> tick rounding, clock its us per tick."""
