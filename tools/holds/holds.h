@@ -92,6 +92,8 @@ typedef struct {
     hs32 stood[HOLDS_LANES];    /* BSS: time the turntable stopped, or -1 */
     hs32 next_tick[HOLDS_LANES];/* HCN/HBSS: next tick, 1/64 ticks */
     hs32 up_at[HOLDS_LANES];    /* key holds: first tick the key read up while holding, or -1 */
+    hs32 rel_at[HOLDS_LANES];   /* key holds: start of the latest up spell while holding (kept through a
+                                   re-press), or -1: the release time when the next head on the lane comes */
     holds_cfg cfg;
     hold_event ev[HOLDS_EVENTS];
     hu32 nev, dropped;

@@ -35,6 +35,8 @@ static void spin_then_stop(hs32 t, hu32 *k, hs8 *tt) { (void)k; tt[0] = t < rele
 static void spin_back_and_again(hs32 t, hu32 *k, hs8 *tt) { (void)k; tt[0] = t < 20 ? 1 : t < 24 ? -1 : t < 40 ? 1 : -1; }
 /* the held mask lags the press: up for two ticks right after the head */
 static void lag_then_hold(hs32 t, hu32 *k, hs8 *tt) { (void)tt; if ((t < 11 || t >= 13) && t < release_at) *k = 1; }
+/* CN chain on one key: up at release_at, down again at release_at + 2 for the next head */
+static void chain(hs32 t, hu32 *k, hs8 *tt) { (void)tt; if (t < release_at || t >= release_at + 2) *k = 1; }
 static void nothing(hs32 t, hu32 *k, hs8 *tt) { (void)t; (void)k; (void)tt; }
 
 int main(void)
@@ -58,6 +60,24 @@ int main(void)
       setup(&hcn, &c); holds_head(&H, 0, 10, J_GREAT, 10); release_at = 20; run(10, 50, hold_key0);
       { hu32 j = 0; while (j < nev && ev[j].kind != HE_BREAK) j++; CHECK(count(HE_BREAK) == 1 && j < nev && ev[j].offset == -20); }
       setup(&cn, &c); holds_head(&H, 0, 10, J_PGREAT, 10); release_at = 99; run(10, 60, hold_key0); CHECK(tail_is(J_POOR, 7)); }
+
+    /* CN chain: the next head on the key comes while the quick release is still inside release_grace
+     * (or already cleared by the re-press): the first CN is judged by that release, not POOR */
+    { holds_cfg c = CFG; c.release_grace = 3;
+      static const hold_def two[2] = {{10, 40, 0, HOLD_CN, 0}, {45, 70, 0, HOLD_CN, 0}};
+      nev = 0; CHECK(holds_reset(&H, two, 2, &c) == 0); holds_head(&H, 0, 10, J_PGREAT, 10);
+      release_at = 41; run(10, 43, chain); holds_head(&H, 0, 45, J_GREAT, 43); nev += holds_pop(&H, ev + nev, 256 - nev);     /* re-pressed at 43, head reported */
+      CHECK(tail_is(J_PGREAT, 1) && holds_lane_held(&H, 0));
+      nev = 0; CHECK(holds_reset(&H, two, 2, &c) == 0); holds_head(&H, 0, 10, J_PGREAT, 10);
+      release_at = 30; run(10, 33, chain); holds_head(&H, 0, 45, J_GREAT, 33); nev += holds_pop(&H, ev + nev, 256 - nev);
+      CHECK(tail_is(J_POOR, -10));                                                /* let go far too early */
+      nev = 0; CHECK(holds_reset(&H, two, 2, &c) == 0); holds_head(&H, 0, 10, J_PGREAT, 10);
+      release_at = 99; run(10, 44, chain); holds_head(&H, 0, 45, J_GREAT, 44); nev += holds_pop(&H, ev + nev, 256 - nev);    /* key never read up */
+      CHECK(tail_is(J_PGREAT, 4)); }   /* no up seen (mask lag): still inside the window */
+
+    /* CN then a plain note on the same key: up at 39, down again at 41 for the note (inside release_grace) */
+    { holds_cfg c = CFG; c.release_grace = 3;
+      setup(&cn, &c); holds_head(&H, 0, 10, J_PGREAT, 10); release_at = 39; run(10, 60, chain); CHECK(tail_is(J_PGREAT, -1)); }
 
     /* CN: a release anywhere in the wide window is PGREAT; early is POOR; held too long is POOR */
     setup(&cn, 0); CHECK(holds_head(&H, 0, 10, J_PGREAT, 10) == 0);

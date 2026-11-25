@@ -58,7 +58,7 @@ int holds_reset(holds_t *h, const hold_def *defs, hu32 n, const holds_cfg *cfg)
     h->defs = defs; h->n = n; h->next = 0; h->nev = 0; h->dropped = 0;
     copy(&h->cfg, cfg, sizeof h->cfg);
     if (h->cfg.overhold_judge != J_BAD) h->cfg.overhold_judge = J_POOR;
-    for (i = 0; i < HOLDS_LANES; i++) { h->active[i] = -1; h->spin[i] = 0; h->stood[i] = -1; h->next_tick[i] = 0; h->up_at[i] = -1; }
+    for (i = 0; i < HOLDS_LANES; i++) { h->active[i] = -1; h->spin[i] = 0; h->stood[i] = -1; h->next_tick[i] = 0; h->up_at[i] = -1; h->rel_at[i] = -1; }
     return 0;
 }
 
@@ -74,11 +74,32 @@ static void let_go(holds_t *h, hu32 i, hs32 now, hu32 real_poor)
                                                                      after the head have no judgement */
 }
 
+static void end_gain(holds_t *h, hu32 i, hs32 offset);
+
+/* The next head on a lane came while the previous hold there is still open. In a chain (CN end, next
+ * head a few ticks later) the player lets go and presses again quickly: the release can still be
+ * inside release_grace, or a fast re-press already cleared it. Judge the old hold by when its key
+ * last went up, as if the release had been seen; only a release before the tail window is POOR. */
+static void close_for_next(holds_t *h, hu32 old, hs32 now)
+{
+    const hold_def *o = &h->defs[old];
+    hs32 at = h->rel_at[o->lane] >= 0 ? h->rel_at[o->lane] : now, offset = at - o->end;
+    hs32 win = h->cfg.tail_window[J_BAD];
+    if (h->state[old] == HS_LOOSE) { finish(h, old, J_NONE, offset); return; }
+    if (h->state[old] != HS_HOLDING) { finish(h, old, J_POOR, offset); return; }
+    if (offset < -win) { finish(h, old, J_POOR, offset); return; }
+    end_gain(h, old, offset);
+    if (h->broken[old]) finish(h, old, J_NONE, offset);
+    else if (h->cfg.overhold == OVERHOLD_AUTO && offset >= 0) finish(h, old, J_PGREAT, offset);
+    else finish(h, old, offset > win ? h->cfg.overhold_judge : tail_judge(h, offset), offset);
+}
+
 static void start_hold(holds_t *h, hu32 i, hu32 judge, hs32 now)
 {
     const hold_def *d = &h->defs[i];
     hs32 old = h->active[d->lane];
-    if (old >= 0 && old != (hs32)i) finish(h, (hu32)old, J_POOR, 0);   /* overlapping holds: close the old one */
+    if (old >= 0 && old != (hs32)i) close_for_next(h, (hu32)old, now);   /* overlapping holds: close the old one */
+    h->rel_at[d->lane] = -1;
     h->active[d->lane] = (hs32)i;
     h->spin[d->lane] = 0;
     h->stood[d->lane] = -1;
@@ -177,9 +198,13 @@ static void step(holds_t *h, hu32 lane, hs32 now, hu32 keys, const hs8 tt[2])
     if (is_spin(d->kind) && still && offset >= -win && h->state[i] == HS_HOLDING && h->spin[lane]) down = 0;
     /* keys: a release only counts once the key has stayed up for release_grace ticks; it is timed
      * from the first up tick */
-    if (down || h->state[i] != HS_HOLDING) h->up_at[lane] = -1;
+    /* keys: up inside the tail window, then pressed again within release_grace (the next note on the
+     * key right after a CN): that was the release, timed from its first up tick */
+    if (down && h->state[i] == HS_HOLDING && !is_spin(d->kind) && h->up_at[lane] >= 0 && h->up_at[lane] - d->end >= -win) {
+        down = 0; now = h->up_at[lane]; offset = now - d->end; now64 = now * HOLDS_FP;
+    } else if (down || h->state[i] != HS_HOLDING) h->up_at[lane] = -1;
     else if (!is_spin(d->kind) && h->cfg.release_grace) {
-        if (h->up_at[lane] < 0) h->up_at[lane] = now;
+        if (h->up_at[lane] < 0) h->up_at[lane] = h->rel_at[lane] = now;
         if (now - h->up_at[lane] < h->cfg.release_grace) { down = 1; pending = 1; }
         else { now = h->up_at[lane]; offset = now - d->end; now64 = now * HOLDS_FP; }
     }

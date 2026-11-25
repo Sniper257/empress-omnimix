@@ -179,8 +179,9 @@ int holds_note_hook(hu8 *note, hu32 handle, hs32 x, hs32 y, hu32 side, hu32 clip
         head_seen = hd_head_at[i] >= hd_now - 1;
         hs32 bottom = head_seen ? hd_head_y[i] : judge;
         if (bottom > judge) bottom = judge;
-        hd_body(body, kind, x, HD_BASE(y) + hd_cap_h[kind] - HD_INTO(kind), HD_BASE(bottom) - hd_cap_h[kind] + HD_INTO(kind), clip);
-        if (!head_seen && holds.state[i] != HS_PENDING && y < judge)
+        hd_body(body, kind, x, HD_BASE(y) + hd_cap_h[kind] - HD_INTO(kind),
+                HD_BASE(bottom) - (!head_seen && holds.state[i] == HS_MISSED ? 0 : hd_cap_h[kind] - HD_INTO(kind)), clip);
+        if (!head_seen && holds.state[i] != HS_PENDING && holds.state[i] != HS_MISSED && y < judge)
             HD_DRAW(base, x, HD_BASE(judge), 100, hd_w[kind] / 2, hd_cap_h[kind], clip);   /* head hit: start cap on the line */
         HD_DRAW(base + 1, x, HD_BASE(y), 100, hd_w[kind] / 2, 0, clip);   /* end cap: hangs below the tail's line (arcade:
                                                                              a head on the same tick sits on that line) */
@@ -199,7 +200,9 @@ static void hd_frame(void)
         i = holds.active[lane];
         side = lane >> 3;
         if (i < 0 || hd_x[lane] < 0 || !hd_cont[side]) continue;
-        if (holds.state[i] != HS_HOLDING && holds.state[i] != HS_LOOSE) continue;
+        /* held, let go (HCN) or missed (CN/BSS): a missed hold keeps its unlit beam down to the line until its
+         * tail comes on screen (it vanished between the missed head and the tail in PCSX2) */
+        if (holds.state[i] != HS_HOLDING && holds.state[i] != HS_LOOSE && holds.state[i] != HS_MISSED) continue;
         if (hd_head_at[i] >= hd_now || hd_tail_at[i] >= hd_now) continue;   /* drawn with its notes */
         holds_ddbg[3]++;
         if (hd_now >= chart_defs[i].end - HOLDS_TAIL_SHIFT) continue;   /* the end is at the line: nothing above it to
@@ -208,8 +211,9 @@ static void hd_frame(void)
         group = hd_group(&chart_defs[i], lane, &kind);
         judge = HD_JUDGE_Y - HD_LIFT(side);
         hd_body(last - (HD_SPRITES - 1) + group + 2 + hd_state((hu32)i, chart_defs[i].kind == HOLD_HCN || chart_defs[i].kind == HOLD_HBSS),
-                kind, hd_x[lane], HD_TOP_Y, HD_BASE(judge) - hd_cap_h[kind] + HD_INTO(kind), hd_clip[side]);
-        HD_DRAW(last - (HD_SPRITES - 1) + group, hd_x[lane], HD_BASE(judge), 100, hd_w[kind] / 2, hd_cap_h[kind], hd_clip[side]);
+                kind, hd_x[lane], HD_TOP_Y, HD_BASE(judge) - (holds.state[i] == HS_MISSED ? 0 : hd_cap_h[kind] - HD_INTO(kind)), hd_clip[side]);
+        if (holds.state[i] != HS_MISSED)                 /* the start cap rides the line only once the head was hit */
+            HD_DRAW(last - (HD_SPRITES - 1) + group, hd_x[lane], HD_BASE(judge), 100, hd_w[kind] / 2, hd_cap_h[kind], hd_clip[side]);
     }
 }
 

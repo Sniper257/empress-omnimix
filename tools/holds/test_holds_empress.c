@@ -138,6 +138,22 @@ int main(void)
         CHECK(n[9] == 2);                                               /* left to the game (not marked consumed) */
         keys[0] = 0;
     }
+    /* a missed CN keeps its unlit beam down to the line (no start cap) until its tail is on screen */
+    {
+        static hu8 n[0x20] __attribute__((aligned(4)));
+        static const hold_def one[1] = {{300, 500, 2, HOLD_CN, 0}};
+        long long tt;
+        *(hu32 *)(record + 0x38) = 109u << 16 | 535u;
+        holds_set_chart(one, 1);
+        keys[0] = keys[1] = 0;
+        for (tt = 0; tt < 290; tt++) holds_frame_hook(tt);
+        make_note(n, 0, 2, 300); holds_note_hook(n, 109u << 16 | 601, 80, 300, 0, 0);   /* head seen: lane x, container */
+        for (tt = 290; tt < 330; tt++) holds_frame_hook(tt);                           /* missed (late rule) */
+        ndraw = 0;
+        holds_frame_hook(330);
+        CHECK(ndraw == 1 && draw_y[0] == -16 && draw_h[0] == (109u << 16 | (500 + 2)));  /* unlit CN beam, no cap */
+        CHECK(draw_zy[0] == (0x143 + 16) * 10);                                         /* down to the line */
+    }
     /* CN held past the tail window: BAD (code 8) on that lane, like the arcade */
     {
         static const hold_def one[1] = {{300, 360, 3, HOLD_CN, 0}};
