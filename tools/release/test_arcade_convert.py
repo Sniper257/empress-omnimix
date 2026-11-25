@@ -168,6 +168,15 @@ class Chart(unittest.TestCase):
         bgm = [e for e in parse(ply)[1] if e[1] & 15 == 7]
         self.assertEqual([(e[1], e[3]) for e in bgm], [(0x87, 2), (0x87, 1)])
 
+    def test_soft_limit(self):
+        import keysound_bank as KB
+        import numpy as np
+        x = np.array([0.0, 1000.0, -26000.0, 30000.0, 40000.0, -90000.0, 1e9])
+        y = KB.soft_limit(x)
+        self.assertTrue(np.array_equal(y[:3], x[:3]))                  # untouched below the knee
+        self.assertTrue((np.abs(y) < 32767.5).all())                   # never over full scale
+        self.assertTrue(30000 > y[3] > 28000 and 32767 > y[4] > y[3] and y[5] < -y[4])   # bent, still monotone
+
     def test_bank_round_trip(self):
         import io, wave, math
         import keysound_bank as KB

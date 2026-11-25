@@ -186,6 +186,22 @@ def fit_rates(lengths, budget, fixed=0):
     return out
 
 
+def soft_limit(pcm, knee=0.8, full=32767.0):
+    """Premixed BGM over full scale, bent smoothly instead of clipped: unchanged up to knee x full scale,
+    then a tanh curve that reaches full scale only at infinity. Memoryless, so the 0.5 s pieces of one
+    mix still join without a seam."""
+    import numpy as np
+    x = np.asarray(pcm, dtype=np.float64)
+    t = knee * full
+    over = np.abs(x) > t
+    if not over.any():
+        return x
+    y = x.copy()
+    room = full - t
+    y[over] = np.sign(x[over]) * (t + room * np.tanh((np.abs(x[over]) - t) / room))
+    return y
+
+
 def build(name, sounds, keys, gain=1.0, budget=None):
     """(bank bytes, {arcade keysound: slot}, info) for the given arcade keysound numbers.
     budget: largest bank size in bytes; the longest sounds up to LONG_SAMPLES are stored at 32 or
@@ -213,6 +229,8 @@ def build(name, sounds, keys, gain=1.0, budget=None):
             pcm, rate = resample(pcm, 44100, lower[n]), lower[n]
         if gain != 1.0:
             pcm = pcm * gain
+        if 'pcm' in keys[s - 1]:                   # premixed BGM: what is over full scale, bent, not clipped
+            pcm = soft_limit(pcm)
         pcm = np.clip(np.round(pcm), -32768, 32767).astype(np.int16)
         left, right = channel_frames(pcm[0]), channel_frames(pcm[1])
         index = len(entries)

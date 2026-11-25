@@ -242,6 +242,12 @@ DIFFICULTY_GROUPS = {'H': (0, 6, 4, 10), 'A': (2, 8), 'N': (1, 7), 'B': (3, 9)}
 DIFFICULTY_FIELDS = {'H': 0xe8, 'A': 0xf0, 'N': 0xf8, 'B': 0x100}
 PIECE_TICKS = 30
 report_gain = {}
+# Loudness each chart's autoplay mix is brought to (RMS over both channels, int16 scale): the level
+# Kailua (HCN Ver.) came out at with peak scaling, which plays level with the game's own songs. Peak
+# scaling alone left hot masters quiet: Purple Perplex's raw mix peaks at 89,616 (about 1% of its samples
+# over full scale), so scaled to its peak it came out at RMS 3,600 against 4,700-4,950 for the others.
+# The premixed BGM goes through keysound_bank.soft_limit for what still goes over full scale.
+TARGET_RMS = 4950
 
 
 def premix_bgm(charts, keys, piece_ticks=PIECE_TICKS):
@@ -249,13 +255,15 @@ def premix_bgm(charts, keys, piece_ticks=PIECE_TICKS):
     each a new keysound started on its tick. EMPRESS's own BGM is short sounds at a modest rate; the
     arcade's long backing tracks and ~2,500 layered BGM events a chart lost voices on the PS2 (long
     sounds cut, BGM silent now and then). Records the gain each chart needs in report_gain (the mix
-    and the chart's note sounds scaled alike, so a mix that would clip keeps its balance)."""
+    and the chart's note sounds scaled alike, so the mix keeps its balance): the autoplay mix brought
+    to TARGET_RMS, its rare peaks over full scale soft-limited in the bank."""
     import numpy as np
     keys = list(keys)
     out = {}
     for slot, events in charts.items():
-        full_peak = render(events, keys)[2]['peak']
-        gain = min(1.0, 32767 / full_peak) if full_peak else 1.0
+        _, full, _ = render(events, keys, raw=True)
+        rms = float(np.sqrt(np.mean(np.square(full, dtype=np.float64)))) if full.size else 0.0
+        gain = min(1.0, TARGET_RMS / rms) if rms else 1.0
         report_gain[slot] = gain
         bgm = [e for e in events if e[1] == 7 and e[3]]
         rest = [e for e in events if not (e[1] == 7)]
