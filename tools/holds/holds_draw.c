@@ -29,7 +29,7 @@
 /* catalogue order (hold_sprites.catalogue): first sprite of each group, states per body */
 enum { HD_CN_WHITE = 0, HD_CN_BLACK = 5, HD_HCN_WHITE = 10, HD_HCN_BLACK = 17, HD_BSS = 24, HD_HBSS = 29 };
 /* sprite sizes in frame rows (hold_sprites.py): white, black, turntable; caps and body tiles */
-static const hs8 hd_w[3] = {17, 13, 30}, hd_cap_h[3] = {10, 9, 10}, hd_body_h[3] = {10, 9, 10};
+static const hs8 hd_w[3] = {15, 11, 28}, hd_cap_h[3] = {10, 9, 10}, hd_body_h[3] = {10, 9, 10};
 /* the beam runs half a cap into each cap (drawn over it): the caps' art has dark rows at their inner
  * edge, which showed as a gap between beam and cap in PCSX2 */
 #define HD_INTO(kind) (hd_cap_h[kind] / 2)
