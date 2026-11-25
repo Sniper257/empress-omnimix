@@ -95,7 +95,7 @@ int main(void)
         CHECK(holds_note_hook(n, 109u << 16 | 601, 80, 200, 0, 0) == 1);
         CHECK(ndraw == 2 && draw_h[0] == (109u << 16 | (500 + 10 + 2)) && draw_py[0] == 0 && draw_zy[0] == (203 - 12 + 1 + 16) * 100 / 10);
         CHECK(draw_h[1] == (109u << 16 | 510) && draw_y[1] == 203 - 12 && draw_py[1] == 0);   /* HCN white start cap, bottom at y+3 */
-        CHECK(draw_px[0] == 8 && draw_px[1] == 8);   /* body and cap 16 px wide, half a pixel left of the note's x (hold_sprites PIVOT_X) */
+        CHECK(draw_px[0] == 7 && draw_px[1] == 7);   /* body and cap 16 px wide, half a pixel right of the note's x (hold_sprites PIVOT_X) */
         /* same tick: tail on screen too -> body from the tail to the head, end cap */
         make_note(n, 0, 2, 400); ndraw = 0;
         CHECK(holds_note_hook(n, 109u << 16 | 601, 80, 40, 0, 0) == 1);
