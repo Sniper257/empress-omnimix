@@ -30,10 +30,11 @@ from pathlib import Path
 # turntable 30 px = 15 / 11 / 27 frame px. Caps and bodies are one frame px wider (16 / 12 / 28), so they
 # reach the lane lines as on an arcade capture (at the inside width a capture showed a pixel or two of
 # lane beside them); the beam art's dark edge columns make the body read slimmer than the cap.
-WIDTH = {'white': 16, 'black': 12, 'scr': 28}
+WIDTH = {'white': 17, 'black': 13, 'scr': 29}   # one more than the lane-line fit, the extra column on the right
 # x pivots: the note x the game hands over is right of the lane's centre (its own notes sit half a pixel
 # right too): half a pixel left of the sprite's middle
-PIVOT_X = {'white': 8, 'black': 6, 'scr': 14}   # keys: 7 / 5 sat a pixel right of the lanes
+PIVOT_X = {'white': 8, 'black': 6, 'scr': 14}   # keys: 7 / 5 sat a pixel right of the lanes; kept when the
+                                                  # sprites grew a column (17 / 13 / 29): anchored on the left
 CAP_WIDTH = WIDTH
 CAP_PIVOT_X = PIVOT_X
 # cap heights: the coloured band of every cap texture is about half of its 26 rows (12-13) and that of

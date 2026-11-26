@@ -378,6 +378,42 @@ static hs8 spin(hu32 side)
     return v == 0 ? 0 : (v & 0x80u) ? -1 : 1;
 }
 
+/* AUTO PLAY (native side mask, input_probe.c): the game hits the heads by itself but presses nothing, so
+ * hold its holds for it: keys down and the turntable spinning from the head until the end tick, then let
+ * go there (a release on the end: PGREAT; a BSS stops on it, which releases it the same way). MSS
+ * sections each start a new spin, in the other direction, as a joint asks for. */
+#ifdef HOLDS_TEST
+extern hu32 test_autoplay(void);
+#define H_AUTOPLAY() test_autoplay()
+#else
+#define H_AUTOPLAY() (*(volatile hu8 *)(unsigned long)0x2ad440 & 3u)
+#endif
+static hs32 auto_hold[2] = {-1, -1};
+static hs8 auto_spin[2] = {1, 1};
+static void autoplay_holds(hs32 now, hu32 *keys, hs8 tt[2])
+{
+    hu32 sides = H_AUTOPLAY(), lane;
+    if (!sides) return;
+    for (lane = 0; lane < HOLDS_LANES; lane++) {
+        hs32 i = holds.active[lane];
+        hu32 side = lane >> 3;
+        LOOP_PAD();
+        if (!(sides >> side & 1u) || i < 0) continue;
+        if (holds.state[i] != HS_HOLDING && holds.state[i] != HS_LOOSE) continue;
+        if (now >= chart_defs[i].end) {                     /* the end: let go */
+            if ((lane & 7u) == 7u) tt[side] = 0; else *keys &= ~(1u << lane);
+            continue;
+        }
+        if ((lane & 7u) == 7u) {
+            if (auto_hold[side] != i) {                     /* a new BSS / MSS section */
+                auto_spin[side] = (mss_chain[i] & MSS_PREV) ? (hs8)-auto_spin[side] : 1;
+                auto_hold[side] = i;
+            }
+            tt[side] = auto_spin[side];
+        } else *keys |= 1u << lane;
+    }
+}
+
 /* Replaces the play loop's jal 0x1e6bb0(tick) at 0x1e5cb8. */
 void holds_frame_hook(long long tick)
 {
@@ -401,6 +437,7 @@ void holds_frame_hook(long long tick)
 #endif
     tt[0] = spin(0);
     tt[1] = spin(1);
+    autoplay_holds((hs32)tick, &keys, tt);
     if (tt[0]) spun_at[0] = (hs32)tick;
     if (tt[1]) spun_at[1] = (hs32)tick;
     hd_heads_gone(keys, tt);

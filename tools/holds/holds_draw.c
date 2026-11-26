@@ -124,15 +124,15 @@ static hu32 hd_group(const hold_def *d, hu32 lane, hu32 *kind)
     return *kind ? HD_CN_BLACK : HD_CN_WHITE;
 }
 
-/* body sprite: 0 not held; held: 1 for HD_RAMP ticks from the hit (or the HCN re-grab), then 2, the
- * brightest, for good (the arcade beam brightens once and stays lit, no flashing); HCN let go: 3, then 4 */
-#define HD_RAMP 4
+/* body sprite: 0 not held; held: 1 and 2 alternating every 4 ticks (the arcade beam pulses; every 2 ticks
+ * was twice too fast); HCN let go: 3 and 4 alternating the same way */
+#define HD_PULSE(t) (((hu32)(t) >> 2) & 1u)
 static hu32 hd_state(hu32 i, hu32 hell)
 {
-    hs32 since = hd_now - holds.hit_at[chart_defs[i].lane];
+    (void)i;
     switch (holds.state[i]) {
-    case HS_HOLDING: return since < HD_RAMP ? 1 : 2;
-    case HS_LOOSE: return hell ? (hd_now - holds.loose_at[chart_defs[i].lane] < HD_RAMP ? 3 : 4) : 0;
+    case HS_HOLDING: return 1 + HD_PULSE(hd_now);
+    case HS_LOOSE: return hell ? 3 + HD_PULSE(hd_now) : 0;
     default: return 0;
     }
 }

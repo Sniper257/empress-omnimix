@@ -29,6 +29,8 @@ hu8 *test_record(void) { return record; }
 static int gains;
 void test_gain(hu32 side) { (void)side; gains++; }
 static int spawned;
+static hu32 autoplay;
+hu32 test_autoplay(void) { return autoplay; }
 void test_native_spawn(hu8 *note) { (void)note; spawned++; }
 static void make_note(hu8 *n, hu32 side, hu32 lane, short t) { hu32 i; for (i = 0; i < 0x20; i++) n[i] = 0; n[9] = (hu8)lane; n[0xa] = (hu8)side; n[0xb] = 1; *(short *)(n + 0x18) = t; }
 hu32 test_chart_cursor(void) { return 0; }   /* no chart in host memory: holds_set_chart provides the records */
@@ -119,10 +121,10 @@ int main(void)
         ndraw = 0;
         holds_frame_hook(305);
         CHECK(ndraw == 2 && draw_y[0] == -16 && draw_y[1] == 0x143 - 12 && draw_zy[0] == (0x143 - 12 + 1 + 16) * 100 / 10);
-        CHECK(draw_h[0] == (109u << 16 | (512 + 2)));   /* held past the ramp: the brightest beam */
-        { hu32 k, steady = 1;                           /* and it stays lit: no flashing */
-          for (k = 0; k < 6; k++) { ndraw = 0; holds_frame_hook(306 + k); steady &= ndraw >= 1 && draw_h[0] == (109u << 16 | (512 + 2)); }
-          CHECK(steady); }
+        CHECK(draw_h[0] == (109u << 16 | (512 + 1 + ((305u >> 2) & 1u))));   /* held: the beam pulses */
+        { hu32 k, pulse = 1;                            /* 1 and 2 alternating every 4 ticks */
+          for (k = 0; k < 6; k++) { ndraw = 0; holds_frame_hook(306 + k); pulse &= ndraw >= 1 && draw_h[0] == (109u << 16 | (512 + 1 + (((306u + k) >> 2) & 1u))); }
+          CHECK(pulse); }
         gains = 0;
         for (tt = 312; tt < 340; tt++) holds_frame_hook(tt);
         CHECK(gains >= 4);                                              /* HCN held: gauge gain every 16th */
@@ -361,6 +363,25 @@ int main(void)
         for (i = 0; i < nring; i++) if (ring_code[i] == 0xf || ring_code[i] == 0xb) bad++;
         CHECK(bad == 0);
         CHECK(nring >= 1 && ring_code[nring - 1] == 0xa);                    /* PGREAT at the end */
+    }
+    /* AUTO PLAY: no keys from the pad; the CN and the BSS are held for the player and let go on their ends */
+    {
+        static const hold_def two[2] = {{300, 400, 2, HOLD_CN, 0}, {300, 380, 7, HOLD_BSS, 0}};
+        long long tt;
+        hu32 i, bad = 0;
+        holds_set_chart(two, 2);
+        keys[0] = pressed[0] = 0; tt_in[0] = 0;
+        holds_frame_hook(0);
+        for (tt = 1; tt < 299; tt++) holds_frame_hook(tt);
+        autoplay = 1;
+        nring = 0;
+        holds_on_judgement(0xa, 2, 0);             /* the game hits both heads itself */
+        holds_on_judgement(0xa, 7, 0);
+        for (tt = 299; tt < 430; tt++) holds_frame_hook(tt);
+        autoplay = 0;
+        for (i = 0; i < nring; i++) if (ring_code[i] == 0xf || ring_code[i] == 0xb || ring_code[i] == 0xe || ring_code[i] == 9) bad++;
+        CHECK(bad == 0);
+        CHECK(logged(0xa, 2) == 1 && logged(0xa, 7) == 1);                   /* both ends PGREAT */
     }
     if (failures) { printf("%d failures\n", failures); return 1; }
     printf("holds_empress: all tests passed\n");
