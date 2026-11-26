@@ -124,9 +124,9 @@ static hu32 hd_group(const hold_def *d, hu32 lane, hu32 *kind)
     return *kind ? HD_CN_BLACK : HD_CN_WHITE;
 }
 
-/* body sprite: 0 not held; held: 1 and 2 alternating every 4 ticks (the arcade beam pulses; every 2 ticks
- * was twice too fast); HCN let go: 3 and 4 alternating the same way */
-#define HD_PULSE(t) (((hu32)(t) >> 2) & 1u)
+/* body sprite: 0 not held; held: 1 and 2 alternating every 8 ticks (the arcade beam pulses; every 2 and 4 ticks
+ * were too fast); HCN let go: 3 and 4 alternating the same way */
+#define HD_PULSE(t) (((hu32)(t) >> 3) & 1u)
 static hu32 hd_state(hu32 i, hu32 hell)
 {
     (void)i;

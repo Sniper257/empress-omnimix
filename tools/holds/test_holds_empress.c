@@ -121,9 +121,9 @@ int main(void)
         ndraw = 0;
         holds_frame_hook(305);
         CHECK(ndraw == 2 && draw_y[0] == -16 && draw_y[1] == 0x143 - 12 && draw_zy[0] == (0x143 - 12 + 1 + 16) * 100 / 10);
-        CHECK(draw_h[0] == (109u << 16 | (512 + 1 + ((305u >> 2) & 1u))));   /* held: the beam pulses */
-        { hu32 k, pulse = 1;                            /* 1 and 2 alternating every 4 ticks */
-          for (k = 0; k < 6; k++) { ndraw = 0; holds_frame_hook(306 + k); pulse &= ndraw >= 1 && draw_h[0] == (109u << 16 | (512 + 1 + (((306u + k) >> 2) & 1u))); }
+        CHECK(draw_h[0] == (109u << 16 | (512 + 1 + ((305u >> 3) & 1u))));   /* held: the beam pulses */
+        { hu32 k, pulse = 1;                            /* 1 and 2 alternating every 8 ticks */
+          for (k = 0; k < 6; k++) { ndraw = 0; holds_frame_hook(306 + k); pulse &= ndraw >= 1 && draw_h[0] == (109u << 16 | (512 + 1 + (((306u + k) >> 3) & 1u))); }
           CHECK(pulse); }
         gains = 0;
         for (tt = 312; tt < 340; tt++) holds_frame_hook(tt);
