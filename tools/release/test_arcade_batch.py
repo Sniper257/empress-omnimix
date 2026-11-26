@@ -23,6 +23,21 @@ class Batch(unittest.TestCase):
         self.assertEqual(B.parse_styles('pinky_crush, 17,Copula'), {32, 17, 23})
         with self.assertRaises(SystemExit):
             B.parse_styles('nope')
+        # a contents folder: data/sound plus data_mods/*/sound, the mods winning
+        c = self.root / 'contents'
+        (c / 'data' / 'sound').mkdir(parents=True)
+        (c / 'data' / 'sound' / '17000.ifs').write_bytes(b'x')
+        (c / 'data' / 'sound' / '18000.ifs').write_bytes(b'x')
+        for mod in ('omnimix_32', 'omnimix_33'):
+            (c / 'data_mods' / mod / 'sound').mkdir(parents=True)
+        (c / 'data_mods' / 'omnimix_32' / 'sound' / '18000.ifs').write_bytes(b'x')
+        (c / 'data_mods' / 'omnimix_33' / 'sound' / '32083').mkdir()
+        (c / 'data_mods' / 'omnimix_33' / 'sound' / '32083' / '32083.1').write_bytes(b'x')
+        (c / 'data' / 'movie').mkdir()
+        (c / 'data' / 'movie' / '99999.ifs').write_bytes(b'x')              # not a sound folder: not searched
+        found = B.find_sources(c)
+        self.assertEqual(sorted(found), [17000, 18000, 32083])
+        self.assertIn('omnimix_32', str(found[18000]))
         used = set()
         self.assertEqual([B.slug(t, used) for t in ('Kailua (HCN Ver.)', 'kailua hcn ver', '!!!')],
                          ['kailua_hcn_ver', 'kailua_hcn_ver_2', 'song'])

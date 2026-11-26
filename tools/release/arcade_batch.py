@@ -4,8 +4,9 @@
   python3 arcade_songdb.py music_data.bin music_omni.bin -o arcade-songs.json      (once)
   python3 arcade_batch.py ARCADE_DATA MEGAMIX --db arcade-songs.json --style pinky_crush [--jobs 4] [--install]
 
-ARCADE_DATA is searched for songs: <id>.ifs files, or <id>/ folders holding <id>.1 with <id>.2dx or <id>.s3p
-(an arcade data/sound folder). MEGAMIX is your built MEGAMIX folder: it supplies the template record
+ARCADE_DATA is the game's contents folder: songs are taken from data/sound and every data_mods/*/sound
+(omnimix_32, omnimix_33, ...; a mod's copy of a song wins). Any other folder is searched as it is. Songs are
+<id>.ifs files, or <id>/ folders holding <id>.1 with <id>.2dx or <id>.s3p. MEGAMIX is your built MEGAMIX folder: it supplies the template record
 (EMPRESS/SLPM_552.21), the native text and folder containers, and the hold sprites of a song converted
 before (or give --hold-sprites). The song database (arcade_songdb.py; or --music music_data.bin, repeatable) gives
 each song's title, artist, genre, levels and version. --style picks the style folders to convert (repeatable or
@@ -74,17 +75,34 @@ def parse_versions(text):
     return out
 
 
-def find_sources(root):
-    """{song id: path} of every <id>.ifs and <id>/ folder with <id>.1 under root."""
-    found = {}
+def _scan(root, found):
     for dirpath, dirnames, filenames in os.walk(root):
         d = Path(dirpath)
         for f in filenames:
             m = re.fullmatch(r'(\d{4,5})\.ifs', f, re.I)
-            if m and '_pre' not in f.lower():
-                found.setdefault(int(m.group(1)), d / f)
+            if m:
+                found[int(m.group(1))] = d / f
         if re.fullmatch(r'\d{4,5}', d.name) and (d / (d.name + '.1')).is_file():
             found[int(d.name)] = d
+
+
+def sound_folders(root):
+    """The sound folders of a game's contents folder: data/sound, then every data_mods/*/sound (omnimix_32,
+    omnimix_33, ...), so a mod's copy of a song wins over the game's. Any other folder is searched as it is."""
+    root = Path(root)
+    mods = sorted(p for p in (root / 'data_mods').glob('*/sound') if p.is_dir()) if (root / 'data_mods').is_dir() else []
+    base = [root / 'data' / 'sound'] if (root / 'data' / 'sound').is_dir() else []
+    return base + mods if base or mods else [root]
+
+
+def find_sources(root):
+    """{song id: path} of every <id>.ifs and <id>/ folder with <id>.1 in the sound folders (sound_folders);
+    within one folder an <id>/ folder wins over an <id>.ifs."""
+    found = {}
+    for folder in sound_folders(root):
+        part = {}
+        _scan(folder, part)
+        found.update(part)
     return found
 
 
