@@ -1,0 +1,317 @@
+#!/usr/bin/env python3
+"""Convert a whole folder of arcade IIDX songs into MEGAMIX song folders, one style folder per version.
+
+  python3 arcade_batch.py ARCADE_DATA MEGAMIX --music music_data.bin [--versions 17-33] [--jobs 4] [--install]
+
+ARCADE_DATA is searched for songs: <id>.ifs files, or <id>/ folders holding <id>.1 with <id>.2dx or <id>.s3p
+(an arcade data/sound folder). MEGAMIX is your built MEGAMIX folder: it supplies the template record
+(EMPRESS/SLPM_552.21), the native text and folder containers, and the hold sprites of a song converted
+before (or give --hold-sprites). music_data.bin gives each song's title, artist, genre, levels and version.
+
+Each song goes to OUT/songs/<style>/<folder>/ (OUT defaults to MEGAMIX/arcade-batch), where <style> is its
+version's folder: sirius, resort_anthem, lincle, ... pinky_crush, sparkle_shower. A version without a style
+folder in MEGAMIX gets one (label, caption, style.txt). Work files stay in OUT/work/<id>/, so running the
+same command again skips songs already done and retries the ones that failed; OUT/batch.json lists both.
+
+--install then copies the songs into MEGAMIX/songs, adds them to their styles' index.txt and new styles to
+songs/styles.txt (arcade styles kept in version order, starting where the first one already is, otherwise at
+the top), and runs `megamix.py index`. Existing songs, settings and saves are not touched. Rebuild the launcher
+cache afterwards if you use one.
+
+Needs numpy, and ffmpeg on the PATH for .s3p (WMA) keysounds. A version whose titles use characters the
+bundled font atlas lacks gets its own atlas from the pinned open fonts (downloaded once into OUT/fonts; needs
+Pillow and fonttools).
+"""
+import argparse
+import concurrent.futures
+import hashlib
+import json
+import os
+import re
+import shutil
+import struct
+import subprocess
+import sys
+import traceback
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+import arcade_data as A  # noqa: E402
+
+GAME_VERSION = 988          # music_data v32 entry: u16 game version (0 1st style, 1 substream, 2 2nd style, ...)
+# version -> (style folder, folder label (native label glyphs: upper case), caption, style name)
+STYLES = {
+    17: ('sirius', 'SIRIUS', 'SIRIUS'),
+    18: ('resort_anthem', 'RESORT ANTHEM', 'Resort Anthem'),
+    19: ('lincle', 'LINCLE', 'Lincle'),
+    20: ('tricoro', 'TRICORO', 'tricoro'),
+    21: ('spada', 'SPADA', 'SPADA'),
+    22: ('pendual', 'PENDUAL', 'PENDUAL'),
+    23: ('copula', 'COPULA', 'copula'),
+    24: ('sinobuz', 'SINOBUZ', 'SINOBUZ'),
+    25: ('cannon_ballers', 'CANNON BALLERS', 'CANNON BALLERS'),
+    26: ('rootage', 'ROOTAGE', 'Rootage'),
+    27: ('heroic_verse', 'HEROIC VERSE', 'HEROIC VERSE'),
+    28: ('bistrover', 'BISTROVER', 'BISTROVER'),
+    29: ('casthour', 'CASTHOUR', 'CastHour'),
+    30: ('resident', 'RESIDENT', 'RESIDENT'),
+    31: ('epolis', 'EPOLIS', 'EPOLIS'),
+    32: ('pinky_crush', 'PINKY CRUSH', 'Pinky Crush'),
+    33: ('sparkle_shower', 'SPARKLE SHOWER', 'Sparkle Shower'),
+}
+TEMPLATE_SONG = 2           # All My Turn: the record template (dump_record.py)
+
+
+def parse_versions(text):
+    out = set()
+    for part in text.split(','):
+        lo, _, hi = part.partition('-')
+        out.update(range(int(lo), int(hi or lo) + 1))
+    return out
+
+
+def find_sources(root):
+    """{song id: path} of every <id>.ifs and <id>/ folder with <id>.1 under root."""
+    found = {}
+    for dirpath, dirnames, filenames in os.walk(root):
+        d = Path(dirpath)
+        for f in filenames:
+            m = re.fullmatch(r'(\d{4,5})\.ifs', f, re.I)
+            if m and '_pre' not in f.lower():
+                found.setdefault(int(m.group(1)), d / f)
+        if re.fullmatch(r'\d{4,5}', d.name) and (d / (d.name + '.1')).is_file():
+            found[int(d.name)] = d
+    return found
+
+
+def slug(title, used):
+    s = re.sub(r'[^a-z0-9]+', '_', title.lower()).strip('_')[:40].strip('_') or 'song'
+    name, n = s, 2
+    while name in used:
+        name, n = '%s_%d' % (s, n), n + 1
+    used.add(name)
+    return name
+
+
+def song_info(music, entries, sid):
+    at = music['index'][sid] if sid < len(music['index']) else -1
+    if at < 0:
+        return None
+    e = entries[at]
+    title, ascii_title = A.entry_title(e)
+    return {'id': sid, 'entry': at, 'version': struct.unpack_from('<H', e, GAME_VERSION)[0],
+            'title': title or ascii_title, 'ascii': ascii_title or title}
+
+
+def style_atlas(out, style, texts, profile):
+    """The bundled arcade atlas when it draws every text of the style, else one built for them (cached)."""
+    import arcade_text as X
+    import text_raster as R
+    base = X.atlas()
+    roles = (('title', 'large_title'), ('genre', 'card_genre'), ('artist', 'card_artist'))
+    if not any(X.missing_glyphs(base, t[k], r) for t in texts for k, r in roles):
+        return None
+    corpus = json.loads((HERE / 'text-fonts' / 'corpus.json').read_text(encoding='utf-8'))
+    seen = set(corpus)
+    for t in texts:
+        for k in ('title', 'ascii_title', 'genre', 'artist'):
+            if t.get(k) and t[k] not in seen:
+                seen.add(t[k]); corpus.append(t[k])
+    blob = json.dumps(corpus, ensure_ascii=False).encode()
+    path = out / 'fonts' / ('%s-%s.mga' % (style, hashlib.sha256(blob).hexdigest()[:12]))
+    if not path.is_file():
+        fonts = out / 'fonts' / 'src'
+        if not (fonts / 'open-fonts.json').is_file():
+            print('fetching the pinned open fonts into', fonts)
+            subprocess.run([sys.executable, str(HERE / 'fetch_text_fonts.py'), str(profile), str(fonts)], check=True)
+        corpus_path = out / 'fonts' / (style + '-corpus.json')
+        corpus_path.write_bytes(blob)
+        print('%s: building a font atlas for its titles' % style)
+        subprocess.run([sys.executable, str(HERE / 'prepare_text_fonts.py'), 'open-fonts.json', str(corpus_path.resolve()),
+                        str(path.resolve())], check=True, cwd=fonts, stdout=subprocess.DEVNULL)
+    return path
+
+
+def convert_one(job):
+    """Worker: one song, source -> work/<id> -> songs/<style>/<folder>. Returns a report row."""
+    import arcade_convert as C
+    import arcade_songfolder as F
+    import arcade_text as X
+    import text_raster as R
+    row = {'id': job['id'], 'title': job['title'], 'style': job['style'], 'folder': job['folder']}
+    try:
+        work = Path(job['work'])
+        if not (work / 'convert.json').is_file():
+            if work.exists():
+                shutil.rmtree(work)
+            C.main([job['source'], str(work), '--split'])
+        music = Path(job['music']).read_bytes()
+        md = A.read_music_data(music)
+        entry = md['entries'][job['entry']]
+        atlas = R.Atlas(Path(job['atlas']).read_bytes()) if job['atlas'] else None
+        containers = X.base_containers(Path(job['megamix']))
+        text_files = X.render(X.song_texts(music, job['id']), containers, atlas)
+        dest = Path(job['dest'])
+        if dest.exists():
+            shutil.rmtree(dest)
+        info = F.build(work, Path(job['template']).read_bytes(), dest, job['ascii'], F.levels(entry), 17,
+                       Path(job['sprites']) if job['sprites'] else None, text_files, job['id'])
+        row.update(ok=True, charts=info['charts'], bpm=info['bpm'])
+    except Exception as e:  # noqa: BLE001 - one song's failure must not stop the batch
+        row.update(ok=False, error='%s: %s' % (type(e).__name__, e), trace=traceback.format_exc()[-1500:])
+    return row
+
+
+def hold_sprites(megamix, given):
+    import arcade_songfolder as F
+    names = F.hold_sprite_names()
+    if given:
+        return given
+    for d in sorted((megamix / 'songs').glob('*/*/holds')):
+        if all((d / (n + '.spr')).is_file() for n in names):
+            return d
+    return None
+
+
+def install(megamix, out, done):
+    """Copy the converted songs into MEGAMIX and list them; then megamix.py index."""
+    import megamix as M
+    songs = megamix / 'songs'
+    styles_path = songs / 'styles.txt'
+    order = [l.strip() for l in styles_path.read_text(encoding='utf-8').splitlines() if l.strip()]
+    arcade = [s for s, _, _ in STYLES.values()]
+    by_style = {}
+    for r in done:
+        by_style.setdefault(r['style'], []).append(r['folder'])
+    for style, folders in by_style.items():
+        src = out / 'songs' / style
+        dst = songs / style
+        dst.mkdir(parents=True, exist_ok=True)
+        for f in ('style.txt', 'label.spr', 'caption.spr'):
+            if (src / f).is_file() and not (dst / f).is_file():
+                shutil.copyfile(src / f, dst / f)
+        for folder in folders:
+            if (dst / folder).exists():
+                shutil.rmtree(dst / folder)
+            shutil.copytree(src / folder, dst / folder)
+        index = dst / 'index.txt'
+        listed = [l.strip() for l in index.read_text(encoding='utf-8').splitlines() if l.strip()] if index.is_file() else []
+        index.write_text(''.join(n + '\n' for n in listed + [f for f in folders if f not in listed]), encoding='utf-8')
+        if style not in order:                       # arcade styles in version order, from the first one
+            after = [s for s in order if s in arcade and arcade.index(s) < arcade.index(style)]
+            before = [s for s in order if s in arcade and arcade.index(s) > arcade.index(style)]
+            at = order.index(after[-1]) + 1 if after else order.index(before[0]) if before else 0
+            order.insert(at, style)
+    M.write_atomic(styles_path, ''.join(s + '\n' for s in order))
+    M.reindex(megamix)
+
+
+def main(argv=None):
+    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    p.add_argument('arcade', type=Path, help='folder searched for <id>.ifs files and <id>/ song folders')
+    p.add_argument('megamix', type=Path, help='your MEGAMIX folder')
+    p.add_argument('--music', type=Path, required=True, help='the arcade data/info/music_data.bin (or an omnimix one)')
+    p.add_argument('--out', type=Path, help='output and work folder (default MEGAMIX/arcade-batch)')
+    p.add_argument('--versions', default='17-33', help='versions to convert, e.g. 17-33 or 24,32 (default 17-33)')
+    p.add_argument('--ids', help='only these song ids, comma separated')
+    p.add_argument('--limit', type=int, help='convert at most this many songs (smallest ids first)')
+    p.add_argument('--jobs', type=int, default=max(1, min(4, (os.cpu_count() or 2) // 2)),
+                   help='songs converted in parallel (each needs about 1 GB of memory; default %(default)s)')
+    p.add_argument('--hold-sprites', type=Path, help='hold sprites folder (default: from a song converted before)')
+    p.add_argument('--install', action='store_true', help='copy the results into MEGAMIX and run megamix.py index')
+    a = p.parse_args(argv)
+    megamix, out = a.megamix.resolve(), (a.out or a.megamix / 'arcade-batch').resolve()
+    try:
+        import numpy  # noqa: F401
+    except ImportError:
+        sys.exit('needs numpy: python3 -m pip install numpy')
+    music = a.music.read_bytes()
+    md = A.read_music_data(music)
+    sources = find_sources(a.arcade)
+    versions = parse_versions(a.versions)
+    ids = {int(x) for x in a.ids.split(',')} if a.ids else None
+    songs = []
+    unknown = []
+    for sid in sorted(sources):
+        if ids is not None and sid not in ids:
+            continue
+        info = song_info(md, md['entries'], sid)
+        if info is None:
+            unknown.append(sid)
+            continue
+        if info['version'] in versions and info['version'] in STYLES:
+            songs.append(info)
+    if a.limit:
+        songs = songs[:a.limit]
+    if not songs:
+        sys.exit('no songs of versions %s found in %s (%d song sources seen)' % (a.versions, a.arcade, len(sources)))
+    sprites = hold_sprites(megamix, a.hold_sprites)
+    if not sprites:
+        print('warning: no hold sprites found (give --hold-sprites): charge notes will draw as plain notes', file=sys.stderr)
+    out.mkdir(parents=True, exist_ok=True)
+    template = out / 'record_template.bin'
+    if not template.is_file():
+        import dump_record
+        dump_record.main([str(megamix), str(TEMPLATE_SONG), str(template)])
+    # folder names: kept from an earlier run so a rerun replaces, not duplicates
+    report_path = out / 'batch.json'
+    previous = {r['id']: r for r in json.loads(report_path.read_text())['songs']} if report_path.is_file() else {}
+    used = {}
+    for s in songs:
+        style = STYLES[s['version']][0]
+        taken = used.setdefault(style, {d.name for d in (megamix / 'songs' / style).glob('*') if d.is_dir()} - {r['folder'] for r in previous.values()})
+        s['style'] = style
+        s['folder'] = previous[s['id']]['folder'] if s['id'] in previous and previous[s['id']]['style'] == style else slug(s['ascii'], taken)
+        taken.add(s['folder'])
+    # styles: folder art for versions MEGAMIX has no folder for; one font atlas per style if needed
+    import arcade_style as S
+    import arcade_text as X
+    containers = S.base_containers(megamix)
+    atlases = {}
+    for v in sorted({s['version'] for s in songs}):
+        style, label, caption = STYLES[v]
+        members = [s for s in songs if s['style'] == style]
+        if not (megamix / 'songs' / style / 'style.txt').is_file() and not (out / 'songs' / style / 'style.txt').is_file():
+            S.write_style(out, style, caption, label, caption, [], containers)
+        texts = [X.song_texts(music, s['id']) for s in members]
+        atlases[style] = style_atlas(out, style, texts, HERE / 'text-fonts' / 'open-fonts.sources.json')
+    jobs = []
+    for s in songs:
+        done = previous.get(s['id'], {}).get('ok') and (out / 'songs' / s['style'] / s['folder'] / 'song.txt').is_file()
+        if done:
+            continue
+        jobs.append({'id': s['id'], 'title': s['title'], 'ascii': s['ascii'], 'style': s['style'], 'folder': s['folder'], 'entry': s['entry'],
+                     'source': str(sources[s['id']]), 'work': str(out / 'work' / str(s['id'])), 'music': str(a.music.resolve()),
+                     'megamix': str(megamix), 'template': str(template), 'sprites': str(sprites) if sprites else None,
+                     'atlas': str(atlases[s['style']]) if atlases[s['style']] else None,
+                     'dest': str(out / 'songs' / s['style'] / s['folder'])})
+    print('%d songs (%d already done), %d jobs in parallel' % (len(songs), len(songs) - len(jobs), a.jobs))
+    rows = {i: r for i, r in previous.items() if r.get('ok') and i in {s['id'] for s in songs}}
+    with concurrent.futures.ProcessPoolExecutor(max_workers=a.jobs) as pool:
+        for n, r in enumerate(pool.map(convert_one, jobs), 1):
+            rows[r['id']] = r
+            print('[%d/%d] %s %s: %s' % (n, len(jobs), r['id'], r['title'], 'ok' if r.get('ok') else r['error']), flush=True)
+            report = {'songs': sorted(rows.values(), key=lambda x: x['id']), 'unknown_ids': unknown}
+            report_path.write_text(json.dumps(report, ensure_ascii=False, indent=1))
+    report = {'songs': sorted(rows.values(), key=lambda x: x['id']), 'unknown_ids': unknown}
+    report_path.write_text(json.dumps(report, ensure_ascii=False, indent=1))
+    ok = [r for r in rows.values() if r.get('ok')]
+    failed = [r for r in rows.values() if not r.get('ok')]
+    by = {}
+    for r in ok:
+        by[r['style']] = by.get(r['style'], 0) + 1
+    print('converted %d songs: %s' % (len(ok), ', '.join('%s %d' % kv for kv in sorted(by.items()))))
+    if failed:
+        print('%d failed (details in %s): %s' % (len(failed), report_path, ', '.join(str(r['id']) for r in failed[:20])))
+    if unknown:
+        print('%d song sources are not in the music data: %s' % (len(unknown), ', '.join(map(str, unknown[:20]))))
+    if a.install:
+        install(megamix, out, ok)
+        print('installed into %s; rebuild the launcher cache if you use one' % megamix)
+    else:
+        print('results in %s; run again with --install to add them to MEGAMIX' % (out / 'songs'))
+
+
+if __name__ == '__main__':
+    main()

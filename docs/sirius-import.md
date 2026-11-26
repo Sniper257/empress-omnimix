@@ -153,3 +153,18 @@ loaded a DP chart in PCSX2.)
 
 Still taken from the template, so an added song shows All My Turn's title card and wheel sprites
 and keeps its 0x58 file (probably the BGA movie) until those are converted.
+
+## Batch conversion (arcade_batch.py)
+
+`python3 tools/release/arcade_batch.py ARCADE_DATA MEGAMIX --music music_data.bin [--versions 17-33] [--jobs 4] [--install]`
+finds every `<id>.ifs` and `<id>/<id>.1` song under ARCADE_DATA, takes each song's version from the music
+data (entry +988, u16: 0 1st style, 1 substream, 2 2nd style, ... 32 Pinky Crush) and converts it into
+`MEGAMIX/arcade-batch/songs/<style>/<folder>/` (arcade_convert --split, arcade_songfolder), one style folder
+per version (sirius, resort_anthem, ... sparkle_shower; folder art from arcade_style for versions MEGAMIX has
+no folder for). Reruns skip finished songs (`batch.json`). `--install` copies the songs into MEGAMIX, lists them in
+their styles' `index.txt` and new styles in `songs/styles.txt`, then runs `megamix.py index`.
+
+Songs carry their identity in `song.txt` (`catalog S/C ...` lines, launcher catalog.h), so `catalog/charts.txt`
+stays the release's and the PC cache builder accepts the installation. A version whose titles need glyphs the
+bundled atlas lacks gets an atlas built from the pinned open fonts (fetched once; Pillow and fonttools).
+Capacity: today's launcher holds about 1,200 added songs in its reserved block (docs/omnimix-capacity.md).
