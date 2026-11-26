@@ -144,6 +144,16 @@ Installed packs, settings, saves and song folders stay as they are. If the
 release needs a new base, it says so and changes nothing. Rebuild the launcher
 cache afterwards if you use one.
 
+Converted songs added by hand
+-----------------------------
+
+After copying converted song folders into songs/<style>/, list each folder in
+that style's index.txt and the style in songs/styles.txt, then run:
+
+    python3 megamix.py index "path/to/MEGAMIX"
+
+This records them so verify, cache, install and update keep them listed.
+
 Add songs from another disc
 ---------------------------
 

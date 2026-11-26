@@ -6,6 +6,7 @@
   python3 megamix.py verify DIRECTORY
   python3 megamix.py cache DIRECTORY --game-path mmce0:/MEGAMIX/
   python3 megamix.py update "EMPRESS DVD1.iso" MEGAMIX_DIRECTORY
+  python3 megamix.py index MEGAMIX_DIRECTORY
 
 EMPRESS Disc1 creates a base; all other supported discs create independent append
 packs. An adjacent release.mmr supplies pinned runtimes, graphics and recipes.
@@ -319,8 +320,39 @@ def indexes(state):
     return out
 
 
+def local_songs(root, state):
+    """Song folders added by hand (converted songs), as listed in the current
+    indexes: kept when indexes are regenerated. {style: [folder, ...]} in order."""
+    owned={(r['style'],r['dir']) for p in state['packages'].values() for r in p['songs']}
+    styles_path=path_in(root,'songs/styles.txt')
+    if not styles_path.is_file():return {}
+    out={}
+    for style in styles_path.read_text(encoding='utf-8',errors='replace').splitlines():
+        style=style.strip()
+        if not style or '/' in style or '\\' in style or style in ('.','..') or style in out:continue
+        index=path_in(root,'songs/'+style+'/index.txt')
+        if not index.is_file():continue
+        rows=[]
+        for d in index.read_text(encoding='utf-8',errors='replace').splitlines():
+            d=d.strip()
+            if d and '/' not in d and '\\' not in d and d not in ('.','..') and (style,d) not in owned and d not in rows and path_in(root,'songs/'+style+'/'+d+'/song.txt').is_file():rows.append(d)
+        if rows:out[style]=rows
+    return out
+
+
 def activate_indexes(root, state):
+    local=local_songs(root,state)
     generated = indexes(state)
+    if local:
+        styles=generated['songs/styles.txt'].splitlines()
+        for style,rows in local.items():
+            name='songs/'+style+'/index.txt'
+            listed=generated.get(name,'').splitlines()
+            generated[name]=''.join(n+'\n' for n in listed+[d for d in rows if d not in listed])
+            if style not in styles:styles.append(style)
+        known=state['style_order']
+        styles=[st for st in known if st in styles]+[st for st in styles if st not in known]
+        generated['songs/styles.txt']=''.join(st+'\n' for st in styles)
     generated.update(folder_presentation.generated(state,lambda name:path_in(root,name).read_bytes()))
     state['generated'] = {}
     for name, text in generated.items():
@@ -736,6 +768,25 @@ def update(iso, root, bundle, progress=print):
         lock.unlink(missing_ok=True)
 
 
+def reindex(root, progress=print):
+    """Record hand-added song folders (listed in songs/styles.txt and their
+    index.txt) in the installed indexes, so verify and cache accept them."""
+    root=Path(root).absolute()
+    state=json.loads(path_in(root,'.megamix/installed.json').read_text())
+    if state.get('schema')!=SCHEMA:raise ValueError('Unsupported installed manifest')
+    for name in ('install-journal.json','update-journal.json'):
+        if path_in(root,'.megamix/'+name).exists():raise ValueError('Finish the interrupted install or update first')
+    lock=path_in(root,'.megamix/install.lock')
+    try:fd=os.open(lock,os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o600)
+    except FileExistsError:raise ValueError('Another installer is active, or left install.lock after a forced stop. Check it before removing that lock.') from None
+    try:
+        with os.fdopen(fd,'w') as f:f.write(str(os.getpid())+'\n')
+        local=local_songs(root,state);activate_indexes(root,state)
+        progress('Indexes updated; %d hand-added song folders kept%s' % (sum(map(len,local.values())),(' ('+', '.join(local)+')') if local else ''))
+    finally:
+        lock.unlink(missing_ok=True)
+
+
 def main(argv=None):
     # Redirected Windows output can use a legacy encoding even with Python 3.14.
     # Keep that encoding, but don't let progress text or a filename abort a build.
@@ -750,6 +801,9 @@ def main(argv=None):
         p.add_argument('--settings-path',help='console path to that separate configuration directory')
         p.add_argument('--temp-dir',type=Path,help='PC directory for temporary build files')
         a=p.parse_args(argv[1:]);generate(a.root,a.game_path,a.config_dir,a.settings_path,a.temp_dir)
+    elif argv and argv[0]=='index':
+        p=argparse.ArgumentParser(description='Refresh song indexes, keeping hand-added song folders')
+        p.add_argument('root',type=Path);a=p.parse_args(argv[1:]);reindex(a.root)
     elif argv and argv[0]=='update':
         p=argparse.ArgumentParser(description='Update the launcher and runtimes of an installed base from this release')
         p.add_argument('iso',type=Path,help='the EMPRESS Disc1 ISO the base was built from');p.add_argument('root',type=Path)

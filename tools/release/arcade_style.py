@@ -87,7 +87,7 @@ def main(argv=None):
     if set(containers) != {LABEL_BYTES, CAPTION_BYTES}:
         sys.exit('%s: the native folder containers a/33/07 and a/84/41 were not found (or differ)' % a.base)
     d = write_style(a.output, a.style, a.name or a.caption, a.label, a.caption, a.songs, containers, a.custom)
-    print('%s: folder %s, %d songs; add "%s" to songs/styles.txt' % (d, a.label, len(a.songs), a.style))
+    print('%s: folder %s, %d songs; add "%s" to songs/styles.txt, then run megamix.py index on the MEGAMIX folder' % (d, a.label, len(a.songs), a.style))
 
 
 if __name__ == '__main__':

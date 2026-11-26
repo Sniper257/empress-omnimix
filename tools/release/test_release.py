@@ -121,6 +121,25 @@ class ReleaseTests(unittest.TestCase):
         for name in ['songs/styles.txt','songs/red/index.txt','songs/3rd_style/index.txt','launcher/source.id']:
             self.assertEqual((bases[0]/name).read_bytes(),(bases[1]/name).read_bytes())
 
+    def test_hand_added_song_folders_survive_install_update_and_index(self):
+        bundle=self.bundle(('id','red'));base=self.root/'base';pack=self.root/'pack'
+        M.build(self.root/'id.iso',base,bundle,progress=lambda _:None);M.build(self.root/'red.iso',pack,bundle,progress=lambda _:None)
+        for style,d in (('copula','mesmerizer'),('red','elisha_cn')):
+            (base/'songs'/style/d).mkdir(parents=True);(base/'songs'/style/d/'song.txt').write_text('name X\n')
+        (base/'songs/copula/index.txt').write_text('mesmerizer\nmissing_folder\n')
+        (base/'songs/red/index.txt').write_text('elisha_cn\n')
+        (base/'songs/styles.txt').write_text('copula\n'+(base/'songs/styles.txt').read_text()+'red\n')
+        log=[];M.reindex(base,progress=log.append);self.assertIn('2 hand-added',log[-1])
+        self.assertEqual(M.verify(base),[])
+        M.install(pack,base,progress=lambda _:None)
+        self.assertEqual((base/'songs/red/index.txt').read_text(),'id_1\nred_1\nelisha_cn\n')
+        self.assertEqual((base/'songs/copula/index.txt').read_text(),'mesmerizer\n')
+        self.assertEqual((base/'songs/styles.txt').read_text().splitlines()[-1],'copula')
+        M.update(self.root/'id.iso',base,self.bundle(('id',),runtime=b'v2',tag='-v2'),progress=lambda _:None)
+        self.assertIn('copula',(base/'songs/styles.txt').read_text().split())
+        self.assertIn('elisha_cn',(base/'songs/red/index.txt').read_text().split())
+        self.assertEqual(M.verify(base),[])
+
     def test_update_replaces_runtime_and_keeps_packs(self):
         bundle=self.bundle(('id','red'));base=self.root/'base';pack=self.root/'pack'
         M.build(self.root/'id.iso',base,bundle,progress=lambda _:None);M.build(self.root/'red.iso',pack,bundle,progress=lambda _:None)
