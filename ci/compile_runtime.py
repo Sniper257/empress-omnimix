@@ -7,7 +7,7 @@ def build(root,out,toolchain):
  env['PATH']=str(toolchain/'llvm/bin')+os.pathsep+env['PATH'];out.mkdir(parents=True,exist_ok=False)
  for target in('console','host'):
   for mode in('quiet','prep','debug'):
-   dest=out/(target+'-'+mode);e=dict(env,ASSET_FRAME_ORDER='1',ASSET_SPLIT_TEXTURE='1')
+   dest=out/(target+'-'+mode);e=dict(env,ASSET_FRAME_ORDER='1',ASSET_SPLIT_TEXTURE='1',HOLDS='1')
    e.update({'PORTABLE_LAUNCHER':'1','USB_HID':'1'}if target=='console'else{'HOST_BENCH':'1'})
    if mode=='prep':e['PREP_WATCH']='1'
    if mode=='debug':e.update(INPUT_LOG='1',FILE_IO_LOG='1')

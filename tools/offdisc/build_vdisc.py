@@ -479,7 +479,7 @@ def main():
     play_preview=usb_hid or host_bench
     if host_bench: defs.append('-DPLAY_PREVIEW')
     defs+=['-DSPR_ASYNC','-DPLAY_LIFT']
-    holds=os.environ.get('HOLDS')=='1'   # CN/HCN/BSS module (tools/holds), off in release builds
+    holds=os.environ.get('HOLDS')=='1'   # CN/HCN/BSS/MSS module (tools/holds); on in release builds (ci/compile_runtime.py)
     if holds:defs.append('-DHOLDS')
     probe_id=None
     if os.environ.get('INPUT_LOG')=='1':
