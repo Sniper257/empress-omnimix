@@ -7,8 +7,8 @@
 ARCADE_DATA is the game's contents folder: songs are taken from data/sound and every data_mods/*/sound
 (omnimix_32, omnimix_33, ...; a mod's copy of a song wins). Any other folder is searched as it is. Songs are
 <id>.ifs files, or <id>/ folders holding <id>.1 with <id>.2dx or <id>.s3p. MEGAMIX is your built MEGAMIX folder: it supplies the template record
-(EMPRESS/SLPM_552.21), the native text and folder containers, and the hold sprites of a song converted
-before (or give --hold-sprites). The song database (arcade_songdb.py; or --music music_data.bin, repeatable) gives
+(EMPRESS/SLPM_552.21) and the native text and folder containers. Hold sprites: --hold-sprites, else those of a
+song converted before, else made from the arcade's own notes_cn00.ifs (found under ARCADE_DATA; needs Pillow). The song database (arcade_songdb.py; or --music music_data.bin, repeatable) gives
 each song's title, artist, genre, levels and version. --style picks the style folders to convert (repeatable or
 comma separated: names as below, or version numbers); without it every style from SIRIUS on.
 
@@ -195,15 +195,32 @@ def convert_one(job):
     return row
 
 
-def hold_sprites(megamix, given):
+def hold_sprites(megamix, given, arcade=None, out=None):
+    """The hold sprites folder: --hold-sprites, a song converted before, or made from the arcade's own
+    notes_cn00.ifs (data/graphic) with konami_tex.py and tools/holds/hold_sprites.py (needs Pillow)."""
     import arcade_songfolder as F
     names = F.hold_sprite_names()
+    have = lambda d: d.is_dir() and all((d / (n + '.spr')).is_file() for n in names)
     if given:
-        return given
+        if not have(Path(given)):
+            raise SystemExit('%s does not hold the %d hold sprites' % (given, len(names)))
+        return Path(given)
+    if out is not None and have(out / 'hold-sprites'):
+        return out / 'hold-sprites'
     for d in sorted((megamix / 'songs').glob('*/*/holds')):
-        if all((d / (n + '.spr')).is_file() for n in names):
+        if have(d):
             return d
-    return None
+    if arcade is None or out is None:
+        return None
+    tex = next((p for folder in [Path(arcade)] for p in sorted(folder.rglob('notes_cn00.ifs'))), None)
+    if tex is None:
+        return None
+    print('making the hold sprites from', tex)
+    png = out / 'hold-sprites-png'
+    subprocess.run([sys.executable, str(HERE / 'konami_tex.py'), str(tex), str(png)], check=True, stdout=subprocess.DEVNULL)
+    subprocess.run([sys.executable, str(HERE.parent / 'holds' / 'hold_sprites.py'), str(png), str(png), str(out / 'hold-sprites')],
+                   check=True, stdout=subprocess.DEVNULL)
+    return out / 'hold-sprites' if have(out / 'hold-sprites') else None
 
 
 def install(megamix, out, done):
@@ -285,10 +302,11 @@ def main(argv=None):
         songs = songs[:a.limit]
     if not songs:
         sys.exit('no songs of %s found in %s (%d song sources seen)' % (', '.join(STYLES[v][0] for v in sorted(versions) if v in STYLES), a.arcade, len(sources)))
-    sprites = hold_sprites(megamix, a.hold_sprites)
-    if not sprites:
-        print('warning: no hold sprites found (give --hold-sprites): charge notes will draw as plain notes', file=sys.stderr)
     out.mkdir(parents=True, exist_ok=True)
+    sprites = hold_sprites(megamix, a.hold_sprites, a.arcade, out)
+    if not sprites:
+        print('warning: no hold sprites (no notes_cn00.ifs under %s; give --hold-sprites): charge notes will draw as '
+              'plain notes' % a.arcade, file=sys.stderr)
     template = out / 'record_template.bin'
     if not template.is_file():
         import dump_record

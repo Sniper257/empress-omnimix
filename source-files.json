@@ -1637,7 +1637,7 @@
   "tools/release/apply_sort_hotfix.py": "4fffce940a5b750d304dfde7d426618bc47b5a0adfdbb17182a0be964d354257",
   "tools/release/apply_usb_hotfix.py": "d1287770d705702d9ef98eb5ada6d6cadd8205810cb86a73497d1ae615a80f5f",
   "tools/release/apply_version_hotfix.py": "6f6aeb4f2e88da63467b8bf6b1e1c0a8db3b5817c71817f1a0ad38019563ae17",
-  "tools/release/arcade_batch.py": "48e76966831101b0d32014de8f4d678d55f8182440aff97a1f105eaff48dfb0e",
+  "tools/release/arcade_batch.py": "f851b92aff802d145eb1930974b7de2eea09ad9f2ce685a38b71180e7124d337",
   "tools/release/arcade_convert.py": "13734dea11ce0bdd9ae84d5c6492adf912403d67314e3584efc3feacd0cc359f",
   "tools/release/arcade_data.py": "35b2d273d9ec146719382da54939af431921fc3fbcdc2b93dd8a0f6ed01f5f43",
   "tools/release/arcade_songdb.py": "580458cdb6bd1907bfba96e1d92c301cda58cecc10980e5cec77bc6bf425b7c8",
