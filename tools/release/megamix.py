@@ -270,7 +270,7 @@ def coverage_text(state,indexed,styles):
     """Small conditional masks: evaluate AFTER the user selects enabled folders."""
     selection=state['packages']['id'].get('selection');lines=['V 1']
     if selection is None:return 'V 1\n'
-    if len(styles)>32:raise ValueError('Too many folders for the release index ABI')
+    if len(styles)>64:raise ValueError('Too many folders for the release index ABI')
     for i,name in enumerate(styles):lines.append(f'S {i} {name}')
     rows={r['source']+':'+str(r['sid']):r for r in indexed};bits={s:1<<i for i,s in enumerate(styles)};groups={};ranks={};edges={k:set()for k in rows}
     for key,row in sorted(rows.items(),key=lambda item:(styles.index(item[1]['style']),item[1]['dir'])):

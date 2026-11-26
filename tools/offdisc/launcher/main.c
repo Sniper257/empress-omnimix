@@ -1507,7 +1507,12 @@ static int add_song(const song_t *sg, int fold)
     p = b;
     while ((l = line(&p))) {
         char *q;
-        int cat = catalog_from_line(l);
+        int cat;
+        if (!strncmp(l, "catalog ", 8)) {         /* the song's own identity lines (converted songs): no catalog/charts.txt edit */
+            if (catalog_line(l + 8, 1)) { logf_("%s: bad catalog line\n", sg->dir); errs++; }
+            continue;
+        }
+        cat = catalog_from_line(l);
         if (cat>=0) identity=cat;
         if (!strncmp(l, "record ", 7)) {
             int n;
@@ -1785,9 +1790,9 @@ static int release_row_filter(void)
     char *marker=slurp("catalog/indexed.txt",0);
     int enabled=marker && !strcmp(marker,"1\n");free(marker);
     if(!enabled)return 0;
-    char *b=slurp("catalog/coverage.txt",0),*p=b,*l;u32 on=0;int version=0,seen=0,error=0;
-    if(!b || n_styles>32){free(b);return -1;}
-    for(int i=0;i<n_styles;i++)if(styles[i].on)on|=1u<<i;
+    char *b=slurp("catalog/coverage.txt",0),*p=b,*l;unsigned long long on=0;int version=0,seen=0,error=0;
+    if(!b || n_styles>64){free(b);return -1;}
+    for(int i=0;i<n_styles;i++)if(styles[i].on)on|=1ull<<i;
     while((l=line(&p))){
         unsigned st;char dir[64],extra;int used=0;
         if(!strcmp(l,"V 1") && !version){version=1;continue;}
@@ -1800,8 +1805,8 @@ static int release_row_filter(void)
         int song=-1;for(int i=0;i<n_songs;i++)if(songs[i].style==(int)st&&!strcmp(songs[i].dir,dir)){song=i;break;}
         if(song<0 || songs[song].id>=0){error=1;break;}
         char *q=l+2+used,*end;int covered=1,masks=0;
-        while(*q){while(*q==' ')q++;if(!*q)break;u32 mask=strtoul(q,&end,16);
-            if(end==q||(*end&&*end!=' ')||!mask||(n_styles<32&&(mask>>n_styles))){error=1;break;}
+        while(*q){while(*q==' ')q++;if(!*q)break;unsigned long long mask=strtoull(q,&end,16);
+            if(end==q||(*end&&*end!=' ')||!mask||(n_styles<64&&(mask>>n_styles))){error=1;break;}
             if(!(mask&on))covered=0;masks++;q=end;
         }
         if(error||!masks){error=1;break;}release_covered[song]=covered;

@@ -163,8 +163,14 @@ def build(converted, template, out, title, lv, version=17, sprites=None, text_fi
             (out / name).write_bytes(data)
         lines += X.song_lines(text_files)
     (out / 'record.bin').write_bytes(bytes(rec))
+    # the song's identity travels in song.txt (`catalog` lines, launcher catalog.h catalog_line), before the
+    # "arcade <id>" line that names it, so catalog/charts.txt stays the release's; catalog-lines.txt is the same
+    # lines for older launchers, which need them merged into charts.txt by hand
+    ident = catalog_lines(out.name, charts, song_id)
+    at = 2 if song_id is not None else len(lines)
+    lines[at:at] = ['catalog ' + l for l in ident.splitlines() if l]
     (out / 'song.txt').write_text('\n'.join(lines) + '\n')
-    (out / 'catalog-lines.txt').write_text(catalog_lines(out.name, charts, song_id))
+    (out / 'catalog-lines.txt').write_text(ident)
     return {'title': title, 'charts': charts, 'bpm': [lo, hi]}
 
 

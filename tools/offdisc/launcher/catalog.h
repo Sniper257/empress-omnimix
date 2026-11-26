@@ -35,19 +35,20 @@ static int catalog_hex(u8 out[16], const char *s)
     return any?0:-1;
 }
 
-static int catalog_load(int n_add)
+/* one identity line (S, C, G, E, M) of catalog/charts.txt or of a song folder's `catalog` lines; 0 = ok.
+ * own: from a song folder, where an S line already in the catalog (the same song converted again, or
+ * lines also merged into charts.txt by hand) is skipped together with its C/G lines instead of failing. */
+static int catalog_skip;
+static int catalog_line(const char *l, int own)
 {
-    char *b=slurp("catalog/charts.txt",0),*p=b,*l,source[80],id[33],family[33],extra;
+    char source[80],id[33],family[33],extra;
     unsigned sid,rank,ch,pref;
-    int version=0,errors=0,at;
-    free(catalog);catalog=0;catalog_n=catalog_cap=0;catalog_merge_n=0;
-    free(catalog_rows);catalog_rows=malloc((FIRST+n_add)*sizeof(int));
-    if (!b || !catalog_rows) {free(b);logf_("missing catalog/charts.txt or out of memory\n");return -1;}
-    memset(catalog_rows,0xff,(FIRST+n_add)*sizeof(int));
-    while ((l=line(&p))) {
-        if (!*l || *l=='#')continue;
-        if (!strcmp(l,"V 1") && !version) {version=1;continue;}
-        if (!version) {errors++;break;}
+    int errors=0,at;
+    do {                                   /* break = one error */
+        if (l[0]=='S' && l[1]==' ' && own && sscanf(l+2,"%79s %u %u %32s %32s %c",source,&sid,&rank,id,family,&extra)==5 &&
+            catalog_find(source,sid)>=0) {catalog_skip=1;return 0;}
+        if (l[0]=='S' && l[1]==' ') catalog_skip=0;
+        else if (own && catalog_skip) return 0;
         if (l[0]=='S' && l[1]==' ' &&
             sscanf(l+2,"%79s %u %u %32s %32s %c",source,&sid,&rank,id,family,&extra)==5) {
             if (catalog_find(source,sid)>=0 || catalog_n>=MAXSONG ||
@@ -80,7 +81,23 @@ static int catalog_load(int n_add)
             for(unsigned k=0;k<catalog_merge_n;k++)if(catalog_merges[k].owner==a||catalog_merges[k].donor==a||catalog_merges[k].owner==b||catalog_merges[k].donor==b)errors++;
             if(errors)break;
             catalog_merges[catalog_merge_n++]=(catalog_merge_t){a,b,borrow,shared};
-        } else {errors++;break;}
+        } else errors++;
+    } while (0);
+    return errors;
+}
+
+static int catalog_load(int n_add)
+{
+    char *b=slurp("catalog/charts.txt",0),*p=b,*l;
+    int version=0,errors=0;
+    free(catalog);catalog=0;catalog_n=catalog_cap=0;catalog_merge_n=0;catalog_skip=0;
+    free(catalog_rows);catalog_rows=malloc((FIRST+n_add)*sizeof(int));
+    if (!b || !catalog_rows) {free(b);logf_("missing catalog/charts.txt or out of memory\n");return -1;}
+    memset(catalog_rows,0xff,(FIRST+n_add)*sizeof(int));
+    while ((l=line(&p))) {
+        if (!*l || *l=='#')continue;
+        if (!strcmp(l,"V 1") && !version) {version=1;continue;}
+        if (!version || catalog_line(l,0)) {errors++;break;}
     }
     free(b);
     if (errors || !version || !catalog_n) {logf_("invalid identity catalog\n");return -1;}

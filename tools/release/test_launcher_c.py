@@ -37,6 +37,9 @@ class LauncherC(unittest.TestCase):
     def test_share_runs(self):
         self.run_test('test_share_runs')
 
+    def test_catalog_lines(self):
+        self.run_test('test_catalog_lines')
+
 
 if __name__ == '__main__':
     unittest.main()
