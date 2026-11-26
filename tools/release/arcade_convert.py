@@ -307,7 +307,9 @@ def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument('song', type=Path, help='<id>.ifs, or a folder holding <id>.1 and <id>.2dx')
     p.add_argument('output', type=Path)
-    p.add_argument('--stream', metavar='CHART', help='render the backing stream from this chart (e.g. SPA)')
+    p.add_argument('--stream', metavar='CHART', help='render the backing stream from this chart (e.g. SPA), or "common": '
+                   'the BGM every chart shares, as EMPRESS\'s own songs do (with --split: one bank of the sounds '
+                   'played by notes in any chart plus each chart\'s own extra BGM, which stays bank-triggered)')
     p.add_argument('--bank-budget', type=int, default=16000000,
                    help='largest bank in bytes (default 16 MB: Elisha\'s 16 MB bank loads in PCSX2 with All My Turn\'s '
                         'record); sounds up to 6 s go to 32 or 24 kHz to fit. 0 = no limit')
@@ -330,13 +332,40 @@ def main(argv=None):
     a.output.mkdir(parents=True, exist_ok=True)
     report = {'song': sid, 'keysounds': len(keys), 'charts': {}}
     banks = {}
+    common_mode = bool(a.stream) and a.stream.lower() == 'common'
+    if common_mode and not a.split:
+        raise SystemExit('--stream common needs --split')
+    common_events = []
+    if common_mode:
+        # EMPRESS layout (All My Turn: one 5.3 MB bank at 0xe8 for every chart, a 6.1 MB stream at 0xec): the
+        # BGM events every chart has alike go to the stream; what a chart has beyond them (sounds another chart
+        # plays with notes) stays a bank-triggered BGM event of that chart.
+        full_charts = charts
+        sets = [set((e[0], e[3]) for e in ev if e[1] == 7 and e[3]) for ev in charts.values()]
+        common = set.intersection(*sets) if sets else set()
+        common_events = sorted((t, 7, 0, v) for t, v in common)
+        charts = {s: [e for e in ev if not (e[1] == 7 and e[3] and (e[0], e[3]) in common)] for s, ev in charts.items()}
+        report['common_bgm_events'] = len(common_events)
     if a.split:
         import keysound_bank as KB
         gain = 1.0
-        if a.stream:                                  # the bank gets the gain the stream gets
+        if common_mode:                               # the loudest chart's whole mix sets the gain of both
+            peak = max(render(ev, keys)[2]['peak'] for ev in full_charts.values())
+            gain = min(1.0, 32767 / peak) if peak else 1.0
+        elif a.stream:                                # the bank gets the gain the stream gets
             peak = render(charts[next(s for s, n in SLOTS.items() if n == a.stream.upper())], keys)[2]['peak']
             gain = min(1.0, 32767 / peak) if peak else 1.0
-        if a.stream:
+        if common_mode:
+            members = sorted(charts)
+            sounds = KB.player_sounds(*(charts[s] for s in members))
+            sounds += [v for v in KB.bgm_sounds(*(charts[s] for s in members)) if v not in set(sounds)]
+            data, slots, info = KB.build('SP', sounds, keys, gain, a.bank_budget or None)
+            (a.output / 'keys.bank').write_bytes(data)
+            banks.update({s: slots for s in members})
+            report.setdefault('banks', {})['keys'] = info
+            print('keys.bank: %d sounds, %d bytes, rates %s%s' % (info['sounds'], info['bytes'], info['rates'],
+                                                            ' (' + info['warning'] + ')' if 'warning' in info else ''))
+        elif a.stream:
             members = sorted(charts)
             sounds = KB.player_sounds(*(charts[s] for s in members))
             data, slots, info = KB.build('SP', sounds, keys, gain, a.bank_budget or None)
@@ -376,7 +405,7 @@ def main(argv=None):
         name = SLOTS.get(slot, 'slot%d' % slot)
         hell = a.hell or is_hell(events)
         holds = H.from_events(events, hell=hell, time=tick, ticks_per_ms=1000 / CLOCK)
-        bank_bgm = slot in banks and not a.stream
+        bank_bgm = slot in banks and (not a.stream or common_mode)
         if slot in banks:
             events = KB.remap(events, banks[slot], bgm=bank_bgm)
         ply, warnings = empress_events(events, holds, keysounds=slot in banks, bgm_slots=bank_bgm)
@@ -386,7 +415,13 @@ def main(argv=None):
         report['charts'][name] = {'notes': notes, 'holds': len(holds), 'mss_joints': len(A.mss_joints(events)), 'hcn': hell, 'total': notes + len(holds),
                                   'bpm': [bpms[0], bpms[-1]] if bpms else None, 'warnings': warnings}
         print('%s: %d notes, %d %s%s' % (name, notes, len(holds), 'HCN' if hell else 'holds', (' (' + '; '.join(warnings) + ')') if warnings else ''))
-    if a.stream:
+    if common_mode:
+        import spu_adpcm as S
+        rate, channels, info = render(common_events, keys, bgm_only=True, peak=peak if a.split else None)
+        (a.output / 'stream.bin').write_bytes(S.stream(channels, rate))
+        report['stream'] = dict(info, chart='common', seconds=round(len(channels[0]) / rate, 2), bgm_only=True)
+        print('stream: %.1f s of the BGM all charts share (%d events)' % (len(channels[0]) / rate, len(common_events)))
+    elif a.stream:
         slot = next((s for s, n in SLOTS.items() if n == a.stream.upper()), None)
         if slot not in charts:
             raise SystemExit('No %s chart in this song' % a.stream)

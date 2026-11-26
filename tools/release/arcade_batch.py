@@ -180,7 +180,7 @@ def convert_one(job):
         if not (work / 'convert.json').is_file():
             if work.exists():
                 shutil.rmtree(work)
-            C.main([job['source'], str(work), '--split'])
+            C.main([job['source'], str(work), '--split'] + (['--stream', 'common'] if job.get('empress_audio') else []))
         atlas = R.Atlas(Path(job['atlas']).read_bytes()) if job['atlas'] else None
         containers = X.base_containers(Path(job['megamix']))
         text_files = X.render(job['texts'], containers, atlas)
@@ -271,6 +271,10 @@ def main(argv=None):
                    help='songs converted in parallel (each needs about 1 GB of memory; default %(default)s)')
     p.add_argument('--hold-sprites', type=Path, help='hold sprites folder (default: from a song converted before)')
     p.add_argument('--install', action='store_true', help='copy the results into MEGAMIX and run megamix.py index')
+    p.add_argument('--empress-audio', action='store_true',
+                   help='EMPRESS\'s own layout: one bank of the sounds notes play in any chart, the BGM every chart shares in '
+                        'the stream (ALL MY TURN: 10 MB instead of about 60; its stream matches the CS one to 64 bytes). '
+                        'Use a new --out folder: songs already converted keep the layout they have')
     a = p.parse_args(argv)
     megamix, out = a.megamix.resolve(), (a.out or a.megamix / 'arcade-batch').resolve()
     try:
@@ -339,7 +343,7 @@ def main(argv=None):
         if done:
             continue
         jobs.append({'id': s['id'], 'title': s['title'], 'ascii': s['ascii'], 'style': s['style'], 'folder': s['folder'],
-                     'texts': s['texts'], 'levels': s['levels'],
+                     'texts': s['texts'], 'levels': s['levels'], 'empress_audio': a.empress_audio,
                      'source': str(sources[s['id']]), 'work': str(out / 'work' / str(s['id'])),
                      'megamix': str(megamix), 'template': str(template), 'sprites': str(sprites) if sprites else None,
                      'atlas': str(atlases[s['style']]) if atlases[s['style']] else None,
