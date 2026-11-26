@@ -11,9 +11,9 @@ class Batch(unittest.TestCase):
 
     def test_find_sources_and_versions(self):
         r = self.root / 'ac'
-        (r / 'data' / 'sound' / '32083').mkdir(parents=True)
-        (r / 'data' / 'sound' / '32083' / '32083.1').write_bytes(b'x')
-        (r / 'data' / 'sound' / '32083_pre').mkdir()
+        (r / 'loose' / '32083').mkdir(parents=True)
+        (r / 'loose' / '32083' / '32083.1').write_bytes(b'x')
+        (r / 'loose' / '32083_pre').mkdir()
         (r / 'ifs').mkdir()
         (r / 'ifs' / '29025.ifs').write_bytes(b'x')
         (r / 'ifs' / '29025_pre.ifs').write_bytes(b'x')

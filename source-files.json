@@ -1721,7 +1721,7 @@
   "tools/release/spu_adpcm.py": "9058038749f4c0d7c8b47c91a39cc9d580beaf3b572508989a46f27ebf9c51fa",
   "tools/release/startup_art.py": "09a26c73c32763aed9ea7eca01d387d4fa0a8c0e24f60cea49b70b8247771f29",
   "tools/release/test_alphabet_catalog.py": "8d2935c80ca330705dbebdf2701849fd98e0c777039807effc4a6aa97b750b4b",
-  "tools/release/test_arcade_batch.py": "c34b958d0ab18e1b93c4ce5737f0b0daaf920e8c7a01b1dd87cf3ef4a51c2035",
+  "tools/release/test_arcade_batch.py": "1408de94297965763b87c39e4b4f92e51b4f8120e79fbdfc2e9851d9bcba9ef4",
   "tools/release/test_arcade_convert.py": "604a0b1ac2d5c1599530ea9f03d5d924d66ef2014dddcf1cdb60e10092b6dcff",
   "tools/release/test_arcade_songfolder.py": "34a2fbde107e399c90131512d4f3e0916410dc9f2456e2d8209477271aa25cb0",
   "tools/release/test_arcade_style.py": "d7fdd26d4d9ab94e48d9ebf5a12e6b61c2ddb2674d77f359affcb21da883fae3",
