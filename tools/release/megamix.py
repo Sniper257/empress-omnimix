@@ -5,6 +5,7 @@
   python3 megamix.py install APPEND_PACK MEGAMIX_DIRECTORY
   python3 megamix.py verify DIRECTORY
   python3 megamix.py cache DIRECTORY --game-path mmce0:/MEGAMIX/
+  python3 megamix.py update "EMPRESS DVD1.iso" MEGAMIX_DIRECTORY
 
 EMPRESS Disc1 creates a base; all other supported discs create independent append
 packs. An adjacent release.mmr supplies pinned runtimes, graphics and recipes.
@@ -648,6 +649,93 @@ def _install(pack, root, progress, manifest, resolve):
         lock.unlink(missing_ok=True)
 
 
+# Files a newer release may replace in an installed base without rebuilding it:
+# the launcher, runtimes, mods and documentation. Song data, catalogs, styles,
+# generated text and everything append packs own stay as installed.
+UPDATABLE_PREFIXES=('launcher/','mods/','licenses/')
+UPDATABLE_FILES={'MEGAMIX.ELF','mods.txt','patch-catalog.json','PATCHES.md','README.txt','README-ja.txt','README-ko.txt'}
+
+
+def updatable(name):
+    return (name in UPDATABLE_FILES or name.startswith(UPDATABLE_PREFIXES)) and name not in MUTABLE and name not in DYNAMIC
+
+
+def update(iso, root, bundle, progress=print):
+    """Replace the launcher and runtime files of an installed base from a newer
+    release with the same contract. Packs, settings, saves and caches' inputs stay."""
+    iso,root=Path(iso).absolute(),Path(root).absolute()
+    state_path=path_in(root,'.megamix/installed.json')
+    state=json.loads(state_path.read_text())
+    if state.get('schema')!=SCHEMA:raise ValueError('Unsupported installed manifest')
+    if path_in(root,'.megamix/install-journal.json').exists():raise ValueError('Finish the interrupted pack installation first')
+    for installed in state['packages'].values():validate_manifest(installed)
+    base=state['packages']['id'];target=base['target']
+    with zipfile.ZipFile(bundle) as archive:
+        release=json.loads(archive.read('release.json'))
+        if release.get('schema')!=SCHEMA:raise ValueError('Unsupported release bundle')
+        if release['contract']!=state['contract']:
+            raise ValueError('This release has a different data contract; build a new base instead (nothing was changed)')
+        disc=next(d for d in release['discs'] if d['source']=='id')
+        if iso.stat().st_size!=disc['iso']['bytes']:raise ValueError('Expected the EMPRESS Disc1 ISO used for the base')
+        recipe=json.loads(archive.read(disc['recipes'][target]))
+        manifest=recipe['package']
+        steps={n:r for n,r in recipe['files'].items() if updatable(n) and r['op'] in ('blob','launcher')}
+        journal_path=path_in(root,'.megamix/update-journal.json')
+        journal=json.loads(journal_path.read_text()) if journal_path.exists() else None
+        if journal and journal.get('runtime_revision')!=manifest.get('runtime_revision'):
+            raise ValueError('Finish the interrupted update with the release that started it')
+        changed={n for n,r in steps.items() if base['files'].get(n)!=manifest['files'].get(n) or r['op']=='launcher'}
+        new_files={}
+        stage=path_in(root,'.megamix/update-stage')
+        stage.mkdir(parents=True,exist_ok=True)
+        with iso.open('rb') as src:
+            for name in sorted(changed):
+                row=steps[name]
+                if row['op']=='launcher':
+                    from iso_launcher import fill,pack,verify_packed
+                    if row.get('packing') and manifest.get('derived_launcher')!=dict(schema=1,template_sha256=row['recipe']['template_sha256'],unpacked_sha256=row['recipe']['unpacked_sha256']):raise ValueError('Launcher source identity mismatch')
+                    template=archive.read('blobs/'+row['template'])
+                    data=fill(template,row['recipe'],lambda at,n:Extent(src,at,n,iso.stat().st_size).read(n))
+                    if row.get('packing'):
+                        data=pack(data,archive.read('blobs/'+row['stub']),row['packing']);verify_packed(data,row['memory'],row['packing'])
+                    record={'bytes':len(data),'sha256':hash_bytes(data)}
+                else:
+                    data=archive.read('blobs/'+row['blob'])
+                    if hash_bytes(data)!=row['blob']:raise ValueError('Corrupt release blob')
+                    record=manifest['files'][name]
+                    if record!={'bytes':len(data),'sha256':hash_bytes(data)}:raise ValueError('Release file record mismatch: '+name)
+                if base['files'].get(name)==record:continue
+                new_files[name]=record
+                write_atomic(stage/hash_bytes(name.encode()),data)
+    if not new_files:
+        shutil.rmtree(stage,ignore_errors=True);journal_path.unlink(missing_ok=True)
+        progress('Launcher and runtime already up to date; nothing changed');return
+    lock=path_in(root,'.megamix/install.lock')
+    try:fd=os.open(lock,os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o600)
+    except FileExistsError:raise ValueError('Another installer is active, or left install.lock after a forced stop. Check it before removing that lock.') from None
+    try:
+        with os.fdopen(fd,'w') as f:f.write(str(os.getpid())+'\n')
+        save_json(journal_path,{'runtime_revision':manifest.get('runtime_revision')})
+        path_in(root,'launcher/source.id').unlink(missing_ok=True)
+        for name,record in sorted(new_files.items()):
+            dst=path_in(root,name);tmp=stage/hash_bytes(name.encode())
+            if hash_file(tmp)!=record['sha256']:raise ValueError('Staged update damaged: '+name)
+            dst.parent.mkdir(parents=True,exist_ok=True);os.replace(tmp,dst)
+        failures=check_files(root,new_files)
+        if failures:raise ValueError('; '.join(failures[:10]))
+        files=dict(base['files']);files.update(new_files)
+        base=dict(base,files=files,runtime_revision=manifest.get('runtime_revision'))
+        if 'derived_launcher' in manifest:base['derived_launcher']=manifest['derived_launcher']
+        base['content_id']=content_id(base);validate_manifest(base)
+        state['packages']['id']=base
+        save_json(path_in(root,'megamix-package.json'),base)
+        activate_indexes(root,state)
+        journal_path.unlink();shutil.rmtree(stage,ignore_errors=True);sync_directory(root)
+        progress(f'Updated {len(new_files)} launcher/runtime files to {manifest.get("runtime_revision")}; packs, settings and saves preserved. Rebuild the launcher cache if you use one.')
+    finally:
+        lock.unlink(missing_ok=True)
+
+
 def main(argv=None):
     # Redirected Windows output can use a legacy encoding even with Python 3.14.
     # Keep that encoding, but don't let progress text or a filename abort a build.
@@ -662,6 +750,11 @@ def main(argv=None):
         p.add_argument('--settings-path',help='console path to that separate configuration directory')
         p.add_argument('--temp-dir',type=Path,help='PC directory for temporary build files')
         a=p.parse_args(argv[1:]);generate(a.root,a.game_path,a.config_dir,a.settings_path,a.temp_dir)
+    elif argv and argv[0]=='update':
+        p=argparse.ArgumentParser(description='Update the launcher and runtimes of an installed base from this release')
+        p.add_argument('iso',type=Path,help='the EMPRESS Disc1 ISO the base was built from');p.add_argument('root',type=Path)
+        p.add_argument('--bundle',type=Path,default=Path(__file__).with_name('release.mmr'))
+        a=p.parse_args(argv[1:]);update(a.iso,a.root,a.bundle)
     elif argv and argv[0] in ('install','verify'):
         command=argv.pop(0);p=argparse.ArgumentParser(description=__doc__)
         if command=='install':

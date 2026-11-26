@@ -18,11 +18,11 @@ class ReleaseTests(unittest.TestCase):
 
     def tearDown(self):self.tmp.cleanup()
 
-    def bundle(self, sources=('id','red','third')):
+    def bundle(self, sources=('id','red','third'), runtime=b'homebrew', tag='', contract='test-v1'):
         discs=[]
         for i,source in enumerate(sources):
             iso=self.root/(source+'.iso');iso.write_bytes(self.original+bytes([i]))
-            tree=self.root/(source+'-author');tree.mkdir()
+            tree=self.root/(source+tag+'-author');tree.mkdir()
             songs=[];paths={}
             data=tree/'music';data.write_bytes(self.original[123:90123])
             name=M.asset_path(M.hash_file(data))
@@ -46,12 +46,12 @@ class ReleaseTests(unittest.TestCase):
                 repacked=bytearray(0x8020+64);repacked[:4]=b'wp\x03\x00';repacked[8:10]=bytes([63,63]);struct.pack_into('<4I',repacked,0x8000,1,64,1,0);data=bytearray(range(64))
                 for frame in range(0,64,16):data[frame]^=255;data[frame+2]=(data[frame+2]-36)&255
                 repacked[0x8020:]=data;out=tree/'old-audio';out.write_bytes(repacked);paths[M.asset_path(M.hash_file(out))]={'path':str(out),'origin':[offset,len(old)]}
-                runtime=tree/'runtime';runtime.write_bytes(b'homebrew')
-                paths['launcher/vdisc-portable.bin']={'path':str(runtime),'generated':'homebrew runtime'}
+                runtime_file=tree/'runtime';runtime_file.write_bytes(runtime)
+                paths['launcher/vdisc-portable.bin']={'path':str(runtime_file),'generated':'homebrew runtime'}
             target='console'if source=='id'else'append'
             discs.append({'source':source,'name':source,'kind':'base'if source=='id'else'append','image':str(iso),'iso':{'sha256':M.hash_file(iso),'bytes':iso.stat().st_size},'targets':{target:{'files':paths,'songs':songs,'payload_prefixes':(['a',f'songs/{style}/{folder}'] if source!='id' else [])}}})
-        plan={'version':'test','contract':'test-v1','style_order':['red','3rd_style'],'discs':discs}
-        p=self.root/'plan.json';p.write_text(json.dumps(plan));bundle=self.root/'release.mmr';freeze(p,bundle)
+        plan={'version':'test'+tag,'contract':contract,'style_order':['red','3rd_style'],'discs':discs}
+        p=self.root/('plan'+tag+'.json');p.write_text(json.dumps(plan));bundle=self.root/('release'+tag+'.mmr');freeze(p,bundle)
         return bundle
 
     def test_freezer_fsync_accepts_windows_descriptor_rules(self):
@@ -120,6 +120,25 @@ class ReleaseTests(unittest.TestCase):
             self.assertEqual(M.verify(out),[]);bases.append(out)
         for name in ['songs/styles.txt','songs/red/index.txt','songs/3rd_style/index.txt','launcher/source.id']:
             self.assertEqual((bases[0]/name).read_bytes(),(bases[1]/name).read_bytes())
+
+    def test_update_replaces_runtime_and_keeps_packs(self):
+        bundle=self.bundle(('id','red'));base=self.root/'base';pack=self.root/'pack'
+        M.build(self.root/'id.iso',base,bundle,progress=lambda _:None);M.build(self.root/'red.iso',pack,bundle,progress=lambda _:None)
+        M.install(pack,base,progress=lambda _:None)
+        (base/'launcher.cfg').write_bytes(b'gn1 290\n');(base/'saved.bin').write_bytes(b'my score')
+        seal=(base/'launcher/source.id').read_bytes()
+        newer=self.bundle(('id',),runtime=b'homebrew v2',tag='-v2')
+        log=[];M.update(self.root/'id.iso',base,newer,progress=log.append)
+        self.assertEqual((base/'launcher/vdisc-portable.bin').read_bytes(),b'homebrew v2')
+        self.assertEqual(M.verify(base),[])
+        self.assertNotEqual((base/'launcher/source.id').read_bytes(),seal)
+        self.assertEqual((base/'launcher.cfg').read_bytes(),b'gn1 290\n');self.assertEqual((base/'saved.bin').read_bytes(),b'my score')
+        self.assertIn('red_1',(base/'songs/red/index.txt').read_text())
+        self.assertFalse((base/'.megamix/update-journal.json').exists())
+        log=[];M.update(self.root/'id.iso',base,newer,progress=log.append);self.assertIn('nothing changed',log[-1])
+        other=self.bundle(('id',),runtime=b'homebrew v3',tag='-v3',contract='test-v2')
+        with self.assertRaisesRegex(ValueError,'different data contract'):M.update(self.root/'id.iso',base,other,progress=lambda _:None)
+        self.assertEqual((base/'launcher/vdisc-portable.bin').read_bytes(),b'homebrew v2')
 
     def test_newer_compatible_base_accepts_older_data_pack(self):
         bundle=self.bundle(('id','red'));base=self.root/'base';pack=self.root/'pack'

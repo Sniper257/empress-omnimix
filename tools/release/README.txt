@@ -131,6 +131,19 @@ packs or the game. Fonts affect generated text; native artwork, launcher UI
 and splash text keep their appearance. To change fonts, create a fresh base
 and reinstall your append packs. Don't copy generated artwork over by hand.
 
+Update an existing installation
+-------------------------------
+
+A newer release with the same data contract can replace the launcher, runtimes
+and mods of a base you already built, without rebuilding it or its packs:
+
+    python3 megamix.py update "path/to/EMPRESS DVD1.iso" "path/to/MEGAMIX"
+
+Use the ISO the base was built from (it reads two small launcher resources).
+Installed packs, settings, saves and song folders stay as they are. If the
+release needs a new base, it says so and changes nothing. Rebuild the launcher
+cache afterwards if you use one.
+
 Add songs from another disc
 ---------------------------
 
