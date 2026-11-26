@@ -121,6 +121,15 @@ class ReleaseTests(unittest.TestCase):
         for name in ['songs/styles.txt','songs/red/index.txt','songs/3rd_style/index.txt','launcher/source.id']:
             self.assertEqual((bases[0]/name).read_bytes(),(bases[1]/name).read_bytes())
 
+    def test_hand_added_styles_are_in_the_coverage_index(self):
+        root=self.root/'cov';(root/'songs/copula/mz').mkdir(parents=True);(root/'songs/copula/mz/song.txt').write_text('x')
+        (root/'songs/copula/index.txt').write_text('mz\n');(root/'songs/styles.txt').write_text('copula\nred\n')
+        state={'schema':1,'contract':'c','style_order':['red','3rd_style'],'generated':{},
+               'packages':{'id':{'source':'id','songs':[{'source':'id','sid':1,'style':'red','dir':'id_1'}],'selection':{'id:1':{'charts':[],'rank':0,'source_id':'0'}},'content_id':'x'}}}
+        M.activate_indexes(root,state)
+        self.assertEqual((root/'songs/styles.txt').read_text(),'copula\nred\n')
+        self.assertEqual((root/'catalog/coverage.txt').read_text(),'V 1\nS 0 copula\nS 1 red\n')
+
     def test_hand_added_song_folders_survive_install_update_and_index(self):
         bundle=self.bundle(('id','red'));base=self.root/'base';pack=self.root/'pack'
         M.build(self.root/'id.iso',base,bundle,progress=lambda _:None);M.build(self.root/'red.iso',pack,bundle,progress=lambda _:None)
@@ -134,7 +143,8 @@ class ReleaseTests(unittest.TestCase):
         M.install(pack,base,progress=lambda _:None)
         self.assertEqual((base/'songs/red/index.txt').read_text(),'id_1\nred_1\nelisha_cn\n')
         self.assertEqual((base/'songs/copula/index.txt').read_text(),'mesmerizer\n')
-        self.assertEqual((base/'songs/styles.txt').read_text().splitlines()[-1],'copula')
+        self.assertEqual((base/'songs/styles.txt').read_text().splitlines()[0],'copula')
+        styles=(base/'songs/styles.txt').read_text().split()
         M.update(self.root/'id.iso',base,self.bundle(('id',),runtime=b'v2',tag='-v2'),progress=lambda _:None)
         self.assertIn('copula',(base/'songs/styles.txt').read_text().split())
         self.assertIn('elisha_cn',(base/'songs/red/index.txt').read_text().split())

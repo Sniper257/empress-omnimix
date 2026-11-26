@@ -320,6 +320,16 @@ def indexes(state):
     return out
 
 
+def local_order(root):
+    p=path_in(root,'songs/styles.txt')
+    if not p.is_file():return []
+    out=[]
+    for st in p.read_text(encoding='utf-8',errors='replace').splitlines():
+        st=st.strip()
+        if st and st not in out:out.append(st)
+    return out
+
+
 def local_songs(root, state):
     """Song folders added by hand (converted songs), as listed in the current
     indexes: kept when indexes are regenerated. {style: [folder, ...]} in order."""
@@ -350,9 +360,17 @@ def activate_indexes(root, state):
             listed=generated.get(name,'').splitlines()
             generated[name]=''.join(n+'\n' for n in listed+[d for d in rows if d not in listed])
             if style not in styles:styles.append(style)
-        known=state['style_order']
-        styles=[st for st in known if st in styles]+[st for st in styles if st not in known]
+        # Keep the user's order from the current styles.txt; new styles go where
+        # the release order puts them.
+        current=[st for st in local_order(root) if st in styles]
+        for st in styles:
+            if st not in current:
+                after=[c for c in current if c in state['style_order'] and st in state['style_order'] and state['style_order'].index(c)<state['style_order'].index(st)]
+                current.insert(current.index(after[-1])+1 if after else (0 if st in state['style_order'] else len(current)),st)
+        styles=current
         generated['songs/styles.txt']=''.join(st+'\n' for st in styles)
+        # The launcher requires coverage S lines to match songs/styles.txt exactly.
+        generated['catalog/coverage.txt']=coverage_text(state,indexed_songs(state),styles)
     generated.update(folder_presentation.generated(state,lambda name:path_in(root,name).read_bytes()))
     state['generated'] = {}
     for name, text in generated.items():
