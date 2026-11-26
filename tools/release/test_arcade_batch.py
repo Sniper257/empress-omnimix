@@ -20,6 +20,9 @@ class Batch(unittest.TestCase):
         found = B.find_sources(r)
         self.assertEqual(sorted(found), [29025, 32083])
         self.assertEqual(B.parse_versions('17-19,32'), {17, 18, 19, 32})
+        self.assertEqual(B.parse_styles('pinky_crush, 17,Copula'), {32, 17, 23})
+        with self.assertRaises(SystemExit):
+            B.parse_styles('nope')
         used = set()
         self.assertEqual([B.slug(t, used) for t in ('Kailua (HCN Ver.)', 'kailua hcn ver', '!!!')],
                          ['kailua_hcn_ver', 'kailua_hcn_ver_2', 'song'])
