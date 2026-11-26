@@ -152,7 +152,13 @@ void input_probe_flush(void)
 #ifdef AUDIO_PROBE
     ap_flush();
 #endif
+#ifdef HOLDS
+    /* debug logs of hold builds: the holds runtime's counters (holds_dbg[32], 'HDBG') after the header */
+    extern volatile unsigned holds_dbg[32];
+    u8 header[INPUT_PROBE_HEADER_BYTES+128];
+#else
     u8 header[INPUT_PROBE_HEADER_BYTES];
+#endif
     for(unsigned i=0;i<sizeof header;i++){header[i]=0;LOOP_PAD();}
     const char *magic="MMIXINP1";for(unsigned i=0;i<8;i++){header[i]=magic[i];LOOP_PAD();}
     ip_write32(header+8,1);ip_write32(header+12,sizeof header);ip_write32(header+16,48);
@@ -164,6 +170,9 @@ void input_probe_flush(void)
     for(unsigned i=0;i<16;i++){header[88+i]=input_probe_build_id[i];LOOP_PAD();}
     ip_write32(header+104,input_probe.autoplay);
     ip_write32(header+108,input_probe.heap);
+#ifdef HOLDS
+    for(unsigned i=0;i<32;i++){ip_write32(header+INPUT_PROBE_HEADER_BYTES+4*i,holds_dbg[i]);LOOP_PAD();}
+#endif
 #ifdef FILE_IO_LOG
     unsigned io_bytes;const void *io=vd_io_snapshot(&io_bytes);
     header[7]='2';ip_write32(header+8,2);

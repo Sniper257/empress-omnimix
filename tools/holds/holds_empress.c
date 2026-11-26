@@ -170,11 +170,27 @@ static void mss_link(void)
     }
 }
 
+static hold_def play_defs[HOLDS_MAX];
+static hu8 chart_lane[HOLDS_MAX];
+
 static void arm(void)
 {
-    hu32 n = 0;
+    hu32 n = 0, i;
     const hold_def *found = holds_in_chart(H_CHART_CURSOR(), &n);
-    if (found) { chart_defs = found; chart_n = n; }
+    /* a chart without holds.bin has no holds: never keep the previous play's list */
+#ifdef HOLDS_TEST
+    if (!found && chart_defs != play_defs) { found = chart_defs; n = chart_n; }   /* holds_set_chart */
+#endif
+    if (found) {
+        /* Lane options (RANDOM, R-RANDOM, MIRROR, S-RANDOM...) move notes to other lanes when they spawn:
+         * work on a copy whose lanes become the head's lane on screen (holds_spawn_hook); chart_lane keeps
+         * the chart's lane, which is what the spawned note's chart event still says. */
+        for (i = 0; i < n && i < HOLDS_MAX; i++) { play_defs[i] = found[i]; chart_lane[i] = found[i].lane; LOOP_PAD(); }
+        chart_defs = play_defs; chart_n = n;
+    }
+#ifndef HOLDS_TEST
+    else chart_n = 0;
+#endif
     armed = chart_n && holds_reset(&holds, chart_defs, chart_n, &default_cfg) == 0;
     hd_reset();
     mss_link();
@@ -188,17 +204,46 @@ static void arm(void)
  * and side (+0xa) are set and +0xb (must judge) has just been decided. A note at a hold's end tick
  * on its lane (within HOLDS_TAIL_SHIFT) is the hold's tail (arcade_convert.py writes one per hold): never judged by the game,
  * only scrolled and drawn, so the renderer knows where the tail is. */
+/* the chart lane (side * 8 + lane) of a spawned note: its chart event (note +0, 8 bytes: u32 tick, then
+ * the command byte, lane << 4 | side), before lane options moved it; the note's own lane if unreadable */
+static hu32 chart_lane_of(const hu8 *note, hu32 lane)
+{
+#ifndef HOLDS_TEST
+    hu32 ev = *(const hu32 *)note, cmd;
+    if (ev < 0x100000u || ev >= 0x2000000u || (ev & 3u)) return lane;
+    cmd = *(const volatile hu8 *)(unsigned long)(ev + 4);
+    if ((cmd & 15u) > 1u) return lane;
+    return (cmd & 15u) * 8u + (cmd >> 4);
+#else
+    (void)note;
+    return lane;
+#endif
+}
+
 void holds_spawn_hook(hu8 *note)
 {
-    hu32 i, lane;
+    hu32 i, lane, clane;
     hs32 t;
     if (!armed) arm();
     if (armed && note[9] < 8 && note[0xa] < 2) {
         t = *(const short *)(note + 0x18);
         lane = note[0xa] * 8u + note[9];
+        clane = chart_lane_of(note, lane);
         for (i = 0; i < chart_n; i++) {
-            if (chart_defs[i].lane == lane && chart_defs[i].start == t) break;            /* a head */
-            if (chart_defs[i].lane == lane && holds_tail_tick(&chart_defs[i], t)) { note[0xb] = 0; tail_note[i] = note; holds_dbg[8]++; break; }
+            if (chart_lane[i] == clane && chart_defs[i].start == t) {                     /* a head */
+                play_defs[i].lane = (hu8)lane;                                           /* its lane on screen */
+                break;
+            }
+            if (chart_lane[i] == clane && holds_tail_tick(&chart_defs[i], t)) {          /* its tail: on the head's lane */
+                if (chart_defs[i].lane != lane) {                                      /* S-RANDOM and the like */
+                    note[9] = chart_defs[i].lane & 7u; note[0xa] = chart_defs[i].lane >> 3;
+#ifndef HOLDS_TEST
+                    /* its x, as the spawner set it from the lane (0x1e7bec: 0x797440 + side * 18 + lane * 2) */
+                    *(short *)(note + 0x1a) = *(const volatile short *)(unsigned long)(0x797440u + note[0xa] * 18u + note[9] * 2u);
+#endif
+                }
+                note[0xb] = 0; tail_note[i] = note; holds_dbg[8]++; break;
+            }
             LOOP_PAD();
         }
     }
