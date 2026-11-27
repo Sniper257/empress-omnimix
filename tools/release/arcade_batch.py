@@ -249,7 +249,9 @@ def install(megamix, out, done):
         by_style.setdefault(r['style'], []).append(r['folder'])
     for style, folders in by_style.items():
         src = out / 'songs' / style
-        dst = songs / style
+        # Windows folders ignore case: a hand-made "Sirius" line is this style's folder, not a new one
+        style_dir = next((s for s in order if s.casefold() == style.casefold()), style)
+        dst = songs / style_dir
         dst.mkdir(parents=True, exist_ok=True)
         for f in ('style.txt', 'label.spr', 'caption.spr'):
             if (src / f).is_file() and not (dst / f).is_file():
@@ -261,11 +263,11 @@ def install(megamix, out, done):
         index = dst / 'index.txt'
         listed = [l.strip() for l in index.read_text(encoding='utf-8').splitlines() if l.strip()] if index.is_file() else []
         index.write_text(''.join(n + '\n' for n in listed + [f for f in folders if f not in listed]), encoding='utf-8')
-        if style not in order:                       # arcade styles in version order, from the first one
+        if style_dir not in order:                   # arcade styles in version order, from the first one
             after = [s for s in order if s in arcade and arcade.index(s) < arcade.index(style)]
             before = [s for s in order if s in arcade and arcade.index(s) > arcade.index(style)]
             at = order.index(after[-1]) + 1 if after else order.index(before[0]) if before else 0
-            order.insert(at, style)
+            order.insert(at, style_dir)
     M.write_atomic(styles_path, ''.join(s + '\n' for s in order))
     M.reindex(megamix)
 

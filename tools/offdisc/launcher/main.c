@@ -1373,7 +1373,7 @@ static int spr_bank_add(int c, int k, const char *path)
     if (!bank || fwrite(b, 1, len, bank) != (size_t)len) { logf_("cannot write cache/sprites_build.tmp\n"); free(b); return -1; }
     sdb->spr_off[k * NSPR + c] = bank_pos;
     bank_pos += len;
-    if(!c && wheel_file && wheel_add(k,b,(u32)len)){free(b);return -1;}
+    if(!c && wheel_file && wheel_add(k,b,(u32)len)){logf_("%s: wheel label does not fit (%d bytes)\n",path,len);free(b);return -1;}
     free(b);
     return 0;
 }
@@ -1503,7 +1503,7 @@ static int add_song(const song_t *sg, int fold)
     u8 *rec = sdb->recs + k * 0x134, *t;
     snprintf(base, sizeof base, "songs/%s/%s/", styles[sg->style].dir, sg->dir);
     snprintf(path, sizeof path, "%ssong.txt", base);
-    if (!(b = slurp(path, 0))) return -1;
+    if (!(b = slurp(path, 0))) { logf_("%s: cannot read %s\n", sg->dir, path); return -1; }
     p = b;
     while ((l = line(&p))) {
         char *q;
@@ -1543,14 +1543,15 @@ static int add_song(const song_t *sg, int fold)
         } else if (!strncmp(l, "card ", 5)) {
             u32 idx;
             song_path(path, sizeof path, base, l + 5);
-            if (!(idx = d1_add(path, sg->dir))) { errs++; continue; }
+            if (!(idx = d1_add(path, sg->dir))) { logf_("%s: cannot add card %s\n", sg->dir, l + 5); errs++; continue; }
             put(rec, 0x94, 4, idx);
             d1_place(rec, 0xfffe, idx);
         } else if (l[0] == 'D' && l[1] == ' ') {
             u32 n = strtoul(l + 2, &q, 10), idx;
             while (*q == ' ') q++;
             song_path(path, sizeof path, base, q);
-            if (n > 0xfd || !(idx = d1_add(path, sg->dir))) { errs++; continue; }
+            if (n > 0xfd) { logf_("%s: D %u is above 253\n", sg->dir, n); errs++; continue; }
+            if (!(idx = d1_add(path, sg->dir))) { logf_("%s: cannot add %s\n", sg->dir, q); errs++; continue; }
             d1_place(rec, 0xff00 + n, idx);
             asset_measure(path,&bga_raw,&bga_packed);
         } else if (!strncmp(l, "variant ", 8)) {
@@ -1953,7 +1954,7 @@ static int build_inner(u32 *entry)
             u32 lui = strtoul(l + 2, &q, 16), addiu = strtoul(q, &q, 16), a;
             while (*q == ' ') q++;
             u32 offset=new_str(q);
-            if(!offset || module_path_count>=module_path_capacity){errs++;continue;}
+            if(!offset || module_path_count>=module_path_capacity){logf_("runtime: module path table full\n");errs++;continue;}
             module_paths[module_path_count++]=(module_path_t){lui,addiu,offset};
             a = RES_LO + offset;
             *W(lui) = (*W(lui) & 0xffff0000) | ((a + 0x8000) >> 16);
@@ -1963,7 +1964,7 @@ static int build_inner(u32 *entry)
     free(vt);
     if (save_at<RES_LO || save_at+4>RES_LO+(u32)vlen || save_diag_at<RES_LO || save_diag_at+48>RES_LO+(u32)vlen) {logf_("runtime save ABI invalid\n");errs++;}
     else {*W(save_at)=save_batch;logf_("Memory-card checkpoints: ON; autosave %s\n",save_batch?"after play at native menu exits":"native exits, unchanged requests skipped");}
-    if (skin_apply(skin_at)) errs++;
+    if (skin_apply(skin_at)) { logf_("skin: settings not applied\n"); errs++; }
     if (gsm_at >= RES_LO && gsm_at + 4 <= RES_LO + (u32)vlen) {
         *W(gsm_at) = mm_any_gas(&shared_options);
         logf_("Gauge auto shift: %s (FREE only)\n", *W(gsm_at) ? "ON" : "off");
@@ -2060,27 +2061,27 @@ static int build_inner(u32 *entry)
                 if (styles[sg->style].fold != NOFOLD && sdb->fold_n[styles[sg->style].fold] < 255) sdb->fold_n[styles[sg->style].fold]++;
                 n_emp++;
             } else {
-                if (add_song(sg, styles[sg->style].fold)) errs++;
+                if (add_song(sg, styles[sg->style].fold)) { logf_("%s/%s: song not added\n", styles[sg->style].dir, sg->dir); errs++; }
             }
         }
-        if (bank && fclose(bank)) errs++;
+        if (bank && fclose(bank)) { logf_("cannot close cache/sprites_build.tmp\n"); errs++; }
         bank = 0;
-        if(wheel_at && wheel_finish())errs++;
+        if(wheel_at && wheel_finish()){logf_("wheel labels: cannot finish the page file\n");errs++;}
         resolve_variants();
         if (catalog_finish())errs++;
         sdb->custom_n = sdb->fold_n[0];
         logf_("songs: %d EMPRESS, %d added, %d custom\n", n_emp, sdb->n_new, sdb->custom_n);
     }
-    if (folders()) errs++;
-    if (n_sq && build_containers()) errs++;
+    if (folders()) { logf_("folders: build failed\n"); errs++; }
+    if (n_sq && build_containers()) { logf_("containers: build failed\n"); errs++; }
     if (bank_pos) {
         u32 sec, size;
         char rel[80];
-        if (cache_publish(rel, sizeof rel, "sprites", 0, bank_pos, "cache/sprites_build.tmp")) errs++;
+        if (cache_publish(rel, sizeof rel, "sprites", 0, bank_pos, "cache/sprites_build.tmp")) { logf_("sprites: cannot publish the bank\n"); errs++; }
         else if (!(sdb->spr_lba = vfile(rel, &sec, &size, "sprites"))) errs++;
         else logf_("sprite bank: %d KB\n", (int)(bank_pos >> 10));
     }
-    if (spr_containers()) errs++;
+    if (spr_containers()) { logf_("sprite containers: build failed\n"); errs++; }
     if(preview_at){
         if(preview_at<RES_LO || preview_at+24>RES_LO+(u32)vlen || (preview_at&3)){logf_("Invalid play preview ABI\n");return -1;}
         /* Preview-owned native intro extent: available even if every retail
@@ -2124,19 +2125,19 @@ static int build_inner(u32 *entry)
     /* mods: graphics/gameplay mods, then video */
     lpl_stage(6);
     progress(96, "mods");
-    for (i = 0; i < n_mods; i++) if (mods[i].on && load_combos(mods[i].dir)) errs++;
-    for (i = 0; i < n_mods; i++) if (mods[i].on && load_mod(mods[i].dir)) errs++;
-    if (video && load_mod(VIDEO_DIR[video])) errs++;
-    if (frame_build()) errs++;                     /* optional frame gets its own virtual extent after mods */
-    if (native_asset_plans()) errs++;
-    if (note_skin_build()) errs++;                  /* after the mods: grows the note containers they provide */
+    for (i = 0; i < n_mods; i++) if (mods[i].on && load_combos(mods[i].dir)) { logf_("%s: bad combination\n", mods[i].dir); errs++; }
+    for (i = 0; i < n_mods; i++) if (mods[i].on && load_mod(mods[i].dir)) { logf_("%s: mod failed\n", mods[i].dir); errs++; }
+    if (video && load_mod(VIDEO_DIR[video])) { logf_("%s: video mode failed\n", VIDEO_DIR[video]); errs++; }
+    if (frame_build()) { logf_("frame: build failed\n"); errs++; }                     /* optional frame gets its own virtual extent after mods */
+    if (native_asset_plans()) { logf_("native asset plans: a record has an invalid file id\n"); errs++; }
+    if (note_skin_build()) { logf_("note skin: build failed\n"); errs++; }                  /* after the mods: grows the note containers they provide */
     /* Append after every existing virtual asset so their extent/FID identity
      * stays unchanged. The eight-byte optional runtime config is prepared-cache
      * content; older runtimes/launchers simply retain the ordinary art path. */
     if(wheel_at && wheel_labels && wheel_pos){
         char rel[80];u32 sec,size,lba;
         if(wheel_labels!=sdb->n_new || cache_publish(rel,sizeof rel,"wheel1",0,wheel_pos,"cache/wheel_build.tmp") ||
-           !(lba=vfile(rel,&sec,&size,"wheel labels")))errs++;
+           !(lba=vfile(rel,&sec,&size,"wheel labels"))){logf_("wheel labels: %u of %u songs, page file not published\n",wheel_labels,sdb->n_new);errs++;}
         else {((u32*)wheel_at)[1]=lba;logf_("wheel pages: %u KB, %u labels\n",wheel_pos>>10,sdb->n_new);}
     }
 
@@ -2272,11 +2273,11 @@ static int build(u32 *entry)
         result=build_inner(entry);
         if(!result && sealed)bc_store(key,*entry);
     }
-    if(!result && save_profile_bind())result=-1;
-    if(!result && select_profile_bind())result=-1;
-    if(!result && shared_settings_bind())result=-1;
+    if(!result && save_profile_bind()){logf_("runtime: save profile ABI mismatch\n");result=-1;}
+    if(!result && select_profile_bind()){logf_("runtime: select profile ABI mismatch\n");result=-1;}
+    if(!result && shared_settings_bind()){logf_("runtime: shared settings ABI mismatch\n");result=-1;}
 #ifdef USB_HID
-    if(!result && usb_runtime_resolve())result=-1;
+    if(!result && usb_runtime_resolve()){logf_("runtime: USB input ABI mismatch\n");result=-1;}
 #endif
     free(str_work);str_work=0;
     free(str_offsets);str_offsets=0;

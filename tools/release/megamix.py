@@ -326,7 +326,7 @@ def local_order(root):
     out=[]
     for st in p.read_text(encoding='utf-8',errors='replace').splitlines():
         st=st.strip()
-        if st and st not in out:out.append(st)
+        if st and st.casefold() not in {o.casefold() for o in out}:out.append(st)
     return out
 
 
@@ -339,7 +339,7 @@ def local_songs(root, state):
     out={}
     for style in styles_path.read_text(encoding='utf-8',errors='replace').splitlines():
         style=style.strip()
-        if not style or '/' in style or '\\' in style or style in ('.','..') or style in out:continue
+        if not style or '/' in style or '\\' in style or style in ('.','..') or style.casefold() in {o.casefold() for o in out}:continue
         index=path_in(root,'songs/'+style+'/index.txt')
         if not index.is_file():continue
         rows=[]
