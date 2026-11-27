@@ -150,7 +150,8 @@ Checked against All My Turn's CS files (arcade 16017; bank, stream and nine char
   charts of its own.
 
 Result for 16017: 5.70 MB bank against the CS 5.32 MB (the difference is the resampled sounds), stream
-6,121,344 bytes against 6,121,248. `arcade_batch.py --empress-audio` uses this mode with each song's volume.
+6,121,344 bytes against 6,121,248. `arcade_batch.py` uses this mode by default, with each song's volume (`--legacy-audio` for the earlier layout).
+In PCSX2 the converted All My Turn plays as a near-perfect match for the CS one.
 
 Song folders for added songs (launcher/main.c `add_song`): `record record.bin` (0x134 bytes),
 `F <field hex> <bytes> <path>` per file id (bank fields 0xe8..0x107: four 8-byte groups, u16 file ids

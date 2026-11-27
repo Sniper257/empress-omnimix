@@ -184,7 +184,11 @@ def convert_one(job):
     row = {'id': job['id'], 'title': job['title'], 'style': job['style'], 'folder': job['folder']}
     try:
         work = Path(job['work'])
-        if not (work / 'convert.json').is_file():
+        layout = 'native' if job.get('empress_audio') else 'split'
+        made = work / 'convert.json'
+        if made.is_file() and json.loads(made.read_text(encoding='utf-8')).get('layout', 'split') != layout:
+            made.unlink()                                   # converted with the other audio layout: redo
+        if not made.is_file():
             if work.exists():
                 shutil.rmtree(work)
             C.main([job['source'], str(work), '--split'] +
@@ -195,9 +199,9 @@ def convert_one(job):
         dest = Path(job['dest'])
         if dest.exists():
             shutil.rmtree(dest)
-        info = F.build(work, Path(job['template']).read_bytes(), dest, job['ascii'], job['levels'], 17,
+        info = F.build(work, Path(job['template']).read_bytes(), dest, job['ascii'], job['levels'], job.get('version', 17),
                        Path(job['sprites']) if job['sprites'] else None, text_files, job['id'])
-        row.update(ok=True, charts=info['charts'], bpm=info['bpm'])
+        row.update(ok=True, charts=info['charts'], bpm=info['bpm'], layout=layout)
     except Exception as e:  # noqa: BLE001 - one song's failure must not stop the batch
         row.update(ok=False, error='%s: %s' % (type(e).__name__, e), trace=traceback.format_exc()[-1500:])
     return row
@@ -279,11 +283,14 @@ def main(argv=None):
                    help='songs converted in parallel (each needs about 1 GB of memory; default %(default)s)')
     p.add_argument('--hold-sprites', type=Path, help='hold sprites folder (default: from a song converted before)')
     p.add_argument('--install', action='store_true', help='copy the results into MEGAMIX and run megamix.py index')
-    p.add_argument('--empress-audio', action='store_true',
-                   help='EMPRESS\'s own layout, as on the CS disc (arcade_convert.py --native): every arcade sound in one '
-                        'bank, the backing track in the stream at the song\'s arcade volume (ALL MY TURN: 11.8 MB instead of '
-                        'about 60; 98%% of chart events identical to the CS charts). Use a new --out folder: songs already '
-                        'converted keep the layout they have')
+    p.add_argument('--empress-audio', dest='empress_audio', action='store_true', default=True,
+                   help='EMPRESS\'s own layout, as on the CS disc (arcade_convert.py --native; the default): every arcade '
+                        'sound in one bank, the backing track in the stream at the song\'s arcade volume (ALL MY TURN: '
+                        '11.8 MB instead of about 60; plays the same as the CS version)')
+    p.add_argument('--legacy-audio', dest='empress_audio', action='store_false',
+                   help='the earlier layout: one bank per difficulty, the autoplay mix of the BGM in the stream')
+    p.add_argument('--version', type=int, default=17,
+                   help='record version byte (default 17, SIRIUS; 16 = EMPRESS, to test the intro screen text)')
     a = p.parse_args(argv)
     megamix, out = a.megamix.resolve(), (a.out or a.megamix / 'arcade-batch').resolve()
     try:
@@ -348,11 +355,12 @@ def main(argv=None):
         atlases[style] = style_atlas(out, style, texts, HERE / 'text-fonts' / 'open-fonts.sources.json')
     jobs = []
     for s in songs:
-        done = previous.get(s['id'], {}).get('ok') and (out / 'songs' / s['style'] / s['folder'] / 'song.txt').is_file()
+        done = (previous.get(s['id'], {}).get('ok') and (out / 'songs' / s['style'] / s['folder'] / 'song.txt').is_file()
+                and previous[s['id']].get('layout', 'split') == ('native' if a.empress_audio else 'split'))
         if done:
             continue
         jobs.append({'id': s['id'], 'title': s['title'], 'ascii': s['ascii'], 'style': s['style'], 'folder': s['folder'],
-                     'texts': s['texts'], 'levels': s['levels'], 'empress_audio': a.empress_audio,
+                     'texts': s['texts'], 'levels': s['levels'], 'empress_audio': a.empress_audio, 'version': a.version,
                      'volume': song_volume(s['entry']),
                      'source': str(sources[s['id']]), 'work': str(out / 'work' / str(s['id'])),
                      'megamix': str(megamix), 'template': str(template), 'sprites': str(sprites) if sprites else None,
