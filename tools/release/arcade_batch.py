@@ -201,7 +201,7 @@ def convert_one(job):
         dest = Path(job['dest'])
         if dest.exists():
             shutil.rmtree(dest)
-        info = F.build(work, Path(job['template']).read_bytes(), dest, job['ascii'], job['levels'], job.get('version', 17),
+        info = F.build(work, Path(job['template']).read_bytes(), dest, job['ascii'], job['levels'], job.get('version', 16),
                        Path(job['sprites']) if job['sprites'] else None, text_files, job['id'])
         row.update(ok=True, charts=info['charts'], bpm=info['bpm'], layout=layout)
     except Exception as e:  # noqa: BLE001 - one song's failure must not stop the batch
@@ -291,8 +291,8 @@ def main(argv=None):
                         '11.8 MB instead of about 60; plays the same as the CS version)')
     p.add_argument('--legacy-audio', dest='empress_audio', action='store_false',
                    help='the earlier layout: one bank per difficulty, the autoplay mix of the BGM in the stream')
-    p.add_argument('--version', type=int, default=17,
-                   help='record version byte (default 17, SIRIUS; 16 = EMPRESS, to test the intro screen text)')
+    p.add_argument('--version', type=int, default=16,
+                   help='record version byte (default 16, EMPRESS; 17 = SIRIUS)')
     a = p.parse_args(argv)
     megamix, out = a.megamix.resolve(), (a.out or a.megamix / 'arcade-batch').resolve()
     try:

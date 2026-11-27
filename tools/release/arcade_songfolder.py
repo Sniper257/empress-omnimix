@@ -9,7 +9,7 @@ Install as songs/custom/<folder>.
 
 Record fields (0x134 bytes; launcher/main.c add_song, song_resources.c, song_window.c, All My Turn):
   0x00  title (ASCII, upper case; also the A-Z folder sort)      0x42/0x44  s16 BPM min / max (-1 = constant)
-  0x4a  levels SP N,H,A,B,X then DP N,H,A,B,X                    0x54  version (16 EMPRESS, 17 SIRIUS)
+  0x4a  levels SP N,H,A,B,X then DP N,H,A,B,X                    0x54  version (16 EMPRESS, the default; 17 SIRIUS)
   0x58  file id kept from the template (All My Turn's 37 MB file, probably the BGA movie)
   0x94, 0x9a  title card (data1 index)    0xac..0xbb  title sprite indices     0xbd  large-bank flag
   0xc0..0xe4  u32 chart file ids, by level index (launcher/coalesce_catalog.h): SPN d0, SPH c0,
@@ -94,7 +94,7 @@ def hold_sprite_names():
     return [row[0] for row in hold_sprites.catalogue()]
 
 
-def build(converted, template, out, title, lv, version=17, sprites=None, text_files=None, song_id=None):
+def build(converted, template, out, title, lv, version=16, sprites=None, text_files=None, song_id=None):
     report = json.loads((converted / 'convert.json').read_text())
     rec = bytearray(template)
     if len(rec) != 0x134:
@@ -194,7 +194,7 @@ def main(argv=None):
     p.add_argument('output', type=Path)
     p.add_argument('--music', type=Path, required=True, help='music_data.bin / music_omni.bin (title, levels)')
     p.add_argument('--id', type=int, required=True, help='arcade song id')
-    p.add_argument('--version', type=int, default=17, help='record version byte (default 17, SIRIUS)')
+    p.add_argument('--version', type=int, default=16, help='record version byte (default 16, EMPRESS; 17 = SIRIUS)')
     p.add_argument('--hold-sprites', type=Path, help='tools/holds/hold_sprites.py output (CN/HCN graphics)')
     p.add_argument('--text-base', type=Path,
                    help='MEGAMIX base folder: its four native text containers (a/40/29, a/21/41, a/37/27, a/57/34) give '
