@@ -54,8 +54,15 @@ def song_texts(music_data, song_id):
     e = m['entries'][n]
     u16 = lambda b: b.decode('utf-16-le', 'replace').split('\0')[0].strip()
     title, ascii_title = A.entry_title(e)
-    return {'title': title or ascii_title, 'ascii_title': ascii_title,
-            'genre': u16(e[0x140:0x1c0]), 'artist': u16(e[0x1c0:0x240])}
+    return decode_entities({'title': title or ascii_title, 'ascii_title': ascii_title,
+                            'genre': u16(e[0x140:0x1c0]), 'artist': u16(e[0x1c0:0x240])})
+
+
+def decode_entities(texts):
+    """The music data writes a few characters as HTML entities (Raison d'&ecirc;tre, Pr&eacute;,
+    Raspberry&#9825;Heart): decoded, so the cards show the character. A bare & (Jam&Marmalade) stays."""
+    import html
+    return {k: html.unescape(v) if isinstance(v, str) else v for k, v in texts.items()}
 
 
 def base_containers(base):

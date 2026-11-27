@@ -126,6 +126,8 @@ def song_info(db, sid):
     r = db['songs'].get(str(sid))
     if r is None:
         return None
+    import arcade_text as X
+    r = dict(r, **X.decode_entities({k: r[k] for k in ('title', 'ascii_title', 'genre', 'artist')}))  # databases built before
     return {'id': sid, 'entry': r['entry'], 'version': r['version'], 'texts': {k: r[k] for k in ('title', 'ascii_title', 'genre', 'artist')},
             'levels': r['levels'], 'title': r['title'] or r['ascii_title'], 'ascii': r['ascii_title'] or r['title']}
 

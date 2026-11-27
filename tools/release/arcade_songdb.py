@@ -32,8 +32,9 @@ def _u16(b):
 def entry_texts(e):
     """{'title', 'ascii_title', 'genre', 'artist'} of a music_data v32 entry (as arcade_text.song_texts)."""
     title, ascii_title = A.entry_title(e)
-    return {'title': title or ascii_title, 'ascii_title': ascii_title, 'genre': _u16(e[0x140:0x1c0]),
-            'artist': _u16(e[0x1c0:0x240])}
+    import arcade_text as X
+    return X.decode_entities({'title': title or ascii_title, 'ascii_title': ascii_title, 'genre': _u16(e[0x140:0x1c0]),
+                              'artist': _u16(e[0x1c0:0x240])})
 
 
 def build(paths):
