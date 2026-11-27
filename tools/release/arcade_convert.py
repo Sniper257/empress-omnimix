@@ -40,8 +40,18 @@ SLOTS = {0: 'SPH', 1: 'SPN', 2: 'SPA', 3: 'SPB', 4: 'SPL', 6: 'DPH', 7: 'DPN', 8
 END = 0x7fff
 
 
+# --native: the CS disc's own timing. All My Turn's CS charts put each event at floor(ms * 60/1001 + 1.63)
+# frames (0 stays 0), against round(ms / 16.683) here: about one frame later. That matches 98.3% of
+# 15,216 event times across six charts exactly, the rest by one frame (the arcade's ms are rounded).
+NATIVE_LEAD = 163   # hundredths of a frame
+native_timing = False
+
+
 def tick(ms):
-    t = (ms * 1000 + CLOCK // 2) // CLOCK
+    if native_timing and ms:
+        t = (ms * 6000 + NATIVE_LEAD * 1001) // 100100
+    else:
+        t = (ms * 1000 + CLOCK // 2) // CLOCK
     if t >= END:
         raise ValueError('Chart is longer than EMPRESS charts allow (%d ms)' % ms)
     return t
@@ -303,6 +313,79 @@ def is_hell(events):
     return any(e[1] == HCN_FLAG for e in events)
 
 
+NATIVE_STREAM_LEAD = 28      # samples of silence the CS stream starts with (one ADPCM frame), as its bank samples do
+NATIVE_STREAM_GAIN = 0.965    # All My Turn's CS stream against arcade sound 1: 0.9647-0.9652 in every 10 s window, 25 dB SNR (ADPCM noise)
+
+
+def keyed_sounds(charts):
+    """Arcade sounds some note plays in any chart (the sample assigned to its lane when it is hit)."""
+    out = set()
+    for ev in charts.values():
+        cur = {}
+        for t, typ, p, v in sorted(ev, key=lambda e: e[0]):
+            if typ in (2, 3):
+                cur[(typ - 2, p)] = v
+            elif typ in (0, 1) and cur.get((typ, p)):
+                out.add(cur[(typ, p)])
+    return out
+
+
+def backing_track(charts, keys):
+    """The arcade sound the stream carries: the BGM sound every chart starts at the same time, that no note
+    plays, the longest such (All My Turn: sound 1 at 0 ms, the whole 121 s backing track). None if none."""
+    keyed = keyed_sounds(charts)
+    sets = [set((e[0], e[3]) for e in ev if e[1] == 7 and e[3]) for ev in charts.values()]
+    common = {v for t, v in set.intersection(*sets)} - keyed if sets else set()
+    if not common:
+        return None
+    import keysound_bank as KB
+    return max(sorted(common), key=lambda v: len(KB.stereo(keys[v - 1]['wav'])[1][0]))
+
+
+def native(a, charts, keys, sid):
+    """--split --native: the CS disc's layout (see the --native help)."""
+    import numpy as np
+    import keysound_bank as KB
+    import spu_adpcm as S
+    global native_timing
+    native_timing = True
+    report = {'song': sid, 'keysounds': len(keys), 'charts': {}, 'layout': 'native'}
+    track = backing_track(charts, keys)
+    sounds = list(range(1, len(keys) + 1))
+    alias = None
+    if track:
+        alias = next((s for s in sounds[sounds.index(track) + 1:] + sounds[:sounds.index(track)][::-1]), None)
+    data, slots, info = KB.build('SP', sounds, keys, 1.0, a.bank_budget or None, aliases={track: alias} if track and alias else None)
+    (a.output / 'keys.bank').write_bytes(data)
+    report['banks'] = {'keys': info}
+    print('keys.bank: %d slots, %d bytes, rates %s' % (info['sounds'], info['bytes'], info['rates']))
+    for slot, events in sorted(charts.items()):
+        name = SLOTS.get(slot, 'slot%d' % slot)
+        hell = a.hell or is_hell(events)
+        holds = H.from_events(events, hell=hell, time=tick, ticks_per_ms=1000 / CLOCK)
+        ev = KB.remap(events, slots, bgm=True)
+        ply, warnings = empress_events(ev, holds, keysounds=True, bgm_slots=True)
+        (a.output / (name + '.bin')).write_bytes(encrypt(ply))
+        notes = sum(1 for e in events if e[1] in (0, 1))
+        bpms = sorted({round(e[3] / e[2], 2) if e[2] else e[3] for e in events if e[1] == 4})
+        report['charts'][name] = {'notes': notes, 'holds': len(holds), 'mss_joints': len(A.mss_joints(events)), 'hcn': hell,
+                                  'total': notes + len(holds), 'bpm': [bpms[0], bpms[-1]] if bpms else None, 'warnings': warnings}
+        print('%s: %d notes, %d %s%s' % (name, notes, len(holds), 'HCN' if hell else 'holds', (' (' + '; '.join(warnings) + ')') if warnings else ''))
+    volume = max(0, min(127, round(a.volume * 100 / 127)))
+    if track:
+        start = min(t for ev in charts.values() for t, k, p, v in ev if k == 7 and v == track)
+        rate, mix, rinfo = render([(start, 7, 0, track)], keys, bgm_only=True, raw=True)
+        mix = np.clip(np.round(mix * NATIVE_STREAM_GAIN), -32768, 32767).astype(np.int16)
+        mix = np.hstack([np.zeros((2, NATIVE_STREAM_LEAD), np.int16), mix])
+        (a.output / 'stream.bin').write_bytes(S.stream([mix[0].tolist(), mix[1].tolist()], rate, volume=volume))
+        report['stream'] = dict(rinfo, chart='native', sound=track, seconds=round(mix.shape[1] / rate, 2), volume=volume)
+        print('stream: sound %d, %.1f s, header volume %#x; its slot points at sound %d\'s sample' % (track, mix.shape[1] / rate, volume, alias))
+    else:
+        report['stream'] = None
+        print('stream: none (no backing track every chart shares); all BGM plays from the bank')
+    (a.output / 'convert.json').write_text(json.dumps(report, indent=1) + '\n', encoding='utf-8')
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument('song', type=Path, help='<id>.ifs, or a folder holding <id>.1 and <id>.2dx')
@@ -321,6 +404,14 @@ def main(argv=None):
                         'into pieces (about a third of the space; long sounds still drop in PCSX2). Default: each '
                         'chart\'s whole BGM mixed and cut into pieces, one bank per difficulty (0xe8 H, 0xf0 A, '
                         '0xf8 N, 0x100 B), which plays best')
+    p.add_argument('--native', action='store_true',
+                   help='with --split: EMPRESS\'s own layout, as on the CS disc (All My Turn, 16017, checked sound by '
+                        'sound): every arcade sound in one bank at full level, slot n = arcade sound n, every chart\'s '
+                        'events kept (BGM bank-triggered), and a stream of the backing track (the BGM sound every chart '
+                        'starts, no note plays) at 0.965, its own slot pointed at the next sound\'s sample, the arcade volume '
+                        'in the stream header (--volume)')
+    p.add_argument('--volume', type=int, default=127, help='the song\'s arcade volume (music_data +0x680, 0..127); '
+                   'with --native it goes to the stream header as volume * 100 / 127 (All My Turn: 65 -> 0x33)')
     p.add_argument('--hell', action='store_true', help='treat holds as HCN/HBSS even without the type-13 HCN event')
     p.add_argument('--split', action='store_true',
                    help='keysounds to one keys.bank for every chart (an EMPRESS "wp" bank; native songs have one '
@@ -332,6 +423,10 @@ def main(argv=None):
     a.output.mkdir(parents=True, exist_ok=True)
     report = {'song': sid, 'keysounds': len(keys), 'charts': {}}
     banks = {}
+    if a.native:
+        if not a.split or a.stream:
+            raise SystemExit('--native needs --split and no --stream')
+        return native(a, charts, keys, sid)
     common_mode = bool(a.stream) and a.stream.lower() == 'common'
     if common_mode and not a.split:
         raise SystemExit('--stream common needs --split')

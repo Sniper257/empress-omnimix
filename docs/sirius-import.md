@@ -131,6 +131,27 @@ no stream. Kailua (HCN Ver.) gives 11.9 MB banks (443 sounds), more than the 6.1
 the record needs the launcher's large-bank workspace (record byte 0xbd; up to 0x1fff800 bytes).
 `--split --stream SPA` keeps the earlier layout: player sounds only in the bank, BGM in a stream.
 
+### `--split --native`: the CS disc's layout
+
+Checked against All My Turn's CS files (arcade 16017; bank, stream and nine charts):
+
+- **Bank**: every arcade sound, slot n = arcade sound n, at full level (gain 1.00, correlation > 0.99),
+  each with the 28-sample zero frame. Slot rows: priority 0, group 0xff, used 2, b8 1, volume 127.
+  Seven sounds are stored at 32 or 24 kHz and two pairs of sounds share one sample; that looks hand-picked
+  (sounds of the same length stayed at 44.1 kHz), so `--native` keeps 44.1 kHz unless `--bank-budget` forces it.
+- **Stream**: arcade sound 1 alone, the whole 121 s backing track, at 0.965 (0.9647-0.9652 in every
+  10 s window; the residual is high-frequency ADPCM noise), after a 28-sample lead. Its header volume
+  is 0x33 for arcade volume 65 (music_data +0x680), taken as volume x 100 / 127.
+- **Slot 1** (the backing track) keeps its row, pointed at slot 2's sample with tail 0, and every chart
+  keeps its BGM event for it at tick 0: that is how the song avoids playing the backing track twice.
+- **Charts**: every arcade event, BGM bank-triggered, on the NTSC frame clock about one frame later than
+  rounding: `floor(ms * 60/1001 + 1.63)` (0 stays 0). The six arcade charts come out 98.0-98.1% identical,
+  event for event; the rest differ by one frame (the arcade's times are whole ms). The CS disc adds three
+  charts of its own.
+
+Result for 16017: 5.70 MB bank against the CS 5.32 MB (the difference is the resampled sounds), stream
+6,121,344 bytes against 6,121,248. `arcade_batch.py --empress-audio` uses this mode with each song's volume.
+
 Song folders for added songs (launcher/main.c `add_song`): `record record.bin` (0x134 bytes),
 `F <field hex> <bytes> <path>` per file id (bank fields 0xe8..0x107: four 8-byte groups, u16 file ids
 at +0 and +2), `card`, `D <n> <path>`, `S <cont> <field> <sprite>`. `tools/release/dump_record.py`

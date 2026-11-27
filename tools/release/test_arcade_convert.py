@@ -201,6 +201,32 @@ class Chart(unittest.TestCase):
                 self.assertEqual(ch[-16:], bytes([0, 7]) + b'\x77' * 14)
                 self.assertEqual(ch[-31], 1)                              # flag 1 on the last audio frame
         self.assertEqual(b['slots'][1]['tail'], 76)
+        data, slots, info = KB.build('SP', [1, 2, 3], keys, aliases={1: 2})      # --native: the stream's sound
+        b = KB.read(data)
+        self.assertEqual(len(b['samples']), 2)
+        self.assertEqual((b['slots'][1]['sample'], b['slots'][1]['tail']), (b['slots'][2]['sample'], 0))
+        self.assertEqual(b['slots'][1]['ms'], b['slots'][2]['ms'])
+
+    def test_native_timing_and_backing_track(self):
+        try:
+            C.native_timing = True
+            self.assertEqual([C.tick(m) for m in (0, 6000, 6882, 7059)], [0, 361, 414, 424])   # All My Turn's CS charts
+        finally:
+            C.native_timing = False
+        self.assertEqual(C.tick(6000), 360)
+        charts = {0: [(0, 2, 0, 3), (0, 7, 0, 1), (10, 7, 0, 2), (20, 0, 0, 0)],
+                  2: [(0, 2, 0, 2), (0, 7, 0, 1), (10, 7, 0, 2), (30, 0, 0, 0)]}
+        self.assertEqual(C.keyed_sounds(charts), {2, 3})
+        long, short = {'wav': self.wav(1000)}, {'wav': self.wav(10)}
+        self.assertEqual(C.backing_track(charts, [long, short, short]), 1)
+
+    @staticmethod
+    def wav(n):
+        import io, wave
+        b = io.BytesIO()
+        with wave.open(b, 'wb') as w:
+            w.setnchannels(2); w.setsampwidth(2); w.setframerate(44100); w.writeframes(bytes(4 * n))
+        return b.getvalue()
 
     def test_hcn_flag_event(self):
         # 18102 Kailua (HCN Ver.) = 18021's notes plus (0, 13, 0, 0) in every chart

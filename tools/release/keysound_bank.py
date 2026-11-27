@@ -202,13 +202,19 @@ def soft_limit(pcm, knee=0.8, full=32767.0):
     return y
 
 
-def build(name, sounds, keys, gain=1.0, budget=None):
+def build(name, sounds, keys, gain=1.0, budget=None, aliases=None):
     """(bank bytes, {arcade keysound: slot}, info) for the given arcade keysound numbers.
     budget: largest bank size in bytes; the longest sounds up to LONG_SAMPLES are stored at 32 or
-    24 kHz to fit (longer ones always stay at 44.1 kHz)."""
+    24 kHz to fit (longer ones always stay at 44.1 kHz).
+    aliases: {sound: other sound}: the sound keeps its slot but stores no sample of its own; its row points
+    at the other's sample with tail 0, as All My Turn's CS bank does for sound 1, the backing track the
+    stream plays (its chart events stay, and land on that row)."""
     import numpy as np
     sounds = [s for s in sounds if 0 < s <= len(keys)]
     slots = slot_map(sounds)
+    aliases = {a: b for a, b in (aliases or {}).items() if a in slots and b in slots and b not in (aliases or {})}
+    own_sounds = sounds
+    sounds = [s for s in sounds if s not in aliases]
     entries, data, table = [], bytearray(), bytearray(TABLE)
     table[:16] = MAGIC + struct.pack('<I', 0x10) + name.encode('ascii')[:8].ljust(8, b'\0')
     rates = {}
@@ -239,6 +245,11 @@ def build(name, sounds, keys, gain=1.0, budget=None):
         ms = math.ceil(pcm.shape[1] * 1000 / rate)
         struct.pack_into('<BBBBiBBHB3x', table, slots[s] * 16, 0, 0xff, 0, 2, ms, 1, 0x7f, index, SLOT_TAIL)
         rates[rate] = rates.get(rate, 0) + 1
+    for a, b in aliases.items():
+        row = bytearray(table[slots[b] * 16:slots[b] * 16 + 16])
+        row[12] = 0
+        table[slots[a] * 16:slots[a] * 16 + 16] = row
+    sounds = own_sounds
     head = struct.pack('<4I', len(entries), len(data), 1, 0) + b''.join(entries)
     bank = bytes(table) + head + bytes(S.disguise(bytes(data), S.BANK_DELTA))
     info = {'name': name, 'sounds': len(sounds), 'bytes': len(bank), 'rates': rates, 'gain': gain}
