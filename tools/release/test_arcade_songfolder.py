@@ -36,7 +36,8 @@ class SongFolder(unittest.TestCase):
             spr.mkdir()
             for n in F.hold_sprite_names():
                 (spr / (n + '.spr')).write_bytes(b'SPR1')
-            F.build(conv, bytes(template), out, 'Test Song ' + 'x' * 80, {'SPN': 4, 'DPA': 12, 'SPA': 9}, sprites=spr)
+            F.build(conv, bytes(template), out, 'Test Song ' + 'x' * 80, {'SPN': 4, 'DPA': 12, 'SPA': 9}, sprites=spr,
+                    pack=False)
             rec = (out / 'record.bin').read_bytes()
             self.assertEqual(rec[:10], b'TEST SONG ')
             self.assertEqual(rec[0x37:0x40], bytes(9))                         # title stops before the hold fields
@@ -64,6 +65,27 @@ class SongFolder(unittest.TestCase):
             cat = (out / 'catalog-lines.txt').read_text().splitlines()
             self.assertTrue(cat[0].startswith('S custom/test_song 0 2000 '))
             self.assertEqual([l.split()[3] for l in cat[1:]], ['0', '7'])
+            # packed (the default): charts and banks in pack.bin, sector aligned; the stream stays a file
+            import song_pack
+            files = {n: (out / n).read_bytes() for n in ('SPN.bin', 'DPA.bin', 'keys_N.bank', 'keys_A.bank')}
+            self.assertEqual(song_pack.pack_folder(out), 4)
+            self.assertEqual(song_pack.pack_folder(out), 0)                     # idempotent
+            txt = (out / 'song.txt').read_text().splitlines()
+            pack = (out / 'pack.bin').read_bytes()
+            got = {}
+            for l in txt:
+                if l.startswith('F ') and '#' in l:
+                    name, member = l.split()[3].split('#')
+                    sector, size = map(int, member.split('+'))
+                    got[l.split()[1]] = pack[sector * 2048:sector * 2048 + size]
+            self.assertEqual(got['d0'], files['SPN.bin'])
+            self.assertEqual(got['cc'], files['DPA.bin'])
+            self.assertEqual(got['f8'], files['keys_N.bank'])
+            self.assertEqual(got['f0'], got['e8'])                               # one member for both fields
+            self.assertEqual(len(pack) % 2048, 0)
+            self.assertIn('F ec 2 stream.bin', txt)
+            self.assertFalse((out / 'SPN.bin').exists())
+            self.assertTrue((out / 'stream.bin').is_file())
 
 
 if __name__ == '__main__':

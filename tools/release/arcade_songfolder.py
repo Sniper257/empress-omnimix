@@ -94,7 +94,7 @@ def hold_sprite_names():
     return [row[0] for row in hold_sprites.catalogue()]
 
 
-def build(converted, template, out, title, lv, version=17, sprites=None, text_files=None, song_id=None):
+def build(converted, template, out, title, lv, version=17, sprites=None, text_files=None, song_id=None, pack=True):
     report = json.loads((converted / 'convert.json').read_text())
     rec = bytearray(template)
     if len(rec) != 0x134:
@@ -180,6 +180,9 @@ def build(converted, template, out, title, lv, version=17, sprites=None, text_fi
     lines[at:at] = ['catalog ' + l for l in ident.splitlines() if l]
     (out / 'song.txt').write_text('\n'.join(lines) + '\n')
     (out / 'catalog-lines.txt').write_text(ident)
+    if pack:                                         # one disc extent for the charts and banks (song_pack.py)
+        import song_pack
+        song_pack.pack_folder(out)
     return {'title': title, 'charts': charts, 'bpm': [lo, hi]}
 
 

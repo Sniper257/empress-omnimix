@@ -51,7 +51,15 @@ So a 20-byte summary per song is enough until a song is bound.
    since, through a 16 KB buffer of 53 aligned records (a folder's songs, numbered together, take one or two
    reads). The probe alias gets a record built from the summary (no read). Music select's levels / BPM / A-Z
    reads (song_window.c, in_vf, the imports in song_resources.c) use the summaries. Per song: 308 -> 20 bytes.
-4. Song packs: the converter writes each song as one file (its charts, banks, stream and sprites, sector aligned,
+4. Song packs, first half (built, Nov 2026): tools/release/song_pack.py (and arcade_songfolder, by default) puts a
+   song's charts and banks in one pack.bin, sector aligned; song.txt names members, `F <field> <bytes>
+   pack.bin#<sector>+<size>`, and the launcher gives them file ids inside the pack's one extent (the runtime reads
+   inside extents). Streams stay files (the streamer reads past their end into the zero gap). A 2,035-song build
+   had failed at the 16,384-extent table ("too many extents"); packs take a song from ~12 extents to ~3, and the
+   launcher's table is now 32,768 (launcher heap; the block keeps only those used). The same build also ran the
+   launcher out of memory queueing 37 hold sprites per song; identical runs are now dropped as each song is
+   read (sq_dedupe_song). Still to do: the per-alias file-id window below.
+   Original plan: the converter writes each song as one file (its charts, banks, stream and sprites, sector aligned,
    with an index). The block keeps one disc extent and one path per song; the song's file table is read with its
    record when it is bound, into a per-alias file-id window (145 x 16 files x 12 bytes = 28 KB). Song folders in
    today's layout keep working with today's costs.

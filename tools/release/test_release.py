@@ -275,3 +275,9 @@ class HoldSetTests(unittest.TestCase):
             self.assertEqual(len(sets), 1)
             self.assertEqual((root / 'songs/mine/c/holds/cn_white_start.spr').read_bytes()[-1:], b'x')
             self.assertEqual(M.unify_holds(root, progress=lambda *_: None), 0)
+            # a set without a file the others have never wins (songs would name a sprite that is gone)
+            (root / 'songs/sirius/a/holds/bss_start.spr').write_bytes(b'SPR1' + (17).to_bytes(2, 'little') + b'\0' * 6 + b'q')
+            (root / 'songs/mine/d/holds/bss_start.spr').write_bytes(b'SPR1' + (17).to_bytes(2, 'little') + b'\0' * 6 + b'q')
+            self.assertEqual(M.unify_holds(root, progress=lambda *_: None), 2)
+            for f in ('sirius/b', 'mine/c'):
+                self.assertTrue((root / 'songs' / f / 'holds/bss_start.spr').is_file())

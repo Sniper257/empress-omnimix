@@ -806,7 +806,11 @@ def unify_holds(root, progress=print):
         f=holds/'cn_white_start.spr'
         try:return int.from_bytes(f.read_bytes()[4:6],'little')
         except OSError:return None
-    key,keep=sorted(sets.items(),key=lambda kv:(width(kv[1][0])!=17,-len(kv[1]),kv[0]))[0]
+    # a set missing a file other songs name (an older set without bss_*.spr) would leave their S lines pointing at
+    # nothing ("bad sprite"): the set with every file name comes first
+    names={k:{f.name for f in v[0].glob('*.spr')} for k,v in sets.items()}
+    union=set().union(*names.values())
+    key,keep=sorted(sets.items(),key=lambda kv:(len(union-names[kv[0]]),width(kv[1][0])!=17,-len(kv[1]),kv[0]))[0]
     src=keep[0];changed=0
     for other,folders in sets.items():
         if other==key:continue

@@ -992,7 +992,7 @@ static int publish_paths(ext_t *base,u32 base_count,ext_t *mods,u32 mod_count)
 /* extents collected on the launcher heap, sorted and copied into the block at the end */
 static ext_t *xb, *xm;                            /* base (EMPRESS + songs + added files), mods (first match wins) */
 static int nxb, nxm;
-#define MAXEXT 16384
+#define MAXEXT 32768                              /* launcher heap; the block keeps only those used */
 #define MAXMEXT 512
 
 static int add_ext(ext_t *arr, int *n, int max, u32 lba, u32 sec, u32 size, const char *rel, const char *who)
@@ -1256,6 +1256,52 @@ static int grow(void **arr, int *cap, int n, int size)
     return 0;
 }
 
+/* a queued run identical to an earlier one is not kept: its destinations take that run's handles */
+typedef struct { u32 *dst; int from; } sq_alias_t;
+static sq_alias_t *sq_alias;
+static int n_alias, cap_alias;
+static u32 sq_hash(const u8 *p, int n);
+
+/* sprites this song queued (from `first`): each run (one container, consecutive) byte for byte the same as a run
+ * kept earlier is dropped at once, so 2,000 songs with one shared hold set queue (and buffer) it once */
+static int sq_dedupe_song(int first)
+{
+    static int kept[4096][2], nk;                 /* (start, n) of kept runs */
+    int i = first, out = first, j, r;
+    while (i < n_sq) {
+        int n = 1, same = -1;
+        while (i + n < n_sq && sq[i + n].cont == sq[i].cont) n++;
+        for (j = 0; j < n; j++) {
+            sq_t *q = &sq[i + j];
+            if (!q->buf && !(q->buf = spr_file(q->path, &q->s, &q->len))) { logf_("bad sprite %s\n", q->path); return -1; }
+            q->hash = sq_hash(q->buf, q->len);
+        }
+        for (r = 0; r < nk && same < 0; r++) {
+            int a = kept[r][0];
+            if (kept[r][1] != n || sq[a].cont != sq[i].cont) continue;
+            for (j = 0; j < n; j++) {
+                const sq_t *x = &sq[a + j], *y = &sq[i + j];
+                if (x->len != y->len || x->hash != y->hash || memcmp(x->buf, y->buf, x->len)) break;
+            }
+            if (j == n) same = a;
+        }
+        if (same >= 0) {
+            for (j = 0; j < n; j++) {
+                if (grow((void **)&sq_alias, &cap_alias, n_alias, sizeof(sq_alias_t))) return -1;
+                sq_alias[n_alias].dst = sq[i + j].dst; sq_alias[n_alias++].from = same + j;
+                free(sq[i + j].buf); sq[i + j].buf = 0;
+            }
+        } else {
+            if (out != i) memmove(&sq[out], &sq[i], n * sizeof(sq_t));
+            if (nk < 4096) { kept[nk][0] = out; kept[nk][1] = n; nk++; }
+            out += n;
+        }
+        i += n;
+    }
+    n_sq = out;
+    return 0;
+}
+
 static sq_t *sq_new(void)
 {
     if (grow((void **)&sq, &cap_sq, n_sq, sizeof(sq_t))) return 0;
@@ -1501,7 +1547,7 @@ static int add_song(const song_t *sg, int fold)
     static char fpath[64][160];                   /* this song's files (same path = same file id) */
     static int fno[64];
     char base[128], path[200], *b, *p, *l;
-    int k = sdb->n_new, errs = 0, nf = 0, identity = -1;
+    int k = sdb->n_new, errs = 0, nf = 0, identity = -1, sq_first = n_sq;
     u32 bga_raw=0,bga_packed=0,max_bank=0;
     u8 *rec = all_recs + k * 0x134, *t;
     snprintf(base, sizeof base, "songs/%s/%s/", styles[sg->style].dir, sg->dir);
@@ -1525,6 +1571,7 @@ static int add_song(const song_t *sg, int fold)
             free(t);
         } else if (l[0] == 'F' && l[1] == ' ') {
             u32 field = strtoul(l + 2, &q, 16), bytes = strtoul(q, &q, 10), sec, size, at;
+            char *q2;
             int j;
             while (*q == ' ') q++;
             song_path(path, sizeof path, base, q);
@@ -1533,7 +1580,15 @@ static int add_song(const song_t *sg, int fold)
             if (j == nf) {
                 if (nf == 64) { logf_("%s: too many files\n", sg->dir); errs++; continue; }
                 if (grow((void **)&fids, &cap_fid, n_fid, 12)) return -1;
-                if (!(at = vfile(path, &sec, &size, sg->dir))) { errs++; continue; }
+                if ((q = strchr(path, '#'))) {        /* a member of a song pack (song_pack.py): <file>#<sector>+<size> */
+                    u32 m = strtoul(q + 1, &q2, 10), msize = *q2 == '+' ? strtoul(q2 + 1, 0, 10) : 0;
+                    *q = 0;
+                    at = vfile(path, &sec, &size, sg->dir);
+                    *q = '#';
+                    if (!at) { errs++; continue; }
+                    if (!msize || m + (msize + 2047) / 2048 > sec) { logf_("%s: bad pack member %s\n", sg->dir, path); errs++; continue; }
+                    at += m; sec = (msize + 2047) / 2048; size = msize;
+                } else if (!(at = vfile(path, &sec, &size, sg->dir))) { errs++; continue; }
                 fids[n_fid * 3] = at - C_LBA;
                 fids[n_fid * 3 + 1] = sec;
                 fids[n_fid * 3 + 2] = size;
@@ -1585,6 +1640,7 @@ static int add_song(const song_t *sg, int fold)
         }
     }
     free(b);
+    if (sq_dedupe_song(sq_first)) return -1;
     if (identity<0) {
         snprintf(path,sizeof path,"custom/%s",sg->dir);
         identity=catalog_find(path,0);
@@ -1676,7 +1732,7 @@ static int build_containers(void)
     spr_t *s = malloc(n_sq * sizeof(spr_t));
     if (!done || !idx || !s) { logf_("out of memory (sprites)\n"); return -1; }
     for (i = 0; i < n_sq; i++) {
-        if (!(sq[i].buf = spr_file(sq[i].path, &sq[i].s, &sq[i].len))) {
+        if (!sq[i].buf && !(sq[i].buf = spr_file(sq[i].path, &sq[i].s, &sq[i].len))) {
             logf_("bad sprite %s\n", sq[i].path); return -1;
         }
         sq[i].hash = sq_hash(sq[i].buf, sq[i].len);
@@ -1720,6 +1776,8 @@ static int build_containers(void)
     }
     for (i = 0; i < n_sq; i++)                       /* shared runs: the first run's handles, in order */
         if (sq[i].from >= 0) *sq[i].dst = sq[sq[i].from].s.handle;
+    for (i = 0; i < n_alias; i++) *sq_alias[i].dst = sq[sq_alias[i].from].s.handle;
+    shared += n_alias;
     if (shared) logf_("containers: %d sprites shared with identical earlier runs\n", shared);
     for (i = 0; i < n_sq; i++) free(sq[i].buf);
     free(done); free(idx); free(s);
