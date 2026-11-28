@@ -55,6 +55,11 @@ def chart_directory(data):
     return out
 
 
+# event types whose value is unsigned: note length (ms), keysound number, BPM x divisor. MAX 360 (30107) starts at
+# 360.00 BPM, stored as 36000 / 100; read signed it came out as -295.36.
+UNSIGNED_VALUE = (0, 1, 2, 3, 4, 7)
+
+
 def chart_events(data, offset, size):
     """Events of one chart up to (not including) the terminator."""
     events = []
@@ -62,6 +67,8 @@ def chart_events(data, offset, size):
         time, kind, param, value = struct.unpack_from('<iBBh', data, at)
         if time == END_TIME:
             return events
+        if kind in UNSIGNED_VALUE:
+            value &= 0xffff
         if time < 0:
             raise FormatError('Negative chart event time')
         events.append((time, kind, param, value))

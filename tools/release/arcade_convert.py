@@ -100,9 +100,6 @@ def empress_events(events, holds=(), keysounds=False, bgm_slots=False, tail_note
             out.append((k, kind | (param & 15) << 4, 0, value if keysounds else 0))
         elif kind == 4:
             bpm = round(value / param) if param else value
-            if bpm < 0:                                                 # reverse scroll (MAX 360): EMPRESS cannot
-                warnings.add('negative BPM played forwards (scroll speed only; note times are exact)')
-                bpm = -bpm
             if not 1 <= bpm <= 4095:
                 raise ValueError('BPM %r outside EMPRESS range' % bpm)
             if param and value % param:
