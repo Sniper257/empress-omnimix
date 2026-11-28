@@ -122,8 +122,13 @@ static u8 *save_of(s32 id, s32 mode, s32 d)
     return sdb.saves + ((id & 0xff) - FIRST) * 0x230 + ((mode < 3 ? mode : 3) * 5 + d) * 0x1c;
 }
 
-/* Keep a changed alias's session scores attached to its stable song slot. */
+/* Keep a changed alias's session scores attached to its stable song slot (docs/omnimix-capacity.md step 6).
+ * Compact: only records that have a save key (save_runtime.c ps_key: a chart identity, category SP for modes
+ * 0 and 1, DP for mode 2, the third category for mode 3), so per existing chart: SP two (modes 0/1 share one,
+ * as their key does; the score writer keeps both equal and a save refuses two changed records of one key that
+ * differ), DP one. slot_base[k] = slot k's first record; the game still sees 20 per alias (sdb.saves). */
 static u8 *slot_saved;
+static u32 *slot_base;
 static s32 slot_saved_n;
 
 #include "song_reference.c"
@@ -145,23 +150,79 @@ const u8 *chart_identity(s32 song, s32 dp, s32 diff)
     s32 row=song_catalog_row(song);
     return row<0?0:chart_identity_row(row,dp,diff);
 }
+/* bit i (0..9: SP N/H/A/B/X, DP N/H/A/B/X) = slot k has that chart (a save key) */
+static u32 slot_charts(s32 k)
+{
+    u32 m=0,i;
+    if (sdb.identity_version!=1 || !sdb.chart_index)return 0x3ff;
+    for (i=0;i<10;i++) { if (sdb.chart_index[(FIRST+k)*10+i]!=NOSLOT)m|=1u<<i; LOOP_PAD(); }
+    return m;
+}
+
+static u32 slot_records(u32 charts) { u32 n=0,i; for (i=0;i<10;i++){ if(charts>>i&1)n+=i<5?2:1; LOOP_PAD(); } return n; }
+
+/* slot k's stored record for (mode, d), 0 if that chart has none (no save key) */
+static u8 *slot_rec(s32 k, s32 mode, s32 d)
+{
+    u32 charts,i,at,c;
+    if (k>=slot_saved_n || !slot_saved || (u32)d>=5)return 0;
+    if (mode>3)mode=3;
+    c=mode==2?5+d:d;
+    charts=slot_charts(k);
+    if (!(charts>>c&1))return 0;
+    at=slot_base[k];
+    for (i=0;i<c;i++) { if (charts>>i&1)at+=i<5?2:1; LOOP_PAD(); }
+    return slot_saved+(at+(mode==3?1:0))*0x1c;
+}
+
+/* slot k's records as the 20 an alias holds (mode * 5 + d; modes 0 and 1 the same record) */
+static void slot_expand(s32 k, u8 *dst)
+{
+    s32 m,d;
+    for (m=0;m<4;m++) for (d=0;d<5;d++) {
+        const u8 *r=slot_rec(k,m,d);
+        memcpy_(dst+(m*5+d)*0x1c,r?r:UNPLAYED,0x1c);LOOP_PAD();
+    }
+}
+
+/* an alias's 20 records back into slot k: for the shared SP record, the side that changed it */
+static void slot_absorb(s32 k, const u8 *src)
+{
+    s32 m,d,i;
+    for (m=0;m<4;m++) { if (m==1)continue; for (d=0;d<5;d++) {
+        u8 *r=slot_rec(k,m,d);const u8 *v=src+(m*5+d)*0x1c;
+        if (!r)continue;
+        if (m==0) {
+            const u8 *p2=src+(5+d)*0x1c;s32 same=1,p2same=1;
+            for (i=0;i<0x1c;i++){ if(v[i]!=r[i])same=0; if(p2[i]!=r[i])p2same=0; LOOP_PAD(); }
+            if (same && !p2same)v=p2;               /* only P2's record moved */
+        }
+        memcpy_(r,v,0x1c);LOOP_PAD();
+    } }
+}
+
 static s32 ensure_saves(void)
 {
-    s32 i;u8 *sv;
-    if (slot_saved_n>=(s32)sdb.n_new)return 1;
-    sv=malloc_(sdb.n_new*0x230);
-    if (!sv)return 0;
-    for (i=0;i<(s32)sdb.n_new*20;i++) {memcpy_(sv+i*0x1c,UNPLAYED,0x1c);LOOP_PAD();}
-    if (slot_saved) {memcpy_(sv,slot_saved,slot_saved_n*0x230);free_(slot_saved);}
-    slot_saved=sv;slot_saved_n=sdb.n_new;return 1;
+    s32 i;u32 n=0;u8 *sv;u32 *base;
+    if (slot_saved && slot_saved_n>=(s32)sdb.n_new)return 1;
+    base=malloc_((sdb.n_new+1)*4);
+    if (!base)return 0;
+    for (i=0;i<(s32)sdb.n_new;i++) { base[i]=n;n+=slot_records(slot_charts(i));LOOP_PAD(); }
+    base[sdb.n_new]=n;
+    sv=malloc_(n*0x1c+4);
+    if (!sv) { free_(base);return 0; }
+    for (i=0;i<(s32)n;i++) { memcpy_(sv+i*0x1c,UNPLAYED,0x1c);LOOP_PAD(); }
+    if (slot_saved) { free_(slot_saved);free_(slot_base); }
+    slot_saved=sv;slot_base=base;slot_saved_n=sdb.n_new;return 1;
 }
 
 static u8 *slot_save(s32 k, s32 mode, s32 d)
 {
     s32 a=sdb.alias_of[k];
+    u8 *r;
     if (a && song_catalog_row(a)==FIRST+k)return save_of(a,mode,d);
-    if (k<slot_saved_n)return slot_saved+k*0x230+((mode<3?mode:3)*5+d)*0x1c;
-    return (u8 *)UNPLAYED;
+    r=slot_rec(k,mode,d);
+    return r?r:(u8 *)UNPLAYED;
 }
 
 static s32 stash_alias(s32 a)
@@ -169,7 +230,7 @@ static s32 stash_alias(s32 a)
     s32 k=sdb.slot_of[a];
     if (k==NOSLOT)return 1;
     if (k>=slot_saved_n)return 0;
-    memcpy_(slot_saved+k*0x230,save_of(a,0,0),0x230);return 1;
+    slot_absorb(k,save_of(a,0,0));return 1;
 }
 
 static void window_reset(void);

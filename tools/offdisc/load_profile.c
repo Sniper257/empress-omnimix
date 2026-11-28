@@ -80,7 +80,7 @@ static void lp_prepare_note(void)
 static unsigned lp_age(void)
 {
  unsigned result=lp_word(0x2ad310);
- return lp_mode==LP_RESULT && lp_result_scene && result>=0x944700 && result<0x2000000-0x1580?lp_word(result+0x1384):0xffffffffu;
+ return lp_mode==LP_RESULT && lp_result_scene && result>=0x994700 && result<0x2000000-0x1580?lp_word(result+0x1384):0xffffffffu;
 }
 static void lp_frame_end(void)
 {

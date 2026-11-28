@@ -7,7 +7,7 @@ Goal: every arcade song from 1st to 33rd (the Pinky Crush omnimix data lists 2,4
 
 Measured on a build with 100 EMPRESS songs and 815 added (launcher.log, 24 Nov 2026):
 
-- Reserved block (0x7c4700..0x944700, 1536 KB): runtime about 293 KB, tables about 732 KB, path strings 88 KB.
+- Reserved block (then 0x7c4700..0x944700, 1536 KB; 1,856 KB since step 7): runtime about 293 KB, tables about 732 KB, path strings 88 KB.
   The rest (about 420 KB) is borrowed by the BGA texture reserve and the movie work area when free.
 - Per added song in the block, about 940 bytes:
 
@@ -57,9 +57,14 @@ So a 20-byte summary per song is enough until a song is bound.
    today's layout keep working with today's costs.
 5. Chart identities off the block: the 16-byte ids are only needed to key save records, at load and save; they
    move to a file read at those times. The block keeps the u16 chart index.
-6. Scores: `slot_saved` keeps 28-byte records only for (chart, category) pairs that exist: SP charts have two
-   (modes 0 and 1 share one; mode 3 has its own), DP charts one. Lossless, and the same size whether nothing or
-   everything has been played: about 320 bytes for a typical song instead of 560.
+6. Scores (built, Nov 2026; needs a device / PCSX2 run): `slot_saved` keeps 28-byte records only for (chart,
+   category) pairs that have a save key: SP charts two (modes 0 and 1 share one, as their key does; the score
+   writer keeps both equal and a save refuses two changed records of one key that differ), DP charts one.
+   `slot_base[k]` indexes them; aliases still get all 20 (`slot_expand` / `slot_absorb`). Lossless, the same size
+   whether nothing or everything has been played: 9-11 records (~290 bytes with the index) instead of 560.
+7. Larger block (built with 6): 1,856 KB (0x7c4700..0x994700), 320 KB more, taken from the game's memory
+   manager arena (SetupHeap, the arena start and libc sbrk move together). With 6, the arena at ~2,200 added
+   songs keeps an estimated ~440 KB free during play of a 16 MB-bank song (input-log header +108 measures it).
 
 Measured on the next build: the launcher logs `records: ... KB in a file, ... KB in the block`.
 

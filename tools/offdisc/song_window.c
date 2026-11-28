@@ -163,7 +163,7 @@ static s32 bind_keys(u16 *keys,s32 n)
         k=keys[i]-SONG_KEY;
         if (sdb.slot_of[best]<sdb.n_new)sdb.alias_of[sdb.slot_of[best]]=0;
         sdb.slot_of[best]=k;sdb.alias_of[k]=best;sdb.stamp[best]=now;
-        memcpy_(save_of(best,0,0),slot_saved+k*0x230,0x230);
+        slot_expand(k,save_of(best,0,0));
         LOOP_PAD();
     }
 #ifdef SELECT_PROFILE

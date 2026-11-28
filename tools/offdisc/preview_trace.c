@@ -38,7 +38,7 @@ static u32 pt_playing(void){u32 p=pt_word(0x2ad534);return play_preview_record &
 static void preview_trace_boundary(u32 stage){
  if(pt.mode && ui_active==2 && play_preview_record && !pt_playing())pt_main_boundary=stage;
 }
-static u32 pt_scene_phase(u32 p){return p>=0x944700 && p<=0x1ffffb8 && !(p&3)?pt_word(p+0x2c):~0u;}
+static u32 pt_scene_phase(u32 p){return p>=0x994700 && p<=0x1ffffb8 && !(p&3)?pt_word(p+0x2c):~0u;}
 static void pt_snapshot(void){
  volatile u32 *r=preview_trace_snapshot;
  r[0]=0x58494d4d;r[1]=0x31545650;r[2]=1;r[3]=pt.sequence;r[4]=pt.stage;r[5]=pt.frames;r[6]=pt_clock();

@@ -111,7 +111,7 @@ static s32 ps_gather(ps_candidate *out,u32 *count,u32 capacity)
                 }else if(record && ps_read_packed){
                     u32 off=(u32)(record-ps_score_object());if(off<4 || off+28>4+0x2fb74)continue;record=ps_read_packed+0x6a90+off-4;
                 }
-            }else record=slot_saved+(row-FIRST)*0x230+(mode*5+diff)*28;
+            }else record=slot_rec(row-FIRST,mode,diff);
             if(!record)continue;cp_record_normalize(r.data,record);
             if(!ps_emit(out,count,capacity,&r)){free_(imported);return 0;}LOOP_PAD();
         }
@@ -212,10 +212,10 @@ static void ps_apply_imports(const cp_record *records,u32 n)
     u32 k; s32 mode,d;cp_record key;const cp_record *r;
     /* Reset every slot first: a LOAD replaces the session, it never combines
      * the previous player's scores with the newly loaded profile. */
-    for(k=0;k<sdb.n_new*20;k++){ps_copy(slot_saved+k*28,UNPLAYED,28);LOOP_PAD();}
-    for(k=0;k<sdb.n_new;k++)for(mode=0;mode<4;mode++)for(d=0;d<5;d++){
-        if(ps_key(&key,FIRST+k,mode,d) && (r=ps_find(records,n,&key)))cp_record_restore(slot_saved+k*0x230+(mode*5+d)*28,r->data);LOOP_PAD();}
-    for(k=FIRST;k<255;k++){u16 slot=sdb.slot_of[k];if(slot!=NOSLOT && slot<sdb.n_new)ps_copy(save_of(k,0,0),slot_saved+slot*0x230,0x230);LOOP_PAD();}
+    for(k=0;k<(slot_base?slot_base[sdb.n_new]:0);k++){ps_copy(slot_saved+k*28,UNPLAYED,28);LOOP_PAD();}
+    for(k=0;k<sdb.n_new;k++)for(mode=0;mode<4;mode++)for(d=0;d<5;d++){u8 *dest;
+        if(mode!=1 && (dest=slot_rec(k,mode,d)) && ps_key(&key,FIRST+k,mode,d) && (r=ps_find(records,n,&key)))cp_record_restore(dest,r->data);LOOP_PAD();}
+    for(k=FIRST;k<255;k++){u16 slot=sdb.slot_of[k];if(slot!=NOSLOT && slot<sdb.n_new)slot_expand(slot,save_of(k,0,0));LOOP_PAD();}
     /* Existing native contexts are rebuilt on re-entry after SAVE/LOAD. */
     window_reset();for(k=0;k<NPOOL;k++){sdb.pools[k].ctx=0;LOOP_PAD();}
 }
@@ -519,7 +519,7 @@ static void ps_share_record(s32 song,s32 mode,s32 diff)
                 if(m==0 && d==3)ps_score_object()[0x2f9dc+row]=value.data[15]>>5;
                 else if((dest=ps_native_record(row,m,d)))cp_record_restore(dest,value.data);
             }else {s32 k=row-FIRST,a=sdb.alias_of[k];
-                if(k<slot_saved_n)cp_record_restore(slot_saved+k*0x230+(m*5+d)*28,value.data);
+                {u8 *dest=slot_rec(k,m,d);if(dest)cp_record_restore(dest,value.data);}
                 if(a)cp_record_restore(save_of(a,m,d),value.data);
             }
             LOOP_PAD();

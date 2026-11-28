@@ -82,7 +82,7 @@ volatile u32 boot_detail[136]; /* IO12, native20, scene count/flags +16x6 record
 extern void vd_boot_snapshot(u32 *);
 #endif
 #include "boot_text.c"
-static int boot_loop_pointer(u32 p,u32 n){return !(p&3)&&p>=0x944700&&p<=0x2000000u-n;}
+static int boot_loop_pointer(u32 p,u32 n){return !(p&3)&&p>=0x994700&&p<=0x2000000u-n;}
 /* Verified native112D30/112F30: header0=packet,1=RPC id,2=semaphore,
  * client9=server (NOT word4); packet+10 flags and+18 RPC id. No RPC call,
  * SIF allocation, busy-loop or new lock. Best-effort sample only. */

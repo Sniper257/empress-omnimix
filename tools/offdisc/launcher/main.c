@@ -59,7 +59,7 @@ static struct cs_preferences shared_customize=CS_INITIALIZER;
 static struct mm_options shared_options=MM_OPTIONS_INITIALIZER;
 #include "load_profile_launcher.h"
 #define RES_LO 0x7c4700u
-#define RES_HI 0x944700u
+#define RES_HI 0x994700u                          /* 1,856 KB (docs/omnimix-capacity.md) */
 #define TAB_HI (RES_LO + 0xd3000u)                /* 844 KB tables, 692 KB strings; heap/reserve unchanged */
 #define MAXI 32
 #define MAXSTYLE 48

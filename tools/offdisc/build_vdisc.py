@@ -10,7 +10,7 @@ usage: python3 tools/offdisc/build_vdisc.py [outdir=offdisc/launcher]
    J <va> <orig> <symbol address>   jal site -> runtime function (orig checked)
    S <lui va> <addiu va> <path>     boot module path (FUN_0012f790): the launcher writes <device><path> into the
                                     block and repoints the lui/addiu pair (cdrom0:\MODULES\X;1 -> host:EMPRESS/MODULES/X)
-Reserved block = 1.5 MB right after the bss (0x7c4700..0x944700): the libc heap (SetupHeap arg at 0x1001d0) and
+Reserved block = 1,856 KB right after the bss (0x7c4700..0x994700; 1.5 MB to 0x944700 until Nov 2026): the libc heap (SetupHeap arg at 0x1001d0) and
 libc sbrk's own pointer (data word 0x2360f4), the game's memory manager (FUN_00152dc0, start at 0x152dc4, its big block = memsize - start - 0x105000) both start
 0x100000 later. The crt0 bss clear (0x100120) still stops at 0x7c4700, so the launcher's copy survives."""
 import os, struct, subprocess, sys, hashlib, argparse
@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.join(HERE, '..', 'e16'))
 from build import CFLAGS, check, run
 import ceiling
 
-RES_LO, RES_HI = 0x7c4700, 0x944700
+RES_LO, RES_HI = 0x7c4700, 0x994700
 JALS = {0x14cbac: (0x11ddb0, 'vd_read'), 0x14cbbc: (0x11d378, 'vd_sync'), 0x14cbd4: (0x11d378, 'vd_sync'),
         0x14ca74: (0x11db90, 'vd_ready'), 0x14cb8c: (0x11db90, 'vd_ready'), 0x14ccac: (0x11df90, 'vd_seek'),
         0x14cc18: (0x11e060, 'vd_error'), 0x14ca90: (0x11e2b0, 'vd_st_init'), 0x14caa4: (0x11e2e0, 'vd_st_start'),
@@ -32,9 +32,9 @@ MODULES = [(0x12f7b8, 0x12f7c0, 0x2641e0)] + [(lui, lui + (8 if lui == 0x12f828 
 GAME_DIR = 'EMPRESS/'
 WORDS = {0x192a40: (0x0c04c398, 0), # RANDOM: let native title intro play instead of seeking to its final frame
          0x21a294: (0x28630008, 0x28630009), # parent folder close: draw final217px anchor before normal state
-         0x1001d0: (0x3c04007c, 0x3c040094),     # SetupHeap(0x7c4700) -> 0x944700
-         0x152dc4: (0x3c03007c, 0x3c030094),     # arena start, same
-         0x2360f4: (0x007c4700, 0x00944700),     # libc sbrk heap pointer (data word, init = _end)
+         0x1001d0: (0x3c04007c, 0x3c040099),     # SetupHeap(0x7c4700) -> 0x994700
+         0x152dc4: (0x3c03007c, 0x3c030099),     # arena start, same
+         0x2360f4: (0x007c4700, 0x00994700),     # libc sbrk heap pointer (data word, init = _end)
          0x1f66c0: (0x1000000c, 0x2413ffee)}    # judge x hook delay: original layout2 y offset -18
 # The USB launcher has just rebooted the original IOPRP310 from an EE buffer
 # and restored USB. Avoid rebooting it again from mass: in FUN_0012f790.

@@ -50,7 +50,7 @@ static int ib_sdk_configure(void){
 #endif
  if(ferror(f))failed=1;
  if(fclose(f))failed=1;
- if(failed||seen!=1||words!=IB_WORDS||(at&3)||at<0x7c4700||at>0x944700-IB_WORDS*4)return -1;
+ if(failed||seen!=1||words!=IB_WORDS||(at&3)||at<0x7c4700||at>0x994700-IB_WORDS*4)return -1;
 #ifdef USB_IOP_BUDGET_TEST
  ib_state=ib_test_address(at);
 #else
