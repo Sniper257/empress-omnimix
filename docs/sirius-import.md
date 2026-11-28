@@ -142,6 +142,10 @@ Checked against All My Turn's CS files (arcade 16017; bank, stream and nine char
 - **Stream**: arcade sound 1 alone, the whole 121 s backing track, at 0.965 (0.9647-0.9652 in every
   10 s window; the residual is high-frequency ADPCM noise), after a 28-sample lead. Its header volume
   is 0x33 for arcade volume 65 (music_data +0x680), taken as volume x 100 / 127.
+- **Stream start**: the game starts the stream at the chart's event for the track's slot, not at the chart's
+  start, so the stream begins with the track itself (plus the 28-sample lead). Light Shine (17026) starts its track
+  at 875 ms: with that silence in front, a PCSX2 capture had the backing track 0.9 s behind every keysound.
+  Songs converted before (`native_revision` 1 in convert.json) are redone by the batch when their track starts after 0.
 - **Slot 1** (the backing track) keeps its row, pointed at slot 2's sample with tail 0, and every chart
   keeps its BGM event for it at tick 0: that is how the song avoids playing the backing track twice.
 - **Charts**: every arcade event, BGM bank-triggered, on the NTSC frame clock about one frame later than

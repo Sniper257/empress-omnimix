@@ -188,8 +188,16 @@ def convert_one(job):
         work = Path(job['work'])
         layout = 'native' if job.get('empress_audio') else 'split'
         made = work / 'convert.json'
-        if made.is_file() and json.loads(made.read_text(encoding='utf-8')).get('layout', 'split') != layout:
-            made.unlink()                                   # converted with the other audio layout: redo
+        if made.is_file():
+            old = json.loads(made.read_text(encoding='utf-8'))
+            if old.get('layout', 'split') != layout:
+                made.unlink()                               # converted with the other audio layout: redo
+            elif layout == 'native' and old.get('native_revision', 1) < C.NATIVE_REVISION:
+                if C.stream_start(job['source']):           # its track starts after 0 ms: the stream was late
+                    made.unlink()
+                else:                                       # nothing changed for it
+                    old['native_revision'] = C.NATIVE_REVISION
+                    made.write_text(json.dumps(old, indent=1) + '\n', encoding='utf-8')
         if not made.is_file():
             if work.exists():
                 shutil.rmtree(work)
@@ -203,7 +211,8 @@ def convert_one(job):
             shutil.rmtree(dest)
         info = F.build(work, Path(job['template']).read_bytes(), dest, job['ascii'], job['levels'], job.get('version', 17),
                        Path(job['sprites']) if job['sprites'] else None, text_files, job['id'])
-        row.update(ok=True, charts=info['charts'], bpm=info['bpm'], layout=layout)
+        row.update(ok=True, charts=info['charts'], bpm=info['bpm'], layout=layout,
+                   **({'native_revision': C.NATIVE_REVISION} if layout == 'native' else {}))
     except Exception as e:  # noqa: BLE001 - one song's failure must not stop the batch
         row.update(ok=False, error='%s: %s' % (type(e).__name__, e), trace=traceback.format_exc()[-1500:])
     return row
@@ -357,10 +366,12 @@ def main(argv=None):
             S.write_style(out, style, caption, label, caption, [], containers)
         texts = [s['texts'] for s in members]
         atlases[style] = style_atlas(out, style, texts, HERE / 'text-fonts' / 'open-fonts.sources.json')
+    import arcade_convert as C
     jobs = []
     for s in songs:
         done = (previous.get(s['id'], {}).get('ok') and (out / 'songs' / s['style'] / s['folder'] / 'song.txt').is_file()
-                and previous[s['id']].get('layout', 'split') == ('native' if a.empress_audio else 'split'))
+                and previous[s['id']].get('layout', 'split') == ('native' if a.empress_audio else 'split')
+                and (not a.empress_audio or previous[s['id']].get('native_revision', 1) >= C.NATIVE_REVISION))
         if done:
             continue
         jobs.append({'id': s['id'], 'title': s['title'], 'ascii': s['ascii'], 'style': s['style'], 'folder': s['folder'],

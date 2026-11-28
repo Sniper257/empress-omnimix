@@ -313,6 +313,7 @@ def is_hell(events):
     return any(e[1] == HCN_FLAG for e in events)
 
 
+NATIVE_REVISION = 2          # 2: the stream starts with the track (the game starts it at the track's event)
 NATIVE_STREAM_LEAD = 28      # samples of silence the CS stream starts with (one ADPCM frame), as its bank samples do
 NATIVE_STREAM_GAIN = 0.965    # All My Turn's CS stream against arcade sound 1: 0.9647-0.9652 in every 10 s window, 25 dB SNR (ADPCM noise)
 
@@ -340,6 +341,15 @@ def backing_track(charts, keys):
         return None
     import keysound_bank as KB
     return max(sorted(common), key=lambda v: len(KB.stereo(keys[v - 1]['wav'])[1][0]))
+
+
+def stream_start(source):
+    """ms at which the --native stream's track (backing_track) starts in the charts; None without one."""
+    charts, keys, sid = load_song(source)
+    track = backing_track(charts, keys)
+    if not track:
+        return None
+    return min(t for ev in charts.values() for t, k, p, v in ev if k == 7 and v == track)
 
 
 def native(a, charts, keys, sid):
@@ -373,12 +383,16 @@ def native(a, charts, keys, sid):
         print('%s: %d notes, %d %s%s' % (name, notes, len(holds), 'HCN' if hell else 'holds', (' (' + '; '.join(warnings) + ')') if warnings else ''))
     volume = max(0, min(127, round(a.volume * 100 / 127)))
     if track:
+        # The game starts the stream at the chart's event for the track's slot (the stream replaces that slot),
+        # not at the chart's start: so the stream begins with the track itself. Light Shine (17026) starts its
+        # track at 875 ms; with that much silence in front, a PCSX2 capture had the backing track 0.9 s late.
         start = min(t for ev in charts.values() for t, k, p, v in ev if k == 7 and v == track)
-        rate, mix, rinfo = render([(start, 7, 0, track)], keys, bgm_only=True, raw=True)
+        rate, mix, rinfo = render([(0, 7, 0, track)], keys, bgm_only=True, raw=True)
         mix = np.clip(np.round(mix * NATIVE_STREAM_GAIN), -32768, 32767).astype(np.int16)
         mix = np.hstack([np.zeros((2, NATIVE_STREAM_LEAD), np.int16), mix])
         (a.output / 'stream.bin').write_bytes(S.stream([mix[0].tolist(), mix[1].tolist()], rate, volume=volume))
-        report['stream'] = dict(rinfo, chart='native', sound=track, seconds=round(mix.shape[1] / rate, 2), volume=volume)
+        report['stream'] = dict(rinfo, chart='native', sound=track, start_ms=start, seconds=round(mix.shape[1] / rate, 2), volume=volume)
+        report['native_revision'] = NATIVE_REVISION
         print('stream: sound %d, %.1f s, header volume %#x; its slot points at sound %d\'s sample' % (track, mix.shape[1] / rate, volume, alias))
     else:
         report['stream'] = None
