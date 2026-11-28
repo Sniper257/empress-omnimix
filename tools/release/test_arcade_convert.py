@@ -258,3 +258,14 @@ class Chart(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class KeysoundFileTests(unittest.TestCase):
+    def test_chart_codes(self):
+        names = ['SPN', 'SPH', 'SPA', 'DPN', 'DPH', 'DPA']
+        self.assertEqual(C.chart_codes('000a0000a0', names),                    # quell: both Another charts
+                         {'SPN': '0', 'SPH': '0', 'SPA': 'a', 'DPN': '0', 'DPH': '0', 'DPA': 'a'})
+        self.assertEqual(C.chart_codes('0512005340', names),                    # crew: SPH and DPH differ
+                         {'SPN': '5', 'SPH': '1', 'SPA': '2', 'DPN': '5', 'DPH': '3', 'DPA': '4'})
+        self.assertEqual(set(C.chart_codes('', names).values()), {'0'})
+        self.assertEqual((C.GROUP_FIELD['H'], C.GROUP_FIELD['X'], C.GROUP_FIELD['A'], C.GROUP_FIELD['N']), (0xe8, 0xe8, 0xf0, 0xf8))

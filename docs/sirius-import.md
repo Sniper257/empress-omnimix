@@ -146,6 +146,13 @@ Checked against All My Turn's CS files (arcade 16017; bank, stream and nine char
   start, so the stream begins with the track itself (plus the 28-sample lead). Light Shine (17026) starts its track
   at 875 ms: with that silence in front, a PCSX2 capture had the backing track 0.9 s behind every keysound.
   Songs converted before (`native_revision` 1 in convert.json) are redone by the batch when their track starts after 0.
+- **Per-chart keysound files** (music_data +0x684, 10 characters SPB SPN SPH SPA SPX DPB DPN DPH DPA DPX; `0` =
+  `<id>.2dx`, another character c = `<id>c.2dx`, bm2dx.dll `%05d/%05d%c.2dx`; 74 songs, 13 from SIRIUS on, e.g.
+  quell `000a0000a0`, GENE `0123001230`): the record's bank groups are picked by difficulty (0xe8 H/X and the
+  fallback, 0xf0 A, 0xf8 N, 0x100 B; bank +0, stream +4), so each group gets a bank of the files its charts use and
+  the stream of the file most of them use. When SP and DP of one difficulty use different files (crew `0512005340`),
+  the group's bank holds both files one after the other and that chart's sounds are renumbered; the other file's
+  backing track then plays from the bank. `arcade_batch.py` passes `--variants` from the database.
 - **Slot 1** (the backing track) keeps its row, pointed at slot 2's sample with tail 0, and every chart
   keeps its BGM event for it at tick 0: that is how the song avoids playing the backing track twice.
 - **Charts**: every arcade event, BGM bank-triggered, on the NTSC frame clock about one frame later than

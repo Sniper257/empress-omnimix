@@ -149,26 +149,44 @@ def encrypt(ply):
     return crypt(lz_encode_opt(ply), 'empress')
 
 
-def load_song(path):
-    """(charts {slot: events}, keysound entries, song id) from an .ifs or a folder with <id>.1/.2dx."""
+def _song_files(path):
+    """(get(name suffix) -> bytes or None, song id) for an .ifs or a folder with <id>.1/.2dx."""
     path = Path(path)
     if path.is_file() and path.suffix.lower() == '.ifs':
         import ifs
         files = ifs.read(path.read_bytes())
-        get = lambda suffix: next((v for k, v in files.items() if k.lower().endswith(suffix) and '_pre' not in k.lower()), None)
         sid = path.stem
-    else:
-        sid = path.name
-        get = lambda suffix: (path / (sid + suffix)).read_bytes() if (path / (sid + suffix)).is_file() else None
-    one, two = get('.1'), get('.2dx')
+        def get(suffix):
+            want = (sid + suffix).lower()
+            return next((v for k, v in files.items() if k.lower().rsplit('/', 1)[-1] == want), None)
+        return get, sid
+    sid = path.name
+    return (lambda suffix: (path / (sid + suffix)).read_bytes() if (path / (sid + suffix)).is_file() else None), sid
+
+
+def load_keys(path, code='0'):
+    """The keysound entries of one keysound file: '0' is <id>.2dx (or .s3p), another code c is the
+    <id><c>.2dx some charts use instead (music_data +0x684; bm2dx.dll "%05d/%05d%c.2dx")."""
+    get, sid = _song_files(path)
+    tail = '' if code == '0' else code
+    two = get(tail + '.2dx')
+    if two:
+        return A.read_2dx(two)[1]
+    s3p = get(tail + '.s3p')
+    if s3p:
+        return s3p_keys(s3p)
+    if code != '0':
+        raise ValueError('%s: no %s%s.2dx or .s3p for the charts that use keysound file %r' % (path, sid, tail, code))
+    return []
+
+
+def load_song(path):
+    """(charts {slot: events}, keysound entries, song id) from an .ifs or a folder with <id>.1/.2dx."""
+    get, sid = _song_files(path)
+    one = get('.1')
     if one is None:
         raise ValueError('No .1 chart in ' + str(path))
-    if two:
-        keys = A.read_2dx(two)[1]
-    else:
-        s3p = get('.s3p')
-        keys = s3p_keys(s3p) if s3p else []
-    return A.read_charts(one), keys, sid
+    return A.read_charts(one), load_keys(path), sid
 
 
 def _wma_to_wav(audio):
@@ -313,7 +331,7 @@ def is_hell(events):
     return any(e[1] == HCN_FLAG for e in events)
 
 
-NATIVE_REVISION = 2          # 2: the stream starts with the track (the game starts it at the track's event)
+NATIVE_REVISION = 3          # 2: the stream starts with the track (the game starts it at the track's event); 3: per-chart keysound files
 NATIVE_STREAM_LEAD = 28      # samples of silence the CS stream starts with (one ADPCM frame), as its bank samples do
 NATIVE_STREAM_GAIN = 0.965    # All My Turn's CS stream against arcade sound 1: 0.9647-0.9652 in every 10 s window, 25 dB SNR (ADPCM noise)
 
@@ -352,51 +370,109 @@ def stream_start(source):
     return min(t for ev in charts.values() for t, k, p, v in ev if k == 7 and v == track)
 
 
+# music_data +0x684: one character per chart in this order; '0' = the song's own keysound file
+VARIANT_ORDER = ['SPB', 'SPN', 'SPH', 'SPA', 'SPX', 'DPB', 'DPN', 'DPH', 'DPA', 'DPX']
+# record bank groups (bank +0, stream +4), picked by difficulty; 0xe8 is the fallback (arcade_songfolder)
+GROUP_FIELD = {'H': 0xe8, 'X': 0xe8, 'A': 0xf0, 'N': 0xf8, 'B': 0x100}
+
+
+def chart_codes(variants, names):
+    """{chart name: keysound file code} from the 10-character +0x684 string ('0' when absent)."""
+    v = (variants or '').ljust(10, '0')[:10]
+    return {n: (v[VARIANT_ORDER.index(n)] if n in VARIANT_ORDER else '0').replace('\0', '0') or '0' for n in names}
+
+
 def native(a, charts, keys, sid):
-    """--split --native: the CS disc's layout (see the --native help)."""
+    """--split --native: the CS disc's layout (see the --native help). With per-chart keysound files
+    (--variants), each difficulty group (GROUP_FIELD) gets a bank of the files its charts use, one after
+    another, and a stream of the backing track of the file most of them use."""
     import numpy as np
     import keysound_bank as KB
     import spu_adpcm as S
     global native_timing
     native_timing = True
-    report = {'song': sid, 'keysounds': len(keys), 'charts': {}, 'layout': 'native'}
-    track = backing_track(charts, keys)
-    sounds = list(range(1, len(keys) + 1))
-    alias = None
-    if track:
-        alias = next((s for s in sounds[sounds.index(track) + 1:] + sounds[:sounds.index(track)][::-1]), None)
-    data, slots, info = KB.build('SP', sounds, keys, 1.0, a.bank_budget or None, aliases={track: alias} if track and alias else None)
-    (a.output / 'keys.bank').write_bytes(data)
-    report['banks'] = {'keys': info}
-    print('keys.bank: %d slots, %d bytes, rates %s' % (info['sounds'], info['bytes'], info['rates']))
-    for slot, events in sorted(charts.items()):
-        name = SLOTS.get(slot, 'slot%d' % slot)
-        hell = a.hell or is_hell(events)
-        holds = H.from_events(events, hell=hell, time=tick, ticks_per_ms=1000 / CLOCK)
-        ev = KB.remap(events, slots, bgm=True)
-        ply, warnings = empress_events(ev, holds, keysounds=True, bgm_slots=True)
-        (a.output / (name + '.bin')).write_bytes(encrypt(ply))
-        notes = sum(1 for e in events if e[1] in (0, 1))
-        bpms = sorted({round(e[3] / e[2], 2) if e[2] else e[3] for e in events if e[1] == 4})
-        report['charts'][name] = {'notes': notes, 'holds': len(holds), 'mss_joints': len(A.mss_joints(events)), 'hcn': hell,
-                                  'total': notes + len(holds), 'bpm': [bpms[0], bpms[-1]] if bpms else None, 'warnings': warnings}
-        print('%s: %d notes, %d %s%s' % (name, notes, len(holds), 'HCN' if hell else 'holds', (' (' + '; '.join(warnings) + ')') if warnings else ''))
+    names = {slot: SLOTS.get(slot, 'slot%d' % slot) for slot in charts}
+    codes = chart_codes(a.variants, names.values())
+    files = {'0': keys}
+    for c in sorted(set(codes.values()) - {'0'}):
+        files[c] = load_keys(a.song, c)
+    by_code = {c: {slot: ev for slot, ev in charts.items() if codes[names[slot]] == c} for c in files}
+    tracks = {c: backing_track(chs, files[c]) if chs else None for c, chs in by_code.items()}
+    report = {'song': sid, 'keysounds': len(keys), 'charts': {}, 'layout': 'native', 'native_revision': NATIVE_REVISION,
+              'variants': {n: c for n, c in codes.items() if c != '0'}, 'banks': {}, 'groups': {}}
+    groups = {}
+    for slot, n in names.items():
+        groups.setdefault(GROUP_FIELD.get(n[-1], 0xe8), []).append(slot)
+    if 0xe8 not in groups:                                   # the fallback group must hold a bank
+        groups[0xe8] = []
+    simple = set(codes.values()) == {'0'}
+    built = {}
     volume = max(0, min(127, round(a.volume * 100 / 127)))
-    if track:
-        # The game starts the stream at the chart's event for the track's slot (the stream replaces that slot),
-        # not at the chart's start: so the stream begins with the track itself. Light Shine (17026) starts its
-        # track at 875 ms; with that much silence in front, a PCSX2 capture had the backing track 0.9 s late.
-        start = min(t for ev in charts.values() for t, k, p, v in ev if k == 7 and v == track)
-        rate, mix, rinfo = render([(0, 7, 0, track)], keys, bgm_only=True, raw=True)
-        mix = np.clip(np.round(mix * NATIVE_STREAM_GAIN), -32768, 32767).astype(np.int16)
-        mix = np.hstack([np.zeros((2, NATIVE_STREAM_LEAD), np.int16), mix])
-        (a.output / 'stream.bin').write_bytes(S.stream([mix[0].tolist(), mix[1].tolist()], rate, volume=volume))
-        report['stream'] = dict(rinfo, chart='native', sound=track, start_ms=start, seconds=round(mix.shape[1] / rate, 2), volume=volume)
-        report['native_revision'] = NATIVE_REVISION
-        print('stream: sound %d, %.1f s, header volume %#x; its slot points at sound %d\'s sample' % (track, mix.shape[1] / rate, volume, alias))
-    else:
-        report['stream'] = None
-        print('stream: none (no backing track every chart shares); all BGM plays from the bank')
+    for field in sorted(groups):
+        slots_here = groups[field]
+        used = [codes[names[s]] for s in slots_here] or ['0']
+        order = sorted(set(used), key=lambda c: (c != '0', c))
+        lead = max(order, key=lambda c: (used.count(c), c == '0'))      # the file whose backing track streams
+        key = (tuple(order), lead)
+        if key not in built:
+            tag = '' if simple else '_' + ''.join(order) + ('' if len(order) == 1 else '-' + lead)
+            offset, combined = {}, []
+            for c in order:
+                offset[c] = len(combined)
+                combined += files[c]
+            sounds = list(range(1, len(combined) + 1))
+            track = tracks.get(lead)
+            alias = None
+            if track:
+                own = list(range(offset[lead] + 1, offset[lead] + len(files[lead]) + 1))
+                t = offset[lead] + track
+                alias = next((x for x in own[own.index(t) + 1:] + own[:own.index(t)][::-1]), None)
+            data, slots, info = KB.build('SP', sounds, combined, 1.0, a.bank_budget or None,
+                                         aliases={offset[lead] + track: alias} if track and alias else None)
+            bank = 'keys%s.bank' % tag
+            (a.output / bank).write_bytes(data)
+            report['banks'][bank] = dict(info, files=order)
+            print('%s: %d slots, %d bytes, rates %s%s' % (bank, info['sounds'], info['bytes'], info['rates'],
+                  '' if simple else ' (keysound files %s)' % ', '.join(order)))
+            stream = None
+            if track:
+                # The game starts the stream at the chart's event for the track's slot (the stream replaces that slot),
+                # not at the chart's start: so the stream begins with the track itself. Light Shine (17026) starts its
+                # track at 875 ms; with that much silence in front, a PCSX2 capture had the backing track 0.9 s late.
+                start = min(t for ev in by_code[lead].values() for t, k, p, v in ev if k == 7 and v == track)
+                rate, mix, rinfo = render([(0, 7, 0, track)], files[lead], bgm_only=True, raw=True)
+                mix = np.clip(np.round(mix * NATIVE_STREAM_GAIN), -32768, 32767).astype(np.int16)
+                mix = np.hstack([np.zeros((2, NATIVE_STREAM_LEAD), np.int16), mix])
+                stream = 'stream%s.bin' % ('' if simple else '_' + lead)
+                if not (a.output / stream).is_file():
+                    (a.output / stream).write_bytes(S.stream([mix[0].tolist(), mix[1].tolist()], rate, volume=volume))
+                    print('%s: sound %d of keysound file %s, %.1f s, header volume %#x%s'
+                          % (stream, track, lead, mix.shape[1] / rate, volume,
+                             '; its slot points at sound %d\'s sample' % (alias - offset[lead]) if alias else ''))
+                report.setdefault('streams', {})[stream] = dict(rinfo, file=lead, sound=track, start_ms=start,
+                                                                seconds=round(mix.shape[1] / rate, 2), volume=volume)
+            elif not simple or field == 0xe8:
+                print('%s: no stream (no backing track every chart shares); all BGM plays from the bank' % bank)
+            built[key] = (bank, stream, slots, offset)
+        bank, stream, slots, offset = built[key]
+        report['groups']['%#x' % field] = {'bank': bank, 'stream': stream, 'charts': [names[s] for s in slots_here]}
+        for slot in slots_here:
+            events, name, c = charts[slot], names[slot], codes[names[slot]]
+            hell = a.hell or is_hell(events)
+            holds = H.from_events(events, hell=hell, time=tick, ticks_per_ms=1000 / CLOCK)
+            ev = KB.remap(events, {v: slots[offset[c] + v] for v in range(1, len(files[c]) + 1)}, bgm=True)
+            ply, warnings = empress_events(ev, holds, keysounds=True, bgm_slots=True)
+            (a.output / (name + '.bin')).write_bytes(encrypt(ply))
+            notes = sum(1 for e in events if e[1] in (0, 1))
+            bpms = sorted({round(e[3] / e[2], 2) if e[2] else e[3] for e in events if e[1] == 4})
+            report['charts'][name] = {'notes': notes, 'holds': len(holds), 'mss_joints': len(A.mss_joints(events)), 'hcn': hell,
+                                      'total': notes + len(holds), 'bpm': [bpms[0], bpms[-1]] if bpms else None,
+                                      'warnings': warnings, 'keysound_file': c}
+            print('%s: %d notes, %d %s%s%s' % (name, notes, len(holds), 'HCN' if hell else 'holds',
+                  '' if c == '0' else ', keysound file ' + c, (' (' + '; '.join(warnings) + ')') if warnings else ''))
+    # the single-file case keeps the earlier report fields
+    if simple:
+        report['stream'] = next(iter(report.get('streams', {}).values()), None)
     (a.output / 'convert.json').write_text(json.dumps(report, indent=1) + '\n', encoding='utf-8')
 
 
@@ -424,6 +500,8 @@ def main(argv=None):
                         'events kept (BGM bank-triggered), and a stream of the backing track (the BGM sound every chart '
                         'starts, no note plays) at 0.965, its own slot pointed at the next sound\'s sample, the arcade volume '
                         'in the stream header (--volume)')
+    p.add_argument('--variants', default='', help='with --native: music_data +0x684, the keysound file per chart '
+                   '(10 characters, %s; 0 = <id>.2dx, c = <id>c.2dx)' % ' '.join(VARIANT_ORDER))
     p.add_argument('--volume', type=int, default=127, help='the song\'s arcade volume (music_data +0x680, 0..127); '
                    'with --native it goes to the stream header as volume * 100 / 127 (All My Turn: 65 -> 0x33)')
     p.add_argument('--hell', action='store_true', help='treat holds as HCN/HBSS even without the type-13 HCN event')

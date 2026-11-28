@@ -135,7 +135,15 @@ def build(converted, template, out, title, lv, version=17, sprites=None, text_fi
     # game played the bank as a stream (noise in Kailua, a divide by zero in Elisha).
     # Per-difficulty banks (arcade_convert DIFFICULTY_FIELDS): FUN_001e4050 picks the group by
     # difficulty (0xe8 H/X, 0xf0 A, 0xf8 N, 0x100 B) and falls back to 0xe8 when a field is 0xffff.
-    if any(converted.glob('keys_*.bank')):
+    if report.get('groups') and not (converted / 'keys.bank').is_file():
+        # arcade_convert --native with per-chart keysound files: a bank (+0) and a stream (+4) per group
+        files = []
+        for field, g in sorted(report['groups'].items(), key=lambda kv: int(kv[0], 16)):
+            files.append((g['bank'], int(field, 16)))
+            if g.get('stream'):
+                files.append((g['stream'], int(field, 16) + 4))
+        files = tuple(files)
+    elif any(converted.glob('keys_*.bank')):
         files = [('keys_%s.bank' % g, f) for g, f in (('H', 0xe8), ('A', 0xf0), ('N', 0xf8), ('B', 0x100))]
         if not (converted / 'keys_H.bank').is_file():          # 0xe8 is every group's fallback: never the template's
             files[0] = (next(n for n, f in files if (converted / n).is_file()), 0xe8)
@@ -146,9 +154,10 @@ def build(converted, template, out, title, lv, version=17, sprites=None, text_fi
         files = (('SP.bank', 0xe8), ('stream.bin', 0xec))
     for name, field in files:
         if (converted / name).is_file():
-            shutil.copyfile(converted / name, out / name)
+            if not (out / name).is_file() or (out / name).stat().st_size != (converted / name).stat().st_size:
+                shutil.copyfile(converted / name, out / name)
             lines.append('F %x 2 %s' % (field, name))
-    if not (converted / 'stream.bin').is_file():
+    if not any(n.startswith('stream') for n, f in files if (converted / n).is_file()):
         print('%s: warning: no stream.bin; the record keeps the template\'s stream at 0xec' % out, file=sys.stderr)
     if sprites and any(has_holds(converted / (n + '.bin')) for n in charts):
         names = hold_sprite_names()

@@ -102,6 +102,14 @@ def song_volume(entry64):
     return min(127, e[0x680]) if len(e) > 0x680 else 127
 
 
+def song_variants(entry64):
+    """The keysound file per chart (music_data entry +0x684, 10 characters, arcade_convert.VARIANT_ORDER):
+    '0' = the song's own <id>.2dx, another character c = <id>c.2dx."""
+    import base64
+    e = base64.b64decode(entry64)[0x684:0x68e]
+    return ''.join(chr(c) if 0x21 <= c < 0x7f else '0' for c in e).ljust(10, '0')
+
+
 def find_sources(root):
     """{song id: path} of every <id>.ifs and <id>/ folder with <id>.1 in the sound folders (sound_folders);
     within one folder an <id>/ folder wins over an <id>.ifs."""
@@ -193,7 +201,9 @@ def convert_one(job):
             if old.get('layout', 'split') != layout:
                 made.unlink()                               # converted with the other audio layout: redo
             elif layout == 'native' and old.get('native_revision', 1) < C.NATIVE_REVISION:
-                if C.stream_start(job['source']):           # its track starts after 0 ms: the stream was late
+                rev = old.get('native_revision', 1)
+                if ((rev < 3 and set(job.get('variants', '0')) - {'0'})     # per-chart keysound files: were ignored
+                        or (rev < 2 and C.stream_start(job['source']))):    # its track starts after 0 ms: the stream was late
                     made.unlink()
                 else:                                       # nothing changed for it
                     old['native_revision'] = C.NATIVE_REVISION
@@ -202,7 +212,8 @@ def convert_one(job):
             if work.exists():
                 shutil.rmtree(work)
             C.main([job['source'], str(work), '--split'] +
-                   (['--native', '--volume', str(job.get('volume', 127))] if job.get('empress_audio') else []))
+                   (['--native', '--volume', str(job.get('volume', 127)), '--variants', job.get('variants', '0' * 10)]
+                    if job.get('empress_audio') else []))
         atlas = R.Atlas(Path(job['atlas']).read_bytes()) if job['atlas'] else None
         containers = X.base_containers(Path(job['megamix']))
         text_files = X.render(job['texts'], containers, atlas)
@@ -376,7 +387,7 @@ def main(argv=None):
             continue
         jobs.append({'id': s['id'], 'title': s['title'], 'ascii': s['ascii'], 'style': s['style'], 'folder': s['folder'],
                      'texts': s['texts'], 'levels': s['levels'], 'empress_audio': a.empress_audio, 'version': a.version,
-                     'volume': song_volume(s['entry']),
+                     'volume': song_volume(s['entry']), 'variants': song_variants(s['entry']),
                      'source': str(sources[s['id']]), 'work': str(out / 'work' / str(s['id'])),
                      'megamix': str(megamix), 'template': str(template), 'sprites': str(sprites) if sprites else None,
                      'atlas': str(atlases[s['style']]) if atlases[s['style']] else None,
