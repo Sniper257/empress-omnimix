@@ -1,5 +1,5 @@
 """arcade_batch: song discovery, folder names, versions, and --install into a built base."""
-import json, unittest
+import json, shutil, unittest
 from pathlib import Path
 import arcade_batch as B
 import megamix as M
@@ -52,8 +52,8 @@ class Batch(unittest.TestCase):
             (out / 'songs' / style / 'style.txt').write_text('name %s\n' % style)
         (base / 'songs' / 'styles.txt').write_text('sirius\n' + (base / 'songs' / 'styles.txt').read_text())
         (base / 'songs' / 'sirius').mkdir(exist_ok=True)
-        done = [{'style': 'pinky_crush', 'folder': 'mesmerizer'}, {'style': 'sirius', 'folder': 'elisha'},
-                {'style': 'resort_anthem', 'folder': 'kailua'}]
+        done = [{'id': 1, 'style': 'pinky_crush', 'folder': 'mesmerizer'}, {'id': 2, 'style': 'sirius', 'folder': 'elisha'},
+                {'id': 3, 'style': 'resort_anthem', 'folder': 'kailua'}]
         B.install(base, out, done)
         styles = (base / 'songs' / 'styles.txt').read_text().split()
         self.assertEqual(styles[:3], ['sirius', 'resort_anthem', 'pinky_crush'])    # arcade styles in version order
@@ -62,6 +62,14 @@ class Batch(unittest.TestCase):
         self.assertEqual(M.verify(base), [])
         B.install(base, out, done)                                                    # again: nothing doubled
         self.assertEqual((base / 'songs' / 'sirius' / 'index.txt').read_text().split().count('elisha'), 1)
+        # a later run copies only what it converted (and what MEGAMIX lacks)
+        (base / 'songs/pinky_crush/mesmerizer/song.txt').write_text('installed\n')
+        (base / 'songs/sirius/elisha/song.txt').write_text('installed\n')
+        shutil.rmtree(base / 'songs/resort_anthem/kailua')
+        B.install(base, out, done, fresh={2})
+        self.assertEqual((base / 'songs/pinky_crush/mesmerizer/song.txt').read_text(), 'installed\n')
+        self.assertEqual((base / 'songs/sirius/elisha/song.txt').read_text(), 'name X\n')
+        self.assertTrue((base / 'songs/resort_anthem/kailua/song.txt').is_file())
 
 
 if __name__ == '__main__':

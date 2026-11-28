@@ -257,16 +257,19 @@ def hold_sprites(megamix, given, arcade=None, out=None):
     return out / 'hold-sprites' if have(out / 'hold-sprites') else None
 
 
-def install(megamix, out, done):
-    """Copy the converted songs into MEGAMIX and list them; then megamix.py index."""
+def install(megamix, out, done, fresh=None):
+    """Copy the converted songs into MEGAMIX and list them; then megamix.py index. With `fresh` (ids converted in
+    this run), only those and songs MEGAMIX does not have yet are copied: the rest are already installed."""
     import megamix as M
     songs = megamix / 'songs'
     styles_path = songs / 'styles.txt'
     order = [l.strip() for l in styles_path.read_text(encoding='utf-8').splitlines() if l.strip()]
     arcade = [s for s, _, _ in STYLES.values()]
-    by_style = {}
+    by_style, copy = {}, set()
     for r in done:
         by_style.setdefault(r['style'], []).append(r['folder'])
+        if fresh is None or r['id'] in fresh:
+            copy.add((r['style'], r['folder']))
     for style, folders in by_style.items():
         src = out / 'songs' / style
         # Windows folders ignore case: a hand-made "Sirius" line is this style's folder, not a new one
@@ -277,6 +280,8 @@ def install(megamix, out, done):
             if (src / f).is_file() and not (dst / f).is_file():
                 shutil.copyfile(src / f, dst / f)
         for folder in folders:
+            if (style, folder) not in copy and (dst / folder / 'song.txt').is_file():
+                continue                             # installed by an earlier run, unchanged since
             if (dst / folder).exists():
                 shutil.rmtree(dst / folder)
             shutil.copytree(src / folder, dst / folder)
@@ -306,7 +311,9 @@ def main(argv=None):
     p.add_argument('--jobs', type=int, default=max(1, min(4, (os.cpu_count() or 2) // 2)),
                    help='songs converted in parallel (each needs about 1 GB of memory; default %(default)s)')
     p.add_argument('--hold-sprites', type=Path, help='hold sprites folder (default: from a song converted before)')
-    p.add_argument('--install', action='store_true', help='copy the results into MEGAMIX and run megamix.py index')
+    p.add_argument('--install', action='store_true', help='copy the results into MEGAMIX and run megamix.py index '
+                   '(songs converted in this run, and any MEGAMIX does not have yet)')
+    p.add_argument('--reinstall', action='store_true', help='with --install: copy every converted song again')
     p.add_argument('--empress-audio', dest='empress_audio', action='store_true', default=True,
                    help='EMPRESS\'s own layout, as on the CS disc (arcade_convert.py --native; the default): every arcade '
                         'sound in one bank, the backing track in the stream at the song\'s arcade volume (ALL MY TURN: '
@@ -414,7 +421,7 @@ def main(argv=None):
     if unknown:
         print('%d song sources are not in the music data: %s' % (len(unknown), ', '.join(map(str, unknown[:20]))))
     if a.install:
-        install(megamix, out, ok)
+        install(megamix, out, ok, None if a.reinstall else {j['id'] for j in jobs})
         print('installed into %s; rebuild the launcher cache if you use one' % megamix)
     else:
         print('results in %s; run again with --install to add them to MEGAMIX' % (out / 'songs'))
