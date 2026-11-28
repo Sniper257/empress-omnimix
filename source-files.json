@@ -1643,7 +1643,7 @@
   "tools/release/apply_usb_hotfix.py": "d1287770d705702d9ef98eb5ada6d6cadd8205810cb86a73497d1ae615a80f5f",
   "tools/release/apply_version_hotfix.py": "6f6aeb4f2e88da63467b8bf6b1e1c0a8db3b5817c71817f1a0ad38019563ae17",
   "tools/release/arcade_batch.py": "0f0bd8d54bfa2738d430b75b7213411d762e800a82546813a7d9f16fee985598",
-  "tools/release/arcade_convert.py": "e6dfca9c1ac325ae733d1f4328bc35a53d9ef8bbd81b4f42d304d891e65e063d",
+  "tools/release/arcade_convert.py": "e6eca5c159ae3db8887ea41383c0b0e0458c5d4faf7345147a993d2de5d1d9ee",
   "tools/release/arcade_data.py": "46ef3ff3a062276ea7a2dd7545601bb72f846a7943432185beeb2d0eaa785c26",
   "tools/release/arcade_songdb.py": "2dfa675d61c55e9502f8ad8ccc042f1b7e1c6b187e123e5a665fa63ffd0efc4f",
   "tools/release/arcade_songfolder.py": "f6acd0e11f94e108049a6e9a71ea847809b8b979e6849421648e87d584975de9",

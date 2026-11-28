@@ -27,6 +27,7 @@ Until the keysound bank format is pinned down, keysound changes are written
 as slot 0 (no sound) and the stream carries all audio.
 """
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import struct
@@ -418,46 +419,54 @@ def native(a, charts, keys, sid):
         key = (tuple(order), lead)
         if key not in built or built[key][4]:          # a mixed stream is the group's own
             tag = '' if simple else '_' + ''.join(order) + ('' if len(order) == 1 else '-' + lead)
-            offset, combined = {}, []
+            # one numbering for the group: the files one after another; with several files a sound that is
+            # byte-identical to one already in (KAI-DEN's SP and DP files are mostly the same) is that one
+            index, combined, seen = {}, [], {}
             for c in order:
-                offset[c] = len(combined)
-                combined += files[c]
+                for v in range(1, len(files[c]) + 1):
+                    w = files[c][v - 1].get('wav') or b''
+                    h = hashlib.sha256(w).digest() if len(order) > 1 and w else None
+                    if h is not None and h in seen:
+                        index[(c, v)] = seen[h]
+                    else:
+                        combined.append(files[c][v - 1])
+                        index[(c, v)] = len(combined)
+                        if h is not None:
+                            seen[h] = len(combined)
+            gev = {s_: [(t, k, p, index.get((codes[names[s_]], v), 0) if v and k in (2, 3, 7) else v)
+                        for t, k, p, v in charts[s_]] for s_ in slots_here}
+            track = index.get((lead, tracks[lead])) if tracks.get(lead) else None
             sounds = list(range(1, len(combined) + 1))
             mixed = set()                                   # (ms, sound) BGM events this group's stream carries
             if len(sounds) > NATIVE_MAX_SLOTS:
                 # More sounds than a bank has slots (VØID: 2,496). The BGM every chart of the group plays at the same
                 # time, from sounds no note of them plays, goes into the group's stream with the backing track (the
                 # layout of --stream common); the bank keeps what the charts still play.
-                if len(order) > 1:
-                    raise ValueError('%d sounds in keysound files %s; an EMPRESS bank has %d slots'
-                                     % (len(combined), ', '.join(order), NATIVE_MAX_SLOTS))
-                group_charts = {s_: charts[s_] for s_ in slots_here}
-                keyed = keyed_sounds(group_charts)
-                sets_ = [set((t, v) for t, k, p, v in ev if k == 7 and v) for ev in group_charts.values()]
-                track_ = tracks.get(lead)
-                if not track_:
+                if not track:
                     raise ValueError('%d sounds and no backing track to mix BGM into; an EMPRESS bank has %d slots'
                                      % (len(combined), NATIVE_MAX_SLOTS))
-                start_ = min(t for ev in by_code[lead].values() for t, k, p, v in ev if k == 7 and v == track_)
+                keyed = keyed_sounds(gev)
+                sets_ = [set((t, v) for t, k, p, v in ev if k == 7 and v) for ev in gev.values()]
+                start_ = min(t for ev in gev.values() for t, k, p, v in ev if k == 7 and v == track)
                 common_ = set.intersection(*sets_) if sets_ else set()
-                mixed = {(t, v) for t, v in common_ if v not in keyed and v != track_ and t >= start_}
-                used_here = {v for ev in group_charts.values() for t, k, p, v in ev
+                mixed = {(t, v) for t, v in common_ if v not in keyed and v != track and t >= start_}
+                used_here = {v for ev in gev.values() for t, k, p, v in ev
                              if v and ((k in (2, 3)) or (k == 7 and (t, v) not in mixed))}
-                used_here.add(track_)
+                used_here.add(track)
                 sounds = sorted(used_here)
                 print('%d sounds, more than a bank\'s %d slots: %d BGM events mixed into the stream, %d sounds left'
                       % (len(combined), NATIVE_MAX_SLOTS, len(mixed), len(sounds)))
                 if len(sounds) > NATIVE_MAX_SLOTS:
                     raise ValueError('%d sounds still played by the %s charts; an EMPRESS bank has %d slots'
                                      % (len(sounds), '/'.join(names[s_] for s_ in slots_here), NATIVE_MAX_SLOTS))
-            track = tracks.get(lead)
+            elif len(order) > 1 and len(combined) < sum(len(files[c]) for c in order):
+                print('keysound files %s: %d sounds, %d of them shared' % (', '.join(order), len(combined),
+                      sum(len(files[c]) for c in order) - len(combined)))
             alias = None
             if track:
-                own = [x for x in sounds if offset[lead] < x <= offset[lead] + len(files[lead])]
-                t = offset[lead] + track
-                alias = next((x for x in own[own.index(t) + 1:] + own[:own.index(t)][::-1]), None)
+                alias = next((x for x in sounds[sounds.index(track) + 1:] + sounds[:sounds.index(track)][::-1]), None)
             data, slots, info = KB.build('SP', sounds, combined, 1.0, a.bank_budget or None,
-                                         aliases={offset[lead] + track: alias} if track and alias else None)
+                                         aliases={track: alias} if track and alias else None)
             bank = 'keys_%x.bank' % field if mixed else 'keys%s.bank' % tag
             (a.output / bank).write_bytes(data)
             report['banks'][bank] = dict(info, files=order)
@@ -468,31 +477,32 @@ def native(a, charts, keys, sid):
                 # The game starts the stream at the chart's event for the track's slot (the stream replaces that slot),
                 # not at the chart's start: so the stream begins with the track itself. Light Shine (17026) starts its
                 # track at 875 ms; with that much silence in front, a PCSX2 capture had the backing track 0.9 s late.
-                start = min(t for ev in by_code[lead].values() for t, k, p, v in ev if k == 7 and v == track)
+                start = min(t for ev in gev.values() for t, k, p, v in ev if k == 7 and v == track)
                 rate, mix, rinfo = render([(0, 7, 0, track)] + [(t - start, 7, 0, v) for t, v in sorted(mixed)],
-                                          files[lead], bgm_only=True, raw=True)
+                                          combined, bgm_only=True, raw=True)
                 mix = np.clip(np.round(mix * NATIVE_STREAM_GAIN), -32768, 32767).astype(np.int16)
                 mix = np.hstack([np.zeros((2, NATIVE_STREAM_LEAD), np.int16), mix])
                 stream = 'stream%s.bin' % (('_%x' % field) if mixed else '' if simple else '_' + lead)
                 if not (a.output / stream).is_file():
                     (a.output / stream).write_bytes(S.stream([mix[0].tolist(), mix[1].tolist()], rate, volume=volume))
                     print('%s: sound %d of keysound file %s, %.1f s, header volume %#x%s'
-                          % (stream, track, lead, mix.shape[1] / rate, volume,
-                             '; its slot points at sound %d\'s sample' % (alias - offset[lead]) if alias else ''))
-                report.setdefault('streams', {})[stream] = dict(rinfo, file=lead, sound=track, start_ms=start,
+                          % (stream, tracks[lead], lead, mix.shape[1] / rate, volume,
+                             '; its slot points at another sound\'s sample' if alias else ''))
+                report.setdefault('streams', {})[stream] = dict(rinfo, file=lead, sound=tracks[lead], start_ms=start,
                                                                 seconds=round(mix.shape[1] / rate, 2), volume=volume)
             elif not simple or field == 0xe8:
                 print('%s: no stream (no backing track every chart shares); all BGM plays from the bank' % bank)
-            built[key] = (bank, stream, slots, offset, mixed)
-        bank, stream, slots, offset, mixed = built[key]
+            built[key] = (bank, stream, slots, index, mixed)
+        bank, stream, slots, index, mixed = built[key]
         report['groups']['%#x' % field] = {'bank': bank, 'stream': stream, 'charts': [names[s] for s in slots_here]}
         for slot in slots_here:
             events, name, c = charts[slot], names[slot], codes[names[slot]]
             hell = a.hell or is_hell(events)
             holds = H.from_events(events, hell=hell, time=tick, ticks_per_ms=1000 / CLOCK)
+            ev = [(t, k, p, index.get((c, v), 0) if v and k in (2, 3, 7) else v) for t, k, p, v in events]
             if mixed:                                   # these play from the stream
-                events = [e for e in events if not (e[1] == 7 and (e[0], e[3]) in mixed)]
-            ev = KB.remap(events, {v: slots[offset[c] + v] for v in range(1, len(files[c]) + 1) if offset[c] + v in slots}, bgm=True)
+                ev = [e for e in ev if not (e[1] == 7 and (e[0], e[3]) in mixed)]
+            ev = KB.remap(ev, {v: slots[v] for v in slots}, bgm=True)
             ply, warnings = empress_events(ev, holds, keysounds=True, bgm_slots=True)
             (a.output / (name + '.bin')).write_bytes(encrypt(ply))
             notes = sum(1 for e in events if e[1] in (0, 1))
