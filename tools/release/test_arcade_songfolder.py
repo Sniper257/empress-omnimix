@@ -42,7 +42,7 @@ class SongFolder(unittest.TestCase):
             self.assertEqual(rec[0x37:0x40], bytes(9))                         # title stops before the hold fields
             self.assertEqual(struct.unpack_from('<hh', rec, 0x42), (150, -1))
             self.assertEqual(list(rec[0x4a:0x54]), [4, 0, 0, 0, 0, 0, 0, 12, 0, 0])
-            self.assertEqual((rec[0x54], rec[0xbd]), (16, 1))
+            self.assertEqual((rec[0x54], rec[0xbd]), (17, 1))
             self.assertEqual(struct.unpack_from('<H', rec, 0x108)[0], 4)            # 3 notes + 1 hold tail
             self.assertEqual(struct.unpack_from('<HH', rec, 0x112 + 2 * 4), (2, 2))  # DPA: P1 2 notes, P2 1 note + its tail
             self.assertEqual(struct.unpack_from('<I', rec, 0xc0)[0], 0)             # absent chart (SPH) cleared
