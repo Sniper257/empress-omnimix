@@ -48,8 +48,12 @@ int main(void)
     /* the game judges the P2 head 1 tick late; key held until the end */
     holds_on_judgement(7, 1u << 15 | 2, 0);   /* slow GOOD: still a hit */
     keys[1] = 1u << 2;
-    for (t = 100; t < 161; t++) holds_frame_hook(t);
-    CHECK(kept[1] >= 55 && kept[0] == 0);         /* held: P2's judgement stays on screen, P1's untouched */
+    for (t = 100; t < 130; t++) holds_frame_hook(t);
+    CHECK(kept[1] >= 28 && kept[0] == 0);         /* held: P2's head judgement stays on screen, P1's untouched */
+    holds_on_judgement(0xa, 1u << 15 | 5, 0);     /* another P2 note is hit meanwhile: its judgement shows */
+    kept[1] = 0;
+    for (t = 130; t < 161; t++) holds_frame_hook(t);
+    CHECK(kept[1] == 0);                          /* ... and fades as the game's own do */
     keys[1] = 0;
     kept[1] = 0;
     for (t = 161; t < 200; t++) holds_frame_hook(t);

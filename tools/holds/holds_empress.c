@@ -189,6 +189,10 @@ static void mss_link(void)
 static hold_def play_defs[HOLDS_MAX];
 static hu8 chart_lane[HOLDS_MAX];
 
+/* per side: the judgement on screen is a hold head's (the held hold keeps it shown); any other note's
+ * judgement on that side takes the display back, and it fades as the game's own do */
+static hu8 judge_owned[2];
+
 static void arm(void)
 {
     hu32 n = 0, i;
@@ -212,6 +216,7 @@ static void arm(void)
     mss_link();
     spun_at[0] = spun_at[1] = -100;
     for (n = 0; n < HOLDS_MAX; n++) { tail_note[n] = 0; LOOP_PAD(); }
+    judge_owned[0] = judge_owned[1] = 0;
     holds_dbg[1] = (hu32)armed;
     holds_dbg[2] = chart_n;
 }
@@ -336,6 +341,7 @@ int holds_on_judgement(hu32 code, hu32 id, int dir)
     if (code == CODE_EMPTY_POOR) {
         lane = ((id >> 15) & 1u) * 8u + (id & 7u);
         if (tail_empty_poor(lane)) { holds_ddbg[9]++; dbg_report(code, id, -1); return 1; }
+        judge_owned[(id >> 15) & 1u] = 0;          /* an empty POOR of its own replaces the display */
         return 0;
     }
     judge = judge_of_code(code);
@@ -350,6 +356,7 @@ int holds_on_judgement(hu32 code, hu32 id, int dir)
         if (r >= 0) r |= 0x100;
     }
     dbg_report(code, id, r);
+    judge_owned[(id >> 15) & 1u] = r >= 0;
     return 0;
 }
 
@@ -467,8 +474,8 @@ void holds_frame_hook(long long tick)
             if (a >= 0 && (holds.state[a] == HS_HOLDING || holds.state[a] == HS_LOOSE)) held |= 1u << (lane >> 3);
             LOOP_PAD();
         }
-        if (held & 1u) H_JUDGE_KEEP(0);
-        if (held & 2u) H_JUDGE_KEEP(1);
+        if ((held & 1u) && judge_owned[0]) H_JUDGE_KEEP(0);
+        if ((held & 2u) && judge_owned[1]) H_JUDGE_KEEP(1);
     }
     hd_frame();
 }
