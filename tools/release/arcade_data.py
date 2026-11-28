@@ -93,7 +93,7 @@ def read_charts(data):
 
 def mss_joints(events):
     """Middle notes of multi-spin scratches: (time, kind) where a turntable section starts as another ends."""
-    ends = {(t + v, k) for t, k, p, v in events if k in (0, 1) and p == 7 and v > 0}
+    ends = {(t + v - d, k) for t, k, p, v in events if k in (0, 1) and p == 7 and v > 0 for d in (0, 1, 2)}
     return sorted((t, k) for t, k, p, v in events if k in (0, 1) and p == 7 and v > 0 and (t, k) in ends)
 
 

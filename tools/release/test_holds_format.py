@@ -34,6 +34,12 @@ class Format(unittest.TestCase):
     def test_rejects_overlap_and_bad_records(self):
         with self.assertRaisesRegex(ValueError, 'Overlapping'):
             H.from_events([(0, 0, 1, 100), (50, 0, 1, 100)])
+
+    def test_chained_scratch_1ms_overlap_is_a_joint(self):
+        got = H.from_events([(29053, 0, 7, 316), (29368, 0, 7, 316), (29684, 0, 7, 631)])
+        self.assertEqual([(a, b) for a, b, *_ in got], [(29053, 29368), (29368, 29684), (29684, 30315)])
+        import arcade_data as A
+        self.assertEqual(len(A.mss_joints([(29053, 0, 7, 316), (29368, 0, 7, 316)])), 1)
         bad = bytearray(H.pack([(0, 10, 0, H.CN, 0)]))
         bad[17] = H.BSS          # header 8 + start 4 + end 4 + lane 1
         with self.assertRaisesRegex(ValueError, 'Invalid hold'):

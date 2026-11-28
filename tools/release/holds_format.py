@@ -40,6 +40,9 @@ def bpm_at(events, t, default=130.0):
     return bpm
 
 
+JOINT_SLACK_MS = 2   # overlap of back-to-back holds taken as a joint (source ms)
+
+
 def from_events(events, hell=False, time=lambda t: t, ticks_per_ms=1.0):
     """Holds of an arcade-style event list: notes (type 0/1) with value > 0.
 
@@ -48,14 +51,26 @@ def from_events(events, hell=False, time=lambda t: t, ticks_per_ms=1.0):
     EMPRESS frames), used for the 16th-note tick length. Returns a sorted list of
     (start, end, lane, kind, tick64).
     """
-    holds = []
+    raw = []
     for t, kind, param, value in events:
         if kind not in (0, 1) or value <= 0:
             continue
         if param > 7:
             raise ValueError('Invalid note column %d' % param)
-        lane = param + 8 * kind
-        start, end = time(t), time(t + value)
+        raw.append([t, t + value, param + 8 * kind])
+    # A multi-spin scratch is turntable holds that start as the previous ends; the arcade's whole ms can leave the
+    # previous 1 ms past the next one's start (Speculation 31012, SUGAR RUSH 32068): it ends where the next begins.
+    raw.sort()
+    last = {}
+    for h in raw:
+        p = last.get(h[2])
+        if p is not None and h[0] < p[1] <= h[0] + JOINT_SLACK_MS:
+            p[1] = h[0]
+        last[h[2]] = h
+    holds = []
+    for t0, t1, lane in raw:
+        t = t0
+        start, end = time(t0), time(t1)
         if end <= start:
             end = start + 1
         k = kind_for(lane, hell)
