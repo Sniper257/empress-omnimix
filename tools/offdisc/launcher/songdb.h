@@ -113,7 +113,26 @@ typedef struct {
     u8 *chart_ids;                     /* identity_count*16 bytes */
     u32 sort_version;                   /* 1 = complete per-row alphabetical ranks */
     u16 *sort_rank;                     /* FIRST+n_new; independent of scores/source priority */
+    /* records off the block (docs/omnimix-capacity.md step 3). recs above is a cache of full records per alias:
+     * (alias - FIRST) * 0x134 for aliases 104..255, holding the record of slot rec_key[alias - FIRST]; the full
+     * records of all slots are a file of n_new * 0x134 bytes at virtual LBA rec_lba, read through rec_buf when an
+     * alias is asked for one it does not hold. Music select reads everything else from the summaries. */
+    u32 rec_version;                    /* REC_VERSION */
+    u32 rec_lba;
+    u8 *summary;                        /* n_new * SUMMARY_BYTES */
+    u16 *rec_key;                       /* NSAVE: slot each alias's cached record is of, NOSLOT = none */
+    u8 *rec_buf;                        /* REC_BUF bytes: records of slots rec_buf_first.. */
 } sdb_t;
+
+#define REC_VERSION 1
+#define REC_BUF (53 * 0x134)            /* 16,324 bytes: 53 records per read */
+/* per-slot summary: everything music select reads from an added song's record while it is not bound
+ * (song_window.c, songdb.c in_vf, song_resources.c imports, the PROBE record for chart_listed) */
+#define SUMMARY_BYTES 20
+#define SUM_LEVELS 0                    /* 10: record +0x4a..+0x53 */
+#define SUM_TITLE 10                    /* record +0 (A-Z groups) */
+#define SUM_BPM 12                      /* s16 x2: record +0x42, +0x44 */
+#define SUM_CHARTS 16                   /* u16: bit i = chart file id word +0xc0 + 4i is not zero */
 
 const u8 *chart_identity(int song, int dp, int diff);
 const u8 *chart_identity_row(int row, int dp, int diff);

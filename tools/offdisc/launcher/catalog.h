@@ -114,7 +114,7 @@ static int catalog_from_line(const char *l)
 
 static u8 *catalog_record(int row)
 {
-    return row<FIRST?(u8 *)(0x278b70u+row*0x134u):sdb->recs+(row-FIRST)*0x134;
+    return row<FIRST?(u8 *)(0x278b70u+row*0x134u):all_recs+(row-FIRST)*0x134;
 }
 
 static int catalog_better(int row,int ch,int previous,int old_ch)

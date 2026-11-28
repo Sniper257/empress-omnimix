@@ -116,7 +116,7 @@ rec_hook:
         jr $ra
         nop
 7:
-#endif                               # FUN_001e19a0(ctx, id): EMPRESS ids 0..103 -> songlist, added -> sdb.recs[slot]
+#endif                               # FUN_001e19a0(ctx, id): EMPRESS ids 0..103 -> songlist, added -> rec_added
         sltiu $at, $a1, FIRST
         beq $at, $zero, 1f
         li $v0, 0x134
@@ -125,18 +125,12 @@ rec_hook:
         addiu $v0, $v0, -0x7490
         jr $ra
         addu $v0, $v0, $v1
-1:      SLOT $v1, $a1
-        li $at, 0xffff
-        bne $v1, $at, 2f
-        li $v0, 0x134
-        lui $v0, %hi(unavailable_song_record)
+1:      SAVE                            # added songs: songdb.c rec_added(ctx, id), the alias's cached record
+        jal rec_added                   # (read from the records file when the alias was bound since)
+        nop
+        RESTORE
         jr $ra
-        addiu $v0, $v0, %lo(unavailable_song_record)
-2:      .word 0x00621818                # mult v1,v1,v0
-        SDB $v0
-        lw $v0, O_RECS($v0)
-        jr $ra
-        addu $v0, $v0, $v1
+        nop
 
         .globl gate_hook
 gate_hook:                              # song exists: EMPRESS 0..98 present, else an added song

@@ -44,9 +44,13 @@ So a 20-byte summary per song is enough until a song is bound.
 
 1. Shared container sprites (done): converted songs no longer add 37 hold sprites each to the note containers.
 2. 45 folder slots (done): one per version plus extras.
-3. Records off the block: the launcher writes all records to one file on the virtual disc; the block keeps a
-   20-byte summary per song and a cache of full records for the bound aliases (145 x 308 = 45 KB), filled when
-   a folder binds its rows. The probe alias gets a record built from the summary.
+3. Records off the block (built, Nov 2026; needs a device / PCSX2 run): the launcher writes all records to one
+   file on the virtual disc (`records`); the block keeps a 20-byte summary per song (songdb.h SUM_*) and a cache of
+   full records per alias id 104..255 (152 x 308 = 46 KB) with the slot each holds (`rec_key`). rec_hook hands
+   added songs to `rec_added` (songdb.c), which reads the record again when the alias was bound to another slot
+   since, through a 16 KB buffer of 53 aligned records (a folder's songs, numbered together, take one or two
+   reads). The probe alias gets a record built from the summary (no read). Music select's levels / BPM / A-Z
+   reads (song_window.c, in_vf, the imports in song_resources.c) use the summaries. Per song: 308 -> 20 bytes.
 4. Song packs: the converter writes each song as one file (its charts, banks, stream and sprites, sector aligned,
    with an index). The block keeps one disc extent and one path per song; the song's file table is read with its
    record when it is bound, into a per-alias file-id window (145 x 16 files x 12 bytes = 28 KB). Song folders in
@@ -56,6 +60,8 @@ So a 20-byte summary per song is enough until a song is bound.
 6. Scores: `slot_saved` keeps 28-byte records only for (chart, category) pairs that exist: SP charts have two
    (modes 0 and 1 share one; mode 3 has its own), DP charts one. Lossless, and the same size whether nothing or
    everything has been played: about 320 bytes for a typical song instead of 560.
+
+Measured on the next build: the launcher logs `records: ... KB in a file, ... KB in the block`.
 
 Estimated per song after 3-5: about 130 bytes of block (2,600 songs: about 340 KB) and about 320 bytes of heap
 (about 840 KB). The heap headroom during play of a 16 MB-bank song has not been measured yet; the debug runtime

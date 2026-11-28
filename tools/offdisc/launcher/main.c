@@ -1295,6 +1295,9 @@ static void put(u8 *rec, u32 field, int bytes, u32 v)
     else { rec[field] = v; rec[field + 1] = v >> 8; rec[field + 2] = v >> 16; rec[field + 3] = v >> 24; }
 }
 
+/* every added song's record while the launcher builds (its own memory): written to the records file at the end,
+ * the block keeps summaries and a per-alias cache (songdb.h, records off the block) */
+static u8 *all_recs;
 #include "catalog.h"
 
 /* data1 container placeholders in a record (0xfffe = the song's card, 0xff00 + k = its `D k` container):
@@ -1500,7 +1503,7 @@ static int add_song(const song_t *sg, int fold)
     char base[128], path[200], *b, *p, *l;
     int k = sdb->n_new, errs = 0, nf = 0, identity = -1;
     u32 bga_raw=0,bga_packed=0,max_bank=0;
-    u8 *rec = sdb->recs + k * 0x134, *t;
+    u8 *rec = all_recs + k * 0x134, *t;
     snprintf(base, sizeof base, "songs/%s/%s/", styles[sg->style].dir, sg->dir);
     snprintf(path, sizeof path, "%ssong.txt", base);
     if (!(b = slurp(path, 0))) { logf_("%s: cannot read %s\n", sg->dir, path); return -1; }
@@ -1998,7 +2001,16 @@ static int build_inner(u32 *entry)
         asset_mem[1]=(u32)tab_alloc((FIRST+n_add)*4);
         if(!asset_mem[1])return -1;
         memset((void *)asset_mem[1],0,(FIRST+n_add)*4);
-        sdb->recs = tab_alloc(n_add * 0x134 + 1);
+        free(all_recs);
+        all_recs = calloc((size_t)n_add + 1, 0x134);
+        sdb->recs = tab_alloc(NSAVE * 0x134);         /* per-alias record cache */
+        sdb->rec_key = tab_alloc(NSAVE * 2);
+        sdb->summary = tab_alloc(n_add * SUMMARY_BYTES + 4);
+        sdb->rec_buf = tab_alloc(REC_BUF + 64);       /* 64-byte aligned, like the sprite bank's read buffer */
+        if (sdb->rec_buf) sdb->rec_buf = (u8 *)(((u32)sdb->rec_buf + 63) & ~63u);
+        ok &= all_recs && sdb->rec_key && sdb->summary && sdb->rec_buf;
+        if (ok) { memset(sdb->rec_key, 0xff, NSAVE * 2); memset(sdb->recs, 0, NSAVE * 0x134); }
+        sdb->rec_version = REC_VERSION; sdb->rec_lba = 0;
         sdb->slot_fold = tab_alloc(n_add + 1);
         sdb->alias_of = tab_alloc(n_add + 1);
         for (i = 0; i < NPOOL; i++) ok &= !!(sdb->pools[i].listed = tab_alloc(n_add + 1));
@@ -2140,6 +2152,31 @@ static int build_inner(u32 *entry)
            !(lba=vfile(rel,&sec,&size,"wheel labels"))){logf_("wheel labels: %u of %u songs, page file not published\n",wheel_labels,sdb->n_new);errs++;}
         else {((u32*)wheel_at)[1]=lba;logf_("wheel pages: %u KB, %u labels\n",wheel_pos>>10,sdb->n_new);}
     }
+
+    /* records off the block: every added song's full record in one file (read by the runtime when an alias is
+     * bound to it), and its summary in the block for music select */
+    if (sdb->n_new) {
+        char rel[80];u32 sec,size,lba,k,j;
+        for (k = 0; k < sdb->n_new; k++) {
+            const u8 *r = all_recs + k * 0x134;
+            u8 *s = sdb->summary + k * SUMMARY_BYTES;
+            u32 bits = 0;
+            memset(s, 0, SUMMARY_BYTES);
+            memcpy(s + SUM_LEVELS, r + 0x4a, 10);
+            s[SUM_TITLE] = r[0];
+            memcpy(s + SUM_BPM, r + 0x42, 4);
+            for (j = 0; j < 10; j++) if (*(const u32 *)(r + 0xc0 + 4 * j)) bits |= 1u << j;
+            s[SUM_CHARTS] = bits & 0xff; s[SUM_CHARTS + 1] = bits >> 8;
+        }
+        if (cache_publish(rel, sizeof rel, "records", all_recs, (int)(sdb->n_new * 0x134), 0) ||
+            !(lba = vfile(rel, &sec, &size, "records"))) { logf_("records: file not published\n"); errs++; }
+        else {
+            sdb->rec_lba = lba;
+            logf_("records: %u KB in a file, %u KB in the block (summaries, alias cache, read buffer)\n",
+                  (sdb->n_new * 0x134) >> 10, (sdb->n_new * SUMMARY_BYTES + NSAVE * 0x134 + NSAVE * 2 + REC_BUF) >> 10);
+        }
+    }
+    free(all_recs); all_recs = 0;
 
     /* base extents: sort, drop exact duplicates (shared files listed by several songs), check overlaps */
     qsort(xb, nxb, sizeof(ext_t), cmp_ext);

@@ -4,7 +4,7 @@ static u8 *resource_record(s32 song)
 {
     s32 row=song_catalog_row(song);
     if(row<0)return 0;
-    if(row>=FIRST)return sdb.recs?sdb.recs+(row-FIRST)*0x134:0;
+    if(row>=FIRST)return rec_of(song_ctx(),song);      /* the alias's cached record (rec_added) */
     return rec_of(song_ctx(),row);
 }
 
@@ -71,7 +71,7 @@ static void resource_profile_imports(u8 *ctx,s32 baseline)
     u8 *seen;
     s32 bytes,row,dp,d;u32 index;
     if(sdb.identity_version!=1 || !sdb.chart_index || !sdb.chart_ids ||
-       !sdb.recs || !sdb.identity_count || sdb.identity_count>NOSLOT)return;
+       !sdb.summary || !sdb.identity_count || sdb.identity_count>NOSLOT)return;
     bytes=(sdb.identity_count+7)/8;
     seen=malloc_(bytes);if(!seen)return;
     for(d=0;d<bytes;d++){seen[d]=0;LOOP_PAD();}
@@ -86,7 +86,7 @@ static void resource_profile_imports(u8 *ctx,s32 baseline)
         LOOP_PAD();
     }
     for(row=0;row<(s32)sdb.n_new;row++) {
-        u8 *rec=sdb.recs+row*0x134;
+        const u8 *rec=slot_summary(row)+SUM_LEVELS-0x4a;   /* rec[0x4a + i] = level i */
         for(dp=0;dp<2;dp++) {
             s32 best=0;
             for(d=0;d<5;d++) {

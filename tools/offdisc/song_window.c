@@ -28,9 +28,25 @@ static s32 wrap_row(s32 i,s32 n)
     i%=n;return i<0?i+n:i;
 }
 
-static u8 *row_record(s32 key)
+/* native rows: the song list record; added rows: their summary (records are off the block) */
+static s32 row_level(s32 key,s32 dp,s32 diff)
 {
-    return key>=SONG_KEY?sdb.recs+(key-SONG_KEY)*0x134:rec_of(song_ctx(),key);
+    if(key>=SONG_KEY)return slot_summary(key-SONG_KEY)[SUM_LEVELS+(dp?5:0)+diff];
+    return rec_of(song_ctx(),key)[0x4a+(dp?5:0)+diff];
+}
+
+static s32 row_bpm(s32 key)
+{
+    const u8 *b=key>=SONG_KEY?slot_summary(key-SONG_KEY)+SUM_BPM:rec_of(song_ctx(),key)+0x42;
+    s32 lo=(short)(b[0]|b[1]<<8),hi=(short)(b[2]|b[3]<<8);
+    return hi<0?lo:hi;
+}
+
+/* the title bytes compared when there are no sort ranks: an added row has only its first byte */
+static const u8 *row_title(s32 key,u8 *one)
+{
+    if(key<SONG_KEY)return rec_of(song_ctx(),key);
+    one[0]=slot_summary(key-SONG_KEY)[SUM_TITLE];one[1]=0;return one;
 }
 
 static u8 *row_save(s32 key,s32 mode,s32 diff)
@@ -46,7 +62,7 @@ static s32 alias_key(s32 id)
 
 static s32 title_compare(song_row_t *a,song_row_t *b)
 {
-    u8 *x=row_record(a->key),*y=row_record(b->key);s32 i;
+    u8 xo[2],yo[2];const u8 *x=row_title(a->key,xo),*y=row_title(b->key,yo);s32 i;
     if(sdb.sort_version==1 && sdb.sort_rank){
         u32 ar=a->key>=SONG_KEY?FIRST+a->key-SONG_KEY:a->key;
         u32 br=b->key>=SONG_KEY?FIRST+b->key-SONG_KEY:b->key;
@@ -73,14 +89,14 @@ static s32 row_compare(song_row_t *a,song_row_t *b)
 
 static s32 row_order(u8 *ctx,song_row_t *r,s32 mode,s32 dp,s32 smode)
 {
-    u8 *rec=row_record(r->key),*sv;
+    u8 *sv;
     s32 native=r->key<99,score,valid,miss;
     switch(mode) {
-    case 0:return rec[0x4a+(dp?5:0)+r->diff];
+    case 0:return row_level(r->key,dp,r->diff);
     case 2:sv=row_save(r->key,smode,r->diff);miss=(short)(*(u16 *)(sv+12)<<1);miss>>=1;return miss<0?65535:miss;
     case 3:sv=row_save(r->key,smode,r->diff);score=(I32(sv+12)&0x1fffffff)>>15;valid=sv[15]>>5;return valid?-score:1;
     case 4:return native?I32(ctx+0x20ef4+r->diff*0x18c+r->key*4):-1;
-    case 7:{s32 bpm=*(short *)(rec+0x44);return bpm<0?*(short *)(rec+0x42):bpm;}
+    case 7:return row_bpm(r->key);
     case 8:return row_save(r->key,smode,r->diff)[11]>>4;
     case 9:
     case 10:

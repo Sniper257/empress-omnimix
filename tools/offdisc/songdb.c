@@ -31,6 +31,7 @@ sdb_t sdb = { 0x44474e53 };
 u8 *play_preview_record; /* Explicit editor lifetime, never ordinary test kind8. */
 #define PLAY_PREVIEW_ACTIVE() (play_preview_record!=0)
 u8 unavailable_song_record[0x134];     /* invalid metadata is empty, never song0 */
+_Static_assert(OFF(rec_version) == OFF(sort_rank) + 4, "records-off-block fields follow sort_rank");
 const u32 chart_identity_layout[] = {OFF(identity_version),OFF(identity_count),OFF(chart_index),OFF(chart_ids),sizeof(sdb_t)};
 skin_t skin = { 0x808080, 100, 100, { 0xffff, 0xffff }, 0, 0 };
 _Static_assert(__builtin_offsetof(skin_t, note_zoom) == 4 && __builtin_offsetof(skin_t, note_zoom_skin) == 8 &&
@@ -174,6 +175,62 @@ static s32 stash_alias(s32 a)
 static void window_reset(void);
 static s32 window_storage(void);
 
+/* ---- records off the block (songdb.h; docs/omnimix-capacity.md step 3) ---- */
+s32 vd_pread(u32 lba, u32 off, u32 n, void *buf);             /* vdisc.c */
+static s32 rec_buf_first = -1, rec_buf_n;
+
+/* music-select summary of slot k (SUMMARY_BYTES, SUM_*) */
+const u8 *slot_summary(s32 k) { return sdb.summary + k * SUMMARY_BYTES; }
+
+/* slot k's full record into dst, through rec_buf (53 records per read, aligned: a folder's songs, which the
+ * launcher numbers together, come from one or two reads). 0 if the file cannot be read. */
+static s32 slot_record_read(s32 k, u8 *dst)
+{
+    s32 per = REC_BUF / 0x134, first, n;
+    if ((u32)k >= sdb.n_new || !sdb.rec_buf || !sdb.rec_lba) return 0;
+    if (rec_buf_first < 0 || k < rec_buf_first || k >= rec_buf_first + rec_buf_n) {
+        first = k / per * per;
+        rec_buf_first = -1;
+        n = vd_pread(sdb.rec_lba, (u32)first * 0x134, REC_BUF, sdb.rec_buf);
+        if (n < (k - first + 1) * 0x134) return 0;
+        rec_buf_first = first; rec_buf_n = n / 0x134;
+    }
+    memcpy_(dst, sdb.rec_buf + (k - rec_buf_first) * 0x134, 0x134);
+    return 1;
+}
+
+/* the PROBE alias's record, built from slot k's summary: chart_listed (FUN_00214f60), which asks the probe about
+ * every slot when a folder list is built, reads only the levels and the chart file id words (non-zero or not) */
+static void summary_record(s32 k, u8 *r)
+{
+    const u8 *s = slot_summary(k);
+    u32 bits = s[SUM_CHARTS] | s[SUM_CHARTS + 1] << 8, i;
+    for (i = 0; i < 0x134; i++) { r[i] = 0; LOOP_PAD(); }
+    r[0] = s[SUM_TITLE];
+    for (i = 0; i < 4; i++) { r[0x42 + i] = s[SUM_BPM + i]; LOOP_PAD(); }
+    for (i = 0; i < 10; i++) { r[0x4a + i] = s[SUM_LEVELS + i]; if (bits >> i & 1) r[0xc0 + 4 * i] = 1; LOOP_PAD(); }
+}
+
+/* rec_hook (songdb.S) for added songs: alias id -> its cached record, read again when the alias has been bound
+ * to another slot since (bind_keys, the variant and quick-retry aliases) */
+u8 *rec_added(u8 *ctx, s32 id)
+{
+    u32 a = (u32)id & 255, k;
+    u8 *r;
+    (void)ctx;
+    if (a < FIRST || sdb.rec_version != REC_VERSION || !sdb.recs || !sdb.rec_key) return unavailable_song_record;
+    k = sdb.slot_of[a];
+    if (k >= sdb.n_new) return unavailable_song_record;
+    r = sdb.recs + (a - FIRST) * 0x134;
+    if (sdb.rec_key[a - FIRST] != k) {
+        sdb.rec_key[a - FIRST] = NOSLOT;
+        if (a == PROBE) summary_record(k, r);
+        else if (!slot_record_read(k, r)) return unavailable_song_record;
+        sdb.rec_key[a - FIRST] = k;
+    }
+    return r;
+}
+
 /* A-Z group of a title: ABCD EFGH IJKL MNOP QRST UVWXYZ others */
 static s32 alpha(s32 c)
 {
@@ -185,16 +242,16 @@ static s32 alpha(s32 c)
 /* does pair (slot, d) of a context belong in virtual folder vf (diff = the folder's difficulty)? */
 static s32 in_vf(pool_t *p, s32 k, s32 d, s32 vf, s32 diff, s32 dp, s32 mode)
 {
-    u8 *rec = sdb.recs + k * 0x134;
+    const u8 *rec = slot_summary(k);
     s32 lv;
     if (!(p->listed[k] >> d & 1)) return 0;
     if (vf < VF_LEVEL) return sdb.slot_fold[k] == vf && d == diff;
     if (vf == VF_ALL) return d == diff;
     if (vf < VF_ALPHA) {
-        lv = rec[0x4a + (dp ? 5 : 0) + d];
+        lv = rec[SUM_LEVELS + (dp ? 5 : 0) + d];
         return lv == vf - VF_LEVEL + 1;
     }
-    if (vf < VF_NOPLAY) return d == diff && alpha(rec[0]) == vf - VF_ALPHA;
+    if (vf < VF_NOPLAY) return d == diff && alpha(rec[SUM_TITLE]) == vf - VF_ALPHA;
     return slot_save(k, mode, d)[0xb] >> 4 == 9;
 }
 
