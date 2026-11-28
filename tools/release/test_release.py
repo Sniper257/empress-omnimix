@@ -257,3 +257,21 @@ class ReleaseTests(unittest.TestCase):
 
 
 if __name__=='__main__':unittest.main()
+
+
+class HoldSetTests(unittest.TestCase):
+    def test_unify_keeps_the_17px_set(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            def put(folder, w, tail):
+                d = root / 'songs' / folder / 'holds'
+                d.mkdir(parents=True)
+                for n in ('cn_white_start', 'cn_white_end'):
+                    (d / (n + '.spr')).write_bytes(b'SPR1' + w.to_bytes(2, 'little') + b'\0' * 6 + tail)
+            put('sirius/a', 17, b'x'); put('sirius/b', 17, b'x'); put('mine/c', 16, b'y'); put('mine/d', 17, b'z')
+            self.assertEqual(len(M.hold_sets(root)), 3)
+            self.assertEqual(M.unify_holds(root, progress=lambda *_: None), 2)
+            sets = M.hold_sets(root)
+            self.assertEqual(len(sets), 1)
+            self.assertEqual((root / 'songs/mine/c/holds/cn_white_start.spr').read_bytes()[-1:], b'x')
+            self.assertEqual(M.unify_holds(root, progress=lambda *_: None), 0)

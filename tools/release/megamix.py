@@ -786,6 +786,38 @@ def update(iso, root, bundle, progress=print):
         lock.unlink(missing_ok=True)
 
 
+def hold_sets(root):
+    """{content key: [songs/<style>/<folder>/holds, ...]}: the charge-note sprite sets installed songs carry."""
+    sets={}
+    for holds in sorted(path_in(root,'songs').glob('*/*/holds')):
+        files=sorted(holds.glob('*.spr'))
+        if files:sets.setdefault(hashlib.sha256(b''.join(f.name.encode()+b'\0'+f.read_bytes() for f in files)).hexdigest(),[]).append(holds)
+    return sets
+
+
+def unify_holds(root, progress=print):
+    """Give every song the same hold sprites. The launcher packs all songs' holds/*.spr into note containers
+    #109 and #146, which take only byte-identical palettes ("sprites use different palettes"): with two sets
+    installed the build fails. Keeps the 17 px set (white caps), the most used one if several. Returns the
+    number of songs changed."""
+    sets=hold_sets(root)
+    if len(sets)<2:return 0
+    def width(holds):
+        f=holds/'cn_white_start.spr'
+        try:return int.from_bytes(f.read_bytes()[4:6],'little')
+        except OSError:return None
+    key,keep=sorted(sets.items(),key=lambda kv:(width(kv[1][0])!=17,-len(kv[1]),kv[0]))[0]
+    src=keep[0];changed=0
+    for other,folders in sets.items():
+        if other==key:continue
+        for holds in folders:
+            for f in holds.glob('*.spr'):f.unlink()
+            for f in src.glob('*.spr'):shutil.copyfile(f,holds/f.name)
+            changed+=1
+    progress('Hold sprites: %d songs now use the set of %s (%d sets were installed; the launcher needs one)'%(changed,src.parent.name,len(sets)))
+    return changed
+
+
 def reindex(root, progress=print):
     """Record hand-added song folders (listed in songs/styles.txt and their
     index.txt) in the installed indexes, so verify and cache accept them."""
@@ -800,6 +832,7 @@ def reindex(root, progress=print):
     try:
         with os.fdopen(fd,'w') as f:f.write(str(os.getpid())+'\n')
         local=local_songs(root,state);activate_indexes(root,state)
+        unify_holds(root,progress)
         progress('Indexes updated; %d hand-added song folders kept%s' % (sum(map(len,local.values())),(' ('+', '.join(local)+')') if local else ''))
     finally:
         lock.unlink(missing_ok=True)

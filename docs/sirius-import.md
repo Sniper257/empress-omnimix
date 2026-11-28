@@ -150,7 +150,11 @@ Checked against All My Turn's CS files (arcade 16017; bank, stream and nine char
   charts of its own.
 
 Result for 16017: 5.70 MB bank against the CS 5.32 MB (the difference is the resampled sounds), stream
-6,121,344 bytes against 6,121,248. `arcade_batch.py` uses this mode by default, with each song's volume (`--legacy-audio` for the earlier layout).
+6,121,344 bytes against 6,121,248. Hold sprites: the launcher packs every song's `holds/*.spr` into note containers #109 and #146, which take only
+byte-identical palettes, so all installed songs must carry the same set ("sprites use different palettes").
+`megamix.py index` (which `--install` runs) copies one set over the others: the 17 px one, the most used if several.
+
+`arcade_batch.py` uses this mode by default, with each song's volume (`--legacy-audio` for the earlier layout).
 In PCSX2 the converted All My Turn plays as a near-perfect match for the CS one.
 
 Song folders for added songs (launcher/main.c `add_song`): `record record.bin` (0x134 bytes),
