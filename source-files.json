@@ -1599,7 +1599,7 @@
   "tools/offdisc/song_resources.c": "d546099ed3239891a4e49d866f013a268d8c68fe5f31f6d0f75048a3245571ae",
   "tools/offdisc/song_resources.h": "b0ba8c3678912a4997b82ea14f7af69747281ae481c8a68bfc3befca48fb69d8",
   "tools/offdisc/song_window.c": "23d074beae10cd82662f58404c40acda7d3a52252d4cdd3646481e4c7bf6bac9",
-  "tools/offdisc/songdb.S": "f90a3b8f190d41b4860daa82abfedc58190d89376c1a34ecab467e22aa1d4c8d",
+  "tools/offdisc/songdb.S": "2c57925c2acc9303c04c5e0c6021a43e25dc58a0f105677db9a96e4d34337073",
   "tools/offdisc/songdb.c": "1eb376405c591d4a63b961c1a5420a81d405ea498b0895375f20ded41bcd4182",
   "tools/offdisc/songdb.h": "60f9f9fb8311d1e5a19bf40c869cb960e2d65e1e0328dfdec4fde26eb2cf66dc",
   "tools/offdisc/ui_overlay.c": "b27c049342df6c9d56befa428590d434549023115c7b4587df128e5e42b5db40",

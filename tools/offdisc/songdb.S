@@ -375,10 +375,41 @@ info_hook:
         ld $a0, 0xa0($sp)
         ld $a1, 0xa8($sp)
         RESTORE
+        # the game's search of its loaded containers (0x135770..0x1357ac), with one change: a container that is not
+        # loaded gives an empty rect instead of a read through a null pointer (the game crashed there when an added
+        # song started, rect of container a0, sprite a1; both are kept in info_miss for a debugger)
 1:      lui $7, 0x2b
-        lw $7, -0x2fd0($7)              # lw a3,-0x7bc0(gp) = 0x2ad030
-        j 0x135778
-        lui $9, 0x35                    # $9: the game's t1
+        lw $7, -0x2fd0($7)              # loaded containers: lw a3,-0x7bc0(gp) = 0x2ad030
+        lui $9, 0x35
+        addiu $9, $9, -0x5580           # 0x34aa80, 0x228 bytes each, +0x210 data1 index, +0x214 rect table
+        move $8, $zero
+3:      slt $at, $8, $7
+        beq $at, $zero, 4f
+        nop
+        lw $3, 0x210($9)
+        beq $3, $4, 5f
+        nop
+        addiu $8, $8, 1
+        addiu $9, $9, 0x228
+        b 3b
+        nop
+5:      j 0x1357b0                      # the game's copy of rect a1 from table v1
+        lw $3, 0x214($9)
+4:      lui $at, %hi(info_miss)
+        sw $4, %lo(info_miss)($at)
+        addiu $at, $at, %lo(info_miss)
+        sw $5, 4($at)
+        sh $zero, 0($6)
+        sh $zero, 2($6)
+        sh $zero, 4($6)
+        jr $ra
+        sh $zero, 6($6)
+
+        .pushsection .data
+        .globl info_miss
+info_miss:
+        .word -1, -1
+        .popsection
 
         # FUN_00135540 (sprite draw of every path: a0 = loaded container entry (+0x210 data1 index, +0x214 rect
         # table), a1 = the sprite's rect, a2 params) = `j tint_hook ; nop`: lane sprites of the skins #67..#72 are
