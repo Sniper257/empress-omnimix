@@ -153,6 +153,11 @@ Checked against All My Turn's CS files (arcade 16017; bank, stream and nine char
   the stream of the file most of them use. When SP and DP of one difficulty use different files (crew `0512005340`),
   the group's bank holds both files one after the other and that chart's sounds are renumbered; the other file's
   backing track then plays from the bank. `arcade_batch.py` passes `--variants` from the database.
+- **More sounds than a bank's 2,047 slots** (RESIDENT: VØID 2,496, Swing My Wonderland 2,140, Somnidiscotheque
+  2,204): every chart plays every sound, so the group's BGM that all its charts play at the same time, from sounds
+  no note plays, is mixed into the group's own stream (`stream_<field>.bin`) with the backing track and dropped
+  from the charts; the bank (`keys_<field>.bank`) keeps the rest. Negative BPM (MAX 360's reverse scroll) plays
+  forwards: it only sets the scroll speed.
 - **Slot 1** (the backing track) keeps its row, pointed at slot 2's sample with tail 0, and every chart
   keeps its BGM event for it at tick 0: that is how the song avoids playing the backing track twice.
 - **Charts**: every arcade event, BGM bank-triggered, on the NTSC frame clock about one frame later than
