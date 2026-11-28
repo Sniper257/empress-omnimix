@@ -359,6 +359,33 @@ draw_hook:
         j 0x135728
         lui $8, 0x35                    # $8: the game's t0 (n32 names $t0 = $12)
 
+        # FUN_00135770 (sprite rect: a0 container, a1 sprite, a2 out x, y, w, h) = `j info_hook ; nop`: an added
+        # song's title sprite is made resident first, as before a draw (draw_hook). The stage intro (FUN_00222640)
+        # measures the big title, genre and artist once, through FUN_0012fe80, before anything draws them: with
+        # the sprite not resident its rect is 0x0, so the intro showed no title, genre or artist for added songs.
+        .globl info_hook
+info_hook:
+        addiu $at, $a0, -0x12a
+        sltiu $at, $at, 4
+        beq $at, $zero, 1f
+        nop
+        SAVE
+        sd $a1, 0xa8($sp)
+        addiu $sp, $sp, -0x10
+        sd $a2, 0($sp)
+        jal spr_draw
+        sd $a3, 8($sp)
+        ld $a2, 0($sp)
+        ld $a3, 8($sp)
+        addiu $sp, $sp, 0x10
+        ld $a0, 0xa0($sp)
+        ld $a1, 0xa8($sp)
+        RESTORE
+1:      lui $7, 0x2b
+        lw $7, -0x2fd0($7)              # lw a3,-0x7bc0(gp) = 0x2ad030
+        j 0x135778
+        lui $9, 0x35                    # $9: the game's t1
+
         # FUN_00135540 (sprite draw of every path: a0 = loaded container entry (+0x210 data1 index, +0x214 rect
         # table), a1 = the sprite's rect, a2 params) = `j tint_hook ; nop`: lane sprites of the skins #67..#72 are
         # drawn with the Skin settings tint (cur_tint, read by FUN_00139200's colour loads) around a call of the body;

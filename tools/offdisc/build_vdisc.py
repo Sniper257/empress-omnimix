@@ -161,6 +161,7 @@ HOOKS = {0x1896d0: (0x27bdff90, 'j', 'menu_draw_hook'), 0x1896d4: (0xffbf0050, N
          0x1faff0: (JAL(0x1fb650), 'jal', 'eighth_turntable_hook'),
          # sprite draw FUN_00135720 (lw v1,-0x7bc0(gp) ; lui t0,0x35): blank title slots reloaded first
          0x135720: (0x8f838440, 'j', 'draw_hook'), 0x135724: (0x3c080035, None, None),
+         0x135770: (0x8f878440, 'j', 'info_hook'), 0x135774: (0x3c090035, None, None),
          # saved folder getter FUN_001d85c0 (jr ra ; lw v0,0x54(a0)): hidden / none -> the first menu folder
          0x1d85c0: (0x03e00008, 'j', 'saved_hook'),
          # our folders (59 CUSTOM, 60.. versions) get the RANDOM row like the game's song folders
@@ -583,7 +584,7 @@ def main():
         for site,body,hook in [(0x14cce8,0x13a530,'pvt_release_hook'),(0x15183c,0x10ece0,'pvt_vblank_hook'),(0x14cd88,0x14cb20,'pvt_batch_hook'),(0x1f22a8,0x14cf70,'pvt_idle_hook'),(0x1f2380,0x14cf70,'pvt_idle_hook')]:
             assert word(site)==JAL(body),(hex(site),hex(word(site)))
             lines.append('J %x %08x %x' % (site,word(site),syms[hook]))
-        for site,orig,hook in [(0x1361e0,0x27bdef50,'pvt_decode_hook'),(0x1361e4,0x0000402d,None),(0x135860,0x8c830000,'pvt_register_hook'),(0x135864,0x8c650008,None),(0x1519d0,JAL(0x136c30),'pvt_submit_hook'),(0x135770,0x8f878440,'pvt_query_hook'),(0x135774,0x3c090035,None),(0x135670,0x27bdffe0,'pvt_sprite_hook'),(0x135674,0x3c0b0035,None)]:
+        for site,orig,hook in [(0x1361e0,0x27bdef50,'pvt_decode_hook'),(0x1361e4,0x0000402d,None),(0x135860,0x8c830000,'pvt_register_hook'),(0x135864,0x8c650008,None),(0x1519d0,JAL(0x136c30),'pvt_submit_hook'),(0x135670,0x27bdffe0,'pvt_sprite_hook'),(0x135674,0x3c0b0035,None)]:
             assert word(site)==orig
             lines.append('J %x %08x %x' % (site,orig,syms[hook])) if site==0x1519d0 else lines.append('W %x %08x %08x' % (site,orig,J(syms[hook])if hook else 0))
     if host_bench:lines.append('host 1')
