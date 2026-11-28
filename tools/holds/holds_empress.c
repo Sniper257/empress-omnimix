@@ -44,6 +44,8 @@ extern void test_native_spawn(hu8 *note);
 #define H_NATIVE_SPAWN(note) test_native_spawn(note)
 extern void test_play(hu32 index, hu32 side);
 #define H_PLAY_NOTE(note, side) test_play((note)[8], (side))
+extern void test_judge_keep(hu32 side);
+#define H_JUDGE_KEEP(side) test_judge_keep(side)
 #else
 static hu32 h_gp(void) { hu32 g; __asm__ volatile("move %0, $28" : "=r"(g)); return g; }
 /* chart event cursor of the spawner (0x1e9790 reads gp-0x77dc): an address inside the decoded chart */
@@ -78,6 +80,20 @@ static void h_play_note(const hu8 *note, hu32 side)
     ((void (*)(hu32))0x140260)(req);
 }
 #define H_PLAY_NOTE(note, side) h_play_note((note), (side))
+/* the judgement display (FUN_001feaf0, called for every judgement the ring reports): per side, +0xfc the
+ * judgement, +0xec frames left, set to 0x1e (half a second). A note's judgement stays until the next one; a
+ * hold has none from its head to its end, so the head's faded. Held, the frames left stop at HD_JUDGE_KEEP,
+ * past the 0x1e..0x1b pop-in, so it stays as the game shows it, until the end's judgement replaces it. */
+#define HD_JUDGE_KEEP 20
+static void h_judge_keep(hu32 side)
+{
+    hu32 o = *(volatile hu32 *)(unsigned long)(h_gp() - 0x7608);
+    volatile hs32 *left;
+    if (o < 0x100000u || o >= 0x2000000u || (o & 3u)) return;
+    left = (volatile hs32 *)(unsigned long)(o + 0xec + side * 4u);
+    if (*left < HD_JUDGE_KEEP) *left = HD_JUDGE_KEEP;
+}
+#define H_JUDGE_KEEP(side) h_judge_keep(side)
 #endif
 
 #define CODE_PGREAT 0xau
@@ -444,6 +460,16 @@ void holds_frame_hook(long long tick)
     holds_frame(&holds, (hs32)tick, keys, tt);
     while ((n = holds_pop(&holds, ev, 16)) != 0)
         for (i = 0; i < n; i++) apply(&ev[i]);
+    {                                             /* a held hold keeps the side's last judgement on screen */
+        hu32 held = 0, lane;
+        for (lane = 0; lane < HOLDS_LANES; lane++) {
+            hs32 a = holds.active[lane];
+            if (a >= 0 && (holds.state[a] == HS_HOLDING || holds.state[a] == HS_LOOSE)) held |= 1u << (lane >> 3);
+            LOOP_PAD();
+        }
+        if (held & 1u) H_JUDGE_KEEP(0);
+        if (held & 2u) H_JUDGE_KEEP(1);
+    }
     hd_frame();
 }
 

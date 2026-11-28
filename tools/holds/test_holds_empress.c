@@ -26,6 +26,8 @@ static hu32 draw_h[64], ndraw; static hs32 draw_y[64], draw_zy[64], draw_px[64],
 void test_draw(hu32 handle, hs32 x, hs32 y, hs32 zy, hs32 px, hs32 py) { (void)x; if (ndraw < 64) { draw_h[ndraw] = handle; draw_y[ndraw] = y; draw_zy[ndraw] = zy; draw_px[ndraw] = px; draw_py[ndraw++] = py; } }
 static hu8 record[0x134] __attribute__((aligned(4)));
 hu8 *test_record(void) { return record; }
+static int kept[2];
+void test_judge_keep(hu32 side) { kept[side & 1]++; }
 static int gains;
 void test_gain(hu32 side) { (void)side; gains++; }
 static int spawned;
@@ -47,8 +49,11 @@ int main(void)
     holds_on_judgement(7, 1u << 15 | 2, 0);   /* slow GOOD: still a hit */
     keys[1] = 1u << 2;
     for (t = 100; t < 161; t++) holds_frame_hook(t);
+    CHECK(kept[1] >= 55 && kept[0] == 0);         /* held: P2's judgement stays on screen, P1's untouched */
     keys[1] = 0;
+    kept[1] = 0;
     for (t = 161; t < 200; t++) holds_frame_hook(t);
+    CHECK(kept[1] < 5);                           /* after its end is judged: the game's own half second again */
     CHECK(logged(0xa, 1u << 15 | 2) == 1);        /* tail PGREAT (code 0xa) logged on P2 lane 3 */
     /* HCN head missed (code 0xf at its tick): an empty POOR at once, then one per 16th */
     nring = 0;
