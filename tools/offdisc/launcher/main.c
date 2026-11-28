@@ -1166,7 +1166,8 @@ static int note_skin_build(void)
     int side, k, len, outlen, errs = 0;
     /* The new per-owner catalog supersedes the old global note-table patch.
      * Its zero selection must mean native artwork, including on old configs. */
-    if (skin->custom_art) { skin->note_rows=6;skin->skin_first[0]=skin->skin_first[1]=0xffff;return 0; }
+    /* ... only when it has note packs: a catalog of bombs alone leaves the Skin page's note skin working */
+    if (skin->custom_art && skin->custom_art->count[0]) { skin->note_rows=6;skin->skin_first[0]=skin->skin_first[1]=0xffff;return 0; }
     if (!note_skin) return 0;
     for (side = 0; side < 2; side++) {
         u32 *ent = (u32 *)(DATA1_TAB + cont[side] * 16), lba = DATA1_LBA + ent[1], sec, size, at;

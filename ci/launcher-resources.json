@@ -2,17 +2,17 @@
   "console": {
     "template": {
       "bytes": 3497488,
-      "sha256": "ee0a8dbeece399c63c51eaf56aa163d16e1e7b99b38448c02d2e180df311c67b"
+      "sha256": "f59ca51ad42e10474c0f8ad6d5d05428a629f37ca7f95beba128fbe50e6afd56"
     },
     "output": {
-      "bytes": 354436,
-      "sha256": "2b7fa048c773b132f7d7970bdb8676241a506a98b19a95508cb10455c25a97f0"
+      "bytes": 354452,
+      "sha256": "2240e268a39ed0c76ef59aa7e60c278052a0ae60fb8661575d77f35cc0f97ef8"
     },
     "recipe": {
       "format": "megamix/iso-launcher-template-v1",
       "source": "id",
-      "template_sha256": "ee0a8dbeece399c63c51eaf56aa163d16e1e7b99b38448c02d2e180df311c67b",
-      "unpacked_sha256": "430157ab9b8ca1362ca2285961dc0f711265ec4db00387780ada3bbcb7022842",
+      "template_sha256": "f59ca51ad42e10474c0f8ad6d5d05428a629f37ca7f95beba128fbe50e6afd56",
+      "unpacked_sha256": "6d2437c659b8aea0287b3cb033c6542889d551e08dea8a52ab811a9ef8bb1b1e",
       "spans": [
         {
           "at": 574464,
@@ -57,23 +57,23 @@
       "base": 10485760,
       "entry": 10492456,
       "bytes": 2151256,
-      "sha256": "e6f292de6ea20522a7be2cc5192c2071bee59ad5d11f4a47b5df7f6ac70caffe"
+      "sha256": "58e06ef1474ee940033e67d82ca0076b72df0ef9b664b7159b31354d5e525407"
     }
   },
   "host": {
     "template": {
       "bytes": 2498584,
-      "sha256": "93446dd1eb995b082fb628713c0e410d95ac7ca40bc386fe0f792bc4d45857be"
+      "sha256": "ec6170bb0ca2579fae3b0042d21c26b1da4d6eccb88e78cbaf35166a7439f3bf"
     },
     "output": {
       "bytes": 2498584,
-      "sha256": "634fae5c2d1e3e10d12039f2f252516dc3dfd18c70fbbdb89b2c75144dcfa895"
+      "sha256": "c17d4e41ac0c216a62fe5ddec1399f8f0eb65cbf421303490dcb78d00c865d11"
     },
     "recipe": {
       "format": "megamix/iso-launcher-template-v1",
       "source": "id",
-      "template_sha256": "93446dd1eb995b082fb628713c0e410d95ac7ca40bc386fe0f792bc4d45857be",
-      "unpacked_sha256": "634fae5c2d1e3e10d12039f2f252516dc3dfd18c70fbbdb89b2c75144dcfa895",
+      "template_sha256": "ec6170bb0ca2579fae3b0042d21c26b1da4d6eccb88e78cbaf35166a7439f3bf",
+      "unpacked_sha256": "c17d4e41ac0c216a62fe5ddec1399f8f0eb65cbf421303490dcb78d00c865d11",
       "spans": [
         {
           "at": 489856,
