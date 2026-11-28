@@ -151,7 +151,7 @@ static int catalog_finish(void)
     while (cap<raw*2+1)cap*=2;
     hash=malloc(cap*sizeof(int));best=malloc((raw+1)*sizeof(u16));best_ch=malloc(raw+1);groups=malloc((raw+1)*16);
     sdb->chart_index=tab_alloc(rows*10*2);
-    sdb->chart_ids=tab_alloc((raw+1)*16);
+    sdb->chart_ids=malloc((raw+1)*16);              /* launcher heap: a file once built (main.c, step 5) */
     if (!hash || !best || !best_ch || !groups || !sdb->chart_index || !sdb->chart_ids) {
         logf_("block/heap full (chart identities)\n");errors++;goto done;
     }

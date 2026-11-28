@@ -122,6 +122,10 @@ typedef struct {
     u8 *summary;                        /* n_new * SUMMARY_BYTES */
     u16 *rec_key;                       /* NSAVE: slot each alias's cached record is of, NOSLOT = none */
     u8 *rec_buf;                        /* REC_BUF bytes: records of slots rec_buf_first.. */
+    /* chart identities off the block (docs/omnimix-capacity.md step 5): with chart_ids 0, the identity_count * 16
+     * bytes are a file at virtual LBA chart_ids_lba; chart_identity_row reads one 16-byte id per lookup, a save
+     * (ps_collect) reads them all into the heap for its duration (ids_acquire / ids_release) */
+    u32 chart_ids_lba;
 } sdb_t;
 
 #define REC_VERSION 1
@@ -136,5 +140,8 @@ typedef struct {
 
 const u8 *chart_identity(int song, int dp, int diff);
 const u8 *chart_identity_row(int row, int dp, int diff);
+int ids_available(void);
+void ids_acquire(void);
+void ids_release(void);
 
 #endif

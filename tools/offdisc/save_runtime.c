@@ -134,10 +134,10 @@ static void ps_sort(ps_candidate *v,u32 n)
 #ifdef SAVE_PROFILE
 #define ps_collect ps_collect_observed
 #endif
-static s32 ps_collect(cp_record **records,u32 *n)
+static s32 ps_collect_ids(cp_record **records,u32 *n)
 {
     ps_candidate *v;cp_record *result;u32 cap=ps_base_n,count=ps_base_n,i,j,chosen,changed,unique=0;
-    if(sdb.identity_version!=1 || !sdb.chart_index || !sdb.chart_ids || !ensure_saves())return 0;
+    if(sdb.identity_version!=1 || !sdb.chart_index || !ids_available() || !ensure_saves())return 0;
     for(i=FIRST;i<255;i++){if(i>VARIANT && i<128)continue;if(!stash_alias(i))return 0;LOOP_PAD();}
     if(!ps_gather(0,&cap,0) || cap>(pc_enabled()?(8u*1024u*1024u-4)/sizeof *v:CP_MAX_RECORDS*4u))return 0;
     v=malloc_(cap*sizeof *v+4);if(!v)return 0;
@@ -150,6 +150,11 @@ static s32 ps_collect(cp_record **records,u32 *n)
     if(unique>(pc_enabled()?(4u*1024u*1024u)/sizeof(cp_record):CP_MAX_RECORDS)){free_(v);return 0;}
     result=malloc_(unique*sizeof *result+4);if(!result){free_(v);return 0;}
     for(i=0;i<unique;i++){result[i]=v[i].record;LOOP_PAD();}free_(v);*records=result;*n=unique;return 1;
+}
+/* every chart's identity is looked up: with them off the block, all are read into the heap once (songdb.c) */
+static s32 ps_collect(cp_record **records,u32 *n)
+{
+    s32 r;ids_acquire();r=ps_collect_ids(records,n);ids_release();return r;
 }
 #ifdef SAVE_PROFILE
 #undef ps_collect

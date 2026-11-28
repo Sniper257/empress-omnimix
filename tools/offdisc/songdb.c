@@ -135,14 +135,36 @@ static s32 slot_saved_n;
 
 /* Future persistence consumes these bytes, NEVER the table index or alias.
  * dp is an explicit SP/DP flag; native save-mode/assist rules are separate. */
+/* chart identities: in the block (chart_ids), or a file (chart_ids_lba, songdb.h). A save holds them all in the
+ * heap (ids_acquire); otherwise each lookup reads its 16 bytes. Callers copy the bytes before the next lookup. */
+s32 vd_pread(u32 lba, u32 off, u32 n, void *buf);
+static u8 *ids_heap;
+static u8 ids_one[16];
+s32 ids_available(void) { return sdb.chart_ids || sdb.chart_ids_lba; }
+void ids_acquire(void)
+{
+    u32 n = sdb.identity_count * 16;
+    if (sdb.chart_ids || ids_heap || !sdb.chart_ids_lba || !n) return;
+    ids_heap = malloc_(n);
+    if (ids_heap && vd_pread(sdb.chart_ids_lba, 0, n, ids_heap) != (s32)n) { free_(ids_heap); ids_heap = 0; }
+}
+void ids_release(void)
+{
+    if (ids_heap) free_(ids_heap);
+    ids_heap = 0;
+}
 const u8 *chart_identity_row(s32 row, s32 dp, s32 diff)
 {
-    u32 index;
-    if (sdb.identity_version!=1 || !sdb.chart_index || !sdb.chart_ids ||
-        (u32)row>=FIRST+sdb.n_new || (u32)dp>1 || (u32)diff>=5)return 0;
-    index=sdb.chart_index[row*10+dp*5+diff];
-    if (index==NOSLOT || index>=sdb.identity_count)return 0;
-    return sdb.chart_ids+index*16;
+    u32 index = NOSLOT, ok = sdb.identity_version==1 && sdb.chart_index && (sdb.chart_ids || sdb.chart_ids_lba) &&
+                             (u32)row<FIRST+sdb.n_new && (u32)dp<=1 && (u32)diff<5;
+    const u8 *id = 0;
+    if (ok) index = sdb.chart_index[row*10+dp*5+diff];
+    if (index != NOSLOT && index < sdb.identity_count) {
+        if (sdb.chart_ids) id = sdb.chart_ids+index*16;
+        else if (ids_heap) id = ids_heap+index*16;
+        else if (vd_pread(sdb.chart_ids_lba, index*16, 16, ids_one) == 16) id = ids_one;
+    }
+    return id;
 }
 
 const u8 *chart_identity(s32 song, s32 dp, s32 diff)

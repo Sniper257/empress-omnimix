@@ -2236,6 +2236,17 @@ static int build_inner(u32 *entry)
         }
     }
     free(all_recs); all_recs = 0;
+    /* chart identities: a file, read by the runtime per lookup and by a save all at once (songdb.c ids_acquire) */
+    if (sdb->chart_ids && sdb->identity_count) {
+        char rel[64];
+        u32 sec, size, lba = 0;
+        if (cache_publish(rel, sizeof rel, "chart_ids", sdb->chart_ids, (int)(sdb->identity_count * 16), 0) ||
+            !(lba = vfile(rel, &sec, &size, "chart_ids"))) { logf_("chart identities: file not published\n"); errs++; }
+        else logf_("chart identities: %u KB in a file\n", (sdb->identity_count * 16) >> 10);
+        free(sdb->chart_ids);
+        sdb->chart_ids = 0;
+        sdb->chart_ids_lba = lba;
+    }
 
     /* base extents: sort, drop exact duplicates (shared files listed by several songs), check overlaps */
     qsort(xb, nxb, sizeof(ext_t), cmp_ext);

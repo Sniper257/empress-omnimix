@@ -1,21 +1,21 @@
 {
   "console": {
     "template": {
-      "bytes": 3497488,
-      "sha256": "f59ca51ad42e10474c0f8ad6d5d05428a629f37ca7f95beba128fbe50e6afd56"
+      "bytes": 3497744,
+      "sha256": "f0834da6d7cb34832ef64a8390667d7c388626633a21b7f56ddd4ffa8431f7f4"
     },
     "output": {
-      "bytes": 354452,
-      "sha256": "2240e268a39ed0c76ef59aa7e60c278052a0ae60fb8661575d77f35cc0f97ef8"
+      "bytes": 355236,
+      "sha256": "6ebd7ccce2a4354dfc64aa2068e4111ca3c38dcfc74c73505567a929255b5e22"
     },
     "recipe": {
       "format": "megamix/iso-launcher-template-v1",
       "source": "id",
-      "template_sha256": "f59ca51ad42e10474c0f8ad6d5d05428a629f37ca7f95beba128fbe50e6afd56",
-      "unpacked_sha256": "6d2437c659b8aea0287b3cb033c6542889d551e08dea8a52ab811a9ef8bb1b1e",
+      "template_sha256": "f0834da6d7cb34832ef64a8390667d7c388626633a21b7f56ddd4ffa8431f7f4",
+      "unpacked_sha256": "f4fff0ae65e1e3b5b3e8aee7caf83eb574bdb4e305d27cbcae28d702c0d5fdbf",
       "spans": [
         {
-          "at": 574464,
+          "at": 574592,
           "bytes": 278353,
           "iso_offset": 620544,
           "source_bytes": 278353,
@@ -24,7 +24,7 @@
           "transform": "copy"
         },
         {
-          "at": 852864,
+          "at": 852992,
           "bytes": 278353,
           "iso_offset": 620544,
           "source_bytes": 278353,
@@ -33,7 +33,7 @@
           "transform": "copy"
         },
         {
-          "at": 1298560,
+          "at": 1298816,
           "bytes": 378400,
           "iso_offset": 277774336,
           "source_bytes": 1026048,
@@ -56,27 +56,27 @@
     "memory": {
       "base": 10485760,
       "entry": 10492456,
-      "bytes": 2151256,
-      "sha256": "58e06ef1474ee940033e67d82ca0076b72df0ef9b664b7159b31354d5e525407"
+      "bytes": 2151512,
+      "sha256": "6e367ee80dfea5df9e3f5f34ca97750b3de2373bc6ae8353fe7883c7ed6f821f"
     }
   },
   "host": {
     "template": {
-      "bytes": 2498584,
-      "sha256": "ec6170bb0ca2579fae3b0042d21c26b1da4d6eccb88e78cbaf35166a7439f3bf"
+      "bytes": 2498968,
+      "sha256": "0a6464d6b17608beb826509500403112885e2d8a9a8db95aff138240badfc028"
     },
     "output": {
-      "bytes": 2498584,
-      "sha256": "c17d4e41ac0c216a62fe5ddec1399f8f0eb65cbf421303490dcb78d00c865d11"
+      "bytes": 2498968,
+      "sha256": "6726e3767feea0cd8a23276fc812c35e963f7bcc652bf9ec29aae2dfdeead071"
     },
     "recipe": {
       "format": "megamix/iso-launcher-template-v1",
       "source": "id",
-      "template_sha256": "ec6170bb0ca2579fae3b0042d21c26b1da4d6eccb88e78cbaf35166a7439f3bf",
-      "unpacked_sha256": "c17d4e41ac0c216a62fe5ddec1399f8f0eb65cbf421303490dcb78d00c865d11",
+      "template_sha256": "0a6464d6b17608beb826509500403112885e2d8a9a8db95aff138240badfc028",
+      "unpacked_sha256": "6726e3767feea0cd8a23276fc812c35e963f7bcc652bf9ec29aae2dfdeead071",
       "spans": [
         {
-          "at": 489856,
+          "at": 490240,
           "bytes": 378400,
           "iso_offset": 277774336,
           "source_bytes": 1026048,

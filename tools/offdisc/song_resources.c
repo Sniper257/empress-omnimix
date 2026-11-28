@@ -70,7 +70,7 @@ static void resource_profile_imports(u8 *ctx,s32 baseline)
 {
     u8 *seen;
     s32 bytes,row,dp,d;u32 index;
-    if(sdb.identity_version!=1 || !sdb.chart_index || !sdb.chart_ids ||
+    if(sdb.identity_version!=1 || !sdb.chart_index || !ids_available() ||
        !sdb.summary || !sdb.identity_count || sdb.identity_count>NOSLOT)return;
     bytes=(sdb.identity_count+7)/8;
     seen=malloc_(bytes);if(!seen)return;
