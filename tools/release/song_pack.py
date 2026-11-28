@@ -76,6 +76,33 @@ def pack_folder(folder):
     return len(order)
 
 
+def unpack_folder(folder):
+    """Undo pack_folder: members back to their own files, F lines naming them. Returns files written."""
+    txt = folder / 'song.txt'
+    lines = txt.read_text(encoding='utf-8').splitlines()
+    pack = folder / PACK
+    if not pack.is_file() or not any('#' in l for l in lines if l.startswith('F ')):
+        return 0
+    data = pack.read_bytes()
+    names, out = {}, []
+    for line in lines:
+        parts = line.split(' ', 3)
+        if len(parts) == 4 and parts[0] == 'F' and parts[3].startswith(PACK + '#'):
+            sector, size = map(int, parts[3].split('#', 1)[1].split('+'))
+            key = (sector, size)
+            if key not in names:
+                names[key] = 'member_%d_%s.bin' % (len(names), parts[1])
+                (folder / names[key]).write_bytes(data[sector * SECTOR:sector * SECTOR + size])
+            out.append(' '.join(parts[:3] + [names[key]]))
+        else:
+            out.append(line)
+    ttmp = folder / 'song.txt.tmp'
+    ttmp.write_text('\n'.join(out) + '\n', encoding='utf-8')
+    ttmp.replace(txt)
+    pack.unlink()
+    return len(names)
+
+
 def song_folders(path):
     if (path / 'song.txt').is_file():
         return [path]
@@ -85,6 +112,7 @@ def song_folders(path):
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument('path', type=Path, help='MEGAMIX folder, or one song folder')
+    p.add_argument('--unpack', action='store_true', help='undo packing (members back to files)')
     a = p.parse_args(argv)
     folders = song_folders(a.path)
     if not folders:
@@ -92,7 +120,7 @@ def main(argv=None):
     packed = files = 0
     for n, folder in enumerate(folders, 1):
         try:
-            k = pack_folder(folder)
+            k = unpack_folder(folder) if a.unpack else pack_folder(folder)
         except OSError as e:
             print('%s: %s' % (folder, e), file=sys.stderr)
             continue
@@ -101,6 +129,9 @@ def main(argv=None):
             files += k
         if n % 100 == 0:
             print('%d/%d folders' % (n, len(folders)), flush=True)
+    if a.unpack:
+        print('unpacked %d song folders (%d files)' % (packed, files))
+        return
     print('packed %d song folders (%d files into %d packs); %d were already packed or had nothing to pack'
           % (packed, files, packed, len(folders) - packed))
 

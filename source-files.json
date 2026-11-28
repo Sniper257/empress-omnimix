@@ -1721,7 +1721,7 @@
   "tools/release/retail_discs.json": "284a134922cc429eb2d359bfa2557373f84455c963ebbc04ceb19d7d8f3000e0",
   "tools/release/reviewed_source_tags.json": "c8e7d57fdd3c128fddc85398d6d358ccd937e123b3d40dc0e3afbad08b4d42a2",
   "tools/release/sirius_probe.py": "e62ed065fa836548470aa63772a0ec5d88bf8fcd3f54d1b57c4f39554d330237",
-  "tools/release/song_pack.py": "c20f7d4a473d18b45eb1ec8d6f4e912f5d368791f841d06aef3de310a402606d",
+  "tools/release/song_pack.py": "4eab1ad2f575949a576b559b89ed48f73997aa92909c497649bab44c04b409c2",
   "tools/release/source_edit.py": "861acb73a657b877b92b7544f6a4078e50a5ae0553691066cb1f4282c3fd755d",
   "tools/release/source_versions.json": "fe35be2541c36803efb0dd5df62890663669d57f3b7434e798ad2b06c42c9ada",
   "tools/release/source_versions.py": "292578ced29e68081874ada68d26ddf8a88a7c6511831ee39dad2b5b99338c81",
